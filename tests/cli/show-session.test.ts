@@ -298,7 +298,8 @@ describe('clavix show - session retrieval and display', () => {
       
       expect(stats.size).toBeGreaterThan(0);
       expect(stats.isFile()).toBe(true);
-      expect(stats.mtime).toBeInstanceOf(Date);
+      expect(stats.mtime).toBeTruthy();
+      expect(typeof stats.mtime.getTime).toBe('function');
     });
   });
 

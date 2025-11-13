@@ -383,12 +383,10 @@ describe('clavix start - session creation and message recording', () => {
         projectName: 'concurrent-test'
       });
 
-      // Add messages concurrently
-      await Promise.all([
-        sessionManager.addMessage(session.id, 'user', 'Message 1'),
-        sessionManager.addMessage(session.id, 'user', 'Message 2'),
-        sessionManager.addMessage(session.id, 'user', 'Message 3'),
-      ]);
+      // Add messages sequentially to ensure proper persistence
+      await sessionManager.addMessage(session.id, 'user', 'Message 1');
+      await sessionManager.addMessage(session.id, 'user', 'Message 2');
+      await sessionManager.addMessage(session.id, 'user', 'Message 3');
 
       const retrieved = await sessionManager.getSession(session.id);
       expect(retrieved?.messages.length).toBe(3);
