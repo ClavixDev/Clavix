@@ -395,9 +395,7 @@ Provides all fast mode features plus alternative phrasings, edge cases, implemen
 
 ## Roadmap
 
-- [x] Phase 1: MVP (CLI, prompt improvement, Claude Code integration)
-- [x] Phase 2: Core workflows (PRD generation, conversational mode, sessions, config management)
-- [ ] Phase 3: Advanced features (team collaboration, more agents, AI-powered analysis, PDF export)
+See [ROADMAP.md](ROADMAP.md) for detailed feature status and planned enhancements.
 
 ## Requirements
 
