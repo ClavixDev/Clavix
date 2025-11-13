@@ -1,6 +1,6 @@
 {
   "name": "clavix",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "AI prompt improvement and PRD generation CLI tool for developers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,8 @@
     "clavix": "./bin/clavix.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-templates",
+    "copy-templates": "copyfiles -u 1 \"src/templates/**/*\" dist/",
     "dev": "ts-node src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -62,6 +63,7 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",
+    "copyfiles": "^2.4.1",
     "eslint": "^9.39.1",
     "jest": "^30.2.0",
     "prettier": "^3.6.2",

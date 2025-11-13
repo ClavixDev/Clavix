@@ -137,7 +137,7 @@ export default class Update extends Command {
     const commandsPath = path.join(process.cwd(), commandsDir);
 
     // Dynamically scan template directory for all command templates
-    const templatesDir = path.join(__dirname, '..', '..', '..', 'src', 'templates', 'slash-commands', 'claude-code');
+    const templatesDir = path.join(__dirname, '..', '..', 'templates', 'slash-commands', 'claude-code');
 
     if (!fs.existsSync(templatesDir)) {
       this.log(chalk.yellow(`  ⚠ Templates directory not found: ${templatesDir}`));

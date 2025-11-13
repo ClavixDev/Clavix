@@ -190,7 +190,7 @@ See documentation for template format details.
   }
 
   private async generateSlashCommands(adapter: any): Promise<void> {
-    const templateDir = path.join(__dirname, '../../../src/templates/slash-commands/claude-code');
+    const templateDir = path.join(__dirname, '../../templates/slash-commands/claude-code');
     const commandFiles = await FileSystem.listFiles(templateDir, /\.md$/);
 
     const templates: CommandTemplate[] = [];
