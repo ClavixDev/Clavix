@@ -9,7 +9,9 @@
   },
   "scripts": {
     "build": "tsc && npm run copy-templates",
+    "build:prod": "npm run build && npm run remove-sourcemaps",
     "copy-templates": "copyfiles -u 1 \"src/templates/**/*\" dist/",
+    "remove-sourcemaps": "find dist -name '*.map' -type f -delete",
     "dev": "ts-node src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -18,7 +20,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build:prod"
   },
   "repository": {
     "type": "git",

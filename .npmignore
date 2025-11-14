@@ -1,0 +1,35 @@
+# Exclude source maps from npm package
+# (keep in repo for development debugging)
+*.map
+**/*.map
+dist/**/*.map
+
+# Development files
+src/
+tests/
+*.test.ts
+*.spec.ts
+.gitignore
+.eslintrc.json
+.prettierrc
+tsconfig.json
+jest.config.js
+
+# Documentation files (already in README)
+docs/
+CONTRIBUTING.md
+
+# CI/CD
+.github/
+
+# IDE
+.vscode/
+.idea/
+
+# Clavix working directories
+.clavix/
+
+# OpenSpec
+openspec/
+AGENTS.md
+OCTO.md

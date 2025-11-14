@@ -31,5 +31,20 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local Clavix data (for testing)
+# Local Clavix data and provider directories (for testing)
 .clavix/
+.claude/
+.windsurf/
+.kilocode/
+.cline/
+.roo/
+.crush/
+.cursor/
+.factory/
+.opencode/
+.agents/
+
+# Generated documentation files
+AGENTS.md
+OCTO.md
+CLAUDE.md
