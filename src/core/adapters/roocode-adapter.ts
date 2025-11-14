@@ -44,7 +44,7 @@ export class RoocodeAdapter extends BaseAdapter {
    * Adds frontmatter with description and argument-hint if not already present
    */
   protected formatCommand(template: CommandTemplate): string {
-    let content = template.content;
+    const content = template.content;
 
     // Check if frontmatter already exists
     if (content.trim().startsWith('---')) {

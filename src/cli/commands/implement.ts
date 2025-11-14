@@ -251,7 +251,7 @@ export default class Implement extends Command {
         try {
           const phases = await manager.readTasksFile(tasksPath);
           stats = manager.getTaskStats(phases);
-        } catch (error) {
+        } catch {
           // Ignore read errors, treat as no stats
         }
       }
