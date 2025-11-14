@@ -1,8 +1,4 @@
 ---
-description: Execute tasks from the implementation plan
----
-
----
 name: "Clavix: Implement"
 description: Execute tasks from the implementation plan
 ---

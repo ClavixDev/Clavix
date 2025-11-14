@@ -1,9 +1,4 @@
 ---
-description: Generate implementation task breakdown from PRD
-argument-hint: [prompt]
----
-
----
 name: "Clavix: Plan"
 description: Generate implementation task breakdown from PRD
 ---

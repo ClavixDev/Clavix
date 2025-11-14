@@ -1,8 +1,4 @@
 ---
-description: Generate implementation task breakdown from PRD
----
-
----
 name: "Clavix: Plan"
 description: Generate implementation task breakdown from PRD
 ---

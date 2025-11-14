@@ -1,9 +1,4 @@
 ---
-description: CLEAR-guided quick improvements (C, L, E components)
-argument-hint: [prompt]
----
-
----
 name: "Clavix: Fast"
 description: CLEAR-guided quick improvements (C, L, E components)
 ---
@@ -26,7 +21,7 @@ An academically-validated prompt engineering framework by Dr. Leo Lo (University
 
 ## Instructions
 
-1. Take the user's prompt: `$ARGUMENTS`
+1. Take the user's prompt: `{{ARGS}}`
 
 2. **CLEAR Analysis** - Assess the prompt using three components:
 

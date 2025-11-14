@@ -1,8 +1,4 @@
 ---
-description: Archive completed PRD projects
----
-
----
 name: "Clavix: Archive"
 description: Archive completed PRD projects
 ---

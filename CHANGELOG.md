@@ -5,6 +5,69 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2025-11-14
+
+### 🐛 Critical Fixes
+
+#### Multi-Provider Support in Update Command
+- **Fixed**: `clavix update` now properly updates all installed providers instead of only claude-code
+  - **Root Cause**: `update.ts` was reading non-existent `config.agent` field instead of `config.providers` array
+  - **Impact**: Users with OpenCode, Cursor, Droid, or Amp were not getting command updates
+  - **Solution**: Refactored to iterate over all providers in `config.providers`
+  - **Technical Changes**: `src/cli/commands/update.ts:52-103`
+
+#### IDE Slash Commands Updated to v1.5.0
+- **Fixed**: All provider slash command templates synchronized with v1.5.0 (7→5 questions)
+  - **Affected Files**:
+    - `src/templates/slash-commands/claude-code/prd.md`
+    - `src/templates/slash-commands/opencode/prd.md`
+    - `src/templates/slash-commands/cursor/prd.md`
+    - `src/templates/slash-commands/amp/prd.md`
+    - `src/templates/slash-commands/droid/prd.md`
+  - **Issue**: v1.5.0 updated CLI flow (7→5 questions) but forgot to update IDE slash commands
+  - **Result**: `/clavix:prd` in all IDEs now uses streamlined 5-question flow
+
+#### Hardcoded Template Paths Fixed
+- **Fixed**: Dynamic template path resolution based on provider name
+  - **Before**: `path.join(__dirname, 'templates/slash-commands/claude-code')` (hardcoded)
+  - **After**: `path.join(__dirname, 'templates/slash-commands', adapter.name)` (dynamic)
+  - **Impact**: Enables true multi-provider template management
+  - **Files Updated**:
+    - `src/cli/commands/update.ts:140`
+    - `src/cli/commands/init.ts:274`
+
+#### Added Special Handling for Universal Formats
+- **Added**: Dedicated update methods for `agents-md` and `octo-md` providers
+  - These are not standard adapters and require special handling
+  - New methods: `updateAgentsMd()` and `updateOctoMd()`
+
+### 📊 What This Fixes
+
+**Before 1.5.2:**
+```bash
+clavix update --commands-only
+# Only updated .claude/commands/clavix/
+# OpenCode, Cursor, etc. were ignored
+# Still showed 7 questions instead of 5
+```
+
+**After 1.5.2:**
+```bash
+clavix update --commands-only
+# Updates ALL providers: claude-code, opencode, cursor, droid, amp
+# All commands now use 5-question flow
+# ✅ 32 files updated (4 providers × 8 commands)
+```
+
+### 🎯 Verification
+
+All providers confirmed working with 5-question PRD flow:
+- ✅ Claude Code (`/clavix:prd`)
+- ✅ OpenCode (`/clavix:prd`)
+- ✅ Cursor (`/clavix:prd`)
+- ✅ Droid CLI
+- ✅ Amp
+
 ## [1.5.1] - 2025-11-14
 
 ### 🐛 Fixed

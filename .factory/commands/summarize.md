@@ -1,9 +1,4 @@
 ---
-description: Extract and CLEAR-optimize requirements from conversation
-argument-hint: [prompt]
----
-
----
 name: "Clavix: Summarize"
 description: Extract and CLEAR-optimize requirements from conversation
 ---

@@ -1,9 +1,4 @@
 ---
-description: Execute tasks from the implementation plan
-argument-hint: [prompt]
----
-
----
 name: "Clavix: Implement"
 description: Execute tasks from the implementation plan
 ---

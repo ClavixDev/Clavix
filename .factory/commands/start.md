@@ -1,9 +1,4 @@
 ---
-description: Start conversational mode for iterative prompt development
-argument-hint: [prompt]
----
-
----
 name: "Clavix: Start"
 description: Start conversational mode for iterative prompt development
 ---

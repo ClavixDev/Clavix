@@ -1,9 +1,4 @@
 ---
-description: Archive completed PRD projects
-argument-hint: [prompt]
----
-
----
 name: "Clavix: Archive"
 description: Archive completed PRD projects
 ---

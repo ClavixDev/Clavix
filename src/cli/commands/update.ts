@@ -5,6 +5,8 @@ import * as path from 'path';
 import JSON5 from 'json5';
 import { DocInjector } from '../../core/doc-injector';
 import { AgentManager } from '../../core/agent-manager';
+import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator';
+import { OctoMdGenerator } from '../../core/adapters/octo-md-generator';
 
 export default class Update extends Command {
   static description = 'Update managed blocks and slash commands';
@@ -49,30 +51,57 @@ export default class Update extends Command {
 
     this.log(chalk.bold.cyan('🔄 Updating Clavix integration...\n'));
 
-    // Load config to determine agent
+    // Load config to determine providers
     const config = JSON5.parse(fs.readFileSync(configPath, 'utf-8'));
-    const agentType = config.agent || 'claude-code';
+    const providers = config.providers || ['claude-code'];
 
     const agentManager = new AgentManager();
-    const adapter = agentManager.getAdapter(agentType);
-
-    if (!adapter) {
-      this.error(chalk.red(`Unknown agent type: ${agentType}`));
-    }
 
     const updateDocs = flags['docs-only'] || (!flags['docs-only'] && !flags['commands-only']);
     const updateCommands = flags['commands-only'] || (!flags['docs-only'] && !flags['commands-only']);
 
     let updatedCount = 0;
 
-    // Update documentation blocks
-    if (updateDocs) {
-      updatedCount += await this.updateDocumentation(adapter, agentType, flags.force);
-    }
+    // Update for each provider
+    for (const providerName of providers) {
+      // Handle agents-md separately (not an adapter)
+      if (providerName === 'agents-md') {
+        if (updateDocs) {
+          const agentsPath = path.join(process.cwd(), 'AGENTS.md');
+          if (fs.existsSync(agentsPath)) {
+            updatedCount += await this.updateAgentsMd(flags.force);
+          }
+        }
+        continue;
+      }
 
-    // Update slash commands
-    if (updateCommands) {
-      updatedCount += await this.updateCommands(adapter, flags.force);
+      // Handle octo-md separately (not an adapter)
+      if (providerName === 'octo-md') {
+        if (updateDocs) {
+          const octoPath = path.join(process.cwd(), 'OCTO.md');
+          if (fs.existsSync(octoPath)) {
+            updatedCount += await this.updateOctoMd(flags.force);
+          }
+        }
+        continue;
+      }
+
+      const adapter = agentManager.getAdapter(providerName);
+
+      if (!adapter) {
+        this.log(chalk.yellow(`  ⚠ Unknown provider: ${providerName}, skipping...`));
+        continue;
+      }
+
+      // Update documentation blocks (Claude Code only)
+      if (updateDocs && providerName === 'claude-code') {
+        updatedCount += await this.updateDocumentation(adapter, providerName, flags.force);
+      }
+
+      // Update slash commands
+      if (updateCommands) {
+        updatedCount += await this.updateCommands(adapter, flags.force);
+      }
     }
 
     this.log('');
@@ -251,5 +280,31 @@ Analyze the current conversation and extract key requirements into a structured 
   private hasUpToDateBlock(currentContent: string, newContent: string): boolean {
     // Check if the managed block contains the new content
     return currentContent.includes(newContent.trim());
+  }
+
+  private async updateAgentsMd(force: boolean): Promise<number> {
+    this.log(chalk.cyan('📝 Updating AGENTS.md...'));
+
+    try {
+      await AgentsMdGenerator.generate();
+      this.log(chalk.gray('  ✓ Updated AGENTS.md'));
+      return 1;
+    } catch (error: any) {
+      this.log(chalk.yellow(`  ⚠ Failed to update AGENTS.md: ${error.message}`));
+      return 0;
+    }
+  }
+
+  private async updateOctoMd(force: boolean): Promise<number> {
+    this.log(chalk.cyan('📝 Updating OCTO.md...'));
+
+    try {
+      await OctoMdGenerator.generate();
+      this.log(chalk.gray('  ✓ Updated OCTO.md'));
+      return 1;
+    } catch (error: any) {
+      this.log(chalk.yellow(`  ⚠ Failed to update OCTO.md: ${error.message}`));
+      return 0;
+    }
   }
 }

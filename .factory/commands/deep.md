@@ -1,9 +1,4 @@
 ---
-description: Full CLEAR framework analysis (C, L, E, A, R components)
-argument-hint: [prompt]
----
-
----
 name: "Clavix: Deep"
 description: Full CLEAR framework analysis (C, L, E, A, R components)
 ---
@@ -26,7 +21,7 @@ An academically-validated prompt engineering framework by Dr. Leo Lo (University
 
 ## Instructions
 
-1. Take the user's prompt: `$ARGUMENTS`
+1. Take the user's prompt: `{{ARGS}}`
 
 2. **Apply Full CLEAR Framework** (C, L, E, A, R):
 

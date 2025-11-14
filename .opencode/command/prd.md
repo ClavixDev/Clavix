@@ -1,8 +1,4 @@
 ---
-description: CLEAR-validated PRD generation through Socratic questioning
----
-
----
 name: "Clavix: PRD"
 description: CLEAR-validated PRD generation through Socratic questioning
 ---
@@ -15,19 +11,15 @@ You are helping the user create a Product Requirements Document (PRD) using Clav
 
 1. Guide the user through these strategic questions, one at a time:
 
-   **Question 1**: What problem are you solving? Who experiences this problem?
+   **Question 1**: 🎯 What are we building and why? (Problem + goal in 2-3 sentences)
 
-   **Question 2**: Who will use this? What are their key characteristics and needs?
+   **Question 2**: ⚡ What are the must-have core features? (List 3-5 critical features)
 
-   **Question 3**: What are the must-have features? List 3-5 core features.
+   **Question 3**: 🔧 Tech stack and requirements? (Technologies, integrations, constraints - press Enter to skip if extending existing project)
 
-   **Question 4**: How will you measure success? What are the key metrics?
+   **Question 4**: 🚫 What is explicitly OUT of scope? (What are we NOT building?)
 
-   **Question 5**: Any specific technologies, performance requirements, or integrations required?
-
-   **Question 6**: What are you explicitly NOT building in this version?
-
-   **Question 7**: Any deadlines or milestones to be aware of?
+   **Question 5**: 💡 Any additional context or requirements? (Optional - press Enter to skip)
 
 2. After collecting all answers, generate TWO documents:
 
@@ -35,36 +27,30 @@ You are helping the user create a Product Requirements Document (PRD) using Clav
    ```markdown
    # Product Requirements Document: [Project Name]
 
-   ## Problem Statement
+   ## Problem & Goal
    [User's answer to Q1]
-
-   ## Target Users
-   [User's answer to Q2]
 
    ## Requirements
    ### Must-Have Features
-   [User's answer to Q3, expanded]
+   [User's answer to Q2, expanded with details]
 
    ### Technical Requirements
-   [User's answer to Q5, detailed]
-
-   ## Success Metrics
-   [User's answer to Q4]
+   [User's answer to Q3, detailed]
 
    ## Out of Scope
-   [User's answer to Q6]
+   [User's answer to Q4]
 
-   ## Timeline
-   [User's answer to Q7]
+   ## Additional Context
+   [User's answer to Q5 if provided]
    ```
 
    **Quick PRD** (2-3 paragraphs, AI-optimized):
    ```markdown
-   [Concise summary combining problem, solution, and must-have features]
+   [Concise summary combining problem, goal, and must-have features from Q1+Q2]
 
-   [Technical requirements and constraints in one paragraph]
+   [Technical requirements and constraints from Q3]
 
-   [Success criteria and timeline]
+   [Out of scope and additional context from Q4+Q5]
    ```
 
 3. Save both documents to `.clavix/outputs/[project-name]/`

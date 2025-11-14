@@ -1,8 +1,4 @@
 ---
-description: Extract and CLEAR-optimize requirements from conversation
----
-
----
 name: "Clavix: Summarize"
 description: Extract and CLEAR-optimize requirements from conversation
 ---
