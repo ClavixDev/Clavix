@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2025-11-14
+
+### 🐛 Bug Fixes
+
+#### Missing Commands in New Providers
+- **Fixed**: Added missing `plan.md` and `implement.md` commands to all providers
+- **Affected**: Cursor, Droid CLI, OpenCode, Amp providers
+- **Root cause**: Commands were added to deployed location instead of source templates in v1.3.0
+- **Impact**: Users selecting new providers (cursor, droid, opencode, amp) now receive complete command set including `/clavix:plan` and `/clavix:implement`
+
+### 📝 What Was Fixed
+- Added `plan.md` to all 5 provider template directories
+- Added `implement.md` to all 5 provider template directories
+- Verified frontmatter compatibility with Droid and OpenCode YAML requirements
+- All providers now have feature parity with Claude Code
+
+### ✅ Complete Command List (All Providers)
+- `/clavix:fast` - Quick prompt improvements
+- `/clavix:deep` - Comprehensive analysis
+- `/clavix:prd` - PRD generation
+- `/clavix:plan` - Task breakdown ✨ NEW for cursor/droid/opencode/amp
+- `/clavix:implement` - Task execution ✨ NEW for cursor/droid/opencode/amp
+- `/clavix:start` - Conversational mode
+- `/clavix:summarize` - Extract requirements
+
+---
+
 ## [1.4.0] - 2025-11-14
 
 ### 🎉 Major Features
