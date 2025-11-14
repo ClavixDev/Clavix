@@ -21,15 +21,29 @@ npm install -g clavix
 
 Clavix integrates seamlessly with multiple AI development tools:
 
+### IDE & IDE Extensions
 | Tool | Slash Commands | Directory | Status |
 |------|----------------|-----------|--------|
 | **Claude Code** | ✅ | `.claude/commands/clavix/` | Fully Supported |
 | **Cursor** | ✅ | `.cursor/commands/` | Fully Supported |
+| **Windsurf** | ✅ | `.windsurf/workflows/` | Fully Supported |
+| **Kilocode** | ✅ | `.kilocode/workflows/` | Fully Supported |
+| **Roocode** | ✅ | `.roo/commands/` | Fully Supported |
+| **Cline** | ✅ | `.cline/workflows/` | Fully Supported |
+
+### CLI Tools
+| Tool | Slash Commands | Directory | Status |
+|------|----------------|-----------|--------|
 | **Droid CLI** | ✅ | `.factory/commands/` | Fully Supported |
 | **OpenCode** | ✅ | `.opencode/command/` | Fully Supported |
 | **Amp** | ✅ | `.agents/commands/` | Fully Supported |
 | **Crush CLI** | ✅ | `.crush/commands/clavix/` | Fully Supported |
+
+### Universal Adapters
+| Tool | Slash Commands | Directory | Status |
+|------|----------------|-----------|--------|
 | **Universal (agents.md)** | ⚡ No slash commands | `AGENTS.md` | Fully Supported |
+| **Octofriend** | ⚡ No slash commands | `OCTO.md` | Fully Supported |
 
 **Key Features:**
 - **Multi-Select Support** - Choose multiple tools during `clavix init`

@@ -27,13 +27,17 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should register all built-in adapters', () => {
       const adapters = agentManager.getAdapters();
 
-      expect(adapters).toHaveLength(6);
+      expect(adapters).toHaveLength(10);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
       expect(agentManager.hasAgent('opencode')).toBe(true);
       expect(agentManager.hasAgent('amp')).toBe(true);
       expect(agentManager.hasAgent('crush')).toBe(true);
+      expect(agentManager.hasAgent('windsurf')).toBe(true);
+      expect(agentManager.hasAgent('kilocode')).toBe(true);
+      expect(agentManager.hasAgent('cline')).toBe(true);
+      expect(agentManager.hasAgent('roocode')).toBe(true);
     });
 
     it('should provide list of available agents', () => {
@@ -45,6 +49,10 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(available).toContain('opencode');
       expect(available).toContain('amp');
       expect(available).toContain('crush');
+      expect(available).toContain('windsurf');
+      expect(available).toContain('kilocode');
+      expect(available).toContain('cline');
+      expect(available).toContain('roocode');
     });
 
     it('should get adapter by name', () => {
@@ -332,9 +340,15 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should provide formatted choices for prompts', () => {
       const choices = agentManager.getAdapterChoices();
 
-      expect(choices).toHaveLength(6);
+      expect(choices).toHaveLength(10);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
+
+      // Verify new providers are included
+      expect(choices.find(c => c.value === 'windsurf')).toBeDefined();
+      expect(choices.find(c => c.value === 'kilocode')).toBeDefined();
+      expect(choices.find(c => c.value === 'cline')).toBeDefined();
+      expect(choices.find(c => c.value === 'roocode')).toBeDefined();
     });
 
     it('should pre-select Claude Code by default', () => {

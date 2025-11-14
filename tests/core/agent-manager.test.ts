@@ -28,10 +28,17 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('crush');
     });
 
-    it('should have exactly 6 built-in adapters', () => {
+    it('should have exactly 10 built-in adapters', () => {
       const adapters = manager.getAdapters();
 
-      expect(adapters.length).toBe(6);
+      expect(adapters.length).toBe(10);
+
+      // Verify new adapters are registered
+      const adapterNames = adapters.map(a => a.name);
+      expect(adapterNames).toContain('windsurf');
+      expect(adapterNames).toContain('kilocode');
+      expect(adapterNames).toContain('cline');
+      expect(adapterNames).toContain('roocode');
     });
   });
 

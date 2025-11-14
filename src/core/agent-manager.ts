@@ -5,6 +5,10 @@ import { DroidAdapter } from './adapters/droid-adapter';
 import { OpenCodeAdapter } from './adapters/opencode-adapter';
 import { AmpAdapter } from './adapters/amp-adapter';
 import { CrushAdapter } from './adapters/crush-adapter';
+import { WindsurfAdapter } from './adapters/windsurf-adapter';
+import { KilocodeAdapter } from './adapters/kilocode-adapter';
+import { ClineAdapter } from './adapters/cline-adapter';
+import { RoocodeAdapter } from './adapters/roocode-adapter';
 import { IntegrationError } from '../types/errors';
 
 /**
@@ -21,6 +25,10 @@ export class AgentManager {
     this.registerAdapter(new OpenCodeAdapter());
     this.registerAdapter(new AmpAdapter());
     this.registerAdapter(new CrushAdapter());
+    this.registerAdapter(new WindsurfAdapter());
+    this.registerAdapter(new KilocodeAdapter());
+    this.registerAdapter(new ClineAdapter());
+    this.registerAdapter(new RoocodeAdapter());
   }
 
   /**
