@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { BaseAdapter } from './base-adapter';
-import { CommandTemplate, ManagedBlock } from '../../types/agent';
+import { ManagedBlock } from '../../types/agent';
 import { FileSystem } from '../../utils/file-system';
 import { IntegrationError } from '../../types/errors';
 
