@@ -42,6 +42,14 @@ export default class Implement extends Command {
       const manager = new TaskManager();
       const gitManager = new GitManager();
 
+      // Interactive PRD selection (if no project specified)
+      if (!flags['tasks-path'] && !flags.project) {
+        const selectedProject = await this.selectPrdProject(manager);
+        if (selectedProject) {
+          flags.project = selectedProject;
+        }
+      }
+
       // Find tasks.md file
       let tasksPath: string;
 
@@ -202,6 +210,170 @@ export default class Implement extends Command {
         console.log(chalk.red('\n✗ An unexpected error occurred\n'));
       }
       this.exit(1);
+    }
+  }
+
+  /**
+   * Scans for PRD projects and shows interactive selection menu
+   * @param manager TaskManager instance
+   * @returns Selected project name or null
+   */
+  private async selectPrdProject(manager: TaskManager): Promise<string | null> {
+    const outputsDir = path.join(process.cwd(), '.clavix', 'outputs');
+
+    if (!(await fs.pathExists(outputsDir))) {
+      return null; // No PRDs exist
+    }
+
+    // Scan for PRD projects (exclude 'archive' directory)
+    const entries = await fs.readdir(outputsDir, { withFileTypes: true });
+    const prdProjects: Array<{ name: string; hasTasks: boolean; stats?: any }> = [];
+
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name === 'archive') {
+        continue;
+      }
+
+      const projectPath = path.join(outputsDir, entry.name);
+      const tasksPath = path.join(projectPath, 'tasks.md');
+
+      // Check if this directory has a PRD file
+      const hasPrd = await manager.hasPrdFile(projectPath);
+      if (!hasPrd) {
+        continue; // Not a PRD project
+      }
+
+      // Check if tasks.md exists
+      const hasTasks = await fs.pathExists(tasksPath);
+
+      let stats = null;
+      if (hasTasks) {
+        try {
+          const phases = await manager.readTasksFile(tasksPath);
+          stats = manager.getTaskStats(phases);
+        } catch (error) {
+          // Ignore read errors, treat as no stats
+        }
+      }
+
+      prdProjects.push({
+        name: entry.name,
+        hasTasks,
+        stats,
+      });
+    }
+
+    // No PRD projects found
+    if (prdProjects.length === 0) {
+      console.log(chalk.yellow('⚠ No PRD projects found in .clavix/outputs/\n'));
+      console.log(chalk.gray('💡 Create a PRD first using:'), chalk.cyan('clavix prd\n'));
+      this.exit(1);
+      return null;
+    }
+
+    // Only one PRD - auto-select
+    if (prdProjects.length === 1) {
+      const project = prdProjects[0];
+      console.log(chalk.dim(`Auto-selected project: ${project.name}\n`));
+
+      // Check if it has tasks
+      if (!project.hasTasks) {
+        await this.handleNoTasks(project.name);
+        return null;
+      }
+
+      return project.name;
+    }
+
+    // Multiple PRDs - show selection menu
+    console.log(chalk.bold('Select a PRD project to implement:\n'));
+
+    const choices = prdProjects.map((project, index) => {
+      let label = `${index + 1}. ${project.name}`;
+
+      if (project.hasTasks && project.stats) {
+        const percentage = project.stats.percentage.toFixed(0);
+        label += chalk.dim(` - ${project.stats.completed}/${project.stats.total} tasks (${percentage}%)`);
+      } else {
+        label += chalk.dim(' - No tasks generated');
+      }
+
+      return {
+        name: label,
+        value: project.name,
+        hasTasks: project.hasTasks,
+      };
+    });
+
+    const response = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'project',
+        message: 'Select project:',
+        choices: choices.map(c => ({ name: c.name, value: c.value })),
+      },
+    ]);
+
+    const selectedProject = response.project as string;
+    const selected = choices.find(c => c.value === selectedProject);
+
+    // Handle "no tasks" scenario
+    if (selected && !selected.hasTasks) {
+      await this.handleNoTasks(selectedProject);
+      return null;
+    }
+
+    console.log(); // Add spacing
+    return selectedProject;
+  }
+
+  /**
+   * Handles the scenario when selected PRD has no tasks
+   * @param projectName Name of the PRD project
+   */
+  private async handleNoTasks(projectName: string): Promise<void> {
+    console.log(chalk.yellow(`\n⚠ Project "${projectName}" has no tasks generated yet.\n`));
+
+    const response = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'runPlan',
+        message: 'Would you like to run "clavix plan" to generate tasks first?',
+        default: true,
+      },
+    ]);
+
+    if (response.runPlan) {
+      console.log(chalk.cyan(`\nRunning: clavix plan --project ${projectName}\n`));
+
+      // Execute clavix plan command
+      const { exec } = await import('child_process');
+      const { promisify } = await import('util');
+      const execAsync = promisify(exec);
+
+      try {
+        const { stdout, stderr } = await execAsync(`clavix plan --project ${projectName}`, {
+          cwd: process.cwd(),
+        });
+
+        if (stdout) {
+          console.log(stdout);
+        }
+        if (stderr) {
+          console.error(chalk.yellow(stderr));
+        }
+
+        // After plan completes, continue with implementation
+        console.log(chalk.green('\n✓ Tasks generated! Continuing with implementation...\n'));
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(chalk.red(`\n✗ Error running clavix plan: ${error.message}\n`));
+        }
+        this.exit(1);
+      }
+    } else {
+      console.log(chalk.dim('\nExiting. Run "clavix plan" when ready to generate tasks.\n'));
+      this.exit(0);
     }
   }
 }

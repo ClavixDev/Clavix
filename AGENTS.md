@@ -18,17 +18,33 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 <!-- OPENSPEC:END -->
 
 <!-- CLAVIX:START -->
-# Clavix Workflows
+## Clavix Integration
 
-Quick workflow instructions for AI tools.
+This project uses Clavix for prompt improvement and PRD generation.
 
-## Fast Mode
-Use for quick prompt improvements.
+### Available Commands
+- `clavix prd` - Generate a comprehensive PRD through guided questions
+- `clavix fast [prompt]` - Quick prompt improvements with smart triage
+- `clavix deep [prompt]` - Comprehensive prompt analysis
+- `clavix start` - Start a conversational session for iterative development
+- `clavix summarize` - Extract requirements from conversation history
+- `clavix list` - List all sessions and outputs
+- `clavix show [session-id]` - Show detailed session information
 
-## Deep Mode
-Use for comprehensive analysis.
+### Quick Start
+```bash
+# Generate a PRD
+clavix prd
 
-## PRD Mode
-Use for strategic planning.
+# Quick prompt improvement
+clavix fast "Build a user auth system"
 
+# Deep prompt analysis
+clavix deep "Build a user auth system"
+
+# Start conversational mode
+clavix start
+```
+
+Learn more: https://github.com/Bob5k/Clavix
 <!-- CLAVIX:END -->

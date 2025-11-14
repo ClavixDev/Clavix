@@ -15,11 +15,17 @@ You are helping the user implement tasks from their task plan with AI assistance
    ```
 
    This will:
-   - Locate the `tasks.md` file
+   - Show interactive PRD selection (if multiple projects exist)
+   - Locate the `tasks.md` file for the selected/specified project
    - Show current progress
    - Display the next incomplete task
    - Prompt for git auto-commit preferences
    - Create a config file for the AI agent
+
+   **Note**: You can skip the selection menu by specifying a project:
+   ```bash
+   clavix implement --project my-feature
+   ```
 
 2. **As the AI agent, you should**:
 

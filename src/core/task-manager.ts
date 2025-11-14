@@ -607,7 +607,7 @@ export class TaskManager {
   /**
    * Check if directory has a PRD file
    */
-  private async hasPrdFile(dirPath: string): Promise<boolean> {
+  public async hasPrdFile(dirPath: string): Promise<boolean> {
     const possibleFiles = [
       'PRD.md',
       'full-prd.md',
