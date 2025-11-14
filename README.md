@@ -12,6 +12,13 @@ Clavix helps developers create better prompts and structured Product Requirement
 npm install -g clavix
 ```
 
+Or run without global install (no global state):
+
+```bash
+npx clavix@latest --help
+npx clavix@latest init
+```
+
 **Troubleshooting:**
 - If you encounter permission errors, use `sudo npm install -g clavix` (macOS/Linux)
 - On Windows, run your terminal as Administrator
@@ -27,16 +34,16 @@ Clavix integrates seamlessly with multiple AI development tools:
 | **Claude Code** | ✅ | `.claude/commands/clavix/` | Fully Supported |
 | **Cursor** | ✅ | `.cursor/commands/` | Fully Supported |
 | **Windsurf** | ✅ | `.windsurf/workflows/` | Fully Supported |
-| **Kilocode** | ✅ | `.kilocode/workflows/` | Fully Supported |
+| **Kilocode** | ✅ | `.kilocode/workflows/` (flat, no subdirectories) | Fully Supported |
 | **Roocode** | ✅ | `.roo/commands/` | Fully Supported |
-| **Cline** | ✅ | `.cline/workflows/` | Fully Supported |
+| **Cline** | ✅ | `.cline/workflows/` (flat, no subdirectories) | Fully Supported |
 
 ### CLI Tools
 | Tool | Slash Commands | Directory | Status |
 |------|----------------|-----------|--------|
-| **Droid CLI** | ✅ | `.factory/commands/` | Fully Supported |
+| **Droid CLI** | ✅ | `.factory/commands/` (YAML frontmatter) | Fully Supported |
 | **OpenCode** | ✅ | `.opencode/command/` | Fully Supported |
-| **Amp** | ✅ | `.agents/commands/` | Fully Supported |
+| **Amp** | ✅ | `.agents/commands/` (no frontmatter) | Fully Supported |
 | **Crush CLI** | ✅ | `.crush/commands/clavix/` | Fully Supported |
 
 ### Universal Adapters
@@ -47,7 +54,7 @@ Clavix integrates seamlessly with multiple AI development tools:
 
 **Key Features:**
 - **Multi-Select Support** - Choose multiple tools during `clavix init`
-- **Provider-Specific Formatting** - Commands generated in each tool's native format
+- **Provider-Specific Formatting** - Commands generated in each tool's native format (e.g., Crush CLI uses `$PROMPT`, Droid CLI adds YAML `description`/`argument-hint`, Amp omits frontmatter)
 - **Universal Fallback** - `agents.md` works with any tool
 - **Managed Documentation** - Auto-inject and update instructions
 
@@ -121,7 +128,7 @@ Clavix works with all major AI development tools (see [Supported Providers](#sup
 - `/clavix:summarize` - Extract optimized prompts
 
 **Integration Features:**
-- Provider-specific command formatting (e.g., Crush CLI uses `$PROMPT` placeholder)
+- Provider-specific command formatting (e.g., Crush CLI uses `$PROMPT`; Droid CLI adds YAML `description`/`argument-hint`; Amp omits frontmatter)
 - Interactive multi-select during `clavix init`
 - Automatic documentation injection with managed blocks
 - Extensible plugin-based architecture for adding new providers
@@ -179,6 +186,7 @@ You'll be prompted to select which AI tools to support:
  ◉ OpenCode (.opencode/command/)
  ◯ Amp (.agents/commands/)
  ◉ agents.md (Universal)
+ ◯ Octofriend (OCTO.md - Universal)
 ```
 
 This will:
@@ -412,7 +420,7 @@ clavix archive my-project --force
 ```
 /clavix:archive
 ```
-Available in: Claude Code, Cursor, Droid, OpenCode, Amp
+Available in: Claude Code, Cursor, Droid, OpenCode, Amp, Crush, Windsurf, Kilocode, Cline, Roocode
 
 ### `clavix start`
 
@@ -666,6 +674,20 @@ Provides all fast mode features plus alternative phrasings, edge cases, implemen
 
 - Node.js >= 18.0.0
 - npm or yarn
+
+## Development
+
+```bash
+# build dist
+npm run build
+
+# run tests
+npm test
+
+# lint / format
+npm run lint
+npm run format:check
+```
 
 ## License
 
