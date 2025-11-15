@@ -13,6 +13,7 @@ export interface AgentAdapter {
   generateCommands(templates: CommandTemplate[]): Promise<void>;
   injectDocumentation(blocks: ManagedBlock[]): Promise<void>;
   getCommandPath(): string;
+  getTargetFilename(name: string): string;
   validate?(): Promise<ValidationResult>;
 }
 
