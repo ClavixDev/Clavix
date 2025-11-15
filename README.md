@@ -18,9 +18,9 @@ Clavix is built on CLEAR (Concise, Logical, Explicit, Adaptive, Reflective), an 
 
 | Category | Providers |
 | --- | --- |
-| IDE & editor extensions | ✅ Claude Code · ✅ Cursor · ✅ Windsurf · ✅ Kilocode · ✅ Roocode · ✅ Cline |
-| CLI agents | ✅ Droid CLI · ✅ CodeBuddy CLI · ✅ OpenCode · ✅ Gemini CLI · ✅ Qwen Code · ✅ Amp · ✅ Crush CLI · ✅ Codex CLI |
-| Universal adapters | ✅ agents.md · ✅ OCTO.md |
+| IDE & editor extensions | Claude Code · Cursor · Windsurf · Kilocode · Roocode · Cline |
+| CLI agents | Droid CLI · CodeBuddy CLI · OpenCode · Gemini CLI · Qwen Code · Amp · Crush CLI · Codex CLI |
+| Universal adapters | AGENTS.md · OCTO.md |
 
 Provider paths and argument placeholders are listed in [docs/providers.md](docs/providers.md).
 
