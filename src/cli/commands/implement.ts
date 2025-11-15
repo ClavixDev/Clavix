@@ -227,7 +227,7 @@ export default class Implement extends Command {
 
     // Scan for PRD projects (exclude 'archive' directory)
     const entries = await fs.readdir(outputsDir, { withFileTypes: true });
-    const prdProjects: Array<{ name: string; hasTasks: boolean; stats?: any }> = [];
+    const prdProjects: Array<{ name: string; hasTasks: boolean; stats?: { total: number; completed: number; remaining: number; percentage: number } }> = [];
 
     for (const entry of entries) {
       if (!entry.isDirectory() || entry.name === 'archive') {
