@@ -9,9 +9,9 @@ You are helping the user generate a CLEAR-optimized implementation task breakdow
 
 ## Instructions
 
-1. **Locate the PRD**:
-   - Look for the most recent PRD in `.clavix/outputs/[project-name]/`
-   - Find either `PRD.md` or `full-prd.md`
+1. **Locate the PRD outputs**:
+   - Look for the most recent artifacts in `.clavix/outputs/[project-name]/`
+   - Accepted sources: `full-prd.md`, `quick-prd.md`, `mini-prd.md`, or `optimized-prompt.md`
 
 2. **Run the plan command**:
    ```bash
@@ -22,6 +22,13 @@ You are helping the user generate a CLEAR-optimized implementation task breakdow
    ```bash
    clavix plan --project project-name
    ```
+
+   Or generate tasks directly from a saved session (auto-creates mini-prd.md):
+   ```bash
+   clavix plan --session SESSION_ID
+   ```
+
+   The CLI will prompt you to pick a project when multiple outputs are available.
 
 3. **Review the generated tasks**:
    - The command will generate `tasks.md` in the PRD folder
@@ -65,5 +72,6 @@ The generated `tasks.md` will look like:
 - Tasks are automatically optimized using CLEAR framework
 - Each task is concise and actionable
 - Tasks can reference specific PRD sections
+- Supports mini-PRD outputs from `/clavix:summarize` and session workflows via `--session` or `--active-session`
 - You can manually edit tasks.md before implementing
 - Use `--overwrite` flag to regenerate if needed

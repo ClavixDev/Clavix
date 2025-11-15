@@ -14,6 +14,21 @@ import * as path from 'path';
 import { PromptOptimizer } from './prompt-optimizer';
 import { FileSystem } from '../utils/file-system';
 
+export type PrdSourceType = 'auto' | 'full' | 'quick' | 'mini' | 'prompt';
+
+const SOURCE_FILE_MAP: Record<Exclude<PrdSourceType, 'auto'>, string[]> = {
+  full: ['full-prd.md', 'PRD.md', 'prd.md', 'Full-PRD.md', 'FULL_PRD.md', 'FULL-PRD.md'],
+  quick: ['quick-prd.md', 'QUICK_PRD.md'],
+  mini: ['mini-prd.md'],
+  prompt: ['optimized-prompt.md'],
+};
+
+const SOURCE_ORDER_AUTO: Array<Exclude<PrdSourceType, 'auto'>> = ['full', 'quick', 'mini', 'prompt'];
+
+const ALL_KNOWN_PRD_FILES = Array.from(
+  new Set(Object.values(SOURCE_FILE_MAP).flat())
+);
+
 /**
  * Represents a single task in the implementation plan
  */
@@ -40,6 +55,7 @@ export interface TaskGenerationOptions {
   maxTasksPerPhase?: number;
   includeReferences?: boolean;
   clearMode?: 'fast' | 'deep';
+  source?: PrdSourceType;
 }
 
 /**
@@ -49,6 +65,8 @@ export interface TaskGenerationResult {
   phases: TaskPhase[];
   totalTasks: number;
   outputPath: string;
+  sourcePath: string;
+  sourceType: Exclude<PrdSourceType, 'auto'>;
 }
 
 /**
@@ -75,7 +93,10 @@ export class TaskManager {
     options: TaskGenerationOptions = {}
   ): Promise<TaskGenerationResult> {
     // Read the full PRD
-    const fullPrdPath = await this.findPrdFile(prdPath);
+    const { path: fullPrdPath, sourceType } = await this.resolvePrdFile(
+      prdPath,
+      options.source ?? 'auto'
+    );
     const prdContent = await fs.readFile(fullPrdPath, 'utf-8');
 
     // Analyze PRD and generate tasks
@@ -89,29 +110,37 @@ export class TaskManager {
       phases,
       totalTasks: phases.reduce((sum, phase) => sum + phase.tasks.length, 0),
       outputPath,
+      sourcePath: fullPrdPath,
+      sourceType,
     };
   }
 
   /**
    * Find the PRD file in a directory
    */
-  private async findPrdFile(prdPath: string): Promise<string> {
-    // Try common PRD filenames
-    const possibleFiles = [
-      'PRD.md',
-      'full-prd.md',
-      'prd.md',
-      'Full-PRD.md',
-    ];
+  private async resolvePrdFile(
+    prdPath: string,
+    preferredSource: PrdSourceType
+  ): Promise<{ path: string; sourceType: Exclude<PrdSourceType, 'auto'> }> {
+    const order = preferredSource === 'auto' ? SOURCE_ORDER_AUTO : [preferredSource];
 
-    for (const filename of possibleFiles) {
-      const filepath = path.join(prdPath, filename);
-      if (await fs.pathExists(filepath)) {
-        return filepath;
+    for (const source of order) {
+      const filenames = SOURCE_FILE_MAP[source];
+      for (const filename of filenames) {
+        const filepath = path.join(prdPath, filename);
+        if (await fs.pathExists(filepath)) {
+          return { path: filepath, sourceType: source };
+        }
       }
     }
 
-    throw new Error(`No PRD file found in ${prdPath}`);
+    if (preferredSource !== 'auto') {
+      throw new Error(
+        `No PRD artifacts found for source "${preferredSource}" in ${prdPath}`
+      );
+    }
+
+    throw new Error(`No PRD artifacts found in ${prdPath}`);
   }
 
   /**
@@ -119,15 +148,25 @@ export class TaskManager {
    */
   private async analyzePrdAndGenerateTasks(
     prdContent: string,
-    _options: TaskGenerationOptions
+    options: TaskGenerationOptions
   ): Promise<TaskPhase[]> {
     const phases: TaskPhase[] = [];
 
     // Parse PRD sections
     const sections = this.parsePrdSections(prdContent);
 
-    // Generate tasks based on requirements sections
-    if (sections.requirements) {
+    const coreSection = this.getSectionByAliases(sections, [
+      'requirements',
+      'corefeatures',
+      'features',
+      'keyrequirements',
+    ]);
+
+    if (coreSection) {
+      phases.push(...this.generatePhasesFromCoreFeatures(coreSection, options));
+    }
+
+    if (phases.length === 0 && sections.requirements) {
       phases.push(...this.generateTasksFromRequirements(sections.requirements, sections));
     }
 
@@ -139,7 +178,201 @@ export class TaskManager {
       }));
     });
 
+    const technicalSection = this.getSectionByAliases(sections, [
+      'technicalrequirements',
+      'technicalconstraints',
+    ]);
+    if (technicalSection) {
+      this.injectTechnicalConstraintsTask(phases, technicalSection, options);
+    }
+
+    const successSection = this.getSectionByAliases(sections, [
+      'successcriteria',
+      'acceptancecriteria',
+    ]);
+    if (successSection) {
+      this.appendSuccessCriteriaPhase(phases, successSection, options);
+    }
+
+    if (phases.length === 0) {
+      phases.push(this.generateDefaultPhases(prdContent));
+    }
+
     return phases;
+  }
+
+  private getSectionByAliases(
+    sections: Record<string, string>,
+    aliases: string[]
+  ): string | null {
+    for (const alias of aliases) {
+      if (sections[alias]) {
+        return sections[alias];
+      }
+    }
+    return null;
+  }
+
+  private generatePhasesFromCoreFeatures(
+    coreContent: string,
+    options: TaskGenerationOptions
+  ): TaskPhase[] {
+    const bullets = this.extractListItems(coreContent);
+
+    if (bullets.length === 0) {
+      return [];
+    }
+
+    const maxTasks = options.maxTasksPerPhase ?? 20;
+    const phases: TaskPhase[] = [];
+
+    bullets.forEach((rawFeature, index) => {
+      const feature = rawFeature.trim();
+      if (!feature) {
+        return;
+      }
+
+      const phaseName = `Phase ${index + 1}: ${this.toTitleCase(feature)}`;
+      const baseDescriptions = this.buildFeatureTaskDescriptions(feature);
+      const allowed = Math.max(1, Math.min(maxTasks, baseDescriptions.length));
+      const minTasks = maxTasks >= 2 ? 2 : 1;
+      const taskCount = Math.max(minTasks, allowed);
+      const limitedDescriptions = baseDescriptions.slice(0, Math.min(taskCount, baseDescriptions.length));
+
+      const tasks = limitedDescriptions.map((description, taskIndex) => ({
+        id: `${this.sanitizeId(phaseName)}-${taskIndex + 1}`,
+        description,
+        phase: phaseName,
+        completed: false,
+        prdReference: feature,
+      }));
+
+      phases.push({
+        name: phaseName,
+        tasks,
+      });
+    });
+
+    return phases;
+  }
+
+  private extractListItems(sectionContent: string): string[] {
+    const items: string[] = [];
+    const regex = /^\s*(?:[-*]|\d+[.)])\s+(.+)$/gm;
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(sectionContent)) !== null) {
+      const value = match[1].trim();
+      if (value) {
+        items.push(value.replace(/\s+/g, ' ').replace(/\.$/, ''));
+      }
+    }
+
+    return items;
+  }
+
+  private buildFeatureTaskDescriptions(feature: string): string[] {
+    const formattedFeature = this.formatInlineText(feature);
+    const tasks = [
+      this.convertBehaviorToTask(feature),
+      `Add tests covering ${formattedFeature}`,
+      `Integrate ${formattedFeature} into the end-to-end experience`,
+      `Document ${formattedFeature} for stakeholders`,
+      `Validate ${formattedFeature} against requirements`,
+    ];
+
+    return tasks;
+  }
+
+  private formatInlineText(text: string): string {
+    if (!text) {
+      return text;
+    }
+
+    const trimmed = text.replace(/\.$/, '').trim();
+    if (!trimmed) {
+      return trimmed;
+    }
+
+    return trimmed.charAt(0).toLowerCase() + trimmed.slice(1);
+  }
+
+  private toTitleCase(text: string): string {
+    const cleaned = text.replace(/\.$/, '').trim();
+    if (!cleaned) {
+      return 'Feature';
+    }
+
+    return cleaned
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+      .substring(0, 60);
+  }
+
+  private injectTechnicalConstraintsTask(
+    phases: TaskPhase[],
+    technicalContent: string,
+    _options: TaskGenerationOptions
+  ): void {
+    const constraints = this.extractListItems(technicalContent);
+    if (constraints.length === 0) {
+      return;
+    }
+
+    const summary = constraints.slice(0, 3).join('; ');
+    const description = `Ensure technical constraints are satisfied: ${summary}`;
+
+    if (phases.length === 0) {
+      phases.push({
+        name: 'Phase 1: Technical Foundations',
+        tasks: [
+          {
+            id: 'technical-1',
+            description,
+            phase: 'Phase 1: Technical Foundations',
+            completed: false,
+            prdReference: 'Technical Constraints',
+          },
+        ],
+      });
+      return;
+    }
+
+    const firstPhase = phases[0];
+    firstPhase.tasks.unshift({
+      id: `${this.sanitizeId(firstPhase.name)}-constraints`,
+      description,
+      phase: firstPhase.name,
+      completed: false,
+      prdReference: 'Technical Constraints',
+    });
+  }
+
+  private appendSuccessCriteriaPhase(
+    phases: TaskPhase[],
+    successContent: string,
+    _options: TaskGenerationOptions
+  ): void {
+    const criteria = this.extractListItems(successContent);
+    if (criteria.length === 0) {
+      return;
+    }
+
+    const selected = criteria.slice(0, 2);
+
+    const phaseName = 'Phase QA: Validation & Success';
+    const tasks = selected.map((criterion, index) => ({
+      id: `${this.sanitizeId(phaseName)}-${index + 1}`,
+      description: `Validate success criterion: ${this.formatInlineText(criterion)}`,
+      phase: phaseName,
+      completed: false,
+      prdReference: 'Success Criteria',
+    }));
+
+    phases.push({
+      name: phaseName,
+      tasks,
+    });
   }
 
   /**
@@ -608,22 +841,35 @@ export class TaskManager {
    * Check if directory has a PRD file
    */
   public async hasPrdFile(dirPath: string): Promise<boolean> {
-    const possibleFiles = [
-      'PRD.md',
-      'full-prd.md',
-      'prd.md',
-      'Full-PRD.md',
-      'FULL_PRD.md',
-      'FULL-PRD.md',
-      'QUICK_PRD.md',
-    ];
-
-    for (const filename of possibleFiles) {
+    for (const filename of ALL_KNOWN_PRD_FILES) {
       if (await fs.pathExists(path.join(dirPath, filename))) {
         return true;
       }
     }
 
+    // Prompt-only projects
+    if (await fs.pathExists(path.join(dirPath, 'optimized-prompt.md'))) {
+      return true;
+    }
+
     return false;
+  }
+
+  public async detectAvailableSources(
+    dirPath: string
+  ): Promise<Array<Exclude<PrdSourceType, 'auto'>>> {
+    const available: Array<Exclude<PrdSourceType, 'auto'>> = [];
+
+    for (const source of SOURCE_ORDER_AUTO) {
+      const filenames = SOURCE_FILE_MAP[source];
+      for (const filename of filenames) {
+        if (await fs.pathExists(path.join(dirPath, filename))) {
+          available.push(source);
+          break;
+        }
+      }
+    }
+
+    return available;
   }
 }
