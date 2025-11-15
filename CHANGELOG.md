@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2025-11-15
+
+### 🎉 New Features
+- **Added** adapters for CodeBuddy CLI, Gemini CLI, Qwen Code CLI, and Codex CLI
+  - Project-level and global detection (Codex/CodeBuddy support `~` home directories)
+  - Provider-specific formatting (`$1`, `{{args}}`, `$ARGUMENTS`) applied automatically during command generation
+- **Enhanced** `clavix init` & `clavix update` to respect provider file extensions (Markdown/TOML)
+- **Added** confirmation prompt when generating Codex commands (writes to `~/.codex/prompts`)
+
+### 🛠️ Technical Implementation
+- New adapters: `codebuddy-adapter.ts`, `gemini-adapter.ts`, `qwen-adapter.ts`, `codex-adapter.ts`
+- Template packs: `slash-commands/codebuddy`, `slash-commands/gemini` (`.toml`), `slash-commands/qwen` (`.toml`), `slash-commands/codex`
+- Updated `AgentManager`, `init.ts`, and `update.ts` for dynamic extensions and provider registration
+- Extended `extractDescription` to parse both YAML (`description:`) and TOML (`description = ""`) metadata
+
+### 🧪 Testing
+- Added adapter test suites covering detection, formatting, and command generation for each new provider
+- Updated CLI init tests to assert availability of new providers
+
+### 📚 Documentation
+- README: expanded CLI tools table, added placeholder reference, updated init walkthrough
+- CHANGELOG: this entry
+
+---
+
 ## [1.6.0] - 2025-11-14
 
 ### 🎉 New Features

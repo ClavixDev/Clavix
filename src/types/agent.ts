@@ -52,4 +52,8 @@ export type AgentType =
   | 'agents-md'
   | 'octo-md'
   | 'windsurf'
-  | 'custom';
+  | 'custom'
+  | 'codebuddy'
+  | 'gemini'
+  | 'qwen'
+  | 'codex';

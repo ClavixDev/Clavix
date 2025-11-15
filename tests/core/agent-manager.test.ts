@@ -26,12 +26,16 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('opencode');
       expect(adapterNames).toContain('amp');
       expect(adapterNames).toContain('crush');
+      expect(adapterNames).toContain('codebuddy');
+      expect(adapterNames).toContain('gemini');
+      expect(adapterNames).toContain('qwen');
+      expect(adapterNames).toContain('codex');
     });
 
-    it('should have exactly 10 built-in adapters', () => {
+    it('should have exactly 14 built-in adapters', () => {
       const adapters = manager.getAdapters();
 
-      expect(adapters.length).toBe(10);
+      expect(adapters.length).toBe(14);
 
       // Verify new adapters are registered
       const adapterNames = adapters.map(a => a.name);
@@ -39,6 +43,10 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('kilocode');
       expect(adapterNames).toContain('cline');
       expect(adapterNames).toContain('roocode');
+      expect(adapterNames).toContain('codebuddy');
+      expect(adapterNames).toContain('gemini');
+      expect(adapterNames).toContain('qwen');
+      expect(adapterNames).toContain('codex');
     });
   });
 

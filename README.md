@@ -42,9 +42,13 @@ Clavix integrates seamlessly with multiple AI development tools:
 | Tool | Slash Commands | Directory | Status |
 |------|----------------|-----------|--------|
 | **Droid CLI** | ✅ | `.factory/commands/` (YAML frontmatter) | Fully Supported |
+| **CodeBuddy CLI** | ✅ | `.codebuddy/commands/` (YAML frontmatter, shell-style args) | Fully Supported |
 | **OpenCode** | ✅ | `.opencode/command/` | Fully Supported |
+| **Gemini CLI** | ✅ | `.gemini/commands/clavix/` (TOML custom commands) | Fully Supported |
+| **Qwen Code CLI** | ✅ | `.qwen/commands/clavix/` (TOML custom commands) | Fully Supported |
 | **Amp** | ✅ | `.agents/commands/` (no frontmatter) | Fully Supported |
 | **Crush CLI** | ✅ | `.crush/commands/clavix/` | Fully Supported |
+| **Codex CLI** | ✅ | `~/.codex/prompts` (global YAML frontmatter) | Fully Supported |
 
 ### Universal Adapters
 | Tool | Slash Commands | Directory | Status |
@@ -54,9 +58,22 @@ Clavix integrates seamlessly with multiple AI development tools:
 
 **Key Features:**
 - **Multi-Select Support** - Choose multiple tools during `clavix init`
-- **Provider-Specific Formatting** - Commands generated in each tool's native format (e.g., Crush CLI uses `$PROMPT`, Droid CLI adds YAML `description`/`argument-hint`, Amp omits frontmatter)
+- **Provider-Specific Formatting** - Commands generated in each tool's native format (e.g., Crush CLI uses `$PROMPT`, Droid & CodeBuddy add YAML `description`/`argument-hint`, Gemini/Qwen emit TOML with `{{args}}`, Codex expands `$ARGUMENTS`, Amp omits frontmatter)
 - **Universal Fallback** - `agents.md` works with any tool
 - **Managed Documentation** - Auto-inject and update instructions
+
+#### Argument placeholder reference
+
+| Provider | Placeholder |
+|----------|-------------|
+| Droid CLI | `$ARGUMENTS`
+| CodeBuddy CLI | `$1` (additional args: `$2`, `$3`, ...)
+| OpenCode | `$ARGUMENTS`
+| Gemini CLI | `{{args}}`
+| Qwen Code CLI | `{{args}}`
+| Amp | *(no inline placeholder; raw prompt)*
+| Crush CLI | `$PROMPT`
+| Codex CLI | `$ARGUMENTS`
 
 ## Why Clavix?
 
@@ -183,10 +200,14 @@ You'll be prompted to select which AI tools to support:
  ◉ Claude Code (.claude/commands/clavix/)
  ◉ Cursor (.cursor/commands/)
  ◯ Droid CLI (.factory/commands/)
+ ◯ CodeBuddy CLI (.codebuddy/commands/)
  ◉ OpenCode (.opencode/command/)
+ ◯ Gemini CLI (.gemini/commands/clavix/)
+ ◯ Qwen Code CLI (.qwen/commands/clavix/)
  ◯ Amp (.agents/commands/)
  ◉ agents.md (Universal)
  ◯ Octofriend (OCTO.md - Universal)
+ ◯ Codex CLI (~/.codex/prompts)
 ```
 
 This will:

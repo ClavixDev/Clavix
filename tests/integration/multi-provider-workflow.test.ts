@@ -11,14 +11,25 @@ import { CommandTemplate } from '../../src/types/agent';
 describe('Multi-Provider Workflow Integration', () => {
   const testDir = path.join(__dirname, '../tmp/multi-provider-test');
   let agentManager: AgentManager;
+  let originalHomeOverride: string | undefined;
+  let testHomeDir: string;
 
   beforeEach(async () => {
     await fs.ensureDir(testDir);
     process.chdir(testDir);
+    testHomeDir = path.join(testDir, 'home');
+    await fs.remove(testHomeDir);
+    originalHomeOverride = process.env.CLAVIX_HOME_OVERRIDE;
+    process.env.CLAVIX_HOME_OVERRIDE = testHomeDir;
     agentManager = new AgentManager();
   });
 
   afterEach(async () => {
+    if (originalHomeOverride === undefined) {
+      delete process.env.CLAVIX_HOME_OVERRIDE;
+    } else {
+      process.env.CLAVIX_HOME_OVERRIDE = originalHomeOverride;
+    }
     process.chdir(path.join(__dirname, '../..'));
     await fs.remove(testDir);
   });
@@ -27,7 +38,7 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should register all built-in adapters', () => {
       const adapters = agentManager.getAdapters();
 
-      expect(adapters).toHaveLength(10);
+      expect(adapters).toHaveLength(14);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
@@ -38,6 +49,10 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(agentManager.hasAgent('kilocode')).toBe(true);
       expect(agentManager.hasAgent('cline')).toBe(true);
       expect(agentManager.hasAgent('roocode')).toBe(true);
+      expect(agentManager.hasAgent('codebuddy')).toBe(true);
+      expect(agentManager.hasAgent('gemini')).toBe(true);
+      expect(agentManager.hasAgent('qwen')).toBe(true);
+      expect(agentManager.hasAgent('codex')).toBe(true);
     });
 
     it('should provide list of available agents', () => {
@@ -53,6 +68,10 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(available).toContain('kilocode');
       expect(available).toContain('cline');
       expect(available).toContain('roocode');
+      expect(available).toContain('codebuddy');
+      expect(available).toContain('gemini');
+      expect(available).toContain('qwen');
+      expect(available).toContain('codex');
     });
 
     it('should get adapter by name', () => {
@@ -118,10 +137,37 @@ describe('Multi-Provider Workflow Integration', () => {
       await fs.ensureDir('.opencode');
       await fs.ensureDir('.agents');
       await fs.ensureDir('.crush');
+      await fs.ensureDir('.windsurf');
+      await fs.ensureDir('.kilocode');
+      await fs.ensureDir('.cline');
+      await fs.ensureDir('.roo');
+      await fs.ensureDir('.codebuddy');
+      await fs.ensureDir('.gemini');
+      await fs.ensureDir('.qwen');
+      await fs.ensureDir(path.join(testHomeDir, '.codex'));
 
       const detected = await agentManager.detectAgents();
+      const names = detected.map(a => a.name);
 
-      expect(detected).toHaveLength(6);
+      expect(detected).toHaveLength(14);
+      expect(names).toEqual(
+        expect.arrayContaining([
+          'claude-code',
+          'cursor',
+          'droid',
+          'opencode',
+          'amp',
+          'crush',
+          'windsurf',
+          'kilocode',
+          'cline',
+          'roocode',
+          'codebuddy',
+          'gemini',
+          'qwen',
+          'codex',
+        ]),
+      );
     });
   });
 
@@ -340,7 +386,7 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should provide formatted choices for prompts', () => {
       const choices = agentManager.getAdapterChoices();
 
-      expect(choices).toHaveLength(10);
+      expect(choices).toHaveLength(14);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
 

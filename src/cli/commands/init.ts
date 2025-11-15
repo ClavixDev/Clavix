@@ -83,8 +83,20 @@ export default class Init extends Command {
               value: 'droid',
             },
             {
+              name: 'CodeBuddy (.codebuddy/commands/)',
+              value: 'codebuddy',
+            },
+            {
               name: 'OpenCode (.opencode/command/)',
               value: 'opencode',
+            },
+            {
+              name: 'Gemini CLI (.gemini/commands/clavix/)',
+              value: 'gemini',
+            },
+            {
+              name: 'Qwen Code (.qwen/commands/clavix/)',
+              value: 'qwen',
             },
             {
               name: 'Amp (.agents/commands/)',
@@ -93,6 +105,10 @@ export default class Init extends Command {
             {
               name: 'Crush CLI (.crush/commands/clavix/)',
               value: 'crush',
+            },
+            {
+              name: 'Codex CLI (~/.codex/prompts)',
+              value: 'codex',
             },
             new inquirer.Separator(),
             // Universal Adapters
@@ -156,6 +172,23 @@ export default class Init extends Command {
         const adapter = agentManager.requireAdapter(providerName);
 
         console.log(chalk.gray(`  ✓ Generating ${adapter.displayName} commands...`));
+
+        if (adapter.name === 'codex') {
+          const codexPath = adapter.getCommandPath();
+          const { confirmCodex } = await inquirer.prompt([
+            {
+              type: 'confirm',
+              name: 'confirmCodex',
+              message: `Codex commands will be generated at ${codexPath}. Continue?`,
+              default: true,
+            },
+          ]);
+
+          if (!confirmCodex) {
+            console.log(chalk.yellow('    ⊗ Skipped Codex CLI'));
+            continue;
+          }
+        }
 
         // Validate before generating
         if (adapter.validate) {
@@ -296,13 +329,15 @@ See documentation for template format details.
 
   private async generateSlashCommands(adapter: AgentAdapter): Promise<void> {
     const templateDir = path.join(__dirname, '../../templates/slash-commands', adapter.name);
-    const commandFiles = await FileSystem.listFiles(templateDir, /\.md$/);
+    const files = await FileSystem.listFiles(templateDir);
+    const extension = adapter.fileExtension;
+    const commandFiles = files.filter((file) => file.endsWith(extension));
 
     const templates: CommandTemplate[] = [];
 
     for (const file of commandFiles) {
       const content = await FileSystem.readFile(path.join(templateDir, file));
-      const name = file.replace('.md', '');
+      const name = file.slice(0, -extension.length);
 
       templates.push({
         name,
@@ -363,8 +398,17 @@ See documentation for template format details.
   }
 
   private extractDescription(content: string): string {
-    const match = content.match(/description:\s*(.+)/);
-    return match ? match[1] : '';
+    const yamlMatch = content.match(/description:\s*(.+)/);
+    if (yamlMatch) {
+      return yamlMatch[1].trim().replace(/^['"]|['"]$/g, '');
+    }
+
+    const tomlMatch = content.match(/description\s*=\s*['"]?(.+?)['"]?(?:\r?\n|$)/);
+    if (tomlMatch) {
+      return tomlMatch[1].trim().replace(/^['"]|['"]$/g, '');
+    }
+
+    return '';
   }
 
   private extractClavixBlock(content: string): string {

@@ -165,6 +165,7 @@ export default class Update extends Command {
 
     const commandsDir = adapter.getCommandPath();
     const commandsPath = path.join(process.cwd(), commandsDir);
+    const extension = adapter.fileExtension;
 
     // Dynamically scan template directory for all command templates
     const templatesDir = path.join(__dirname, '..', '..', 'templates', 'slash-commands', adapter.name);
@@ -176,8 +177,8 @@ export default class Update extends Command {
 
     // Get all .md template files
     const templateFiles = fs.readdirSync(templatesDir)
-      .filter(file => file.endsWith('.md'))
-      .map(file => file.replace('.md', ''));
+      .filter(file => file.endsWith(extension))
+      .map(file => file.slice(0, -extension.length));
 
     if (templateFiles.length === 0) {
       this.log(chalk.yellow('  ⚠ No command templates found'));
@@ -193,8 +194,8 @@ export default class Update extends Command {
     let updated = 0;
 
     for (const command of templateFiles) {
-      const commandFile = path.join(commandsPath, `${command}.md`);
-      const templatePath = path.join(templatesDir, `${command}.md`);
+      const commandFile = path.join(commandsPath, `${command}${extension}`);
+      const templatePath = path.join(templatesDir, `${command}${extension}`);
 
       const newContent = fs.readFileSync(templatePath, 'utf-8');
 

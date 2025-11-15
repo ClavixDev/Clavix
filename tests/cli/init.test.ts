@@ -128,6 +128,38 @@ describe('Init command', () => {
       expect(adapter?.name).toBe('opencode');
     });
 
+    it('should support codebuddy provider', () => {
+      const agentManager = new AgentManager();
+      const adapter = agentManager.getAdapter('codebuddy');
+
+      expect(adapter).toBeDefined();
+      expect(adapter?.name).toBe('codebuddy');
+    });
+
+    it('should support gemini provider', () => {
+      const agentManager = new AgentManager();
+      const adapter = agentManager.getAdapter('gemini');
+
+      expect(adapter).toBeDefined();
+      expect(adapter?.name).toBe('gemini');
+    });
+
+    it('should support qwen provider', () => {
+      const agentManager = new AgentManager();
+      const adapter = agentManager.getAdapter('qwen');
+
+      expect(adapter).toBeDefined();
+      expect(adapter?.name).toBe('qwen');
+    });
+
+    it('should support codex provider', () => {
+      const agentManager = new AgentManager();
+      const adapter = agentManager.getAdapter('codex');
+
+      expect(adapter).toBeDefined();
+      expect(adapter?.name).toBe('codex');
+    });
+
     it('should support amp provider', () => {
       const agentManager = new AgentManager();
       const adapter = agentManager.getAdapter('amp');
@@ -144,6 +176,10 @@ describe('Init command', () => {
       expect(providers).toContain('cursor');
       expect(providers).toContain('droid');
       expect(providers).toContain('opencode');
+      expect(providers).toContain('codebuddy');
+      expect(providers).toContain('gemini');
+      expect(providers).toContain('qwen');
+      expect(providers).toContain('codex');
       expect(providers).toContain('amp');
     });
   });
@@ -303,10 +339,20 @@ describe('Init command', () => {
     });
 
     it('should support both slash commands and md-based providers', () => {
-      const slashCommandProviders = ['claude-code', 'cursor', 'droid', 'opencode', 'amp'];
+      const slashCommandProviders = [
+        'claude-code',
+        'cursor',
+        'droid',
+        'opencode',
+        'amp',
+        'codebuddy',
+        'gemini',
+        'qwen',
+        'codex',
+      ];
       const mdProviders = ['agents-md', 'octo-md'];
 
-      expect(slashCommandProviders.length).toBe(5);
+      expect(slashCommandProviders.length).toBeGreaterThan(mdProviders.length);
       expect(mdProviders.length).toBe(2);
     });
   });
