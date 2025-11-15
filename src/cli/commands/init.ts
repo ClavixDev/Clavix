@@ -7,6 +7,7 @@ import { AgentManager } from '../../core/agent-manager';
 import { DocInjector } from '../../core/doc-injector';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator';
 import { OctoMdGenerator } from '../../core/adapters/octo-md-generator';
+import { WarpMdGenerator } from '../../core/adapters/warp-md-generator';
 import { FileSystem } from '../../utils/file-system';
 import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config';
 import { CommandTemplate, AgentAdapter } from '../../types/agent';
@@ -55,32 +56,6 @@ export default class Init extends Command {
           name: 'selectedProviders',
           message: 'Which AI tools are you using?',
           choices: [
-            // IDE & IDE Extensions
-            {
-              name: 'Claude Code (.claude/commands/clavix/)',
-              value: 'claude-code',
-            },
-            {
-              name: 'Cline (.clinerules/workflows/)',
-              value: 'cline',
-            },
-            {
-              name: 'Cursor (.cursor/commands/)',
-              value: 'cursor',
-            },
-            {
-              name: 'Kilocode (.kilocode/workflows/)',
-              value: 'kilocode',
-            },
-            {
-              name: 'Roocode (.roo/commands/)',
-              value: 'roocode',
-            },
-            {
-              name: 'Windsurf (.windsurf/workflows/)',
-              value: 'windsurf',
-            },
-            new inquirer.Separator(),
             // CLI Tools
             {
               name: 'Amp (.agents/commands/)',
@@ -107,6 +82,10 @@ export default class Init extends Command {
               value: 'crush',
             },
             {
+              name: 'Claude Code (.claude/commands/clavix/)',
+              value: 'claude-code',
+            },
+            {
               name: 'Droid CLI (.factory/commands/)',
               value: 'droid',
             },
@@ -123,10 +102,36 @@ export default class Init extends Command {
               value: 'qwen',
             },
             new inquirer.Separator(),
+            // IDE & IDE Extensions
+            {
+              name: 'Cursor (.cursor/commands/)',
+              value: 'cursor',
+            },
+            {
+              name: 'Windsurf (.windsurf/workflows/)',
+              value: 'windsurf',
+            },
+            {
+              name: 'Kilocode (.kilocode/workflows/)',
+              value: 'kilocode',
+            },
+            {
+              name: 'Roocode (.roo/commands/)',
+              value: 'roocode',
+            },
+            {
+              name: 'Cline (.clinerules/workflows/)',
+              value: 'cline',
+            },
+            new inquirer.Separator(),
             // Universal Adapters
             {
               name: 'agents.md (Universal - for tools without slash commands)',
               value: 'agents-md',
+            },
+            {
+              name: 'Warp (WARP.md - optimized for Warp)',
+              value: 'warp-md',
             },
             {
               name: 'Octofriend (OCTO.md - optimized for Octofriend)',
@@ -178,6 +183,12 @@ export default class Init extends Command {
         if (providerName === 'octo-md') {
           console.log(chalk.gray('  ✓ Generating OCTO.md...'));
           await OctoMdGenerator.generate();
+          continue;
+        }
+
+        if (providerName === 'warp-md') {
+          console.log(chalk.gray('  ✓ Generating WARP.md...'));
+          await WarpMdGenerator.generate();
           continue;
         }
 

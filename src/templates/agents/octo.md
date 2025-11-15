@@ -215,6 +215,25 @@ Detect user intent from keywords and trigger appropriate workflow. Use Octofrien
 
 ---
 
+### CLI reference cheat sheet
+
+| Command | Use it for |
+| --- | --- |
+| `clavix init` | Rebuild `.clavix` structure and regenerate provider assets. |
+| `clavix fast` / `clavix deep` | CLEAR-based prompt improvement (quick vs. comprehensive). |
+| `clavix prd` | Guided questions to create PRDs. |
+| `clavix plan` | Convert PRD artifacts into task lists. |
+| `clavix implement` | Step through tasks with optional git automation. |
+| `clavix start` | Capture conversational requirements. |
+| `clavix summarize` | Extract mini PRDs and prompts from sessions. |
+| `clavix list` | List sessions or outputs (use `--sessions`, `--outputs`, `--archived`). |
+| `clavix show` | Inspect sessions or output directories. |
+| `clavix archive` | Archive or restore project outputs. |
+| `clavix config` | View/update `.clavix/config.json`. |
+| `clavix update` | Refresh documentation and slash commands. |
+| `clavix version` | Display installed CLI version. |
+
+
 ## 📝 Workflow Selection Guide
 
 **User mentions PRD, requirements doc, strategic planning:**

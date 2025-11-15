@@ -8,6 +8,8 @@ import { DocInjector } from '../../core/doc-injector';
 import { AgentManager } from '../../core/agent-manager';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator';
 import { OctoMdGenerator } from '../../core/adapters/octo-md-generator';
+import { WarpMdGenerator } from '../../core/adapters/warp-md-generator';
+import { WarpMdGenerator } from '../../core/adapters/warp-md-generator';
 import { AgentAdapter } from '../../types/agent';
 import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup';
 
@@ -22,7 +24,7 @@ export default class Update extends Command {
 
   static flags = {
     'docs-only': Flags.boolean({
-      description: 'Update only documentation blocks (AGENTS.md, CLAUDE.md)',
+      description: 'Update only documentation blocks (AGENTS.md, CLAUDE.md, OCTO.md, WARP.md)',
       default: false,
     }),
     'commands-only': Flags.boolean({
@@ -67,24 +69,26 @@ export default class Update extends Command {
 
     // Update for each provider
     for (const providerName of providers) {
-      // Handle agents-md separately (not an adapter)
+      // Handle AGENTS.md separately
       if (providerName === 'agents-md') {
         if (updateDocs) {
-          const agentsPath = path.join(process.cwd(), 'AGENTS.md');
-          if (fs.existsSync(agentsPath)) {
-            updatedCount += await this.updateAgentsMd(flags.force);
-          }
+          updatedCount += await this.updateAgentsMd(flags.force);
         }
         continue;
       }
 
-      // Handle octo-md separately (not an adapter)
+      // Handle Warp separately
+      if (providerName === 'warp-md') {
+        if (updateDocs) {
+          updatedCount += await this.updateWarpMd(flags.force);
+        }
+        continue;
+      }
+
+      // Handle Octofriend separately
       if (providerName === 'octo-md') {
         if (updateDocs) {
-          const octoPath = path.join(process.cwd(), 'OCTO.md');
-          if (fs.existsSync(octoPath)) {
-            updatedCount += await this.updateOctoMd(flags.force);
-          }
+          updatedCount += await this.updateOctoMd(flags.force);
         }
         continue;
       }
@@ -357,6 +361,20 @@ Analyze the current conversation and extract key requirements into a structured 
     } catch (error: unknown) {
       const { getErrorMessage } = await import('../../utils/error-utils.js');
       this.log(chalk.yellow(`  ⚠ Failed to update OCTO.md: ${getErrorMessage(error)}`));
+      return 0;
+    }
+  }
+
+  private async updateWarpMd(_force: boolean): Promise<number> {
+    this.log(chalk.cyan('📝 Updating WARP.md...'));
+
+    try {
+      await WarpMdGenerator.generate();
+      this.log(chalk.gray('  ✓ Updated WARP.md'));
+      return 1;
+    } catch (error: unknown) {
+      const { getErrorMessage } = await import('../../utils/error-utils.js');
+      this.log(chalk.yellow(`  ⚠ Failed to update WARP.md: ${getErrorMessage(error)}`));
       return 0;
     }
   }

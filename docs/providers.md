@@ -6,7 +6,6 @@ Clavix can generate slash commands and documentation snippets for a wide range o
 
 | Provider | Command location | Subdirectories | Placeholder |
 | --- | --- | --- | --- |
-| Claude Code | `.claude/commands/clavix/` | Yes | *(implicit — command templates inject arguments directly)* |
 | Cursor | `.cursor/commands/` | No | *(implicit)* |
 | Windsurf | `.windsurf/workflows/` | Yes | *(implicit)* |
 | Kilocode | `.kilocode/workflows/` | No | *(implicit)* |
@@ -17,6 +16,7 @@ Clavix can generate slash commands and documentation snippets for a wide range o
 
 | Provider | Command location | Subdirectories | Placeholder |
 | --- | --- | --- | --- |
+| Claude Code | `.claude/commands/clavix/` | Yes | *(implicit — command templates inject arguments directly)* |
 | Droid CLI | `.factory/commands/` | No | `$ARGUMENTS` |
 | CodeBuddy CLI | `.codebuddy/commands/` (or `~/.codebuddy/commands/`) | No | `$1`, `$2`, … |
 | OpenCode | `.opencode/command/` | No | `$ARGUMENTS` |
@@ -31,8 +31,9 @@ Clavix can generate slash commands and documentation snippets for a wide range o
 
 ## Universal adapters
 
-- **agents.md** – Adds a managed block to `AGENTS.md` for tooling that ingests long-form documentation instead of slash commands.
+- **AGENTS.md** – Adds a managed block to `AGENTS.md` for tooling that ingests long-form documentation instead of slash commands.
 - **OCTO.md** – Generates content tailored for Octofriend’s markdown interface.
+- **WARP.md** – Provides Clavix quick-start guidance optimized for Warp users.
 
 ### Multi-select during `clavix init`
 
