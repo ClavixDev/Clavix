@@ -15,7 +15,14 @@ Better prompts lead to better code. Clavix analyzes gaps, generates PRDs, and in
 Clavix is built on CLEAR (Concise, Logical, Explicit, Adaptive, Reflective), an academically validated prompt engineering methodology. Read the full overview in [docs/clear-framework.md](docs/clear-framework.md).
 
 ## Providers
-Clavix supports Claude Code, Cursor, Windsurf, Kilocode, Roocode, Cline, Droid CLI, CodeBuddy, OpenCode, Gemini CLI, Qwen Code, Amp, Crush, Codex, and universal adapters (agents.md / OCTO.md). Provider paths and argument placeholders are listed in [docs/providers.md](docs/providers.md).
+
+| Category | Providers |
+| --- | --- |
+| IDE & editor extensions | ✅ Claude Code · ✅ Cursor · ✅ Windsurf · ✅ Kilocode · ✅ Roocode · ✅ Cline |
+| CLI agents | ✅ Droid CLI · ✅ CodeBuddy CLI · ✅ OpenCode · ✅ Gemini CLI · ✅ Qwen Code · ✅ Amp · ✅ Crush CLI · ✅ Codex CLI |
+| Universal adapters | ✅ agents.md · ✅ OCTO.md |
+
+Provider paths and argument placeholders are listed in [docs/providers.md](docs/providers.md).
 
 ## Quickstart
 ```bash
