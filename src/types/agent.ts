@@ -44,16 +44,22 @@ export interface ManagedBlock {
 }
 
 export type AgentType =
-  | 'claude-code'
-  | 'cursor'
-  | 'droid'
-  | 'opencode'
-  | 'amp'
   | 'agents-md'
-  | 'octo-md'
-  | 'windsurf'
-  | 'custom'
+  | 'amp'
+  | 'augment'
+  | 'claude-code'
+  | 'cline'
+  | 'codex'
   | 'codebuddy'
+  | 'copilot'
+  | 'crush'
+  | 'cursor'
+  | 'custom'
+  | 'droid'
   | 'gemini'
+  | 'kilocode'
+  | 'octo-md'
+  | 'opencode'
   | 'qwen'
-  | 'codex';
+  | 'roocode'
+  | 'windsurf';

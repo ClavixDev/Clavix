@@ -14,6 +14,8 @@ import { CodeBuddyAdapter } from './adapters/codebuddy-adapter';
 import { GeminiAdapter } from './adapters/gemini-adapter';
 import { QwenAdapter } from './adapters/qwen-adapter';
 import { CodexAdapter } from './adapters/codex-adapter';
+import { AugmentAdapter } from './adapters/augment-adapter';
+import { CopilotAdapter } from './adapters/copilot-adapter';
 
 /**
  * Agent Manager - handles agent detection and registration
@@ -33,10 +35,12 @@ export class AgentManager {
     this.registerAdapter(new KilocodeAdapter());
     this.registerAdapter(new ClineAdapter());
     this.registerAdapter(new RoocodeAdapter());
+    this.registerAdapter(new AugmentAdapter());
     this.registerAdapter(new CodeBuddyAdapter());
     this.registerAdapter(new GeminiAdapter());
     this.registerAdapter(new QwenAdapter());
     this.registerAdapter(new CodexAdapter());
+    this.registerAdapter(new CopilotAdapter());
   }
 
   /**

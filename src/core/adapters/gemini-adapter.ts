@@ -6,18 +6,26 @@ import { FileSystem } from '../../utils/file-system';
 
 /**
  * Gemini CLI adapter
- * Commands stored as TOML files under .gemini/commands
+ * Commands stored as TOML files under .gemini/commands/clavix by default
  */
 export class GeminiAdapter extends BaseAdapter {
   readonly name = 'gemini';
   readonly displayName = 'Gemini CLI';
-  readonly directory = '.gemini/commands';
   readonly fileExtension = '.toml';
   readonly features = {
     supportsSubdirectories: true,
     supportsFrontmatter: false,
     argumentPlaceholder: '{{args}}',
   };
+
+  constructor(private readonly options: { useNamespace?: boolean } = {}) {
+    super();
+  }
+
+  get directory(): string {
+    const useNamespace = this.options.useNamespace ?? true;
+    return useNamespace ? path.join('.gemini', 'commands', 'clavix') : path.join('.gemini', 'commands');
+  }
 
   async detectProject(): Promise<boolean> {
     if (await FileSystem.exists('.gemini')) {

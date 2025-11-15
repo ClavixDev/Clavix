@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.2] - 2025-11-15
+
+### ✨ Features
+- Added Augment CLI and Copilot CLI providers with template support and detection during `clavix init`.
+- Alphabetized IDE and CLI tool selections in the initialization wizard for easier navigation.
+
+### 🐛 Fixes
+- Fixed Gemini CLI and Qwen Code CLI template handling to avoid nested `prompt = """` blocks and ensured their commands remain discoverable.
+- Restored the default namespaced layout (`.gemini/commands/clavix` and `.qwen/commands/clavix`) while offering an opt-out during initialization for flat command naming.
+
+### 🧪 Testing
+- `npm run lint`
+- `npx tsc --noEmit`
+- `NODE_OPTIONS="--localstorage-file=.jest-localstorage" npm test`
+
 ## [1.8.1] - 2025-11-15
 
 ### 🐛 Fixes

@@ -10,6 +10,8 @@ import { OctoMdGenerator } from '../../core/adapters/octo-md-generator';
 import { FileSystem } from '../../utils/file-system';
 import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config';
 import { CommandTemplate, AgentAdapter } from '../../types/agent';
+import { GeminiAdapter } from '../../core/adapters/gemini-adapter';
+import { QwenAdapter } from '../../core/adapters/qwen-adapter';
 
 export default class Init extends Command {
   static description = 'Initialize Clavix in the current project';
@@ -57,12 +59,12 @@ export default class Init extends Command {
               value: 'claude-code',
             },
             {
-              name: 'Cursor (.cursor/commands/)',
-              value: 'cursor',
+              name: 'Cline (.cline/workflows/)',
+              value: 'cline',
             },
             {
-              name: 'Windsurf (.windsurf/workflows/)',
-              value: 'windsurf',
+              name: 'Cursor (.cursor/commands/)',
+              value: 'cursor',
             },
             {
               name: 'Kilocode (.kilocode/workflows/)',
@@ -73,42 +75,50 @@ export default class Init extends Command {
               value: 'roocode',
             },
             {
-              name: 'Cline (.cline/workflows/)',
-              value: 'cline',
+              name: 'Windsurf (.windsurf/workflows/)',
+              value: 'windsurf',
             },
             new inquirer.Separator(),
             // CLI Tools
             {
-              name: 'Droid CLI (.factory/commands/)',
-              value: 'droid',
+              name: 'Amp (.agents/commands/)',
+              value: 'amp',
+            },
+            {
+              name: 'Augment CLI (.augment/commands/clavix/)',
+              value: 'augment',
+            },
+            {
+              name: 'Codex CLI (~/.codex/prompts)',
+              value: 'codex',
             },
             {
               name: 'CodeBuddy (.codebuddy/commands/)',
               value: 'codebuddy',
             },
             {
-              name: 'OpenCode (.opencode/command/)',
-              value: 'opencode',
-            },
-            {
-              name: 'Gemini CLI (.gemini/commands/)',
-              value: 'gemini',
-            },
-            {
-              name: 'Qwen Code (.qwen/commands/)',
-              value: 'qwen',
-            },
-            {
-              name: 'Amp (.agents/commands/)',
-              value: 'amp',
+              name: 'Copilot CLI (.github/agents/)',
+              value: 'copilot',
             },
             {
               name: 'Crush CLI (.crush/commands/clavix/)',
               value: 'crush',
             },
             {
-              name: 'Codex CLI (~/.codex/prompts)',
-              value: 'codex',
+              name: 'Droid CLI (.factory/commands/)',
+              value: 'droid',
+            },
+            {
+              name: 'Gemini CLI (.gemini/commands/clavix/)',
+              value: 'gemini',
+            },
+            {
+              name: 'OpenCode (.opencode/command/)',
+              value: 'opencode',
+            },
+            {
+              name: 'Qwen Code (.qwen/commands/clavix/)',
+              value: 'qwen',
             },
             new inquirer.Separator(),
             // Universal Adapters
@@ -169,7 +179,7 @@ export default class Init extends Command {
           continue;
         }
 
-        const adapter = agentManager.requireAdapter(providerName);
+        let adapter: AgentAdapter = agentManager.requireAdapter(providerName);
 
         console.log(chalk.gray(`  ✓ Generating ${adapter.displayName} commands...`));
 
@@ -187,6 +197,25 @@ export default class Init extends Command {
           if (!confirmCodex) {
             console.log(chalk.yellow('    ⊗ Skipped Codex CLI'));
             continue;
+          }
+        }
+
+        if (adapter.name === 'gemini' || adapter.name === 'qwen') {
+          const defaultNamespacePath = path.join(`.${adapter.name}`, 'commands', 'clavix');
+          const { useNamespace } = await inquirer.prompt([
+            {
+              type: 'confirm',
+              name: 'useNamespace',
+              message: `Store ${adapter.displayName} commands under ${defaultNamespacePath}? (Produces /clavix:<command> shortcuts)`,
+              default: true,
+            },
+          ]);
+
+          if (!useNamespace) {
+            adapter = adapter.name === 'gemini'
+              ? new GeminiAdapter({ useNamespace: false })
+              : new QwenAdapter({ useNamespace: false });
+            console.log(chalk.gray(`    → Using ${adapter.getCommandPath()} (no namespacing)`));
           }
         }
 
@@ -223,7 +252,20 @@ export default class Init extends Command {
         }
 
         // Generate slash commands
-        await this.generateSlashCommands(adapter);
+        const generatedTemplates = await this.generateSlashCommands(adapter);
+
+        if (adapter.name === 'gemini' || adapter.name === 'qwen') {
+          const commandPath = adapter.getCommandPath();
+          const isNamespaced = commandPath.endsWith(path.join('commands', 'clavix'));
+          const namespace = isNamespaced ? path.basename(commandPath) : undefined;
+          const commandNames = generatedTemplates.map((template) =>
+            isNamespaced ? `/${namespace}:${template.name}` : `/${template.name}`
+          );
+
+          console.log(chalk.green(`    → Registered ${commandNames.join(', ')}`));
+          console.log(chalk.gray(`    Commands saved to ${commandPath}`));
+          console.log(chalk.gray('    Tip: reopen the CLI or run /help to refresh the command list.'));
+        }
 
         // Inject documentation blocks (Claude Code only)
         if (providerName === 'claude-code') {
@@ -327,7 +369,7 @@ See documentation for template format details.
     await FileSystem.writeFileAtomic('.clavix/INSTRUCTIONS.md', instructions);
   }
 
-  private async generateSlashCommands(adapter: AgentAdapter): Promise<void> {
+  private async generateSlashCommands(adapter: AgentAdapter): Promise<CommandTemplate[]> {
     const templateDir = path.join(__dirname, '../../templates/slash-commands', adapter.name);
     const files = await FileSystem.listFiles(templateDir);
     const extension = adapter.fileExtension;
@@ -339,14 +381,24 @@ See documentation for template format details.
       const content = await FileSystem.readFile(path.join(templateDir, file));
       const name = file.slice(0, -extension.length);
 
-      templates.push({
-        name,
-        content,
-        description: this.extractDescription(content),
-      });
+      if (extension === '.toml') {
+        const parsed = this.parseTomlTemplate(content, name, adapter.name);
+        templates.push({
+          name,
+          content: parsed.prompt,
+          description: parsed.description,
+        });
+      } else {
+        templates.push({
+          name,
+          content,
+          description: this.extractDescription(content),
+        });
+      }
     }
 
     await adapter.generateCommands(templates);
+    return templates;
   }
 
   private async injectDocumentation(adapter: AgentAdapter): Promise<void> {
@@ -409,6 +461,20 @@ See documentation for template format details.
     }
 
     return '';
+  }
+
+  private parseTomlTemplate(content: string, templateName: string, providerName: string): { description: string; prompt: string } {
+    const descriptionMatch = content.match(/^\s*description\s*=\s*(['"])(.*?)\1/m);
+    const promptMatch = content.match(/^\s*prompt\s*=\s*"""([\s\S]*?)"""/m);
+
+    if (!promptMatch) {
+      throw new Error(`Template ${templateName}.toml for ${providerName} is missing a prompt = """ ... """ block.`);
+    }
+
+    const description = descriptionMatch ? descriptionMatch[2] : '';
+    const prompt = promptMatch[1];
+
+    return { description, prompt };
   }
 
   private extractClavixBlock(content: string): string {

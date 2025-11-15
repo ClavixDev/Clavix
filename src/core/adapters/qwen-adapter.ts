@@ -6,18 +6,26 @@ import { FileSystem } from '../../utils/file-system';
 
 /**
  * Qwen Code CLI adapter
- * Commands stored as TOML files under .qwen/commands
+ * Commands stored as TOML files under .qwen/commands/clavix by default
  */
 export class QwenAdapter extends BaseAdapter {
   readonly name = 'qwen';
   readonly displayName = 'Qwen Code';
-  readonly directory = '.qwen/commands';
   readonly fileExtension = '.toml';
   readonly features = {
     supportsSubdirectories: true,
     supportsFrontmatter: false,
     argumentPlaceholder: '{{args}}',
   };
+
+  constructor(private readonly options: { useNamespace?: boolean } = {}) {
+    super();
+  }
+
+  get directory(): string {
+    const useNamespace = this.options.useNamespace ?? true;
+    return useNamespace ? path.join('.qwen', 'commands', 'clavix') : path.join('.qwen', 'commands');
+  }
 
   async detectProject(): Promise<boolean> {
     if (await FileSystem.exists('.qwen')) {

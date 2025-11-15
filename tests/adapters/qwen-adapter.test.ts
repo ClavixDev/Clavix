@@ -35,7 +35,7 @@ describe('QwenAdapter', () => {
   it('should expose Qwen metadata', () => {
     expect(adapter.name).toBe('qwen');
     expect(adapter.displayName).toBe('Qwen Code');
-    expect(adapter.directory).toBe('.qwen/commands');
+    expect(adapter.directory).toBe(path.join('.qwen', 'commands', 'clavix'));
     expect(adapter.fileExtension).toBe('.toml');
   });
 
@@ -83,10 +83,12 @@ describe('QwenAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(path.join('.qwen/commands', 'deep.toml'), 'utf8');
+      const fileContent = await fs.readFile(path.join('.qwen', 'commands', 'clavix', 'deep.toml'), 'utf8');
 
       expect(fileContent).toContain('description = "Deep analysis"');
       expect(fileContent).toContain('Process {{args}} thoroughly.');
+      const occurrences = (fileContent.match(/prompt\s*=\s*"""/g) ?? []).length;
+      expect(occurrences).toBe(1);
     });
   });
 });

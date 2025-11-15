@@ -38,17 +38,19 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should register all built-in adapters', () => {
       const adapters = agentManager.getAdapters();
 
-      expect(adapters).toHaveLength(14);
+      expect(adapters).toHaveLength(16);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
       expect(agentManager.hasAgent('opencode')).toBe(true);
       expect(agentManager.hasAgent('amp')).toBe(true);
+      expect(agentManager.hasAgent('augment')).toBe(true);
       expect(agentManager.hasAgent('crush')).toBe(true);
       expect(agentManager.hasAgent('windsurf')).toBe(true);
       expect(agentManager.hasAgent('kilocode')).toBe(true);
       expect(agentManager.hasAgent('cline')).toBe(true);
       expect(agentManager.hasAgent('roocode')).toBe(true);
+      expect(agentManager.hasAgent('copilot')).toBe(true);
       expect(agentManager.hasAgent('codebuddy')).toBe(true);
       expect(agentManager.hasAgent('gemini')).toBe(true);
       expect(agentManager.hasAgent('qwen')).toBe(true);
@@ -63,11 +65,13 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(available).toContain('droid');
       expect(available).toContain('opencode');
       expect(available).toContain('amp');
+      expect(available).toContain('augment');
       expect(available).toContain('crush');
       expect(available).toContain('windsurf');
       expect(available).toContain('kilocode');
       expect(available).toContain('cline');
       expect(available).toContain('roocode');
+      expect(available).toContain('copilot');
       expect(available).toContain('codebuddy');
       expect(available).toContain('gemini');
       expect(available).toContain('qwen');
@@ -330,7 +334,7 @@ describe('Multi-Provider Workflow Integration', () => {
     });
 
     it('should use flat structure for all providers except Claude Code', async () => {
-      const flatProviders = ['cursor', 'droid', 'opencode', 'amp'];
+      const flatProviders = ['cursor', 'droid', 'opencode', 'amp', 'codebuddy', 'copilot', 'kilocode', 'cline', 'roocode'];
       const templates: CommandTemplate[] = [
         { name: 'test', description: 'Test', content: 'Test' },
       ];
@@ -351,8 +355,8 @@ describe('Multi-Provider Workflow Integration', () => {
 
   describe('Feature Flag Differences', () => {
     it('should identify frontmatter support differences', () => {
-      const withFrontmatter = ['droid', 'opencode'];
-      const withoutFrontmatter = ['claude-code', 'cursor', 'amp'];
+      const withFrontmatter = ['augment', 'droid', 'opencode', 'codebuddy', 'codex', 'roocode', 'copilot'];
+      const withoutFrontmatter = ['claude-code', 'cursor', 'amp', 'crush', 'windsurf', 'kilocode', 'cline', 'gemini', 'qwen'];
 
       for (const name of withFrontmatter) {
         const adapter = agentManager.requireAdapter(name);
@@ -369,7 +373,7 @@ describe('Multi-Provider Workflow Integration', () => {
       const claudeAdapter = agentManager.requireAdapter('claude-code');
       expect(claudeAdapter.features?.supportsSubdirectories).toBe(true);
 
-      const otherAdapters = ['cursor', 'droid', 'opencode', 'amp'];
+      const otherAdapters = ['cursor', 'droid', 'opencode', 'amp', 'codebuddy', 'copilot', 'kilocode', 'cline', 'roocode', 'codex'];
       for (const name of otherAdapters) {
         const adapter = agentManager.requireAdapter(name);
         expect(adapter.features?.supportsSubdirectories).toBe(false);
@@ -386,7 +390,7 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should provide formatted choices for prompts', () => {
       const choices = agentManager.getAdapterChoices();
 
-      expect(choices).toHaveLength(14);
+      expect(choices).toHaveLength(16);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
 
@@ -395,6 +399,8 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(choices.find(c => c.value === 'kilocode')).toBeDefined();
       expect(choices.find(c => c.value === 'cline')).toBeDefined();
       expect(choices.find(c => c.value === 'roocode')).toBeDefined();
+      expect(choices.find(c => c.value === 'augment')).toBeDefined();
+      expect(choices.find(c => c.value === 'copilot')).toBeDefined();
     });
 
     it('should pre-select Claude Code by default', () => {
