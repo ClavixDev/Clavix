@@ -170,14 +170,6 @@ export class TaskManager {
       phases.push(...this.generateTasksFromRequirements(sections.requirements, sections));
     }
 
-    // Ensure all tasks follow CLEAR principles
-    phases.forEach((phase) => {
-      phase.tasks = phase.tasks.map((task) => ({
-        ...task,
-        description: this.optimizeTaskDescription(task.description),
-      }));
-    });
-
     const technicalSection = this.getSectionByAliases(sections, [
       'technicalrequirements',
       'technicalconstraints',
@@ -197,6 +189,14 @@ export class TaskManager {
     if (phases.length === 0) {
       phases.push(this.generateDefaultPhases(prdContent));
     }
+
+    // Ensure all tasks follow CLEAR principles (applied AFTER all tasks are added)
+    phases.forEach((phase) => {
+      phase.tasks = phase.tasks.map((task) => ({
+        ...task,
+        description: this.optimizeTaskDescription(task.description),
+      }));
+    });
 
     return phases;
   }
@@ -580,16 +580,16 @@ export class TaskManager {
    * Optimize task description using CLEAR principles
    */
   private optimizeTaskDescription(description: string): string {
-    // Ensure conciseness: limit to reasonable length
-    if (description.length > 150) {
-      description = description.substring(0, 147) + '...';
-    }
-
-    // Ensure starts with action verb
+    // Ensure starts with action verb first
     const actionVerbs = /^(Create|Add|Implement|Build|Generate|Read|Write|Parse|Analyze|Display|Update|Handle|Process|Execute|Mark|Track|Ensure|Validate|Configure|Set up|Fix|Refactor|Test)/i;
 
     if (!actionVerbs.test(description)) {
       description = `Implement ${description}`;
+    }
+
+    // Ensure conciseness: limit to reasonable length (after adding action verb)
+    if (description.length > 150) {
+      description = description.substring(0, 147) + '...';
     }
 
     return description;

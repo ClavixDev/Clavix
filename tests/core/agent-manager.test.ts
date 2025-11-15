@@ -428,5 +428,6 @@ function createMockAdapter(
     generateCommands: jest.fn().mockResolvedValue(undefined),
     injectDocumentation: jest.fn().mockResolvedValue(undefined),
     getCommandPath: jest.fn().mockReturnValue(`.${name}/commands`),
+    getTargetFilename: jest.fn((cmdName: string) => `${cmdName}.md`),
   };
 }

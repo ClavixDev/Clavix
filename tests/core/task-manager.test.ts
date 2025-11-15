@@ -71,7 +71,7 @@ describe('TaskManager', () => {
     it('should throw error when no PRD file found', async () => {
       await expect(async () => {
         await manager.generateTasksFromPrd(testPrdDir);
-      }).rejects.toThrow('No PRD file found');
+      }).rejects.toThrow('No PRD artifacts found');
     });
 
     it('should generate default phases when no structure found', async () => {
