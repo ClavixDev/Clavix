@@ -35,7 +35,7 @@ describe('GeminiAdapter', () => {
   it('should expose Gemini metadata', () => {
     expect(adapter.name).toBe('gemini');
     expect(adapter.displayName).toBe('Gemini CLI');
-    expect(adapter.directory).toBe('.gemini/commands/clavix');
+    expect(adapter.directory).toBe('.gemini/commands');
     expect(adapter.fileExtension).toBe('.toml');
   });
 
@@ -84,7 +84,7 @@ describe('GeminiAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(path.join('.gemini/commands/clavix', 'fast.toml'), 'utf8');
+      const fileContent = await fs.readFile(path.join('.gemini/commands', 'fast.toml'), 'utf8');
 
       expect(fileContent).toContain('description = "Fast improvements"');
       expect(fileContent).toContain('Handle {{args}} swiftly.');

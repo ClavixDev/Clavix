@@ -44,8 +44,8 @@ Clavix integrates seamlessly with multiple AI development tools:
 | **Droid CLI** | ✅ | `.factory/commands/` (YAML frontmatter) | Fully Supported |
 | **CodeBuddy CLI** | ✅ | `.codebuddy/commands/` (YAML frontmatter, shell-style args) | Fully Supported |
 | **OpenCode** | ✅ | `.opencode/command/` | Fully Supported |
-| **Gemini CLI** | ✅ | `.gemini/commands/clavix/` (TOML custom commands) | Fully Supported |
-| **Qwen Code CLI** | ✅ | `.qwen/commands/clavix/` (TOML custom commands) | Fully Supported |
+| **Gemini CLI** | ✅ | `.gemini/commands/` (TOML custom commands) | Fully Supported |
+| **Qwen Code CLI** | ✅ | `.qwen/commands/` (TOML custom commands) | Fully Supported |
 | **Amp** | ✅ | `.agents/commands/` (no frontmatter) | Fully Supported |
 | **Crush CLI** | ✅ | `.crush/commands/clavix/` | Fully Supported |
 | **Codex CLI** | ✅ | `~/.codex/prompts` (global YAML frontmatter) | Fully Supported |
@@ -202,8 +202,8 @@ You'll be prompted to select which AI tools to support:
  ◯ Droid CLI (.factory/commands/)
  ◯ CodeBuddy CLI (.codebuddy/commands/)
  ◉ OpenCode (.opencode/command/)
- ◯ Gemini CLI (.gemini/commands/clavix/)
- ◯ Qwen Code CLI (.qwen/commands/clavix/)
+ ◯ Gemini CLI (.gemini/commands/)
+ ◯ Qwen Code CLI (.qwen/commands/)
  ◯ Amp (.agents/commands/)
  ◉ agents.md (Universal)
  ◯ Octofriend (OCTO.md - Universal)

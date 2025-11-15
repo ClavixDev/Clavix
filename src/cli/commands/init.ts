@@ -91,11 +91,11 @@ export default class Init extends Command {
               value: 'opencode',
             },
             {
-              name: 'Gemini CLI (.gemini/commands/clavix/)',
+              name: 'Gemini CLI (.gemini/commands/)',
               value: 'gemini',
             },
             {
-              name: 'Qwen Code (.qwen/commands/clavix/)',
+              name: 'Qwen Code (.qwen/commands/)',
               value: 'qwen',
             },
             {

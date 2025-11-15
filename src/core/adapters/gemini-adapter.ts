@@ -6,12 +6,12 @@ import { FileSystem } from '../../utils/file-system';
 
 /**
  * Gemini CLI adapter
- * Commands stored as TOML files under .gemini/commands/clavix
+ * Commands stored as TOML files under .gemini/commands
  */
 export class GeminiAdapter extends BaseAdapter {
   readonly name = 'gemini';
   readonly displayName = 'Gemini CLI';
-  readonly directory = '.gemini/commands/clavix';
+  readonly directory = '.gemini/commands';
   readonly fileExtension = '.toml';
   readonly features = {
     supportsSubdirectories: true,

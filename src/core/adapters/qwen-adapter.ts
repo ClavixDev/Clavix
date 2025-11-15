@@ -6,12 +6,12 @@ import { FileSystem } from '../../utils/file-system';
 
 /**
  * Qwen Code CLI adapter
- * Commands stored as TOML files under .qwen/commands/clavix
+ * Commands stored as TOML files under .qwen/commands
  */
 export class QwenAdapter extends BaseAdapter {
   readonly name = 'qwen';
   readonly displayName = 'Qwen Code';
-  readonly directory = '.qwen/commands/clavix';
+  readonly directory = '.qwen/commands';
   readonly fileExtension = '.toml';
   readonly features = {
     supportsSubdirectories: true,
