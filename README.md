@@ -1,5 +1,5 @@
 # Clavix
-> AI prompt improvement & PRD generation CLI (CLEAR Framework)
+> Transform vague ideas into production-ready prompts. Analyze gaps, generate PRDs, and supercharge your AI coding workflow with the CLEAR framework.
 
 ## Table of contents
 - [Why Clavix?](#why-clavix)

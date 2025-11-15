@@ -1,7 +1,7 @@
 {
   "name": "clavix",
   "version": "2.1.2",
-  "description": "AI prompt improvement and PRD generation CLI tool for developers",
+  "description": "Transform vague ideas into production-ready prompts. CLI tool using the CLEAR framework to analyze, improve, and generate PRDs for AI coding assistants (Claude Code, Cursor, Windsurf, and more)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
