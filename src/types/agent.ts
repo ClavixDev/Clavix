@@ -52,7 +52,7 @@ export type AgentType =
   | 'cline'
   | 'codex'
   | 'codebuddy'
-  | 'copilot'
+  | 'copilot-instructions'
   | 'crush'
   | 'cursor'
   | 'custom'

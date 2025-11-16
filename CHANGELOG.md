@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-11-16
+
+### ⚠️ Breaking Changes
+- **GitHub Copilot Integration Migration**: Moved from non-working slash commands (`.github/agents/`) to official repository instructions (`.github/copilot-instructions.md`)
+  - Old `.github/agents/clavix-*.agent.md` files no longer generated
+  - Copilot now uses natural language instructions per [GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions)
+  - Copilot moved from "CLI Tools" to "Universal Adapters" section in `clavix init`
+
+### ✨ Features
+- **GitHub Copilot Instructions Generator**: New adapter for `.github/copilot-instructions.md`
+  - Generates natural language Clavix workflow instructions for GitHub Copilot
+  - Uses managed blocks (`<!-- CLAVIX:START -->` / `<!-- CLAVIX:END -->`) for easy updates via `clavix update`
+  - Includes command reference, CLEAR Framework principles, and workflow patterns
+  - Automatically creates `.github/` directory if needed
+
+### 🗑️ Removed
+- `CopilotAdapter` class (replaced with `CopilotInstructionsGenerator`)
+- Copilot slash command templates (8 files: `archive.agent.md`, `deep.agent.md`, `fast.agent.md`, etc.)
+- Agent type `'copilot'` (replaced with `'copilot-instructions'`)
+
+### 🔧 Technical Changes
+- **New Files**:
+  - `src/templates/agents/copilot-instructions.md` - Copilot workflow instructions template
+  - `src/core/adapters/copilot-instructions-generator.ts` - Generator class for `.github/copilot-instructions.md`
+- **Modified Files**:
+  - `src/cli/commands/init.ts` - Updated provider selection UI
+  - `src/core/agent-manager.ts` - Removed CopilotAdapter registration
+  - `src/types/agent.ts` - Updated AgentType union
+- **Deleted Files**:
+  - `src/core/adapters/copilot-adapter.ts`
+  - `src/templates/slash-commands/copilot/*.agent.md` (8 files)
+
+### 📚 Documentation
+- Updated README.md: Copilot now listed under "Universal adapters"
+- Updated docs/providers.md: Changed Copilot entry to GitHub Copilot with `.github/copilot-instructions.md` path
+- CHANGELOG.md: This entry
+
+### 🎯 Migration Guide
+**For existing Copilot users:**
+1. Run `clavix init` and select "GitHub Copilot (.github/copilot-instructions.md)"
+2. Old `.github/agents/clavix-*.agent.md` files can be safely deleted
+3. GitHub Copilot will now read instructions from `.github/copilot-instructions.md`
+4. Use `clavix update` to refresh instructions in future versions
+
+**Why this change?**
+- GitHub Copilot doesn't support custom slash commands via `.github/agents/`
+- Official documentation specifies `.github/copilot-instructions.md` for repository-wide instructions
+- Natural language instructions provide better integration with Copilot's AI
+
+---
+
 ## [1.9.0] - 2025-11-15
 
 ### ⚠️ Breaking Changes / Migrations

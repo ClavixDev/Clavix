@@ -8,6 +8,7 @@ import { DocInjector } from '../../core/doc-injector';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator';
 import { OctoMdGenerator } from '../../core/adapters/octo-md-generator';
 import { WarpMdGenerator } from '../../core/adapters/warp-md-generator';
+import { CopilotInstructionsGenerator } from '../../core/adapters/copilot-instructions-generator';
 import { FileSystem } from '../../utils/file-system';
 import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config';
 import { CommandTemplate, AgentAdapter } from '../../types/agent';
@@ -74,10 +75,6 @@ export default class Init extends Command {
               value: 'codebuddy',
             },
             {
-              name: 'Copilot CLI (.github/agents/)',
-              value: 'copilot',
-            },
-            {
               name: 'Crush CLI (.crush/commands/clavix/)',
               value: 'crush',
             },
@@ -130,6 +127,10 @@ export default class Init extends Command {
               value: 'agents-md',
             },
             {
+              name: 'GitHub Copilot (.github/copilot-instructions.md)',
+              value: 'copilot-instructions',
+            },
+            {
               name: 'Warp (WARP.md - optimized for Warp)',
               value: 'warp-md',
             },
@@ -176,6 +177,13 @@ export default class Init extends Command {
         if (providerName === 'agents-md') {
           console.log(chalk.gray('  ✓ Generating AGENTS.md...'));
           await AgentsMdGenerator.generate();
+          continue;
+        }
+
+        // Handle copilot-instructions separately (it's not an adapter)
+        if (providerName === 'copilot-instructions') {
+          console.log(chalk.gray('  ✓ Generating .github/copilot-instructions.md...'));
+          await CopilotInstructionsGenerator.generate();
           continue;
         }
 

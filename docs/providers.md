@@ -26,13 +26,12 @@ Clavix can generate slash commands and documentation snippets for a wide range o
 | Crush CLI | `.crush/commands/clavix/` | Yes | `$PROMPT` |
 | Codex CLI | `~/.codex/prompts` | No | `$ARGUMENTS` |
 | Augment CLI | `.augment/commands/clavix/` (or `~/.augment/commands/clavix/`) | Yes | *(implicit — templates include arguments)* |
-| Copilot CLI | `.github/agents/` | Yes | *(implicit)* |
-| OpenCode (Universal) | `.opencode/command/` | No | `$ARGUMENTS` |
 
 ## Universal adapters
 
 - **AGENTS.md** – Adds a managed block to `AGENTS.md` for tooling that ingests long-form documentation instead of slash commands.
-- **OCTO.md** – Generates content tailored for Octofriend’s markdown interface.
+- **GitHub Copilot** – Generates `.github/copilot-instructions.md` with natural language Clavix workflow instructions per [official GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions).
+- **OCTO.md** – Generates content tailored for Octofriend's markdown interface.
 - **WARP.md** – Provides Clavix quick-start guidance optimized for Warp users.
 
 ### Multi-select during `clavix init`
