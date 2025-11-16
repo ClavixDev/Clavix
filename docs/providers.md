@@ -2,6 +2,22 @@
 
 Clavix can generate slash commands and documentation snippets for a wide range of IDEs and CLI agents. The tables below summarize where command files are written, whether subdirectories are supported, and which argument placeholders are used.
 
+## Template architecture
+
+Starting with v2.4.0, Clavix uses **canonical templates** that are automatically formatted for each provider at runtime. This architecture ensures:
+
+- **Consistency**: All providers receive identical template content and logic
+- **Maintainability**: Single source of truth in `src/templates/slash-commands/_canonical/`
+- **Efficiency**: 67% smaller package size (1.5MB → 830KB unpacked)
+- **Quality**: Updates and bug fixes apply automatically to all providers
+
+Provider-specific formatting is handled by each adapter's `formatCommand()` method:
+- **Markdown providers**: Use canonical content as-is or with minimal formatting
+- **TOML providers** (Gemini, Qwen): Convert to TOML with `prompt = """..."""` wrapper
+- **Special providers** (Crush): Apply custom placeholder transformations
+
+For detailed information on template customization and override options, see [Template customization guide](guides/templates.md).
+
 ## IDEs and editor extensions
 
 | Provider | Command location | Subdirectories | Placeholder |
