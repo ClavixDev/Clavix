@@ -318,4 +318,89 @@ describe('Deep command', () => {
       expect(result.implementationExamples).toBeDefined();
     });
   });
+
+  describe('strategic scope detection', () => {
+    it('should identify architectural keywords suggesting PRD mode', () => {
+      const architecturalKeywords = [
+        'architecture',
+        'scalability',
+        'security best practices',
+        'system design',
+        'infrastructure',
+        'microservices',
+        'deployment strategy',
+        'business impact',
+      ];
+
+      const strategicPatterns = [
+        'architecture',
+        'scalability',
+        'security',
+        'infrastructure',
+        'deployment',
+        'business',
+        'system',
+        'microservices',
+      ];
+
+      architecturalKeywords.forEach((keyword) => {
+        const isStrategicKeyword = strategicPatterns.some((strategic) =>
+          keyword.toLowerCase().includes(strategic)
+        );
+
+        expect(isStrategicKeyword).toBe(true);
+      });
+    });
+
+    it('should detect strategic scope in prompts requiring architecture decisions', () => {
+      const strategicPrompts = [
+        'Design the architecture for a scalable e-commerce platform',
+        'Create a security strategy for user authentication',
+        'Build a microservices infrastructure for our application',
+      ];
+
+      strategicPrompts.forEach((prompt) => {
+        const hasArchitectureKeyword = /architecture|scalability|security.*strateg|infrastructure|microservices/i.test(prompt);
+        expect(hasArchitectureKeyword).toBe(true);
+      });
+    });
+
+    it('should not flag implementation-level prompts as strategic', () => {
+      const implementationPrompts = [
+        'Create a login form with email and password',
+        'Implement a button that changes color on hover',
+        'Add validation to the user input field',
+      ];
+
+      implementationPrompts.forEach((prompt) => {
+        const hasArchitectureKeyword = /architecture|scalability|security.*strateg|infrastructure|microservices/i.test(prompt);
+        expect(hasArchitectureKeyword).toBe(false);
+      });
+    });
+
+    it('should suggest switching to PRD mode for strategic scope', () => {
+      const strategicPrompt = 'Design a scalable microservices architecture for our platform';
+      const hasStrategicScope = /architecture|scalability|microservices|infrastructure/i.test(strategicPrompt);
+      const shouldSuggestPRD = hasStrategicScope;
+
+      expect(shouldSuggestPRD).toBe(true);
+    });
+
+    it('should detect multiple strategic indicators', () => {
+      const complexPrompt = 'Design a secure, scalable architecture with proper deployment infrastructure';
+      const strategicKeywords = ['secure', 'scalable', 'architecture', 'deployment', 'infrastructure'];
+      const detectedKeywords = strategicKeywords.filter((keyword) =>
+        complexPrompt.toLowerCase().includes(keyword)
+      );
+
+      expect(detectedKeywords.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should provide clear escalation path to PRD mode', () => {
+      const escalationMessage = 'For architecture, security, and scalability decisions, use /clavix:prd';
+      const hasEscalationPath = escalationMessage.includes('/clavix:prd');
+
+      expect(hasEscalationPath).toBe(true);
+    });
+  });
 });

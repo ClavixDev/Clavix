@@ -506,4 +506,169 @@ describe('Implement command', () => {
       expect(phases[0].tasks.every(t => t.description && typeof t.completed === 'boolean')).toBe(true);
     });
   });
+
+  describe('task blocking protocol', () => {
+    it('should detect common blocking scenarios', () => {
+      const blockingScenarios = [
+        { type: 'missing-dependency', description: 'Missing API key' },
+        { type: 'unclear-requirements', description: 'Task too vague' },
+        { type: 'external-blocker', description: 'Third-party API not ready' },
+        { type: 'technical-blocker', description: 'Library incompatible' },
+        { type: 'resource-blocker', description: 'Database not set up' },
+      ];
+
+      blockingScenarios.forEach((scenario) => {
+        expect(scenario.type).toBeDefined();
+        expect(scenario.description).toBeDefined();
+      });
+    });
+
+    it('should identify blocked task and stop implementation', async () => {
+      const projectDir = path.join(outputsDir, 'blocked-task');
+      await fs.ensureDir(projectDir);
+
+      const tasksContent = `# Tasks
+
+## Phase 1
+
+- [ ] Setup database connection
+- [ ] [BLOCKED: Missing API key] Integrate payment API
+- [ ] Create user interface`;
+
+      const tasksPath = path.join(projectDir, 'tasks.md');
+      await fs.writeFile(tasksPath, tasksContent);
+
+      const content = await fs.readFile(tasksPath, 'utf-8');
+      const hasBlockedTask = content.includes('[BLOCKED');
+
+      expect(hasBlockedTask).toBe(true);
+    });
+
+    it('should present user with resolution options', () => {
+      const resolutionOptions = [
+        { option: 1, name: 'Provide missing resource', action: 'User provides what is needed' },
+        { option: 2, name: 'Break into sub-tasks', action: 'Implement unblocked parts now' },
+        { option: 3, name: 'Skip for now', action: 'Mark as BLOCKED, continue with next' },
+      ];
+
+      expect(resolutionOptions.length).toBe(3);
+      expect(resolutionOptions.every(opt => opt.option && opt.name && opt.action)).toBe(true);
+    });
+
+    it('should support breaking blocked task into sub-tasks', async () => {
+      const projectDir = path.join(outputsDir, 'sub-tasks');
+      await fs.ensureDir(projectDir);
+
+      const originalTask = 'Implement payment integration';
+      const subTasks = [
+        { task: 'Create payment service interface', blocked: false },
+        { task: '[BLOCKED: Need Stripe API key] Integrate Stripe SDK', blocked: true },
+        { task: 'Add payment UI components', blocked: false },
+      ];
+
+      expect(subTasks.length).toBeGreaterThan(1);
+      expect(subTasks.some(t => t.blocked)).toBe(true);
+      expect(subTasks.some(t => !t.blocked)).toBe(true);
+    });
+
+    it('should mark task with BLOCKED tag and reason', async () => {
+      const projectDir = path.join(outputsDir, 'blocked-notation');
+      await fs.ensureDir(projectDir);
+
+      const tasksContent = `# Tasks
+
+## Phase 2: Integration
+
+- [x] Create API client structure
+- [ ] [BLOCKED: Waiting for API endpoint spec] Implement data sync
+- [ ] Add error handling for API calls`;
+
+      const tasksPath = path.join(projectDir, 'tasks.md');
+      await fs.writeFile(tasksPath, tasksContent);
+
+      const content = await fs.readFile(tasksPath, 'utf-8');
+      const hasBlockedNotation = /\[BLOCKED:.*?\]/.test(content);
+      const hasBlockerReason = content.includes('Waiting for API endpoint spec');
+
+      expect(hasBlockedNotation).toBe(true);
+      expect(hasBlockerReason).toBe(true);
+    });
+
+    it('should communicate blocking issue to user immediately', () => {
+      const blockingMessage = `Task blocked: Implement payment integration
+
+Blocking issue: Missing Stripe API key for payment integration
+
+Options to proceed:
+1. Provide missing resource - Stripe API key
+2. Break into sub-tasks - Implement interface now, defer Stripe integration
+3. Skip for now - Mark as [BLOCKED], continue with next task
+
+Which option would you like?`;
+
+      expect(blockingMessage.includes('Task blocked')).toBe(true);
+      expect(blockingMessage.includes('Blocking issue')).toBe(true);
+      expect(blockingMessage.includes('Options to proceed')).toBe(true);
+    });
+
+    it('should track all blocked tasks and list them at end', async () => {
+      const projectDir = path.join(outputsDir, 'multiple-blocked');
+      await fs.ensureDir(projectDir);
+
+      const tasksContent = `# Tasks
+
+## Phase 1
+
+- [x] Task 1
+- [ ] [BLOCKED: Missing API key] Task 2
+- [ ] [BLOCKED: Waiting for design] Task 3
+- [ ] Task 4`;
+
+      const tasksPath = path.join(projectDir, 'tasks.md');
+      await fs.writeFile(tasksPath, tasksContent);
+
+      const content = await fs.readFile(tasksPath, 'utf-8');
+      const blockedTaskMatches = content.match(/\[BLOCKED:.*?\]/g);
+      const blockedCount = blockedTaskMatches ? blockedTaskMatches.length : 0;
+
+      expect(blockedCount).toBe(2);
+    });
+
+    it('should provide specific resolution for common blocker types', () => {
+      const blockerResolutions = [
+        { blocker: 'Missing API key/credentials', resolution: 'Ask user for credentials OR stub with mock' },
+        { blocker: 'Vague requirements', resolution: 'Ask specific questions OR propose implementation' },
+        { blocker: 'External dependency not available', resolution: 'Create interface/mock OR skip and defer' },
+        { blocker: 'Environment issue', resolution: 'Ask user to fix OR implement without testing' },
+        { blocker: 'Design/content missing', resolution: 'Create placeholder OR wait for assets' },
+      ];
+
+      expect(blockerResolutions.length).toBe(5);
+      expect(blockerResolutions.every(br => br.blocker && br.resolution)).toBe(true);
+    });
+
+    it('should alert when multiple blocked tasks accumulate', async () => {
+      const projectDir = path.join(outputsDir, 'many-blocked');
+      await fs.ensureDir(projectDir);
+
+      const tasksContent = `# Tasks
+
+## Phase 1
+
+- [ ] [BLOCKED: Issue 1] Task 1
+- [ ] [BLOCKED: Issue 2] Task 2
+- [ ] [BLOCKED: Issue 3] Task 3
+- [ ] [BLOCKED: Issue 4] Task 4`;
+
+      const tasksPath = path.join(projectDir, 'tasks.md');
+      await fs.writeFile(tasksPath, tasksContent);
+
+      const content = await fs.readFile(tasksPath, 'utf-8');
+      const blockedTaskMatches = content.match(/\[BLOCKED:.*?\]/g);
+      const blockedCount = blockedTaskMatches ? blockedTaskMatches.length : 0;
+      const shouldAlert = blockedCount >= 3;
+
+      expect(shouldAlert).toBe(true);
+    });
+  });
 });

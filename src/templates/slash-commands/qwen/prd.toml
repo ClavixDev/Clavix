@@ -1,24 +1,69 @@
 description = "CLEAR-validated PRD generation through Socratic questioning"
 prompt = """
+
 # Clavix PRD Generation - CLEAR Framework Validated
 
 You are helping the user create a Product Requirements Document (PRD) using Clavix's Socratic questioning approach. **Generated PRDs are automatically validated using the CLEAR Framework** (Concise, Logical, Explicit) for AI consumption quality.
 
 ## Instructions
 
-1. Guide the user through these strategic questions, one at a time:
+1. Guide the user through these strategic questions, **one at a time** with validation:
 
-   **Question 1**: 🎯 What are we building and why? (Problem + goal in 2-3 sentences)
+   **Question 1**: What are we building and why? (Problem + goal in 2-3 sentences)
 
-   **Question 2**: ⚡ What are the must-have core features? (List 3-5 critical features)
+   - **Validation**: Must have both problem AND goal stated clearly
+   - **If vague/short** (e.g., "a dashboard"): Ask probing questions:
+     - "What specific problem does this dashboard solve?"
+     - "Who will use this and what decisions will they make with it?"
+     - "What happens if this doesn't exist?"
+   - **If "I don't know"**: Ask:
+     - "What triggered the need for this?"
+     - "Can you describe the current pain point or opportunity?"
+   - **Good answer example**: "Sales managers can't quickly identify at-risk deals in our 10K+ deal pipeline. Build a real-time dashboard showing deal health, top performers, and pipeline status so managers can intervene before deals are lost."
 
-   **Question 3**: 🔧 Tech stack and requirements? (Technologies, integrations, constraints - press Enter to skip if extending existing project)
+   **Question 2**: What are the must-have core features? (List 3-5 critical features)
 
-   **Question 4**: 🚫 What is explicitly OUT of scope? (What are we NOT building?)
+   - **Validation**: At least 2 concrete features provided
+   - **If vague** (e.g., "user management"): Probe deeper:
+     - "What specific user management capabilities? (registration, roles, permissions, profile management?)"
+     - "Which feature would you build first if you could only build one?"
+   - **If too many** (7+ features): Help prioritize:
+     - "If you had to launch with only 3 features, which would they be?"
+     - "Which features are launch-blockers vs nice-to-have?"
+   - **If "I don't know"**: Ask:
+     - "Walk me through how someone would use this - what would they do first?"
+     - "What's the core value this provides?"
 
-   **Question 5**: 💡 Any additional context or requirements? (Optional - press Enter to skip)
+   **Question 3**: Tech stack and requirements? (Technologies, integrations, constraints)
 
-2. After collecting all answers, generate TWO documents:
+   - **Optional**: Can skip if extending existing project
+   - **If vague** (e.g., "modern stack"): Probe:
+     - "What technologies are already in use that this must integrate with?"
+     - "Any specific frameworks or languages your team prefers?"
+     - "Are there performance requirements (load time, concurrent users)?"
+   - **If "I don't know"**: Suggest common stacks based on project type or skip
+
+   **Question 4**: What is explicitly OUT of scope? (What are we NOT building?)
+
+   - **Validation**: At least 1 explicit exclusion
+   - **Why important**: Prevents scope creep and clarifies boundaries
+   - **If stuck**: Suggest common exclusions:
+     - "Are we building admin dashboards? Mobile apps? API integrations?"
+     - "Are we handling payments? User authentication? Email notifications?"
+   - **If "I don't know"**: Provide project-specific prompts based on previous answers
+
+   **Question 5**: Any additional context or requirements?
+
+   - **Optional**: Press Enter to skip
+   - **Helpful areas**: Compliance needs, accessibility, localization, deadlines, team constraints
+
+2. **Before proceeding to document generation**, verify minimum viable answers:
+   - Q1: Both problem AND goal stated
+   - Q2: At least 2 concrete features
+   - Q4: At least 1 explicit scope exclusion
+   - If missing critical info, ask targeted follow-ups
+
+3. After collecting and validating all answers, generate TWO documents:
 
    **Full PRD** (comprehensive):
    ```markdown
@@ -69,10 +114,64 @@ You are helping the user create a Product Requirements Document (PRD) using Clav
 
 **Note:** Adaptive (A) and Reflective (R) components are not applicable to PRDs. For prompt-level CLEAR analysis with all 5 components, use `/clavix:deep` instead.
 
+## Workflow Navigation
+
+**You are here:** PRD Generation (Strategic Planning)
+
+**Common workflows:**
+- **Full PRD workflow**: `/clavix:prd` → `/clavix:plan` → `/clavix:implement` → `/clavix:archive`
+- **From deep mode**: `/clavix:deep` → (strategic scope detected) → `/clavix:prd`
+- **Quick to strategic**: `/clavix:fast` → (realizes complexity) → `/clavix:prd`
+
+**Related commands:**
+- `/clavix:plan` - Generate task breakdown from PRD (next step)
+- `/clavix:implement` - Execute tasks (after plan)
+- `/clavix:summarize` - Alternative: Extract PRD from conversation instead of Q&A
+
 ## Tips
 
 - Ask follow-up questions if answers are too vague
 - Help users think through edge cases
 - Keep the process conversational and supportive
 - Generated PRDs are automatically CLEAR-validated for optimal AI consumption
+
+## Troubleshooting
+
+### Issue: User's answers to Q1 are too vague ("make an app")
+**Cause**: User hasn't thought through the problem/goal deeply enough
+**Solution** (inline):
+- Stop and ask probing questions before proceeding
+- "What specific problem does this app solve?"
+- "Who will use this and what pain point does it address?"
+- Don't proceed until both problem AND goal are clear
+
+### Issue: User lists 10+ features in Q2
+**Cause**: Unclear priorities or scope creep
+**Solution** (inline):
+- Help prioritize: "If you could only launch with 3 features, which would they be?"
+- Separate must-have from nice-to-have
+- Document extras in "Additional Context" or "Out of scope"
+
+### Issue: User says "I don't know" to critical questions
+**Cause**: Genuine uncertainty or needs exploration
+**Solution**:
+- For Q1: Ask about what triggered the need, current pain points
+- For Q2: Walk through user journey step-by-step
+- For Q4: Suggest common exclusions based on project type
+- Consider suggesting `/clavix:start` for conversational exploration first
+
+### Issue: CLEAR validation shows low scores after generation
+**Cause**: Answers were too vague or incomplete
+**Solution**:
+- Review the generated PRD
+- Identify specific gaps (missing context, vague requirements)
+- Ask targeted follow-up questions
+- Regenerate PRD with enhanced answers
+
+### Issue: Generated PRD doesn't match user's vision
+**Cause**: Miscommunication during Q&A or assumptions made
+**Solution**:
+- Review each section with user
+- Ask "What's missing or inaccurate?"
+- Update PRD manually or regenerate with corrected answers
 """

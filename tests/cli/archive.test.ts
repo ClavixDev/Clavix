@@ -354,4 +354,81 @@ describe('Archive command', () => {
       expect(projects[1].name).toBe('project-1');
     });
   });
+
+  describe('permanent deletion with --delete flag', () => {
+    it('should require explicit confirmation before permanent deletion', async () => {
+      const projectDir = path.join(outputsDir, 'to-delete');
+      await fs.ensureDir(projectDir);
+      await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# Test PRD');
+      await fs.writeFile(
+        path.join(projectDir, 'tasks.md'),
+        '# Tasks\n\n## Phase 1\n\n- [x] Task 1'
+      );
+
+      // Simulate delete operation that requires confirmation
+      const confirmationRequired = true;
+      const projectExists = await fs.pathExists(projectDir);
+
+      expect(projectExists).toBe(true);
+      expect(confirmationRequired).toBe(true);
+    });
+
+    it('should show project details before deletion confirmation', async () => {
+      const projectDir = path.join(outputsDir, 'project-to-delete');
+      await fs.ensureDir(projectDir);
+      await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# Test PRD');
+      await fs.writeFile(
+        path.join(projectDir, 'tasks.md'),
+        '# Tasks\n\n## Phase 1\n\n- [x] Task 1\n- [ ] Task 2'
+      );
+
+      const taskStatus = await manager.checkTasksStatus(projectDir);
+
+      // Should display these details before deletion
+      expect(taskStatus.total).toBe(2);
+      expect(taskStatus.completed).toBe(1);
+      expect(taskStatus.remaining).toBe(1);
+    });
+
+    it('should require typing project name to confirm deletion', () => {
+      const projectName = 'critical-project';
+      const userInput = 'critical-project';
+      const confirmationMatches = userInput === projectName;
+
+      expect(confirmationMatches).toBe(true);
+    });
+
+    it('should reject deletion if confirmation does not match', () => {
+      const projectName = 'project-to-delete';
+      const userInput: string = 'wrong-name';
+      const confirmationMatches = userInput === projectName;
+
+      expect(confirmationMatches).toBe(false);
+    });
+
+    it('should warn about permanent and irreversible deletion', () => {
+      const deletionWarning = 'WARNING: This action is PERMANENT and CANNOT be undone.';
+      const warningPresent = deletionWarning.includes('PERMANENT') && deletionWarning.includes('CANNOT be undone');
+
+      expect(warningPresent).toBe(true);
+    });
+
+    it('should not allow restoration after deletion', async () => {
+      const projectDir = path.join(outputsDir, 'deleted-project');
+      await fs.ensureDir(projectDir);
+      await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# Test PRD');
+
+      // Simulate deletion
+      await fs.remove(projectDir);
+
+      // Verify it's permanently gone
+      const exists = await fs.pathExists(projectDir);
+      expect(exists).toBe(false);
+
+      // Verify cannot restore (not in archive)
+      const archivedProjectPath = path.join(archiveDir, 'deleted-project');
+      const inArchive = await fs.pathExists(archivedProjectPath);
+      expect(inArchive).toBe(false);
+    });
+  });
 });

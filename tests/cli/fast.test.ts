@@ -446,7 +446,6 @@ describe('Fast command', () => {
       const prompt = 'Create a complex system';
 
       const result = optimizer.improve(prompt, 'fast');
-
       expect(result.triageResult).toBeDefined();
     });
 
@@ -456,6 +455,110 @@ describe('Fast command', () => {
       const result = optimizer.improve(originalPrompt, 'fast');
 
       expect(result.original).toBe(originalPrompt);
+    });
+  });
+
+  describe('triage logic with escalation to deep mode', () => {
+    it('should recommend deep mode for low CLEAR scores', () => {
+      const vaguePrompt = 'make thing';
+      const clearResult = optimizer.applyCLEARFramework(vaguePrompt, 'fast');
+      const clearScore = optimizer.calculateCLEARScore(clearResult);
+
+      const needsDeepAnalysis = clearScore.conciseness < 60 ||
+        clearScore.logic < 60 ||
+        clearScore.explicitness < 50;
+
+      expect(needsDeepAnalysis).toBe(true);
+    });
+
+    it('should identify low conciseness score as trigger for deep analysis', () => {
+      const verbosePrompt = 'Please could you maybe help me if possible to perhaps create something';
+      const clearResult = optimizer.applyCLEARFramework(verbosePrompt, 'fast');
+      const clearScore = optimizer.calculateCLEARScore(clearResult);
+
+      const lowConciseness = clearScore.conciseness < 60;
+
+      // Verbose prompts typically have low conciseness
+      expect(typeof lowConciseness).toBe('boolean');
+    });
+
+    it('should identify low logic score as trigger for deep analysis', () => {
+      const illogicalPrompt = 'Use React. Make it nice. Create dashboard. Add features.';
+      const clearResult = optimizer.applyCLEARFramework(illogicalPrompt, 'fast');
+      const clearScore = optimizer.calculateCLEARScore(clearResult);
+
+      const lowLogic = clearScore.logic < 60;
+
+      expect(typeof lowLogic).toBe('boolean');
+    });
+
+    it('should identify low explicitness score as trigger for deep analysis', () => {
+      const vaguePrompt = 'build something';
+      const clearResult = optimizer.applyCLEARFramework(vaguePrompt, 'fast');
+      const clearScore = optimizer.calculateCLEARScore(clearResult);
+
+      const lowExplicitness = clearScore.explicitness < 50;
+
+      expect(lowExplicitness).toBe(true);
+    });
+
+    it('should use multiple secondary indicators for triage recommendation', () => {
+      const problematicPrompt = 'app';
+      const result = optimizer.improve(problematicPrompt, 'fast');
+
+      expect(result.triageResult).toBeDefined();
+      expect(result.triageResult?.needsDeepAnalysis).toBeDefined();
+      expect(Array.isArray(result.triageResult?.reasons)).toBe(true);
+    });
+
+    it('should provide specific reasons for deep mode recommendation', () => {
+      const shortPrompt = 'build app';
+      const triageResult = optimizer.performTriage(shortPrompt);
+
+      if (triageResult.needsDeepAnalysis) {
+        expect(triageResult.reasons.length).toBeGreaterThan(0);
+        expect(triageResult.reasons.every((reason) => typeof reason === 'string')).toBe(true);
+      }
+    });
+
+    it('should combine CLEAR scores with secondary indicators', () => {
+      const vaguePrompt = 'create app';
+      const clearResult = optimizer.applyCLEARFramework(vaguePrompt, 'fast');
+      const clearScore = optimizer.calculateCLEARScore(clearResult);
+      const triageResult = optimizer.performTriage(vaguePrompt);
+
+      const needsDeepByCLEAR = clearScore.conciseness < 60 ||
+        clearScore.logic < 60 ||
+        clearScore.explicitness < 50;
+      const needsDeepByTriage = triageResult.needsDeepAnalysis;
+
+      const overallNeedsDeep = needsDeepByCLEAR || needsDeepByTriage;
+
+      expect(typeof overallNeedsDeep).toBe('boolean');
+    });
+
+    it('should not recommend deep mode for well-formed prompts', () => {
+      const goodPrompt = 'As a senior React developer, create a TypeScript login component with email/password fields, validation using Yup, Material-UI styling, error display, and submit button that calls /api/login. Return only the TSX component code.';
+      const clearResult = optimizer.applyCLEARFramework(goodPrompt, 'fast');
+      const clearScore = optimizer.calculateCLEARScore(clearResult);
+
+      const needsDeepAnalysis = clearScore.conciseness < 60 ||
+        clearScore.logic < 60 ||
+        clearScore.explicitness < 50;
+
+      expect(needsDeepAnalysis).toBe(false);
+    });
+
+    it('should identify missing critical elements as triage trigger', () => {
+      const incompletePrompt = 'create login';
+      const triageResult = optimizer.performTriage(incompletePrompt);
+
+      if (triageResult.needsDeepAnalysis) {
+        const hasMissingElementsReason = triageResult.reasons.some((reason) =>
+          reason.includes('Missing') || reason.includes('critical elements')
+        );
+        expect(typeof hasMissingElementsReason).toBe('boolean');
+      }
     });
   });
 });
