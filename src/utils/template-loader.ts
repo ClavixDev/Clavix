@@ -1,9 +1,8 @@
 import * as path from 'path';
 import { AgentAdapter, CommandTemplate } from '../types/agent';
 import { FileSystem } from './file-system';
-import { parseTomlSlashCommand } from './toml-templates';
 
-export async function loadCommandTemplates(adapter: AgentAdapter): Promise<CommandTemplate[]> {
+export async function loadCommandTemplates(_adapter: AgentAdapter): Promise<CommandTemplate[]> {
   // Load from canonical template source (always .md files)
   const templatesDir = getCanonicalTemplatesDirectory();
   const files = await FileSystem.listFiles(templatesDir);
