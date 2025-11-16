@@ -123,7 +123,7 @@ export default class Init extends Command {
             new inquirer.Separator(),
             // Universal Adapters
             {
-              name: 'agents.md (Universal - for tools without slash commands)',
+              name: 'Agents (AGENTS.md - Universal - for tools without slash commands)',
               value: 'agents-md',
             },
             {
