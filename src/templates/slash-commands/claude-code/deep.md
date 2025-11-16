@@ -31,21 +31,37 @@ An academically-validated prompt engineering framework by Dr. Leo Lo (University
    - **Adaptiveness [A]**: Multiple variations and approaches
    - **Reflectiveness [R]**: Full validation and edge case analysis
 
-3. **Generate Comprehensive Output**:
+3. **Strategic Scope Detection** (before detailed analysis):
 
-   a. **📊 CLEAR Assessment** (all 5 components with scores)
+   **Check for strategic concerns** by identifying keywords/themes:
+   - **Architecture**: system design, microservices, monolith, architecture patterns, scalability patterns
+   - **Security**: authentication, authorization, encryption, security, OWASP, vulnerabilities, threat model
+   - **Scalability**: load balancing, caching, database scaling, performance optimization, high availability
+   - **Infrastructure**: deployment, CI/CD, DevOps, cloud infrastructure, containers, orchestration
+   - **Business Impact**: ROI, business metrics, KPIs, stakeholder impact, market analysis
 
-   b. **✨ CLEAR-Optimized Prompt** (applying all components)
+   **If 3+ strategic keywords detected**:
+   Ask the user: "I notice this involves strategic decisions around [detected themes]. These topics benefit from PRD-style planning with business context and architectural considerations. Would you like to:
+   - Switch to `/clavix:prd` for comprehensive strategic planning (recommended)
+   - Continue with deep mode for prompt-level analysis only"
 
-   c. **📝 CLEAR Changes Made** (labeled with [C], [L], [E], [A], [R])
+   **If user chooses to continue**, proceed with deep analysis but remind them at the end that `/clavix:prd` is available for strategic planning.
 
-   d. **🔄 Adaptive Variations [A]**:
+4. **Generate Comprehensive Output**:
+
+   a. **CLEAR Assessment** (all 5 components with scores)
+
+   b. **CLEAR-Optimized Prompt** (applying all components)
+
+   c. **CLEAR Changes Made** (labeled with [C], [L], [E], [A], [R])
+
+   d. **Adaptive Variations [A]**:
       - 2-3 alternative phrasings
       - Alternative structures (user story, job story, structured)
       - Temperature recommendations
       - Explain when each approach is most appropriate
 
-   e. **🤔 Reflection Checklist [R]**:
+   e. **Reflection Checklist [R]**:
       - Validation steps for accuracy
       - Edge cases to consider
       - "What could go wrong" analysis
@@ -62,14 +78,14 @@ An academically-validated prompt engineering framework by Dr. Leo Lo (University
 
 ## Deep Mode Features
 
-✅ Include (Full CLEAR Framework):
+**Include (Full CLEAR Framework):**
 - **[C, L, E]**: All fast mode analysis (conciseness, logic, explicitness)
 - **[A] Adaptive**: Alternative phrasings, structures, flexibility, temperature
 - **[R] Reflective**: Validation checklist, edge cases, quality criteria, fact-checking
 - **CLEAR Assessment**: All 5 component scores
 - **CLEAR-labeled Changes**: Educational feedback showing which component improved what
 
-❌ Do NOT include (these belong in `/clavix:prd`):
+**Do NOT include (these belong in `/clavix:prd`):**
 - System architecture recommendations
 - Security best practices
 - Scalability strategy
@@ -101,12 +117,12 @@ Output:
 - How to handle session expiration during active use?
 
 ## Implementation Examples
-✅ Good:
+**Good:**
 - Prompt specifies authentication method, error handling, and accessibility requirements
 - Includes context about existing auth system and integration points
 - Defines measurable success criteria (load time, accessibility score)
 
-❌ Bad:
+**Bad:**
 - "Make a login page" - no context, constraints, or success criteria
 - Missing technical stack and integration requirements
 - No consideration of security or user experience
@@ -137,6 +153,20 @@ Output:
 - **Deep mode** (`/clavix:deep`): Full CLEAR (C, L, E, A, R) - comprehensive analysis with alternatives and validation
 - **PRD mode** (`/clavix:prd`): CLEAR-validated PRD generation - strategic planning with architecture decisions
 
+## Workflow Navigation
+
+**You are here:** Deep Mode (Comprehensive CLEAR Analysis)
+
+**Common workflows:**
+- **Thorough analysis**: `/clavix:deep` → Use optimized prompt + alternatives
+- **Escalate to strategic**: `/clavix:deep` → (detects strategic scope) → `/clavix:prd` → Plan → Implement → Archive
+- **From fast mode**: `/clavix:fast` → (suggests) `/clavix:deep` → Full analysis with A & R components
+
+**Related commands:**
+- `/clavix:fast` - Quick CLEAR improvements (C, L, E only)
+- `/clavix:prd` - Strategic PRD generation for architecture/business decisions
+- `/clavix:start` - Conversational mode for exploring unclear requirements
+
 ## Tips
 
 - **Apply full CLEAR framework** systematically: all 5 components
@@ -145,3 +175,33 @@ Output:
 - Use **[A] Adaptive** to explore alternative approaches
 - Use **[R] Reflective** to identify edge cases and validation needs
 - For architecture, security, and scalability, recommend `/clavix:prd`
+
+## Troubleshooting
+
+### Issue: Strategic scope detected but user wants to continue with deep mode
+**Cause**: User prefers deep analysis over PRD generation
+**Solution**:
+- Proceed with deep mode as requested
+- Remind at end that `/clavix:prd` is available for strategic planning
+- Focus on prompt-level CLEAR analysis, exclude architecture recommendations
+
+### Issue: Too many alternative variations making output overwhelming
+**Cause**: Adaptive component generating many options
+**Solution**:
+- Limit to 2-3 most distinct alternatives
+- Focus on meaningfully different approaches (not minor wording changes)
+- Group similar variations together
+
+### Issue: Reflective validation finding too many edge cases
+**Cause**: Complex prompt with many potential failure modes
+**Solution**:
+- Prioritize most likely or highest-impact edge cases
+- Group related edge cases
+- Suggest documenting all edge cases in PRD for complex projects
+
+### Issue: Deep analysis still feels insufficient for complex project
+**Cause**: Project needs strategic planning, not just prompt analysis
+**Solution**:
+- Switch to `/clavix:prd` for comprehensive planning
+- Deep mode is for prompts, PRD mode is for projects
+- Use PRD workflow: PRD → Plan → Implement
