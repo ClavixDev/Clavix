@@ -28,16 +28,18 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('augment');
       expect(adapterNames).toContain('crush');
       expect(adapterNames).toContain('codebuddy');
-      expect(adapterNames).toContain('copilot');
+      // Note: copilot is now handled via CopilotInstructionsGenerator, not as an adapter
       expect(adapterNames).toContain('gemini');
       expect(adapterNames).toContain('qwen');
       expect(adapterNames).toContain('codex');
     });
 
-    it('should have exactly 16 built-in adapters', () => {
+    it('should have exactly 15 built-in adapters', () => {
       const adapters = manager.getAdapters();
 
-      expect(adapters.length).toBe(16);
+      // Note: Copilot was removed as an adapter and is now handled via CopilotInstructionsGenerator
+      // which injects into .github/copilot-instructions.md instead
+      expect(adapters.length).toBe(15);
 
       // Verify new adapters are registered
       const adapterNames = adapters.map(a => a.name);
@@ -47,7 +49,6 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('roocode');
       expect(adapterNames).toContain('augment');
       expect(adapterNames).toContain('codebuddy');
-      expect(adapterNames).toContain('copilot');
       expect(adapterNames).toContain('gemini');
       expect(adapterNames).toContain('qwen');
       expect(adapterNames).toContain('codex');

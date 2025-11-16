@@ -4,42 +4,48 @@ import { FileSystem } from './file-system';
 import { parseTomlSlashCommand } from './toml-templates';
 
 export async function loadCommandTemplates(adapter: AgentAdapter): Promise<CommandTemplate[]> {
-  const templatesDir = getTemplatesDirectory(adapter.name);
+  // Load from canonical template source (always .md files)
+  const templatesDir = getCanonicalTemplatesDirectory();
   const files = await FileSystem.listFiles(templatesDir);
   if (files.length === 0) {
     return [];
   }
 
-  const extension = adapter.fileExtension;
-  const commandFiles = files.filter((file) => file.endsWith(extension));
+  // Canonical templates are always .md files
+  const commandFiles = files.filter((file) => file.endsWith('.md'));
   const templates: CommandTemplate[] = [];
 
   for (const file of commandFiles) {
     const templatePath = path.join(templatesDir, file);
     const content = await FileSystem.readFile(templatePath);
-    const name = file.slice(0, -extension.length);
+    const name = file.slice(0, -3); // Remove .md extension
 
-    if (extension === '.toml') {
-      const parsed = parseTomlSlashCommand(content, name, adapter.name);
-      templates.push({
-        name,
-        content: parsed.prompt,
-        description: parsed.description,
-      });
-    } else {
-      templates.push({
-        name,
-        content,
-        description: extractDescription(content),
-      });
-    }
+    // Extract description and clean content from markdown
+    const description = extractDescription(content);
+    const cleanContent = stripFrontmatter(content);
+
+    templates.push({
+      name,
+      content: cleanContent,
+      description,
+    });
   }
 
   return templates;
 }
 
-function getTemplatesDirectory(adapterName: string): string {
-  return path.join(__dirname, '..', 'templates', 'slash-commands', adapterName);
+function getCanonicalTemplatesDirectory(): string {
+  return path.join(__dirname, '..', 'templates', 'slash-commands', '_canonical');
+}
+
+/**
+ * Strip YAML frontmatter from markdown content
+ * Returns clean content without the --- delimited frontmatter
+ */
+function stripFrontmatter(content: string): string {
+  // Match YAML frontmatter pattern: ---\n...\n---
+  const frontmatterRegex = /^---\r?\n[\s\S]*?\r?\n---\r?\n/;
+  return content.replace(frontmatterRegex, '').trim();
 }
 
 function extractDescription(content: string): string {

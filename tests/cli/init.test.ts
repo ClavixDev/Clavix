@@ -379,9 +379,21 @@ describe('Init command', () => {
   });
 
   describe('TOML template parsing', () => {
-    it('extracts description and prompt body without duplicating headers', async () => {
-      const templatePath = path.join(__dirname, '../../src/templates/slash-commands/gemini/archive.toml');
-      const templateContent = await fs.readFile(templatePath, 'utf8');
+    it('extracts description and prompt body without duplicating headers', () => {
+      // Note: TOML templates are now generated from canonical .md templates
+      // This test validates the parsing logic still works correctly
+      const templateContent = `description = "Archive completed PRD projects"
+
+prompt = """
+# Clavix Archive - Project Management
+
+Execute this command to archive or restore completed PRD projects.
+
+## Usage
+
+Archive projects that are complete or restore previously archived projects.
+"""
+`;
 
       const parsed = parseTomlSlashCommand(templateContent, 'archive', 'gemini');
 
