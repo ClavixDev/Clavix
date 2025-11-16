@@ -48,3 +48,6 @@ yarn-error.log*
 AGENTS.md
 OCTO.md
 CLAUDE.md
+
+# OpenSpec (local spec working files)
+openspec/
