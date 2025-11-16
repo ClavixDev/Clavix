@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-import { run as oclifRun, handle } from '@oclif/core';
+import { run as oclifRun, handle, settings } from '@oclif/core';
 
 export async function run(argv?: string[]) {
+  // Disable debug mode (stack traces) unless explicitly requested via DEBUG env var
+  if (!process.env.DEBUG) {
+    settings.debug = false;
+  }
   return oclifRun(argv);
 }
 

@@ -61,11 +61,7 @@ export default class Implement extends Command {
         tasksPath = path.join(prdPath, 'tasks.md');
 
         if (!(await fs.pathExists(tasksPath))) {
-          this.error(
-            chalk.red('No tasks.md found!') +
-            '\n\n' +
-            chalk.yellow('Hint: Run ') + chalk.cyan('clavix plan') + chalk.yellow(' first to generate task breakdown')
-          );
+          this.error('No tasks.md found\n\nHint: Run "clavix plan" first to generate task breakdown');
         }
 
         console.log(chalk.dim(`Found: ${tasksPath}\n`));
@@ -200,7 +196,7 @@ export default class Implement extends Command {
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      this.error(chalk.red(errorMessage));
+      this.error(errorMessage);
     }
   }
 
@@ -256,11 +252,7 @@ export default class Implement extends Command {
 
     // No PRD projects found
     if (prdProjects.length === 0) {
-      this.error(
-        chalk.yellow('Warning: No PRD projects found in .clavix/outputs/') +
-        '\n\n' +
-        chalk.gray('Hint: Create a PRD first using ') + chalk.cyan('clavix prd')
-      );
+      this.error('No PRD projects found in .clavix/outputs/\n\nHint: Create a PRD first using: clavix prd');
     }
 
     // Only one PRD - auto-select
@@ -359,7 +351,7 @@ export default class Implement extends Command {
         console.log(chalk.green('\nTasks generated! Continuing with implementation...\n'));
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        this.error(chalk.red(`Running clavix plan failed: ${errorMessage}`));
+        this.error(`Running clavix plan failed: ${errorMessage}`);
       }
     } else {
       console.log(chalk.dim('\nExiting. Run "clavix plan" when ready to generate tasks.\n'));

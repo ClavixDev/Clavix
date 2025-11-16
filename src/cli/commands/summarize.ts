@@ -54,18 +54,14 @@ export default class Summarize extends Command {
         session = await manager.getSession(args.sessionId);
 
         if (!session) {
-          this.error(chalk.red(`Session not found: ${args.sessionId}`));
+          this.error(`Session not found: ${args.sessionId}`);
         }
       } else if (flags.active) {
         console.log(chalk.dim('Loading most recent active session...\n'));
         session = await manager.getActiveSession();
 
         if (!session) {
-          this.error(
-            chalk.red('No active session found') +
-            '\n\n' +
-            chalk.gray('Hint: Use ') + chalk.cyan('clavix list') + chalk.gray(' to see all sessions')
-          );
+          this.error('No active session found\n\nHint: Use "clavix list" to see all sessions');
         }
       } else {
         // Try to get active session by default
@@ -73,12 +69,11 @@ export default class Summarize extends Command {
 
         if (!session) {
           this.error(
-            chalk.yellow('Warning: No active session found') +
-            '\n\n' +
-            chalk.gray('Usage:') +
-            '\n' + chalk.gray('  • ') + chalk.cyan('clavix summarize <session-id>') + chalk.gray(' - Summarize specific session') +
-            '\n' + chalk.gray('  • ') + chalk.cyan('clavix summarize --active') + chalk.gray(' - Summarize most recent active session') +
-            '\n' + chalk.gray('  • ') + chalk.cyan('clavix list') + chalk.gray(' - View all sessions')
+            'No active session found\n\n' +
+            'Usage:\n' +
+            '  • clavix summarize <session-id> - Summarize specific session\n' +
+            '  • clavix summarize --active - Summarize most recent active session\n' +
+            '  • clavix list - View all sessions'
           );
         }
       }
@@ -93,7 +88,7 @@ export default class Summarize extends Command {
 
       // Check if session has messages
       if (session.messages.length === 0) {
-        this.error(chalk.yellow('Warning: Session has no messages to analyze'));
+        this.error('Session has no messages to analyze');
       }
 
       // Analyze conversation
@@ -149,7 +144,7 @@ export default class Summarize extends Command {
       console.log();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      this.error(chalk.red(errorMessage));
+      this.error(errorMessage);
     }
   }
 

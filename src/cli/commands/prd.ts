@@ -185,7 +185,7 @@ export default class Prd extends Command {
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      this.error(chalk.red(errorMessage));
+      this.error(errorMessage);
     }
   }
 

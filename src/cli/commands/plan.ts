@@ -87,11 +87,11 @@ export default class Plan extends Command {
 
         if (!selectedProject) {
           this.error(
-            chalk.red('No PRD projects found in .clavix/outputs/') +
-            '\n\n' +
-            chalk.gray(
-              "Hint: Run 'clavix prd' to generate a PRD, 'clavix summarize' to create a mini-PRD, or use 'clavix plan --session <id>'"
-            )
+            'No PRD projects found in .clavix/outputs/\n\n' +
+            'Hints:\n' +
+            '  • Run "clavix prd" to generate a PRD\n' +
+            '  • Run "clavix summarize" to create a mini-PRD\n' +
+            '  • Use "clavix plan --session <id>" to plan from a session'
           );
         }
 
@@ -120,21 +120,19 @@ export default class Plan extends Command {
 
       if (availableSources.length === 0) {
         this.error(
-          chalk.red('No PRD artifacts found in this directory') +
-          '\n\n' +
-          chalk.gray(
-            'Hint: Generate a PRD with clavix prd, run clavix summarize, or supply a session via --session'
-          )
+          'No PRD artifacts found in this directory\n\n' +
+          'Hints:\n' +
+          '  • Generate a PRD with: clavix prd\n' +
+          '  • Create a mini-PRD with: clavix summarize\n' +
+          '  • Plan from a session with: clavix plan --session <id>'
         );
       }
 
       if (sourcePreference !== 'auto' && !availableSources.includes(sourcePreference)) {
         this.error(
-          chalk.red(`Preferred source "${sourcePreference}" not found in ${prdPath}`) +
-          '\n\n' +
-          chalk.gray(
-            `Hint: Available sources: ${availableSources.join(', ') || 'none'}. Override with --source`
-          )
+          `Preferred source "${sourcePreference}" not found in ${prdPath}\n\n` +
+          `Available sources: ${availableSources.join(', ') || 'none'}\n` +
+          'Hint: Override with --source flag'
         );
       }
 
@@ -217,7 +215,7 @@ export default class Plan extends Command {
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      this.error(chalk.red(errorMessage));
+      this.error(errorMessage);
     }
   }
 
