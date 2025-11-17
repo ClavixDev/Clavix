@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Bob5k/Clavix.git"
+    "url": "git+https://github.com/ClavixDev/Clavix.git"
   },
   "keywords": [
     "cli",
@@ -40,9 +40,9 @@
   "author": "Bob5k",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Bob5k/Clavix/issues"
+    "url": "https://github.com/ClavixDev/Clavix/issues"
   },
-  "homepage": "https://github.com/Bob5k/Clavix#readme",
+  "homepage": "https://github.com/ClavixDev/Clavix#readme",
   "engines": {
     "node": ">=18.0.0"
   },
