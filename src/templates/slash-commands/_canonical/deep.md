@@ -153,16 +153,39 @@ Output:
 - **Deep mode** (`/clavix:deep`): Full CLEAR (C, L, E, A, R) - comprehensive analysis with alternatives and validation
 - **PRD mode** (`/clavix:prd`): CLEAR-validated PRD generation - strategic planning with architecture decisions
 
+## Next Steps (v2.7+)
+
+After deep analysis completes, the prompt is automatically saved to `.clavix/outputs/prompts/deep/`.
+
+**Execute immediately:**
+```bash
+/clavix:execute
+```
+
+**Review saved prompts first:**
+```bash
+/clavix:prompts
+```
+
+**Cleanup old prompts:**
+```bash
+clavix prompts clear --deep
+```
+
 ## Workflow Navigation
 
 **You are here:** Deep Mode (Comprehensive CLEAR Analysis)
 
 **Common workflows:**
+- **Quick execute**: `/clavix:deep` → `/clavix:execute` → Implement
+- **Review first**: `/clavix:deep` → `/clavix:prompts` → `/clavix:execute`
 - **Thorough analysis**: `/clavix:deep` → Use optimized prompt + alternatives
 - **Escalate to strategic**: `/clavix:deep` → (detects strategic scope) → `/clavix:prd` → Plan → Implement → Archive
 - **From fast mode**: `/clavix:fast` → (suggests) `/clavix:deep` → Full analysis with A & R components
 
 **Related commands:**
+- `/clavix:execute` - Execute saved prompt
+- `/clavix:prompts` - Manage saved prompts
 - `/clavix:fast` - Quick CLEAR improvements (C, L, E only)
 - `/clavix:prd` - Strategic PRD generation for architecture/business decisions
 - `/clavix:start` - Conversational mode for exploring unclear requirements

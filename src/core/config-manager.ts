@@ -290,7 +290,7 @@ export class ConfigManager {
    * @param config - Old config format
    * @returns Migrated config
    */
-  private migrateConfig(config: any): ImplementConfig {
+  private migrateConfig(config: Partial<ImplementConfig>): ImplementConfig {
     // If already has new fields, return as-is
     if (config.completedTaskIds !== undefined) {
       return config as ImplementConfig;
@@ -298,10 +298,10 @@ export class ConfigManager {
 
     // Migrate from old format
     const migrated: ImplementConfig = {
-      commitStrategy: config.commitStrategy,
-      tasksPath: config.tasksPath,
-      currentTask: config.currentTask,
-      stats: config.stats,
+      commitStrategy: config.commitStrategy ?? 'none',
+      tasksPath: config.tasksPath ?? '',
+      currentTask: config.currentTask ?? { id: 'initial', description: 'Initial Task', phase: 'initialization', completed: false },
+      stats: config.stats ?? { total: 0, completed: 0, remaining: 0, percentage: 0 },
       timestamp: config.timestamp ?? new Date().toISOString(),
       completedTaskIds: [],
       completionTimestamps: {},

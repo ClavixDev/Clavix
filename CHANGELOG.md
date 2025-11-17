@@ -5,6 +5,198 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2025-11-17
+
+### 🎉 New Features - Prompt Lifecycle Management
+
+#### Prompt Persistence & Execution System
+Transform vague ideas into executable prompts with full lifecycle tracking.
+
+**Core Features:**
+- **Automatic Prompt Saving**: Optimized prompts from `/clavix:fast` and `/clavix:deep` auto-saved to `.clavix/outputs/prompts/`
+  - Fast prompts: `.clavix/outputs/prompts/fast/`
+  - Deep prompts: `.clavix/outputs/prompts/deep/`
+  - Each saved prompt includes:
+    - Original user input
+    - CLEAR-optimized version
+    - CLEAR Framework scores (C, L, E for fast; full C, L, E, A, R for deep)
+    - Metadata (timestamp, source, execution status)
+    - Unique ID for tracking (`{source}-YYYYMMDD-HHMMSS-{hash}`)
+
+- **`clavix execute` - Prompt Execution Command**
+  ```bash
+  clavix execute               # Interactive selection
+  clavix execute --latest      # Execute most recent prompt
+  clavix execute --latest --fast   # Latest fast mode prompt
+  clavix execute --latest --deep   # Latest deep mode prompt
+  clavix execute --id <prompt-id>  # Execute specific prompt by ID
+  ```
+  - Interactive prompt selection with details
+  - Auto-marks prompts as EXECUTED after display
+  - Storage cleanup suggestions post-execution
+  - Agent-friendly with `--latest` flag
+
+- **`clavix prompts list` - Lifecycle Visibility**
+  ```bash
+  clavix prompts list          # View all saved prompts
+  ```
+  - Status indicators: ✓ EXECUTED, ○ NEW
+  - Age warnings: >7 days = OLD (yellow), >30 days = STALE (red)
+  - Grouped by source (fast/deep)
+  - Storage statistics dashboard:
+    - Total prompts count
+    - Fast vs deep breakdown
+    - Executed vs pending counts
+    - Oldest prompt age
+  - Hygiene recommendations (stale prompts, executed cleanup, storage limits)
+
+- **`clavix prompts clear` - Storage Hygiene Management**
+  ```bash
+  clavix prompts clear                 # Interactive cleanup
+  clavix prompts clear --executed      # Clear executed prompts (safe)
+  clavix prompts clear --stale         # Clear prompts >30 days old
+  clavix prompts clear --fast          # Clear fast mode prompts
+  clavix prompts clear --deep          # Clear deep mode prompts
+  clavix prompts clear --all           # Clear all (with confirmation)
+  clavix prompts clear --all --force   # Skip confirmations
+  ```
+  - Safety confirmations before deletion
+  - Preview before cleanup
+  - Unexecuted prompt warnings
+  - Filter composition (combine flags)
+
+#### Slash Commands - AI Agent Integration
+
+- **`/clavix:execute` - Execute Saved Prompts**
+  - Full integration with agent workflows
+  - Supports interactive selection or `--latest` flag
+  - Template includes agent recovery instructions
+  - Cross-references to prompt management commands
+
+- **`/clavix:prompts` - Manage Prompt Lifecycle**
+  - Complete workflow documentation for agents
+  - List, cleanup, and hygiene workflows
+  - Best practices for lifecycle management
+  - Storage health monitoring
+
+### 🏗️ Technical Implementation
+
+**New Core Module:**
+- `src/core/prompt-manager.ts` - PromptManager class
+  - `savePrompt()` - Save with metadata and frontmatter
+  - `loadPrompt()` - Retrieve by ID
+  - `listPrompts()` - Filter by source/executed/age
+  - `deletePrompts()` - Remove with safety filters
+  - `markExecuted()` - Update execution status
+  - `getPromptAge()` - Calculate days since creation
+  - `getStorageStats()` - Real-time statistics
+  - Index management via `.index.json`
+  - Age-based stale detection (>30 days)
+
+**New CLI Commands:**
+- `src/cli/commands/execute.ts` - Execution command with flags
+- `src/cli/commands/prompts/list.ts` - Listing with statistics
+- `src/cli/commands/prompts/clear.ts` - Cleanup with safety
+
+**New Canonical Templates:**
+- `src/templates/slash-commands/_canonical/execute.md` - Agent execution workflow
+- `src/templates/slash-commands/_canonical/prompts.md` - Agent lifecycle management
+
+**Updated Canonical Templates:**
+- `src/templates/slash-commands/_canonical/fast.md` - Auto-save notification + next steps
+- `src/templates/slash-commands/_canonical/deep.md` - Auto-save notification + next steps
+- `src/templates/slash-commands/_canonical/archive.md` - Prompts exclusion documentation
+
+**Updated Commands:**
+- `src/cli/commands/fast.ts` - Integrated PromptManager, auto-saves after optimization
+- `src/cli/commands/deep.ts` - Integrated PromptManager, auto-saves after optimization
+
+### 📊 Workflow Improvements
+
+**Before v2.7.0:**
+```bash
+clavix fast "create a login page"
+→ See optimized prompt in terminal
+→ Copy-paste manually
+→ Implement
+→ Prompt lost after session
+```
+
+**After v2.7.0:**
+```bash
+clavix fast "create a login page"
+→ Auto-saved to .clavix/outputs/prompts/fast/fast-20251117-143022-a3f8.md
+→ ✅ Prompt saved!
+
+clavix prompts list
+→ Review all saved prompts with status
+
+clavix execute --latest
+→ Select and implement when ready
+
+clavix prompts clear --executed
+→ Clean up after completion
+```
+
+### 🎯 Benefits
+
+- **No Lost Prompts**: All CLEAR-optimized prompts automatically persisted
+- **Review Before Execution**: See all saved prompts, choose when to implement
+- **Lifecycle Awareness**: Age tracking prevents stale prompt accumulation
+- **Storage Hygiene**: Easy cleanup of executed/old prompts with safety checks
+- **Agent-Friendly**: Full slash command integration for AI coding assistants
+- **Robustness**: Safety confirmations, preview before deletion, unexecuted warnings
+- **Statistics Dashboard**: Real-time visibility into prompt storage health
+
+### 📚 Documentation Updates
+
+**Updated Files:**
+- `CLAUDE.md` - Complete v2.7 workflow documentation
+- `fast.md` / `deep.md` templates - Next steps with execute/prompts commands
+- `archive.md` template - Prompts separation from PRD lifecycle
+- New `execute.md` and `prompts.md` templates for agent workflows
+
+### ⚡ Migration Notes
+
+**Existing Users:**
+- ✅ No breaking changes
+- ✅ Old workflow still works (manual copy-paste)
+- ✅ New workflow is opt-in (use `/clavix:execute`)
+- ✅ Prompts saved automatically after upgrade
+
+**Best Practices:**
+1. Review prompts weekly: `clavix prompts list`
+2. Clear after execution: `clavix prompts clear --executed`
+3. Remove stale prompts: `clavix prompts clear --stale`
+4. Keep storage lean (<20 active prompts recommended)
+
+**Complete Lifecycle:**
+```
+CREATE     → clavix fast/deep "requirement"
+REVIEW     → clavix prompts list
+EXECUTE    → clavix execute --latest
+CLEANUP    → clavix prompts clear --executed
+```
+
+### 🔗 Related Commands
+
+**Prompt Optimization:**
+- `clavix fast` - Quick CLEAR improvements (C, L, E)
+- `clavix deep` - Full CLEAR analysis (C, L, E, A, R)
+
+**Prompt Management:**
+- `clavix execute` - Execute saved prompts
+- `clavix prompts list` - View all prompts
+- `clavix prompts clear` - Cleanup prompts
+
+**Slash Commands:**
+- `/clavix:fast` - Quick optimization (auto-save)
+- `/clavix:deep` - Deep optimization (auto-save)
+- `/clavix:execute` - Execute saved prompts
+- `/clavix:prompts` - Manage lifecycle
+
+---
+
 ## [2.4.0] - 2025-11-16
 
 ### 🎯 Major Improvements

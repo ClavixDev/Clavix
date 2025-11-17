@@ -136,16 +136,38 @@ Success Criteria:
 [E] Added explicit specifications: React TypeScript persona, component output format, production-ready tone, accessibility criteria
 ```
 
+## Next Steps (v2.7+)
+
+After fast optimization completes, the prompt is automatically saved to `.clavix/outputs/prompts/fast/`.
+
+**Execute immediately:**
+```bash
+/clavix:execute
+```
+
+**Review saved prompts first:**
+```bash
+/clavix:prompts
+```
+
+**Cleanup old prompts:**
+```bash
+clavix prompts clear --fast
+```
+
 ## Workflow Navigation
 
 **You are here:** Fast Mode (Quick CLEAR Improvement)
 
 **Common workflows:**
-- **Quick cleanup**: `/clavix:fast` → Use improved prompt
+- **Quick cleanup**: `/clavix:fast` → `/clavix:execute` → Implement
+- **Review first**: `/clavix:fast` → `/clavix:prompts` → `/clavix:execute`
 - **Need more depth**: `/clavix:fast` → (suggests) `/clavix:deep` → Comprehensive analysis
 - **Strategic planning**: `/clavix:fast` → (suggests) `/clavix:prd` → Plan → Implement → Archive
 
 **Related commands:**
+- `/clavix:execute` - Execute saved prompt
+- `/clavix:prompts` - Manage saved prompts
 - `/clavix:deep` - Full CLEAR analysis (all 5 components: C, L, E, A, R)
 - `/clavix:prd` - Generate PRD for strategic planning
 - `/clavix:start` - Conversational exploration before prompting

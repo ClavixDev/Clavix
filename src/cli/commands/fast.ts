@@ -2,6 +2,7 @@ import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { PromptOptimizer, CLEARResult, ImprovedPrompt, CLEARScore } from '../../core/prompt-optimizer';
+import { PromptManager } from '../../core/prompt-manager';
 
 export default class Fast extends Command {
   static description = 'Quickly improve a prompt using CLEAR framework (Concise, Logical, Explicit) with smart triage';
@@ -112,6 +113,9 @@ export default class Fast extends Command {
 
     // Display full analysis
     this.displayFastModeOutput(result, clearResult, clearScore);
+
+    // Save prompt to file system
+    await this.savePrompt(clearResult.improvedPrompt, args.prompt, clearScore);
   }
 
   private displayFastModeOutput(result: ImprovedPrompt, clearResult: CLEARResult, clearScore: CLEARScore): void {
@@ -364,6 +368,40 @@ export default class Fast extends Command {
     console.log(overallColor.bold(`  Overall Score: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})\n`));
 
     console.log(chalk.gray('Use without --clear-only flag to see improved prompt and changes.\n'));
+  }
+
+  private async savePrompt(improvedPrompt: string, originalPrompt: string, clearScore: CLEARScore): Promise<void> {
+    try {
+      const promptManager = new PromptManager();
+
+      // Build content with CLEAR scores
+      const content = `# Improved Prompt
+
+${improvedPrompt}
+
+## CLEAR Scores
+- **C** (Conciseness): ${clearScore.conciseness.toFixed(0)}%
+- **L** (Logic): ${clearScore.logic.toFixed(0)}%
+- **E** (Explicitness): ${clearScore.explicitness.toFixed(0)}%
+- **Overall**: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})
+
+## Original Prompt
+\`\`\`
+${originalPrompt}
+\`\`\`
+`;
+
+      const metadata = await promptManager.savePrompt(content, 'fast', originalPrompt);
+
+      console.log(chalk.green(`\n✅ Prompt saved to: ${metadata.filename}`));
+      console.log(chalk.cyan(`\n💡 Next steps:`));
+      console.log(chalk.cyan(`   /clavix:execute    - Implement this prompt`));
+      console.log(chalk.cyan(`   /clavix:prompts    - Review all saved prompts`));
+      console.log();
+    } catch (error) {
+      // Don't fail the command if saving fails
+      console.log(chalk.yellow(`\n⚠️  Could not save prompt: ${error}`));
+    }
   }
 
   private displayFrameworkInfo(): void {

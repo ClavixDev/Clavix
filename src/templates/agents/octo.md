@@ -215,12 +215,39 @@ Detect user intent from keywords and trigger appropriate workflow. Use Octofrien
 
 ---
 
+### Prompt Execution Workflow
+**Trigger Keywords:** execute prompt, implement saved prompt, run optimized prompt, use saved optimization
+
+**When to use:** User has saved prompts from fast/deep optimization and wants to execute them
+
+**Process:**
+1. List saved prompts: `clavix prompts list`
+   - Shows all prompts with status (NEW, EXECUTED, OLD, STALE)
+   - Displays age warnings and storage statistics
+2. Execute interactively: `clavix execute` (select from list)
+   - Or execute latest: `clavix execute --latest`
+   - Or execute specific: `clavix execute --id <prompt-id>`
+3. Prompt is marked as EXECUTED after display
+4. Implement the requirements from the optimized prompt
+5. Cleanup after completion: `clavix prompts clear --executed`
+
+**Octofriend Tip:**
+- Execute complex prompts with thinking models for better analysis
+- Execute simple prompts with fast models for quick implementation
+- Your autofix capabilities help recover from implementation failures
+- Use `--latest` flag for streamlined workflow automation
+
+---
+
 ### CLI reference cheat sheet
 
 | Command | Use it for |
 | --- | --- |
 | `clavix init` | Rebuild `.clavix` structure and regenerate provider assets. |
-| `clavix fast` / `clavix deep` | CLEAR-based prompt improvement (quick vs. comprehensive). |
+| `clavix fast` / `clavix deep` | CLEAR-based prompt improvement (quick vs. comprehensive). Auto-saves prompts to `.clavix/outputs/prompts/`. |
+| `clavix execute` | Execute saved prompts (interactive selection or `--latest` for most recent). |
+| `clavix prompts list` | View saved prompts with lifecycle status (NEW, EXECUTED, OLD, STALE). |
+| `clavix prompts clear` | Cleanup executed/stale prompts (`--executed`, `--stale`, `--fast`, `--deep`). |
 | `clavix prd` | Guided questions to create PRDs. |
 | `clavix plan` | Convert PRD artifacts into task lists. |
 | `clavix implement` | Step through tasks with optional git automation. |

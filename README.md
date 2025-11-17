@@ -39,9 +39,40 @@ clavix init
 /clavix:fast "Create a login page"
 /clavix:deep "Build an API for user management"
 /clavix:prd  # Full PRD workflow
+
+# 3. Execute saved prompts (v2.7+)
+/clavix:execute  # Interactive selection of saved prompts
+/clavix:prompts  # Manage prompt lifecycle
+
+# Or via CLI
+clavix execute --latest
+clavix prompts list
+clavix prompts clear --executed
 ```
 
 **Supported agents**: Claude Code, Cursor, Windsurf, and [15+ more providers](docs/providers.md)
+
+### Prompt Lifecycle Management (v2.7+)
+
+Clavix now automatically saves prompts from fast/deep optimization, allowing you to:
+- 💾 **Review** saved prompts before execution
+- ⚡ **Execute** prompts when ready
+- 📊 **Track** prompt lifecycle (NEW → EXECUTED → STALE)
+- 🧹 **Clean up** old prompts with safety checks
+
+**Complete workflow:**
+1. **Optimize**: `/clavix:fast` or `/clavix:deep` → Auto-saved to `.clavix/outputs/prompts/`
+2. **Review**: `/clavix:prompts` or `clavix prompts list` → View all saved prompts with status
+3. **Execute**: `/clavix:execute` or `clavix execute --latest` → Implement when ready
+4. **Cleanup**: `clavix prompts clear --executed` → Remove completed prompts
+
+**Storage hygiene:**
+- Age warnings: >7 days = OLD, >30 days = STALE
+- Safety confirmations before deletion
+- Smart recommendations for cleanup
+- Keep <20 active prompts recommended
+
+Learn more: [Complete prompt lifecycle documentation](#prompt-management-commands)
 
 ### Direct CLI Usage (Alternative)
 
@@ -71,3 +102,13 @@ clavix prd
 
 ## License
 MIT
+
+## Star History
+
+<a href="https://www.star-history.com/#Bob5k/Clavix&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Bob5k/Clavix&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Bob5k/Clavix&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Bob5k/Clavix&type=date&legend=top-left" />
+ </picture>
+</a>

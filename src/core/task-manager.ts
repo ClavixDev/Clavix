@@ -798,7 +798,7 @@ export class TaskManager {
       const phases = await this.readTasksFile(tasksPath);
       const task = this.validateTaskExists(phases, taskId);
       return task ? task.completed : false;
-    } catch (error) {
+    } catch {
       // If we can't read the file, verification failed
       return false;
     }
@@ -834,7 +834,7 @@ export class TaskManager {
       backupPath = `${tasksPath}.backup`;
       try {
         await fs.copyFile(tasksPath, backupPath);
-      } catch (error) {
+      } catch {
         warnings.push('Failed to create backup file');
       }
     }
@@ -917,7 +917,7 @@ export class TaskManager {
         try {
           await fs.copyFile(backupPath, tasksPath);
           warnings.push('Restored tasks.md from backup due to error');
-        } catch (restoreError) {
+        } catch {
           warnings.push('Failed to restore from backup');
         }
       }

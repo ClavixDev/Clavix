@@ -1,6 +1,7 @@
 import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import { PromptOptimizer, CLEARResult, ImprovedPrompt, CLEARScore } from '../../core/prompt-optimizer';
+import { PromptManager } from '../../core/prompt-manager';
 
 export default class Deep extends Command {
   static description = 'Perform comprehensive deep analysis using full CLEAR framework (Concise, Logical, Explicit, Adaptive, Reflective)';
@@ -61,6 +62,9 @@ export default class Deep extends Command {
     }
 
     this.displayOutput(result, clearResult, clearScore);
+
+    // Save prompt to file system
+    await this.savePrompt(clearResult.improvedPrompt, args.prompt, clearScore);
   }
 
   private displayOutput(result: ImprovedPrompt, clearResult: CLEARResult, clearScore: CLEARScore): void {
@@ -275,6 +279,42 @@ export default class Deep extends Command {
     console.log(overallColor.bold(`  Overall Score: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})\n`));
 
     console.log(chalk.gray('Use without --clear-only flag to see improved prompt and detailed sections.\n'));
+  }
+
+  private async savePrompt(improvedPrompt: string, originalPrompt: string, clearScore: CLEARScore): Promise<void> {
+    try {
+      const promptManager = new PromptManager();
+
+      // Build content with full CLEAR scores (including A and R)
+      const content = `# Improved Prompt
+
+${improvedPrompt}
+
+## CLEAR Scores (Deep Analysis)
+- **C** (Conciseness): ${clearScore.conciseness.toFixed(0)}%
+- **L** (Logic): ${clearScore.logic.toFixed(0)}%
+- **E** (Explicitness): ${clearScore.explicitness.toFixed(0)}%
+- **A** (Adaptiveness): ${(clearScore.adaptiveness || 0).toFixed(0)}%
+- **R** (Reflectiveness): ${(clearScore.reflectiveness || 0).toFixed(0)}%
+- **Overall**: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})
+
+## Original Prompt
+\`\`\`
+${originalPrompt}
+\`\`\`
+`;
+
+      const metadata = await promptManager.savePrompt(content, 'deep', originalPrompt);
+
+      console.log(chalk.green(`\n✅ Prompt saved to: ${metadata.filename}`));
+      console.log(chalk.cyan(`\n💡 Next steps:`));
+      console.log(chalk.cyan(`   /clavix:execute    - Implement this prompt`));
+      console.log(chalk.cyan(`   /clavix:prompts    - Review all saved prompts`));
+      console.log();
+    } catch (error) {
+      // Don't fail the command if saving fails
+      console.log(chalk.yellow(`\n⚠️  Could not save prompt: ${error}`));
+    }
   }
 
   private displayFrameworkInfo(): void {

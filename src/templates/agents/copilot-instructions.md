@@ -29,6 +29,34 @@ When working with this project, you can use the following Clavix commands:
 - `clavix archive [project]` - Archive or restore completed projects
 - `clavix update` - Refresh Clavix documentation and commands
 
+### Prompt Lifecycle Management (v2.7+)
+Clavix now automatically saves optimized prompts from fast/deep commands for later execution:
+
+- `clavix execute [--latest]` - Execute saved prompts from fast/deep optimization
+  - Interactive selection from saved prompts
+  - `--latest` flag for most recent prompt
+  - `--fast` / `--deep` filters with `--latest`
+  - `--id <prompt-id>` for specific prompt execution
+
+- `clavix prompts list` - View all saved prompts with lifecycle status
+  - Status indicators: NEW, EXECUTED, OLD (>7 days), STALE (>30 days)
+  - Storage statistics dashboard
+  - Age warnings and hygiene recommendations
+
+- `clavix prompts clear` - Manage prompt cleanup with safety checks
+  - `--executed` - Clear executed prompts only (safe cleanup)
+  - `--stale` - Clear prompts >30 days old
+  - `--fast` - Clear fast mode prompts
+  - `--deep` - Clear deep mode prompts
+  - `--all` - Clear all prompts (with confirmation)
+  - `--force` - Skip confirmation prompts
+
+**Prompt Lifecycle Workflow:**
+1. Optimize: `clavix fast/deep "<prompt>"` → Auto-saved to `.clavix/outputs/prompts/`
+2. Review: `clavix prompts list` → View all saved prompts with status
+3. Execute: `clavix execute --latest` → Implement when ready
+4. Cleanup: `clavix prompts clear --executed` → Remove completed prompts
+
 ## Workflow Patterns
 
 ### Quick Prompt Improvement

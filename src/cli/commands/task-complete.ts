@@ -1,6 +1,6 @@
 import { Command, Flags, Args } from '@oclif/core';
 import chalk from 'chalk';
-import { TaskManager, Task } from '../../core/task-manager';
+import { TaskManager, Task, TaskPhase } from '../../core/task-manager';
 import { ConfigManager } from '../../core/config-manager';
 import { GitManager, CommitStrategy } from '../../core/git-manager';
 import * as path from 'path';
@@ -231,7 +231,7 @@ export default class TaskComplete extends Command {
     configPath: string,
     strategy: CommitStrategy,
     completedTask: Task,
-    phases: any[]
+    phases: TaskPhase[]
   ): Promise<void> {
     console.log(chalk.dim(`Checking git commit strategy (${strategy})...`));
 
@@ -259,7 +259,7 @@ export default class TaskComplete extends Command {
         }
         break;
 
-      case 'per-phase':
+      case 'per-phase': {
         // Check if current phase is complete
         const currentPhase = phases.find(p => p.name === completedTask.phase);
         if (currentPhase) {
@@ -270,6 +270,7 @@ export default class TaskComplete extends Command {
           }
         }
         break;
+      }
 
       case 'none':
       default:
@@ -315,7 +316,7 @@ export default class TaskComplete extends Command {
   /**
    * Show next incomplete task
    */
-  private async showNextTask(taskManager: TaskManager, phases: any[]): Promise<void> {
+  private async showNextTask(taskManager: TaskManager, phases: TaskPhase[]): Promise<void> {
     const nextTask = taskManager.findFirstIncompleteTask(phases);
 
     if (!nextTask) {

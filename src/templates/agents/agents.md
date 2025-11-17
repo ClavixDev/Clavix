@@ -12,8 +12,11 @@ Use these instructions when your agent can only read documentation (no slash-com
 | Command | Purpose |
 | --- | --- |
 | `clavix init` | Interactive setup. Select providers and generate documentation/command files. |
-| `clavix fast "<prompt>"` | CLEAR (C/L/E) analysis with improved prompt output. |
-| `clavix deep "<prompt>"` | Full CLEAR (C/L/E/A/R) analysis, alternative variations, validation checklists. |
+| `clavix fast "<prompt>"` | CLEAR (C/L/E) analysis with improved prompt output. Auto-saves to `.clavix/outputs/prompts/fast/`. |
+| `clavix deep "<prompt>"` | Full CLEAR (C/L/E/A/R) analysis, alternative variations, validation checklists. Auto-saves to `.clavix/outputs/prompts/deep/`. |
+| `clavix execute [--latest]` | Execute saved prompts from fast/deep optimization. Interactive selection or `--latest` for most recent. |
+| `clavix prompts list` | View all saved prompts with status (NEW, EXECUTED, OLD, STALE) and storage statistics. |
+| `clavix prompts clear` | Manage prompt cleanup. Supports `--executed`, `--stale`, `--fast`, `--deep`, `--all` flags. |
 | `clavix prd` | Guided Socratic questions that generate `full-prd.md` and `quick-prd.md`. |
 | `clavix plan` | Transform PRDs or sessions into phase-based `tasks.md`. |
 | `clavix implement` | Walk through tasks, track progress, optionally set git auto-commit strategy. |

@@ -152,6 +152,29 @@ You are helping the user archive completed PRD projects to keep their workspace 
 - They're still accessible in archive directory
 - Can be restored at any time
 
+## Prompts Are Separate (v2.7+)
+
+Fast/deep prompts from `/clavix:fast` and `/clavix:deep` are stored separately in `.clavix/outputs/prompts/`.
+
+**Prompts are NOT archived with PRD projects.**
+
+**Manage prompts separately:**
+```bash
+clavix prompts list           # View all prompts
+clavix prompts clear          # Cleanup prompts
+/clavix:prompts               # Full management workflow
+```
+
+**Before archiving, consider cleanup:**
+```bash
+/clavix:prompts clear --executed
+```
+
+**Prompts lifecycle:**
+- Independent from PRD lifecycle
+- Managed via `/clavix:prompts`
+- Clear manually when project complete
+
 ## Example Workflows
 
 ### Workflow 1: Complete Project
