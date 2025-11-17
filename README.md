@@ -25,19 +25,36 @@ Clavix is built on CLEAR (Concise, Logical, Explicit, Adaptive, Reflective), an 
 Provider paths and argument placeholders are listed in [docs/providers.md](docs/providers.md).
 
 ## Quickstart
+
+### For AI Agents (Recommended)
+
+Most Clavix users work through AI coding assistants:
+
 ```bash
+# 1. Initialize in your project
 npm install -g clavix
-# or without a global install
-npx clavix@latest init
+clavix init
+
+# 2. Use slash commands in your AI agent
+/clavix:fast "Create a login page"
+/clavix:deep "Build an API for user management"
+/clavix:prd  # Full PRD workflow
 ```
 
-Common commands:
+**Supported agents**: Claude Code, Cursor, Windsurf, and [20+ more providers](docs/providers.md)
+
+### Direct CLI Usage (Alternative)
+
+You can also use Clavix directly from the terminal:
+
 ```bash
 clavix init
 clavix fast "Create a login page"
 clavix deep "Build an API for user management"
 clavix prd
 ```
+
+**Note**: CLI usage is primarily for initialization and state management. AI agents handle the workflow orchestration via slash commands.
 
 ## Full documentation
 - Overview & navigation: [docs/index.md](docs/index.md)

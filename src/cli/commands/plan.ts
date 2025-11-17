@@ -7,6 +7,7 @@ import { TaskManager, PrdSourceType } from '../../core/task-manager';
 import { SessionManager } from '../../core/session-manager';
 import { ConversationAnalyzer } from '../../core/conversation-analyzer';
 import { FileSystem } from '../../utils/file-system';
+import { AgentErrorMessages } from '../../utils/agent-error-messages';
 
 export default class Plan extends Command {
   static description = 'Generate implementation task breakdown from PRD';
@@ -86,13 +87,7 @@ export default class Plan extends Command {
         selectedProject = await this.resolveProjectDirectory(manager, flags.project);
 
         if (!selectedProject) {
-          this.error(
-            'No PRD projects found in .clavix/outputs/\n\n' +
-            'Hints:\n' +
-            '  • Run "clavix prd" to generate a PRD\n' +
-            '  • Run "clavix summarize" to create a mini-PRD\n' +
-            '  • Use "clavix plan --session <id>" to plan from a session'
-          );
+          this.error(AgentErrorMessages.noPrdFound());
         }
 
         prdPath = selectedProject.path;
@@ -119,13 +114,7 @@ export default class Plan extends Command {
       const availableSources = await manager.detectAvailableSources(prdPath);
 
       if (availableSources.length === 0) {
-        this.error(
-          'No PRD artifacts found in this directory\n\n' +
-          'Hints:\n' +
-          '  • Generate a PRD with: clavix prd\n' +
-          '  • Create a mini-PRD with: clavix summarize\n' +
-          '  • Plan from a session with: clavix plan --session <id>'
-        );
+        this.error(AgentErrorMessages.noPrdFound());
       }
 
       if (sourcePreference !== 'auto' && !availableSources.includes(sourcePreference)) {

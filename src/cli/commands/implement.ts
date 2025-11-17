@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { TaskManager } from '../../core/task-manager';
 import { GitManager, CommitStrategy } from '../../core/git-manager';
+import { AgentErrorMessages } from '../../utils/agent-error-messages';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -61,7 +62,8 @@ export default class Implement extends Command {
         tasksPath = path.join(prdPath, 'tasks.md');
 
         if (!(await fs.pathExists(tasksPath))) {
-          this.error('No tasks.md found\n\nHint: Run "clavix plan" first to generate task breakdown');
+          const projectName = flags.project || path.basename(path.dirname(tasksPath));
+          this.error(AgentErrorMessages.noTasksFound(projectName));
         }
 
         console.log(chalk.dim(`Found: ${tasksPath}\n`));
@@ -252,7 +254,7 @@ export default class Implement extends Command {
 
     // No PRD projects found
     if (prdProjects.length === 0) {
-      this.error('No PRD projects found in .clavix/outputs/\n\nHint: Create a PRD first using: clavix prd');
+      this.error(AgentErrorMessages.noPrdFound());
     }
 
     // Only one PRD - auto-select

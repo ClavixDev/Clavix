@@ -5,49 +5,83 @@ description: Archive completed PRD projects
 
 # Clavix Archive - PRD Project Archival
 
+> **⚠️ Agent Execution Note**: This command requires CLI execution. AI agents should run `clavix archive` via Bash tool to perform archival operations. Direct file manipulation is not recommended due to state tracking complexity.
+
 You are helping the user archive completed PRD projects to keep their workspace organized.
 
 ## Instructions
 
-1. **Understanding Archive**:
-   - Archives move completed PRD projects from `.clavix/outputs/` to `.clavix/outputs/archive/`
-   - Archived projects are no longer shown in active project lists
-   - Projects can be restored from archive if needed
-   - Only projects with all tasks completed should typically be archived
+### Part A: Agent Execution Protocol
 
-2. **Interactive Archive Mode**:
+**As an AI agent, you should:**
+
+1. **Run the CLI command** to handle archival operations:
    ```bash
    clavix archive
    ```
 
-   This will:
-   - List all PRD projects with 100% tasks completed
-   - Allow user to select which project to archive
-   - Confirm before archiving
-   - Move the project to archive directory
+   The CLI will:
+   - Prompt user for project selection
+   - Validate task completion status
+   - Handle file operations safely
+   - Update state tracking
 
-3. **Archive Specific Project**:
+2. **Choose the appropriate mode** based on user intent:
+
+   - **Interactive mode** (no arguments): User selects from list
+   - **Specific project**: `clavix archive [project-name]`
+   - **Force archive incomplete**: `clavix archive [project-name] --force`
+   - **Permanent delete**: `clavix archive [project-name] --delete`
+   - **List archived**: `clavix archive --list`
+   - **Restore**: `clavix archive --restore [project-name]`
+
+3. **Before running the command**, validate:
+   - Check if `.clavix/outputs/` directory exists
+   - Verify user intent (archive vs delete vs restore)
+   - Confirm project name if specified
+
+4. **After CLI completes**, communicate results:
+   - Confirm where project was moved
+   - Mention restoration is possible (unless deleted)
+   - Update user on next steps
+
+### Part B: Understanding Archive Operations
+
+**Archive Modes**:
+
+1. **Interactive Archive Mode**:
+   ```bash
+   clavix archive
+   ```
+
+   CLI behavior:
+   - Lists all PRD projects with 100% tasks completed
+   - Allows user to select which project to archive
+   - Confirms before archiving
+   - Moves the project to archive directory
+
+2. **Archive Specific Project**:
    ```bash
    clavix archive [project-name]
    ```
 
-   This will:
-   - Check task completion status
-   - Warn if tasks are incomplete
-   - Ask for confirmation
-   - Archive the specific project
+   CLI behavior:
+   - Checks task completion status
+   - Warns if tasks are incomplete
+   - Asks for confirmation
+   - Archives the specific project
 
-4. **Force Archive (Incomplete Tasks)**:
+3. **Force Archive (Incomplete Tasks)**:
    ```bash
    clavix archive [project-name] --force
    ```
 
-   Use this when:
+   Use when:
    - Project scope changed and some tasks are no longer relevant
    - User wants to archive work-in-progress
    - Tasks are incomplete but project is done
 
-5. **Delete Project (Permanent Removal)**: **DESTRUCTIVE ACTION**
+4. **Delete Project (Permanent Removal)**: **DESTRUCTIVE ACTION**
    ```bash
    clavix archive [project-name] --delete
    ```
@@ -73,7 +107,7 @@ You are helping the user archive completed PRD projects to keep their workspace 
    - Warns about permanent deletion
    - Lists what will be permanently deleted
 
-6. **List Archived Projects**:
+5. **List Archived Projects**:
    ```bash
    clavix archive --list
    ```
@@ -184,33 +218,53 @@ Result: Project permanently deleted from .clavix/outputs/api-experiment-1/
 
 When user mentions archiving or cleaning up projects:
 
-1. **Check completion status first**:
-   - Run `clavix archive` to see archivable projects
-   - Review task completion percentages
-   - Suggest archiving only completed projects
+1. **Validate prerequisites before running CLI**:
+   - Check if `.clavix/outputs/` directory exists
+   - If not, inform user no projects exist to archive
+   - Verify user intent (list, archive, restore, delete)
 
-2. **Confirm before archiving**:
-   - Always confirm which project to archive
-   - Mention the archive location
-   - Explain that it can be restored
+2. **Check completion status first**:
+   - Run `clavix archive` (interactive mode) to see archivable projects
+   - CLI will display projects with completion percentages
+   - Review output and communicate options to user
 
-3. **Use --force cautiously**:
+3. **Execute the appropriate command**:
+   - **Interactive selection**: `clavix archive` (let user pick from list)
+   - **Specific project**: `clavix archive [project-name]`
+   - **Force incomplete**: `clavix archive [project-name] --force`
+   - **List archived**: `clavix archive --list`
+   - **Restore**: `clavix archive --restore [project-name]`
+   - **Delete**: `clavix archive [project-name] --delete` (with extra caution)
+
+4. **Confirm before archiving**:
+   - If using specific project mode, confirm project name with user
+   - Mention the archive location (`.clavix/outputs/archive/`)
+   - Explain that restoration is possible
+
+5. **Use --force cautiously**:
    - Only when user explicitly wants to archive incomplete work
-   - Explain which tasks will remain incomplete
-   - Confirm they won't lose data (just moving location)
+   - Run command and let CLI show incomplete task count
+   - CLI will ask for user confirmation
+   - Explain they won't lose data (just moving location)
 
-4. **Suggest restoration**:
-   - If user mentions old work, check archive
-   - Use `clavix archive --list` to show what's archived
-   - Offer to restore if needed
+6. **Suggest restoration when appropriate**:
+   - If user mentions old/past work, check archive first
+   - Run `clavix archive --list` to show what's archived
+   - Offer to restore if needed via `clavix archive --restore [project]`
 
-5. **Handle delete requests carefully**:
-   - Always ask if they want to delete or archive
+7. **Handle delete requests with extreme caution**:
+   - Always ask: "Do you want to DELETE (permanent) or ARCHIVE (safe)?"
    - Explain that delete is permanent and irreversible
    - Suggest archive as the safer default
    - Use decision tree to help user decide
-   - Only proceed with `--delete` after clear confirmation
-   - Double-check it's truly no-value content (failed experiments, duplicates)
+   - Only run `--delete` after clear confirmation from user
+   - Double-check it's truly no-value content (failed experiments, duplicates, test data)
+   - CLI will require typing project name to confirm - this is expected
+
+8. **After CLI execution**:
+   - Communicate success/failure clearly
+   - Mention next steps (e.g., "Project archived, you can restore with `/clavix:archive --restore`")
+   - If error occurs, explain and suggest recovery options
 
 ## Workflow Navigation
 
@@ -238,54 +292,96 @@ When user mentions archiving or cleaning up projects:
 
 ### Issue: No projects available to archive
 **Cause**: No projects in `.clavix/outputs/` OR all already archived
-**Solution**:
-- Run `clavix archive --list` to see archived projects
-- Check `.clavix/outputs/` for active projects
-- If none exist, no action needed
+
+**Agent recovery**:
+1. Check if `.clavix/outputs/` exists: `ls .clavix/outputs/`
+2. If directory doesn't exist: "No PRD projects found. Create one with `/clavix:prd`"
+3. If empty: Run `clavix archive --list` to show archived projects
+4. Communicate: "All projects are already archived" or "No projects exist yet"
 
 ### Issue: Trying to archive project with incomplete tasks
 **Cause**: User wants to archive but tasks aren't 100% done
-**Solution** (inline):
-- Warn: "Project has X incomplete tasks. Archive anyway?"
-- Show which tasks are incomplete
-- Suggest `--force` flag if user confirms
-- Recommend completing tasks first if they're actually unfinished (not scope-changed)
+
+**Agent recovery**:
+1. CLI will warn about incomplete tasks
+2. Ask user: "Project has X incomplete tasks. Do you want to:
+   - Complete tasks first with `/clavix:implement`
+   - Archive anyway with `--force` (tasks remain incomplete but archived)
+   - Cancel archival"
+3. If user confirms force: Run `clavix archive [project] --force`
+4. If scope changed: Explain `--force` is appropriate
 
 ### Issue: Cannot restore archived project (name conflict)
 **Cause**: Project with same name already exists in active outputs
-**Solution**:
-- Error: "Project '[name]' already exists in active outputs"
-- Suggest renaming one of them
-- Or archive the active one first, then restore
-- Or restore to different name (if CLI supports it)
+
+**Agent recovery**:
+1. CLI will show error: "Project '[name]' already exists in active outputs"
+2. Ask user which option:
+   - Archive the active project first, then restore old one
+   - Keep both (manual rename required)
+   - Cancel restoration
+3. Execute user's choice
 
 ### Issue: Unsure whether to delete or archive
 **Cause**: User wants to clean up but uncertain about permanence
-**Solution**:
-- Use the decision tree in template
-- Default recommendation: ARCHIVE (safer)
-- Only suggest delete for: duplicates, failed experiments, test data
-- Remind: Archive is free, disk space is cheap, regret is expensive
+
+**Agent recovery**:
+1. Use decision tree to guide user:
+   ```
+   Ask user questions:
+   - "Is this a failed experiment with no learning value?"
+   - "Might you need to reference this code later?"
+   - "Are you unsure if it's valuable?"
+   ```
+2. Default recommendation: **ARCHIVE** (safer, reversible)
+3. Only suggest DELETE for: duplicates, failed experiments, test data with zero value
+4. Remind: "Archive is free, disk space is cheap, regret is expensive"
+
+### Issue: CLI command fails or hangs
+**Cause**: File system permissions, missing directory, or process error
+
+**Agent recovery**:
+1. Check error output from CLI
+2. Common fixes:
+   - Check `.clavix/outputs/` exists and is writable
+   - Verify project name is correct (no typos)
+   - Check if another process is accessing the files
+3. Suggest: Run with full project path or retry
+4. If persistent: Inform user to check file permissions
 
 ### Issue: Accidentally deleted project (used --delete instead of archive)
 **Cause**: User error or misunderstanding of --delete flag
-**Solution**:
-- Cannot be recovered from Clavix
-- Check if git history exists (if code was committed)
-- Check if user has backups
-- Learn: Use archive by default, delete only when absolutely certain
+
+**Agent recovery**:
+1. Acknowledge: "Project was permanently deleted via `--delete` flag"
+2. Check recovery options:
+   - "If code was committed to git, we can recover from git history"
+   - "Check if you have local backups"
+   - "Check if IDE has local history (VS Code, JetBrains)"
+3. Prevention: "Going forward, use ARCHIVE by default. Only DELETE when absolutely certain."
+4. No recovery possible from Clavix itself
 
 ### Issue: Archive directory getting too large
 **Cause**: Many archived projects accumulating
-**Solution**:
-- Archive is meant to grow - this is normal
-- Projects in archive don't affect performance
-- If truly concerned: Review archive, delete ancient/irrelevant projects
-- Or move very old archives to external backup storage
+
+**Agent response**:
+1. Explain: "Archive is designed to grow - this is normal behavior"
+2. Archived projects don't affect active command performance
+3. If user truly concerned:
+   - Review archive: `clavix archive --list`
+   - Identify ancient/irrelevant projects
+   - Delete only truly obsolete ones: `clavix archive [old-project] --delete`
+   - Or suggest external backup for very old projects
 
 ### Issue: Archived project but forgot what it was about
 **Cause**: No naming convention or time passed
-**Solution**:
-- Read PRD in archived project: `.clavix/outputs/archive/[project]/full-prd.md`
-- PRD contains problem, goal, and features
-- Consider better naming conventions: date-feature format (e.g., "2024-01-user-auth")
+
+**Agent recovery**:
+1. Read the PRD to remind user:
+   ```bash
+   cat .clavix/outputs/archive/[project-name]/full-prd.md
+   ```
+2. Summarize: Problem, Goal, Features from PRD
+3. Suggest: Better naming conventions going forward
+   - Example: `2024-01-user-auth` (date-feature format)
+   - Example: `ecommerce-checkout-v2` (project-component format)
