@@ -9,23 +9,24 @@ You are helping the user implement tasks from their task plan with AI assistance
 
 ## Instructions
 
-1. **Run the implement command**:
-   ```bash
-   clavix implement
-   ```
+1. **First-time setup - Run CLI command if needed**:
 
-   This will:
-   - Show interactive PRD selection (if multiple projects exist)
-   - Locate the `tasks.md` file for the selected/specified project
-   - Show current progress
-   - Display the next incomplete task
-   - Prompt for git auto-commit preferences
-   - Create a config file for the AI agent
+   Check if `.clavix-implement-config.json` exists in the PRD output folder.
 
-   **Note**: You can skip the selection menu by specifying a project:
-   ```bash
-   clavix implement --project my-feature
-   ```
+   **If config file does NOT exist** (first time running implement):
+   - Run the CLI command to initialize:
+     ```bash
+     clavix implement
+     ```
+   - This will:
+     - Show current progress
+     - Display the next incomplete task
+     - Prompt user for git auto-commit preferences
+     - Create `.clavix-implement-config.json` file
+   - Wait for command to complete, then proceed with step 2
+
+   **If config file already exists**:
+   - Skip to step 2 (implementation loop)
 
 2. **As the AI agent, you should**:
 
