@@ -1,9 +1,15 @@
 #!/usr/bin/env node
 
-import { settings, handle } from '@oclif/core';
-import clavixApp from '../dist/index.js';
+import { run, handle, settings } from '@oclif/core';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-// Disable debug mode (stack traces) unless explicitly requested via DEBUG env var
+// Get the project root (one level up from bin/)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectRoot = join(__dirname, '..');
+
+// Disable debug mode unless explicitly requested
 if (!process.env.DEBUG) {
   settings.debug = false;
 }
@@ -21,6 +27,5 @@ async function handleError(error) {
   return handle(error);
 }
 
-clavixApp
-  .run()
+run(undefined, projectRoot)
   .catch(handleError);

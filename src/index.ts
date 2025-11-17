@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-import { run as oclifRun, handle, settings } from '@oclif/core';
+import { run, handle, settings } from '@oclif/core';
 
-export async function run(argv?: string[]) {
-  // Disable debug mode (stack traces) unless explicitly requested via DEBUG env var
-  if (!process.env.DEBUG) {
-    settings.debug = false;
-  }
-  return oclifRun(argv);
+// Disable debug mode (stack traces) unless explicitly requested via DEBUG env var
+if (!process.env.DEBUG) {
+  settings.debug = false;
 }
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   run().catch(handle);
 }
+
+// Export for testing
+export { run };

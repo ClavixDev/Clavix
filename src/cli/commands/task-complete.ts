@@ -136,12 +136,15 @@ export default class TaskComplete extends Command {
         console.log(chalk.green(`✓ Task marked as completed\n`));
       }
 
+      // Re-read tasks file to get updated state (CRITICAL: phases object is stale)
+      const updatedPhases = await taskManager.readTasksFile(tasksPath);
+
       // Track completion in config
       console.log(chalk.dim('Updating configuration...'));
       await configManager.trackCompletion(configPath, taskId);
 
       // Update stats
-      const updatedStats = taskManager.getTaskStats(phases);
+      const updatedStats = taskManager.getTaskStats(updatedPhases);
       await configManager.update(configPath, { stats: updatedStats });
 
       console.log(chalk.green('✓ Configuration updated\n'));
@@ -159,12 +162,12 @@ export default class TaskComplete extends Command {
           configPath,
           config.commitStrategy,
           task,
-          phases
+          updatedPhases
         );
       }
 
       // Show next task
-      await this.showNextTask(taskManager, phases);
+      await this.showNextTask(taskManager, updatedPhases);
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
