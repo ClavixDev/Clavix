@@ -263,7 +263,7 @@ When starting implementation with `clavix implement`:
 | Command | Use it for |
 | --- | --- |
 | `clavix init` | Rebuild `.clavix` structure and regenerate provider assets. |
-| `clavix fast` / `clavix deep` | CLEAR-based prompt improvement (quick vs. comprehensive). Auto-saves prompts to `.clavix/outputs/prompts/`. |
+| `clavix fast` / `clavix deep` | CLEAR-based prompt improvement (quick vs. comprehensive). CLI auto-saves prompts. Slash commands require manual saving per template instructions. |
 | `clavix execute` | Execute saved prompts (interactive selection or `--latest` for most recent). |
 | `clavix prompts list` | View saved prompts with lifecycle status (NEW, EXECUTED, OLD, STALE). |
 | `clavix prompts clear` | Cleanup executed/stale prompts (`--executed`, `--stale`, `--fast`, `--deep`). |

@@ -155,11 +155,110 @@ Output:
 
 ## Next Steps (v2.7+)
 
-After deep analysis completes, the prompt is automatically saved to `.clavix/outputs/prompts/deep/`.
+### Saving the Prompt (REQUIRED)
+
+After displaying the CLEAR-optimized prompt, you MUST save it to ensure it's available for the prompt lifecycle workflow.
+
+**If user ran CLI command** (`clavix deep "prompt"`):
+- Prompt is automatically saved ✓
+- Skip to "Executing the Saved Prompt" section below
+
+**If you are executing this slash command** (`/clavix:deep`):
+- You MUST save the prompt manually
+- Follow these steps:
+
+#### Step 1: Create Directory Structure
+```bash
+mkdir -p .clavix/outputs/prompts/deep
+```
+
+#### Step 2: Generate Unique Prompt ID
+Create a unique identifier using this format:
+- **Format**: `deep-YYYYMMDD-HHMMSS-<random>`
+- **Example**: `deep-20250117-143022-a3f2`
+- Use current timestamp + random 4-character suffix
+
+#### Step 3: Save Prompt File
+Use the Write tool to create the prompt file at:
+- **Path**: `.clavix/outputs/prompts/deep/<prompt-id>.md`
+
+**File content format**:
+```markdown
+---
+id: <prompt-id>
+source: deep
+timestamp: <ISO-8601 timestamp>
+executed: false
+originalPrompt: <user's original prompt text>
+---
+
+# Improved Prompt
+
+<Insert the CLEAR-optimized prompt content from your analysis above>
+
+## CLEAR Scores
+- **C** (Conciseness): <percentage>%
+- **L** (Logic): <percentage>%
+- **E** (Explicitness): <percentage>%
+- **A** (Adaptiveness): <percentage>%
+- **R** (Reflectiveness): <percentage>%
+- **Overall**: <percentage>% (<rating>)
+
+## Alternative Variations
+
+<Insert adaptive variations from your analysis>
+
+## Reflection Checklist
+
+<Insert reflective validation from your analysis>
+
+## Original Prompt
+```
+<user's original prompt text>
+```
+```
+
+#### Step 4: Update Index File
+Use the Write tool to update the index at `.clavix/outputs/prompts/deep/.index.json`:
+
+**If index file doesn't exist**, create it with:
+```json
+{
+  "version": "1.0",
+  "prompts": []
+}
+```
+
+**Then add a new metadata entry** to the `prompts` array:
+```json
+{
+  "id": "<prompt-id>",
+  "filename": "<prompt-id>.md",
+  "source": "deep",
+  "timestamp": "<ISO-8601 timestamp>",
+  "createdAt": "<ISO-8601 timestamp>",
+  "path": ".clavix/outputs/prompts/deep/<prompt-id>.md",
+  "originalPrompt": "<user's original prompt text>",
+  "executed": false,
+  "executedAt": null
+}
+```
+
+**Important**: Read the existing index first, append the new entry to the `prompts` array, then write the updated index back.
+
+#### Step 5: Verify Saving Succeeded
+Confirm:
+- File exists at `.clavix/outputs/prompts/deep/<prompt-id>.md`
+- Index file updated with new entry
+- Display success message: `✓ Prompt saved: <prompt-id>.md`
+
+### Executing the Saved Prompt
+
+After saving completes successfully:
 
 **Execute immediately:**
 ```bash
-/clavix:execute
+/clavix:execute --latest
 ```
 
 **Review saved prompts first:**
@@ -200,6 +299,27 @@ clavix prompts clear --deep
 - For architecture, security, and scalability, recommend `/clavix:prd`
 
 ## Troubleshooting
+
+### Issue: Prompt Not Saved
+
+**Error: Cannot create directory**
+```bash
+mkdir -p .clavix/outputs/prompts/deep
+```
+
+**Error: Index file corrupted or invalid JSON**
+```bash
+echo '{"version":"1.0","prompts":[]}' > .clavix/outputs/prompts/deep/.index.json
+```
+
+**Error: Duplicate prompt ID**
+- Generate a new ID with a different timestamp or random suffix
+- Retry the save operation with the new ID
+
+**Error: File write permission denied**
+- Check directory permissions
+- Ensure `.clavix/` directory is writable
+- Try creating the directory structure again
 
 ### Issue: Strategic scope detected but user wants to continue with deep mode
 **Cause**: User prefers deep analysis over PRD generation

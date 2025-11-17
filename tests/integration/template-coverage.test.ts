@@ -51,6 +51,46 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('.clavix/outputs/prompts/fast');
     });
 
+    it('fast.md should have explicit prompt saving instructions for agents (v2.8.1)', () => {
+      const fastPath = path.join(canonicalDir, 'fast.md');
+      const content = fs.readFileSync(fastPath, 'utf-8');
+
+      // Check for required saving section
+      expect(content).toContain('Saving the Prompt (REQUIRED)');
+
+      // Check for conditional logic
+      expect(content).toContain('If user ran CLI command');
+      expect(content).toContain('If you are executing this slash command');
+
+      // Check for step-by-step instructions
+      expect(content).toContain('Step 1: Create Directory Structure');
+      expect(content).toContain('mkdir -p .clavix/outputs/prompts/fast');
+
+      expect(content).toContain('Step 2: Generate Unique Prompt ID');
+      expect(content).toContain('fast-YYYYMMDD-HHMMSS-<random>');
+
+      expect(content).toContain('Step 3: Save Prompt File');
+      expect(content).toContain('Use the Write tool');
+
+      expect(content).toContain('Step 4: Update Index File');
+      expect(content).toContain('.index.json');
+
+      expect(content).toContain('Step 5: Verify Saving Succeeded');
+
+      // Check for file format specification
+      expect(content).toContain('id:');
+      expect(content).toContain('source: fast');
+      expect(content).toContain('timestamp:');
+      expect(content).toContain('executed: false');
+      expect(content).toContain('originalPrompt:');
+
+      // Check for troubleshooting
+      expect(content).toContain('Issue: Prompt Not Saved');
+      expect(content).toContain('Error: Cannot create directory');
+      expect(content).toContain('Error: Index file corrupted');
+      expect(content).toContain('Error: Duplicate prompt ID');
+    });
+
     it('deep.md should reference v2.7 features', () => {
       const deepPath = path.join(canonicalDir, 'deep.md');
       const content = fs.readFileSync(deepPath, 'utf-8');
@@ -59,6 +99,50 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('/clavix:execute');
       expect(content).toContain('/clavix:prompts');
       expect(content).toContain('.clavix/outputs/prompts/deep');
+    });
+
+    it('deep.md should have explicit prompt saving instructions for agents (v2.8.1)', () => {
+      const deepPath = path.join(canonicalDir, 'deep.md');
+      const content = fs.readFileSync(deepPath, 'utf-8');
+
+      // Check for required saving section
+      expect(content).toContain('Saving the Prompt (REQUIRED)');
+
+      // Check for conditional logic
+      expect(content).toContain('If user ran CLI command');
+      expect(content).toContain('If you are executing this slash command');
+
+      // Check for step-by-step instructions
+      expect(content).toContain('Step 1: Create Directory Structure');
+      expect(content).toContain('mkdir -p .clavix/outputs/prompts/deep');
+
+      expect(content).toContain('Step 2: Generate Unique Prompt ID');
+      expect(content).toContain('deep-YYYYMMDD-HHMMSS-<random>');
+
+      expect(content).toContain('Step 3: Save Prompt File');
+      expect(content).toContain('Use the Write tool');
+
+      expect(content).toContain('Step 4: Update Index File');
+      expect(content).toContain('.index.json');
+
+      expect(content).toContain('Step 5: Verify Saving Succeeded');
+
+      // Check for file format specification (deep includes A & R scores)
+      expect(content).toContain('id:');
+      expect(content).toContain('source: deep');
+      expect(content).toContain('timestamp:');
+      expect(content).toContain('executed: false');
+      expect(content).toContain('originalPrompt:');
+      expect(content).toContain('A** (Adaptiveness)');
+      expect(content).toContain('R** (Reflectiveness)');
+      expect(content).toContain('Alternative Variations');
+      expect(content).toContain('Reflection Checklist');
+
+      // Check for troubleshooting
+      expect(content).toContain('Issue: Prompt Not Saved');
+      expect(content).toContain('Error: Cannot create directory');
+      expect(content).toContain('Error: Index file corrupted');
+      expect(content).toContain('Error: Duplicate prompt ID');
     });
 
     it('archive.md should mention prompt separation', () => {
@@ -101,6 +185,13 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('--executed');
       expect(content).toContain('--stale');
     });
+
+    it('should clarify CLI auto-save vs slash command manual save (v2.8.1)', () => {
+      const content = fs.readFileSync(agentsPath, 'utf-8');
+
+      expect(content).toContain('CLI auto-saves');
+      expect(content).toContain('agent must save manually per template instructions');
+    });
   });
 
   describe('Provider Templates - octo.md', () => {
@@ -132,6 +223,13 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('thinking models');
       expect(content).toContain('fast models');
     });
+
+    it('should clarify CLI auto-save vs slash command manual save (v2.8.1)', () => {
+      const content = fs.readFileSync(octoPath, 'utf-8');
+
+      expect(content).toContain('CLI auto-saves prompts');
+      expect(content).toContain('Slash commands require manual saving');
+    });
   });
 
   describe('Provider Templates - warp.md', () => {
@@ -155,11 +253,11 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('clavix prompts clear');
     });
 
-    it('should mention auto-save for fast/deep', () => {
+    it('should clarify CLI auto-save vs slash command manual save (v2.8.1)', () => {
       const content = fs.readFileSync(warpPath, 'utf-8');
 
-      expect(content).toContain('.clavix/outputs/prompts/fast');
-      expect(content).toContain('.clavix/outputs/prompts/deep');
+      expect(content).toContain('CLI auto-saves');
+      expect(content).toContain('slash commands need manual saving');
     });
   });
 
@@ -204,6 +302,13 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('Review');
       expect(content).toContain('Execute');
       expect(content).toContain('Cleanup');
+    });
+
+    it('should clarify CLI auto-save vs slash command manual save (v2.8.1)', () => {
+      const content = fs.readFileSync(copilotPath, 'utf-8');
+
+      expect(content).toContain('CLI auto-saves');
+      expect(content).toContain('slash commands require manual saving');
     });
   });
 
@@ -250,25 +355,19 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       });
     });
 
-    it('all templates should use consistent terminology for prompt lifecycle', () => {
-      const allTemplates = [
+    it('canonical templates should use consistent storage paths', () => {
+      const canonicalTemplates = [
         'slash-commands/_canonical/fast.md',
         'slash-commands/_canonical/deep.md',
         'slash-commands/_canonical/execute.md',
-        'slash-commands/_canonical/prompts.md',
-        'agents/agents.md',
-        'agents/octo.md',
-        'agents/warp.md',
-        'agents/copilot-instructions.md'
+        'slash-commands/_canonical/prompts.md'
       ];
 
-      allTemplates.forEach(template => {
+      canonicalTemplates.forEach(template => {
         const content = fs.readFileSync(path.join(templatesDir, template), 'utf-8');
 
-        // Consistent storage path
-        if (content.includes('prompts')) {
-          expect(content).toMatch(/\.clavix\/outputs\/prompts/);
-        }
+        // Canonical templates must specify exact storage paths
+        expect(content).toMatch(/\.clavix\/outputs\/prompts/);
       });
     });
   });

@@ -5,6 +5,89 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.1] - 2025-11-17
+
+### Fixed
+
+#### Prompt Saving in Agent Execution Context
+
+**Problem**: Templates for `/clavix:fast` and `/clavix:deep` slash commands did not instruct AI agents to save prompts when executed directly. Only the CLI commands (`clavix fast` / `clavix deep`) automatically saved prompts, breaking the prompt lifecycle workflow for agent-driven workflows.
+
+**Root Cause**: Templates violated the AI-Agent-First Design Philosophy by assuming automatic saving without providing explicit agent instructions, creating a gap between CLI behavior and slash command behavior.
+
+**Solution**: Implemented Dual Mode (Hybrid) approach with explicit saving instructions:
+
+**Template Updates:**
+
+1. **Canonical Templates** (`fast.md`, `deep.md`):
+   - Added comprehensive "Saving the Prompt (REQUIRED)" section with conditional logic
+   - **Step 1**: Directory creation (`mkdir -p .clavix/outputs/prompts/{fast|deep}`)
+   - **Step 2**: Prompt ID generation (`{fast|deep}-YYYYMMDD-HHMMSS-<random>`)
+   - **Step 3**: File creation with frontmatter (Write tool instructions)
+   - **Step 4**: Index update (`.index.json` management)
+   - **Step 5**: Verification confirmation
+   - Added troubleshooting section for saving errors
+
+2. **Provider Templates** (agents.md, octo.md, warp.md, copilot-instructions.md):
+   - Updated command reference tables to clarify: "CLI auto-saves; slash commands require manual saving per template instructions"
+   - Updated workflow documentation to reflect dual saving modes
+
+**File Format Specification:**
+```markdown
+---
+id: <prompt-id>
+source: {fast|deep}
+timestamp: <ISO-8601>
+executed: false
+originalPrompt: <original text>
+---
+
+# Improved Prompt
+<CLEAR-optimized content>
+
+## CLEAR Scores
+- C, L, E (fast) or C, L, E, A, R (deep)
+
+## Original Prompt
+<original text>
+```
+
+**Testing:**
+- Added comprehensive template coverage tests (v2.8.1) validating:
+  - Presence of saving instructions in canonical templates
+  - Step-by-step format verification
+  - File format specification completeness
+  - Troubleshooting section coverage
+  - Provider template clarification language
+
+**Files Modified:**
+- `src/templates/slash-commands/_canonical/fast.md` - Added 100+ lines of saving instructions
+- `src/templates/slash-commands/_canonical/deep.md` - Added 100+ lines of saving instructions (with A/R components)
+- `src/templates/agents/agents.md` - Updated command table descriptions
+- `src/templates/agents/octo.md` - Updated CLI reference
+- `src/templates/agents/warp.md` - Updated common commands list
+- `src/templates/agents/copilot-instructions.md` - Updated prompt improvement and lifecycle workflow sections
+- `tests/integration/template-coverage.test.ts` - Added 10 new test cases
+
+**Impact:**
+- ✅ Prompts now save consistently in both CLI and agent execution contexts
+- ✅ Agents receive explicit, actionable instructions (not passive documentation)
+- ✅ Prompt lifecycle workflow (optimize → review → execute → cleanup) now works end-to-end
+- ✅ Compliance with AI-Agent-First Design Philosophy and Template Quality Checklist
+
+**Example Agent Workflow:**
+```bash
+# User runs /clavix:fast "create login page"
+# Agent executes template → performs CLEAR analysis → follows saving steps:
+
+1. mkdir -p .clavix/outputs/prompts/fast
+2. Generate ID: fast-20250117-143022-a3f2
+3. Write file with frontmatter and content
+4. Update .index.json with metadata
+5. Verify and confirm: ✓ Prompt saved: fast-20250117-143022-a3f2.md
+6. Continue to /clavix:execute --latest
+```
+
 ## [2.8.0] - 2025-11-17
 
 ### ⚠️ BREAKING CHANGES - ESM Migration

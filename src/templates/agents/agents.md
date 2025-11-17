@@ -12,8 +12,8 @@ Use these instructions when your agent can only read documentation (no slash-com
 | Command | Purpose |
 | --- | --- |
 | `clavix init` | Interactive setup. Select providers and generate documentation/command files. |
-| `clavix fast "<prompt>"` | CLEAR (C/L/E) analysis with improved prompt output. Auto-saves to `.clavix/outputs/prompts/fast/`. |
-| `clavix deep "<prompt>"` | Full CLEAR (C/L/E/A/R) analysis, alternative variations, validation checklists. Auto-saves to `.clavix/outputs/prompts/deep/`. |
+| `clavix fast "<prompt>"` | CLEAR (C/L/E) analysis with improved prompt output. CLI auto-saves to `.clavix/outputs/prompts/fast/`. When using slash commands, agent must save manually per template instructions. |
+| `clavix deep "<prompt>"` | Full CLEAR (C/L/E/A/R) analysis, alternative variations, validation checklists. CLI auto-saves to `.clavix/outputs/prompts/deep/`. When using slash commands, agent must save manually per template instructions. |
 | `clavix execute [--latest]` | Execute saved prompts from fast/deep optimization. Interactive selection or `--latest` for most recent. |
 | `clavix prompts list` | View all saved prompts with status (NEW, EXECUTED, OLD, STALE) and storage statistics. |
 | `clavix prompts clear` | Manage prompt cleanup. Supports `--executed`, `--stale`, `--fast`, `--deep`, `--all` flags. |
