@@ -213,6 +213,10 @@ export class TaskManager {
     return null;
   }
 
+  /**
+   * Generate phases from core features with intelligent grouping
+   * CRITICAL FIX: Group related features instead of 1 phase per bullet
+   */
   private generatePhasesFromCoreFeatures(
     coreContent: string,
     options: TaskGenerationOptions
@@ -223,64 +227,236 @@ export class TaskManager {
       return [];
     }
 
-    const maxTasks = options.maxTasksPerPhase ?? 20;
+    // GRANULARITY CONTROL: Warn if too many bullets
+    if (bullets.length > 50) {
+      console.warn(`Warning: PRD contains ${bullets.length} top-level features. Consider grouping related items.`);
+    }
+
+    // Group features by type/category instead of creating separate phases
+    const groupedFeatures = this.groupFeaturesByCategory(bullets);
+
     const phases: TaskPhase[] = [];
+    let phaseNumber = 1;
 
-    bullets.forEach((rawFeature, index) => {
-      const feature = rawFeature.trim();
-      if (!feature) {
-        return;
-      }
+    for (const [category, features] of Object.entries(groupedFeatures)) {
+      const phaseName = `Phase ${phaseNumber}: ${category}`;
+      const tasks: Task[] = [];
 
-      const phaseName = `Phase ${index + 1}: ${this.toTitleCase(feature)}`;
-      const baseDescriptions = this.buildFeatureTaskDescriptions(feature);
-      const allowed = Math.max(1, Math.min(maxTasks, baseDescriptions.length));
-      const minTasks = maxTasks >= 2 ? 2 : 1;
-      const taskCount = Math.max(minTasks, allowed);
-      const limitedDescriptions = baseDescriptions.slice(0, Math.min(taskCount, baseDescriptions.length));
+      // Generate tasks for each feature in this group
+      features.forEach((feature) => {
+        const taskDescriptions = this.buildFeatureTaskDescriptions(feature);
 
-      const tasks = limitedDescriptions.map((description, taskIndex) => ({
-        id: `${this.sanitizeId(phaseName)}-${taskIndex + 1}`,
-        description,
-        phase: phaseName,
-        completed: false,
-        prdReference: feature,
-      }));
-
-      phases.push({
-        name: phaseName,
-        tasks,
+        taskDescriptions.forEach((description) => {
+          tasks.push({
+            id: `${this.sanitizeId(phaseName)}-${tasks.length + 1}`,
+            description,
+            phase: phaseName,
+            completed: false,
+            prdReference: feature,
+          });
+        });
       });
-    });
+
+      // GRANULARITY CONTROL: Skip empty phases
+      if (tasks.length > 0) {
+        phases.push({
+          name: phaseName,
+          tasks,
+        });
+        phaseNumber++;
+      }
+    }
+
+    // GRANULARITY CONTROL: Cap total tasks (merge if exceeding)
+    const totalTasks = phases.reduce((sum, p) => sum + p.tasks.length, 0);
+    if (totalTasks > 50) {
+      console.warn(`Warning: Generated ${totalTasks} tasks. Consider merging related tasks or simplifying PRD.`);
+    }
 
     return phases;
   }
 
+  /**
+   * Group features by category for logical phase organization
+   * Replaces "1 bullet = 1 phase" with intelligent grouping
+   */
+  private groupFeaturesByCategory(features: string[]): Record<string, string[]> {
+    const groups: Record<string, string[]> = {
+      'Configuration & Setup': [],
+      'Core Implementation': [],
+      'Testing & Validation': [],
+      'Documentation': [],
+      'Integration & Release': [],
+    };
+
+    features.forEach((feature) => {
+      const lower = feature.toLowerCase();
+
+      // Config/setup phase
+      if (
+        /\b(config|configuration|setup|install|package|tsconfig|dependencies|environment)\b/i.test(feature)
+      ) {
+        groups['Configuration & Setup'].push(feature);
+      }
+      // Testing phase
+      else if (/\b(test|testing|coverage|validation|verify|qa)\b/i.test(feature)) {
+        groups['Testing & Validation'].push(feature);
+      }
+      // Documentation phase
+      else if (/\b(document|documentation|readme|changelog|guide|comment)\b/i.test(feature)) {
+        groups['Documentation'].push(feature);
+      }
+      // Integration/release phase
+      else if (/\b(integrate|integration|release|deploy|publish|build|distribution)\b/i.test(feature)) {
+        groups['Integration & Release'].push(feature);
+      }
+      // Default to core implementation
+      else {
+        groups['Core Implementation'].push(feature);
+      }
+    });
+
+    // Remove empty groups
+    return Object.fromEntries(
+      Object.entries(groups).filter(([_, features]) => features.length > 0)
+    );
+  }
+
+  /**
+   * Extract top-level list items only (ignore nested bullets)
+   * This prevents sub-bullets from being treated as separate tasks
+   */
   private extractListItems(sectionContent: string): string[] {
     const items: string[] = [];
-    const regex = /^\s*(?:[-*]|\d+[.)])\s+(.+)$/gm;
-    let match: RegExpExecArray | null;
-    while ((match = regex.exec(sectionContent)) !== null) {
-      const value = match[1].trim();
-      if (value) {
-        items.push(value.replace(/\s+/g, ' ').replace(/\.$/, ''));
+    const lines = sectionContent.split('\n');
+
+    let inCodeBlock = false;
+
+    for (const line of lines) {
+      // Track code blocks to ignore bullets inside them
+      if (line.trim().startsWith('```')) {
+        inCodeBlock = !inCodeBlock;
+        continue;
+      }
+
+      if (inCodeBlock) {
+        continue;
+      }
+
+      // Match ONLY top-level bullets (no indentation at all)
+      // Nested bullets (2+ spaces) are implementation details, not separate tasks
+      const topLevelMatch = line.match(/^(?:[-*]|\d+[.)])\s+(.+)$/);
+
+      if (topLevelMatch) {
+        const value = topLevelMatch[1].trim();
+
+        // Skip items that look like code examples, file paths, or implementation details
+        if (value && !this.looksLikeCodeOrPath(value) && !this.looksLikeImplementationDetail(value)) {
+          items.push(value.replace(/\s+/g, ' ').replace(/\.$/, ''));
+        }
       }
     }
 
     return items;
   }
 
+  /**
+   * Detect if a line looks like code or a file path (not a task)
+   */
+  private looksLikeCodeOrPath(text: string): boolean {
+    // File paths with extensions
+    if (/\.(ts|js|json|md|tsx|jsx|mjs|cjs)/.test(text)) {
+      return true;
+    }
+
+    // Code-like patterns
+    if (text.includes('import ') || text.includes('export ') || text.includes('require(')) {
+      return true;
+    }
+
+    // JSON-like
+    if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+      return true;
+    }
+
+    // Very short technical commands
+    if (text.length < 15 && /^[a-z-]+:[a-z-]+$/i.test(text)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Detect if text is an implementation detail rather than a feature
+   * Implementation details are constraints, requirements, or sub-steps
+   */
+  private looksLikeImplementationDetail(text: string): boolean {
+    const lower = text.toLowerCase();
+
+    // Constraints and requirements (not tasks)
+    if (lower.includes(' must ') || lower.includes(' should ') || lower.includes(' required')) {
+      return true;
+    }
+
+    // Very short items (< 25 chars) are likely details, not features
+    if (text.length < 25 && !lower.startsWith('implement') && !lower.startsWith('create')) {
+      return true;
+    }
+
+    // Specific technical constraints
+    if (/^(password|email|session|token|rate|https)/i.test(text)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Build context-aware task descriptions based on feature type and complexity
+   * Replaces the old 5-task boilerplate with intelligent task generation
+   */
   private buildFeatureTaskDescriptions(feature: string): string[] {
     const formattedFeature = this.formatInlineText(feature);
-    const tasks = [
+    const featureLower = feature.toLowerCase();
+
+    // Detect task type
+    const isConfig = /\b(config|configuration|setup|install|update.*json|tsconfig|package\.json)\b/i.test(feature);
+    const isTest = /\b(test|testing|coverage|validation|verify)\b/i.test(feature);
+    const isDocumentation = /\b(document|documentation|readme|changelog|guide)\b/i.test(feature);
+    const isConversion = /\b(convert|migrate|refactor|replace|update.*code)\b/i.test(feature);
+
+    // Simple tasks (config, documentation) - Single task only
+    if (isConfig) {
+      return [this.convertBehaviorToTask(feature)];
+    }
+
+    if (isDocumentation) {
+      return [this.convertBehaviorToTask(feature)];
+    }
+
+    // Testing tasks - Implementation + validation
+    if (isTest) {
+      return [
+        this.convertBehaviorToTask(feature),
+        `Verify ${formattedFeature} passes successfully`,
+      ];
+    }
+
+    // Conversion/migration tasks - Convert + test
+    if (isConversion) {
+      return [
+        this.convertBehaviorToTask(feature),
+        `Test ${formattedFeature} works correctly`,
+      ];
+    }
+
+    // Default for complex features - Implementation + testing only
+    // (No more "integrate into end-to-end" boilerplate)
+    return [
       this.convertBehaviorToTask(feature),
       `Add tests covering ${formattedFeature}`,
-      `Integrate ${formattedFeature} into the end-to-end experience`,
-      `Document ${formattedFeature} for stakeholders`,
-      `Validate ${formattedFeature} against requirements`,
     ];
-
-    return tasks;
   }
 
   private formatInlineText(text: string): string {
