@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.1] - 2025-11-17
+
+### 🔧 Updates
+
+#### Branding & Documentation
+- Updated package metadata to reflect ClavixDev organization
+- Updated homepage to https://clavix.dev/
+- Updated repository references to ClavixDev/Clavix
+- Enhanced Star History chart with theme support (dark/light mode)
+
+**Migration notes:**
+- Package name remains `clavix` (unchanged)
+- All GitHub references now point to ClavixDev organization
+- Homepage now redirects to official website
+
 ## [2.7.0] - 2025-11-17
 
 ### 🎉 New Features - Prompt Lifecycle Management
