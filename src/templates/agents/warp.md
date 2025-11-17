@@ -9,8 +9,8 @@ Clavix helps Warp developers turn rough ideas into CLEAR, AI-ready prompts and P
 
 ### Common commands
 - `clavix init` – interactive provider setup (regenerates docs & commands)
-- `clavix fast "<prompt>"` – quick CLEAR (C/L/E) analysis and improved prompt. Auto-saves to `.clavix/outputs/prompts/fast/`.
-- `clavix deep "<prompt>"` – full CLEAR (C/L/E/A/R) analysis with alternatives & checklists. Auto-saves to `.clavix/outputs/prompts/deep/`.
+- `clavix fast "<prompt>"` – quick CLEAR (C/L/E) analysis and improved prompt. CLI auto-saves; slash commands need manual saving per template instructions.
+- `clavix deep "<prompt>"` – full CLEAR (C/L/E/A/R) analysis with alternatives & checklists. CLI auto-saves; slash commands need manual saving per template instructions.
 - `clavix execute [--latest]` – execute saved prompts from fast/deep. Interactive selection or `--latest` for most recent.
 - `clavix prompts list` – view all saved prompts with age/status (NEW, EXECUTED, OLD, STALE)
 - `clavix prompts clear [--executed|--stale|--fast|--deep]` – cleanup executed or old prompts

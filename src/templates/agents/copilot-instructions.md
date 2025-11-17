@@ -11,8 +11,8 @@ Clavix is a CLEAR Framework-validated prompt engineering toolkit that helps impr
 When working with this project, you can use the following Clavix commands:
 
 ### Prompt Improvement
-- `clavix fast "<prompt>"` - Quick CLEAR analysis (C/L/E components) with improved prompt output
-- `clavix deep "<prompt>"` - Comprehensive CLEAR analysis (all 5 components: C/L/E/A/R) with alternatives and validation
+- `clavix fast "<prompt>"` - Quick CLEAR analysis (C/L/E components) with improved prompt output. CLI auto-saves; slash commands require manual saving per template instructions.
+- `clavix deep "<prompt>"` - Comprehensive CLEAR analysis (all 5 components: C/L/E/A/R) with alternatives and validation. CLI auto-saves; slash commands require manual saving per template instructions.
 
 ### Strategic Planning
 - `clavix prd` - Interactive PRD generation through Socratic questioning
@@ -52,7 +52,7 @@ Clavix now automatically saves optimized prompts from fast/deep commands for lat
   - `--force` - Skip confirmation prompts
 
 **Prompt Lifecycle Workflow:**
-1. Optimize: `clavix fast/deep "<prompt>"` → Auto-saved to `.clavix/outputs/prompts/`
+1. Optimize: `clavix fast/deep "<prompt>"` → CLI auto-saves; slash commands require manual saving
 2. Review: `clavix prompts list` → View all saved prompts with status
 3. Execute: `clavix execute --latest` → Implement when ready
 4. Cleanup: `clavix prompts clear --executed` → Remove completed prompts
