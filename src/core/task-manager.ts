@@ -609,8 +609,10 @@ export class TaskManager {
       // Split by feature headers (#### Number. Feature Name)
       const featureHeaders = [...featuresContent.matchAll(/####\s+(\d+)\.\s+(.+)/g)];
 
+      // Collect all top-level behaviors from all features
+      const allBehaviors: string[] = [];
+
       for (let i = 0; i < featureHeaders.length; i++) {
-        const featureNumber = featureHeaders[i][1];
         const featureName = featureHeaders[i][2].trim();
 
         // Extract content between this header and the next one
@@ -621,15 +623,50 @@ export class TaskManager {
 
         const featureContent = featuresContent.substring(startIndex, endIndex);
 
-        // Generate phase for this feature
-        const phase = this.generatePhaseFromFeature(
-          featureName,
-          featureContent,
-          `Phase ${featureNumber}`
-        );
+        // Extract behavior points using hierarchical parsing
+        const behaviorMatch = featureContent.match(/\*\*Behavior\*\*:([\s\S]*?)(?=\*\*|####|$)/);
+        if (behaviorMatch) {
+          const behaviors = behaviorMatch[1];
+          const bulletPoints = this.extractListItems(behaviors);
 
-        if (phase && phase.tasks.length > 0) {
-          phases.push(phase);
+          // Add all top-level behaviors to the list
+          allBehaviors.push(...bulletPoints);
+        } else {
+          // If no Behavior section, add the feature name itself
+          allBehaviors.push(featureName);
+        }
+      }
+
+      // Now group all behaviors by category (instead of 1 phase per feature)
+      if (allBehaviors.length > 0) {
+        const groupedFeatures = this.groupFeaturesByCategory(allBehaviors);
+
+        let phaseNumber = 1;
+        for (const [category, features] of Object.entries(groupedFeatures)) {
+          const phaseName = `Phase ${phaseNumber}: ${category}`;
+          const tasks: Task[] = [];
+
+          features.forEach((feature) => {
+            const taskDescriptions = this.buildFeatureTaskDescriptions(feature);
+
+            taskDescriptions.forEach((description) => {
+              tasks.push({
+                id: `${this.sanitizeId(phaseName)}-${tasks.length + 1}`,
+                description,
+                phase: phaseName,
+                completed: false,
+                prdReference: feature,
+              });
+            });
+          });
+
+          if (tasks.length > 0) {
+            phases.push({
+              name: phaseName,
+              tasks,
+            });
+            phaseNumber++;
+          }
         }
       }
     }
@@ -652,27 +689,26 @@ export class TaskManager {
   ): TaskPhase | null {
     const tasks: Task[] = [];
 
-    // Extract behavior points
+    // Extract behavior points using hierarchical parsing
     const behaviorMatch = featureContent.match(/\*\*Behavior\*\*:([\s\S]*?)(?=\*\*|####|$)/);
     if (behaviorMatch) {
       const behaviors = behaviorMatch[1];
-      const bulletPoints = behaviors.match(/^[-*]\s+(.+)$/gm);
 
-      if (bulletPoints) {
-        bulletPoints.forEach((bullet, index) => {
-          const description = bullet.replace(/^[-*]\s+/, '').trim();
-          // Skip overly long bullets (likely multi-line descriptions)
-          if (description.length < 200) {
-            tasks.push({
-              id: `${this.sanitizeId(featureName)}-${index + 1}`,
-              description: this.convertBehaviorToTask(description),
-              phase: phasePrefix,
-              completed: false,
-              prdReference: featureName,
-            });
-          }
-        });
-      }
+      // Use the same hierarchical parsing as extractListItems()
+      const bulletPoints = this.extractListItems(behaviors);
+
+      bulletPoints.forEach((description, index) => {
+        // Skip overly long bullets (likely multi-line descriptions)
+        if (description.length < 200) {
+          tasks.push({
+            id: `${this.sanitizeId(featureName)}-${index + 1}`,
+            description: this.convertBehaviorToTask(description),
+            phase: phasePrefix,
+            completed: false,
+            prdReference: featureName,
+          });
+        }
+      });
     }
 
     // If no behavior points, try to extract from feature description

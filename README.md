@@ -26,6 +26,8 @@ Provider paths and argument placeholders are listed in [docs/providers.md](docs/
 
 ## Quickstart
 
+> **⚠️ v2.8.0 Breaking Change**: Clavix is now a pure ESM package. Requires **Node.js ≥ 16.0.0**. See [CHANGELOG.md](CHANGELOG.md#280---2025-11-17) for migration details.
+
 ### For AI Agents (Recommended)
 
 Most Clavix users work through AI coding assistants:
@@ -94,11 +96,23 @@ clavix prd
 - CLEAR Framework: [docs/clear-framework.md](docs/clear-framework.md)
 - Guides: [docs/guides/](docs/guides/workflows.md)
 
-## Development
-- Requires Node.js ≥ 18
-- Run tests: `npm test`
+## Requirements
+
+### For End Users
+- **Node.js ≥ 16.0.0** (required for ESM support)
+- npm or yarn package manager
+
+### For Contributors
+- **Node.js ≥ 16.0.0** (pure ESM package since v2.8.0)
+- Run tests: `npm test` (uses `--experimental-vm-modules` for Jest with ESM)
 - Lint: `npm run lint`
-- Build: `npm run build`
+- Build: `npm run build` (TypeScript ES2020 modules)
+
+**ESM Migration (v2.8.0+):**
+- All source code uses ES modules (`import`/`export`)
+- TypeScript configured with `NodeNext` module resolution
+- All imports require `.js` file extensions
+- See [ESM_MIGRATION_NOTES.md](ESM_MIGRATION_NOTES.md) for details
 
 ## License
 MIT
