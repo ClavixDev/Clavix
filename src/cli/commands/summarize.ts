@@ -1,10 +1,10 @@
 import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import * as path from 'path';
-import { SessionManager } from '../../core/session-manager';
-import { ConversationAnalyzer, ConversationAnalysis } from '../../core/conversation-analyzer';
-import { FileSystem } from '../../utils/file-system';
-import { PromptOptimizer } from '../../core/prompt-optimizer';
+import { SessionManager } from '../../core/session-manager.js';
+import { ConversationAnalyzer, ConversationAnalysis } from '../../core/conversation-analyzer.js';
+import { FileSystem } from '../../utils/file-system.js';
+import { PromptOptimizer } from '../../core/prompt-optimizer.js';
 
 export default class Summarize extends Command {
   static description = 'Analyze a conversation session and extract structured requirements';

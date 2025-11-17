@@ -2,9 +2,14 @@
  * PrdGenerator tests
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { PrdGenerator, PrdGenerationOptions } from '../../src/core/prd-generator';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('PrdGenerator', () => {
   const testOutputDir = path.join(__dirname, '../fixtures/test-prd-output');

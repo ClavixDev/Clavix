@@ -4,10 +4,16 @@
  * Tests filtering by --project flag and limiting results with --limit flag
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { SessionManager } from '../../src/core/session-manager';
 import List from '../../src/cli/commands/list';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import type { Mock } from 'jest-mock';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('clavix list with filtering and limits', () => {
   const testDir = path.join(__dirname, '../fixtures/test-list');
@@ -16,8 +22,8 @@ describe('clavix list with filtering and limits', () => {
   const outputsDir = path.join(clavixDir, 'outputs');
   
   let sessionManager: SessionManager;
-  let mockLog: jest.SpyInstance;
-  let mockError: jest.SpyInstance;
+  let mockLog: any;
+  let mockError: any;
 
   beforeEach(async () => {
     // Clean up and set up test directory
@@ -31,8 +37,8 @@ describe('clavix list with filtering and limits', () => {
     jest.spyOn(process, 'cwd').mockReturnValue(testDir);
 
     // Create mock console methods to suppress output
-    mockLog = jest.spyOn(console, 'log').mockImplementation();
-    mockError = jest.spyOn(console, 'error').mockImplementation();
+    mockLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+    mockError = jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(async () => {

@@ -3,7 +3,7 @@
  * Tests edge cases for configuration validation and recovery
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import {
   ClavixConfig,
@@ -12,6 +12,11 @@ import {
   migrateConfig,
   isLegacyConfig,
 } from '../../src/types/config';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Config Resilience', () => {
   const testDir = path.join(__dirname, '../tmp/config-resilience-test');

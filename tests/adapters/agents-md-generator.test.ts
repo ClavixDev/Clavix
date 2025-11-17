@@ -3,9 +3,14 @@
  * Uses the real template from src/templates/agents/agents.md
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { AgentsMdGenerator } from '../../src/core/adapters/agents-md-generator';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('AgentsMdGenerator', () => {
   const testDir = path.join(__dirname, '../fixtures/agents-md-generator');

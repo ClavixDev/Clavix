@@ -2,10 +2,15 @@
  * Roocode adapter tests
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { RoocodeAdapter } from '../../src/core/adapters/roocode-adapter';
 import { CommandTemplate } from '../../src/types/agent';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('RoocodeAdapter', () => {
   let adapter: RoocodeAdapter;

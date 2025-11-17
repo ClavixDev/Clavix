@@ -1,10 +1,10 @@
 import { Command, Flags, Args } from '@oclif/core';
 import chalk from 'chalk';
-import { TaskManager, Task, TaskPhase } from '../../core/task-manager';
-import { ConfigManager } from '../../core/config-manager';
-import { GitManager, CommitStrategy } from '../../core/git-manager';
+import { TaskManager, Task, TaskPhase } from '../../core/task-manager.js';
+import { ConfigManager } from '../../core/config-manager.js';
+import { GitManager, CommitStrategy } from '../../core/git-manager.js';
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 
 export default class TaskComplete extends Command {
   static description = 'Mark a task as completed with validation and optional git commit';

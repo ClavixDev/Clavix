@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { FileSystem } from '../utils/file-system';
-import { DataError } from '../types/errors';
+import { FileSystem } from '../utils/file-system.js';
+import { DataError } from '../types/errors.js';
 
 export interface ManagedBlockOptions {
   startMarker: string;

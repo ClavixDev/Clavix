@@ -9,7 +9,7 @@
  * - Mini-PRD and optimized prompt generation
  */
 
-import { Session } from '../types/session';
+import { Session } from '../types/session.js';
 
 /**
  * Analyzed conversation data

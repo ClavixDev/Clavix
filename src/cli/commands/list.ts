@@ -1,8 +1,8 @@
 import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { SessionManager } from '../../core/session-manager';
+import { SessionManager } from '../../core/session-manager.js';
 
 export default class List extends Command {
   static description = 'List sessions and outputs';

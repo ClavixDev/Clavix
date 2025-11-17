@@ -3,6 +3,7 @@
  */
 
 import { PromptOptimizer } from '../../src/core/prompt-optimizer';
+import { describe, it, expect, beforeEach } from '@jest/globals';
 
 describe('Fast command', () => {
   let optimizer: PromptOptimizer;

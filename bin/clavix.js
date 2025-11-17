@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
+import { settings, handle } from '@oclif/core';
+import clavixApp from '../dist/index.js';
+
 // Disable debug mode (stack traces) unless explicitly requested via DEBUG env var
 if (!process.env.DEBUG) {
-  require('@oclif/core').settings.debug = false;
+  settings.debug = false;
 }
 
 // Custom error handler to suppress stack traces
@@ -15,10 +18,9 @@ async function handleError(error) {
   }
 
   // For other errors, use default handler
-  const { handle } = require('@oclif/core');
   return handle(error);
 }
 
-require('../dist/index.js')
+clavixApp
   .run()
   .catch(handleError);

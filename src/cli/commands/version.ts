@@ -1,7 +1,12 @@
 import { Command } from '@oclif/core';
 import chalk from 'chalk';
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import fs from 'fs-extra';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default class Version extends Command {
   static description = 'Display Clavix version';

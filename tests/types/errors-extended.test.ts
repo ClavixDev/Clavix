@@ -10,6 +10,7 @@ import {
   IntegrationError,
   DataError,
 } from '../../src/types/errors';
+import { describe, it, expect, jest } from '@jest/globals';
 
 describe('Error Types - Extended', () => {
   describe('ClavixError', () => {
@@ -323,7 +324,7 @@ describe('Error Types - Extended', () => {
       const error = new ClavixError('Test error');
       const consoleErrorSpy = jest
         .spyOn(console, 'error')
-        .mockImplementation();
+        .mockImplementation(() => {});
 
       console.error(error);
 

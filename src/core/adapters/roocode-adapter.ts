@@ -1,6 +1,6 @@
-import { BaseAdapter } from './base-adapter';
-import { CommandTemplate } from '../../types/agent';
-import { FileSystem } from '../../utils/file-system';
+import { BaseAdapter } from './base-adapter.js';
+import { CommandTemplate } from '../../types/agent.js';
+import { FileSystem } from '../../utils/file-system.js';
 
 /**
  * Roocode adapter

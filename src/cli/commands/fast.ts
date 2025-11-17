@@ -1,8 +1,8 @@
 import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { PromptOptimizer, CLEARResult, ImprovedPrompt, CLEARScore } from '../../core/prompt-optimizer';
-import { PromptManager } from '../../core/prompt-manager';
+import { PromptOptimizer, CLEARResult, ImprovedPrompt, CLEARScore } from '../../core/prompt-optimizer.js';
+import { PromptManager } from '../../core/prompt-manager.js';
 
 export default class Fast extends Command {
   static description = 'Quickly improve a prompt using CLEAR framework (Concise, Logical, Explicit) with smart triage';

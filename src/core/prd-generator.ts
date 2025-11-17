@@ -8,10 +8,15 @@
  * - Output organization and timestamps
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import Handlebars from 'handlebars';
-import { FileSystem } from '../utils/file-system';
+import { FileSystem } from '../utils/file-system.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Options for PRD generation

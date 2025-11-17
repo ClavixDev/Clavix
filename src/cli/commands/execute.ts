@@ -1,7 +1,7 @@
 import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { PromptManager, PromptMetadata } from '../../core/prompt-manager';
+import { PromptManager, PromptMetadata } from '../../core/prompt-manager.js';
 
 export default class Execute extends Command {
   static description = 'Execute a saved prompt from fast/deep optimization';

@@ -3,11 +3,16 @@
  * Tests uncovered code paths identified in coverage analysis
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { TaskManager } from '../../src/core/task-manager';
 import { PrdGenerator } from '../../src/core/prd-generator';
 import { PromptOptimizer } from '../../src/core/prompt-optimizer';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Coverage Gaps', () => {
   const testDir = path.join(__dirname, '../tmp/coverage-gaps-test');

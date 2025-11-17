@@ -1,11 +1,11 @@
 import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { TaskManager } from '../../core/task-manager';
-import { GitManager, CommitStrategy } from '../../core/git-manager';
-import { AgentErrorMessages } from '../../utils/agent-error-messages';
+import { TaskManager } from '../../core/task-manager.js';
+import { GitManager, CommitStrategy } from '../../core/git-manager.js';
+import { AgentErrorMessages } from '../../utils/agent-error-messages.js';
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 
 export default class Implement extends Command {
   static description = 'Start implementing tasks from the task plan';

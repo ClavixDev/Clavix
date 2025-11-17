@@ -1,11 +1,7 @@
 import { PromptManager, PromptSource, PromptMetadata } from '../../src/core/prompt-manager';
 import fs from 'fs-extra';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-
-// Mock uuid to return predictable IDs for testing
-jest.mock('uuid');
-const mockUuidv4 = uuidv4 as jest.MockedFunction<typeof uuidv4>;
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 
 describe('PromptManager', () => {
   let promptManager: PromptManager;
@@ -20,14 +16,6 @@ describe('PromptManager', () => {
     if (fs.existsSync(testPromptsDir)) {
       fs.removeSync(testPromptsDir);
     }
-
-    // Reset uuid mock - return different values for each call
-    mockUuidv4.mockReset();
-    let callCount = 0;
-    mockUuidv4.mockImplementation(() => {
-      callCount++;
-      return `test-hash-${String(callCount).padStart(3, '0')}`;
-    });
   });
 
   afterEach(() => {
@@ -50,8 +38,8 @@ describe('PromptManager', () => {
         originalPrompt: 'make a login page',
         executed: false,
       });
-      expect(metadata.id).toMatch(/^fast-\d{8}-\d{6}-test-hash-\d{3}$/);
-      expect(metadata.filename).toMatch(/^fast-\d{8}-\d{6}-test-hash-\d{3}\.md$/);
+      expect(metadata.id).toMatch(/^fast-\d{8}-\d{6}-[a-f0-9-]+$/);
+      expect(metadata.filename).toMatch(/^fast-\d{8}-\d{6}-[a-f0-9-]+\.md$/);
       expect(metadata.timestamp).toBeTruthy();
     });
 

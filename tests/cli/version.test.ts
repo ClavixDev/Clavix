@@ -2,8 +2,13 @@
  * Tests for version command functionality
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
+import { describe, it, expect } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Version command', () => {
   it('should be able to read package.json version', async () => {

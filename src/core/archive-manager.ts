@@ -8,9 +8,9 @@
  * - Managing archive directory structure
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { TaskManager, TaskPhase } from './task-manager';
+import { TaskManager, TaskPhase } from './task-manager.js';
 
 /**
  * Status of a PRD project's tasks

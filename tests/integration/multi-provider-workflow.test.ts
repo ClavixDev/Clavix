@@ -4,9 +4,14 @@
  */
 
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { AgentManager } from '../../src/core/agent-manager';
 import { CommandTemplate } from '../../src/types/agent';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Multi-Provider Workflow Integration', () => {
   const testDir = path.join(__dirname, '../tmp/multi-provider-test');

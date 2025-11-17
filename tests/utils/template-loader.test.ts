@@ -2,10 +2,15 @@
  * Template Loader tests
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { loadCommandTemplates } from '../../src/utils/template-loader';
 import { AgentAdapter } from '../../src/types/agent';
+import { describe, it, expect } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('loadCommandTemplates', () => {
   const testTemplatesDir = path.join(__dirname, '../../src/templates/slash-commands/_canonical');

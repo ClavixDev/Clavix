@@ -2,11 +2,16 @@
  * Tests for BaseAdapter - Base adapter class with shared logic
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { BaseAdapter } from '../../src/core/adapters/base-adapter';
 import { CommandTemplate, ManagedBlock } from '../../src/types/agent';
 import { IntegrationError } from '../../src/types/errors';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create a concrete test implementation of the abstract BaseAdapter
 class TestAdapter extends BaseAdapter {

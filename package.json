@@ -1,11 +1,16 @@
 {
   "name": "clavix",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "description": "Transform vague ideas into production-ready prompts. AI agent tool with CLI interface using the CLEAR framework to analyze, improve, and generate PRDs for AI coding assistants (Claude Code, Cursor, Windsurf, and more)",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
     "clavix": "bin/clavix.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsc && npm run copy-templates",
@@ -13,9 +18,9 @@
     "copy-templates": "copyfiles -u 1 \"src/templates/**/*\" dist/",
     "remove-sourcemaps": "find dist -name '*.map' -type f -delete",
     "dev": "ts-node src/index.ts",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
+    "test:watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch",
+    "test:coverage": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",

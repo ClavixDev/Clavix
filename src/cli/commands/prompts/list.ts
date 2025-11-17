@@ -1,6 +1,6 @@
 import { Command } from '@oclif/core';
 import chalk from 'chalk';
-import { PromptManager, PromptMetadata } from '../../../core/prompt-manager';
+import { PromptManager, PromptMetadata } from '../../../core/prompt-manager.js';
 
 export default class PromptsList extends Command {
   static description = 'List all saved prompts with age warnings and storage statistics';

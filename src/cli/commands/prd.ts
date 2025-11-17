@@ -2,10 +2,15 @@ import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import * as fs from 'fs-extra';
-import { QuestionEngine } from '../../core/question-engine';
-import { PrdGenerator } from '../../core/prd-generator';
-import { PromptOptimizer } from '../../core/prompt-optimizer';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import fs from 'fs-extra';
+import { QuestionEngine } from '../../core/question-engine.js';
+import { PrdGenerator } from '../../core/prd-generator.js';
+import { PromptOptimizer } from '../../core/prompt-optimizer.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default class Prd extends Command {
   static description = 'Generate a Product Requirements Document through Socratic questioning';

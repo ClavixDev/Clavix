@@ -1,9 +1,9 @@
 import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import inquirer from 'inquirer';
-import { AgentManager } from '../../core/agent-manager';
+import { AgentManager } from '../../core/agent-manager.js';
 
 interface ClavixConfig {
   version: string;

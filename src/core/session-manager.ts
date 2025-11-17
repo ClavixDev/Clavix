@@ -12,20 +12,17 @@
  * `.clavix/sessions/{session-id}.json`
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { FileSystem } from '../utils/file-system';
-
-// Use require for uuid to avoid Jest ESM issues
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { v4: uuidv4 } = require('uuid');
+import { FileSystem } from '../utils/file-system.js';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Session,
   SessionMessage,
   SessionMetadata,
   SessionFilter,
   SerializedSession,
-} from '../types/session';
+} from '../types/session.js';
 
 /**
  * Options for creating a new session

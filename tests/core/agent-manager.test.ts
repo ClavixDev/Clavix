@@ -5,6 +5,7 @@
 import { AgentManager } from '../../src/core/agent-manager';
 import { AgentAdapter, ValidationResult, CommandTemplate, ManagedBlock } from '../../src/types/agent';
 import { IntegrationError } from '../../src/types/errors';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 
 describe('AgentManager', () => {
   let manager: AgentManager;
@@ -140,10 +141,10 @@ describe('AgentManager', () => {
 
     it('should only return adapters that detect successfully', async () => {
       const detectableAdapter = createMockAdapter('detectable');
-      detectableAdapter.detectProject = jest.fn().mockResolvedValue(true);
+      detectableAdapter.detectProject = jest.fn<() => Promise<boolean>>().mockResolvedValue(true);
 
       const nonDetectableAdapter = createMockAdapter('non-detectable');
-      nonDetectableAdapter.detectProject = jest.fn().mockResolvedValue(false);
+      nonDetectableAdapter.detectProject = jest.fn<() => Promise<boolean>>().mockResolvedValue(false);
 
       manager.registerAdapter(detectableAdapter);
       manager.registerAdapter(nonDetectableAdapter);
@@ -157,7 +158,7 @@ describe('AgentManager', () => {
 
     it('should handle detection errors gracefully', async () => {
       const errorAdapter = createMockAdapter('error-adapter');
-      errorAdapter.detectProject = jest.fn().mockRejectedValue(new Error('Detection failed'));
+      errorAdapter.detectProject = jest.fn<() => Promise<boolean>>().mockRejectedValue(new Error('Detection failed'));
 
       manager.registerAdapter(errorAdapter);
 
@@ -236,10 +237,10 @@ describe('AgentManager', () => {
   describe('validateAdapters', () => {
     it('should validate all specified adapters', async () => {
       const validAdapter = createMockAdapter('valid-adapter');
-      validAdapter.validate = jest.fn().mockResolvedValue({ valid: true });
+      validAdapter.validate = jest.fn<() => Promise<any>>().mockResolvedValue({ valid: true });
 
       const invalidAdapter = createMockAdapter('invalid-adapter');
-      invalidAdapter.validate = jest.fn().mockResolvedValue({
+      invalidAdapter.validate = jest.fn<() => Promise<any>>().mockResolvedValue({
         valid: false,
         errors: ['Test error'],
       });
@@ -282,11 +283,11 @@ describe('AgentManager', () => {
 
     it('should call validate method on each adapter', async () => {
       const adapter1 = createMockAdapter('adapter-1');
-      const validateMock1 = jest.fn().mockResolvedValue({ valid: true });
+      const validateMock1 = jest.fn<() => Promise<any>>().mockResolvedValue({ valid: true });
       adapter1.validate = validateMock1;
 
       const adapter2 = createMockAdapter('adapter-2');
-      const validateMock2 = jest.fn().mockResolvedValue({ valid: true });
+      const validateMock2 = jest.fn<() => Promise<any>>().mockResolvedValue({ valid: true });
       adapter2.validate = validateMock2;
 
       manager.registerAdapter(adapter1);
@@ -300,7 +301,7 @@ describe('AgentManager', () => {
 
     it('should include validation warnings', async () => {
       const warnAdapter = createMockAdapter('warn-adapter');
-      warnAdapter.validate = jest.fn().mockResolvedValue({
+      warnAdapter.validate = jest.fn<() => Promise<any>>().mockResolvedValue({
         valid: true,
         warnings: ['Warning message'],
       });
@@ -367,8 +368,8 @@ describe('AgentManager', () => {
     it('should handle full adapter lifecycle', async () => {
       // Register
       const adapter = createMockAdapter('lifecycle-test');
-      adapter.detectProject = jest.fn().mockResolvedValue(true);
-      adapter.validate = jest.fn().mockResolvedValue({ valid: true });
+      adapter.detectProject = jest.fn<() => Promise<boolean>>().mockResolvedValue(true);
+      adapter.validate = jest.fn<() => Promise<any>>().mockResolvedValue({ valid: true });
 
       manager.registerAdapter(adapter);
 
@@ -390,10 +391,10 @@ describe('AgentManager', () => {
 
     it('should work with multiple concurrent operations', async () => {
       const adapter1 = createMockAdapter('concurrent-1');
-      adapter1.validate = jest.fn().mockResolvedValue({ valid: true });
+      adapter1.validate = jest.fn<() => Promise<any>>().mockResolvedValue({ valid: true });
 
       const adapter2 = createMockAdapter('concurrent-2');
-      adapter2.validate = jest.fn().mockResolvedValue({ valid: true });
+      adapter2.validate = jest.fn<() => Promise<any>>().mockResolvedValue({ valid: true });
 
       manager.registerAdapter(adapter1);
       manager.registerAdapter(adapter2);
@@ -425,10 +426,10 @@ function createMockAdapter(
     displayName: displayName || `Mock ${name}`,
     directory: directory || `.${name}`,
     fileExtension: '.md',
-    detectProject: jest.fn().mockResolvedValue(false),
-    generateCommands: jest.fn().mockResolvedValue(undefined),
-    injectDocumentation: jest.fn().mockResolvedValue(undefined),
-    getCommandPath: jest.fn().mockReturnValue(`.${name}/commands`),
-    getTargetFilename: jest.fn((cmdName: string) => `${cmdName}.md`),
+    detectProject: jest.fn<() => Promise<boolean>>().mockResolvedValue(false),
+    generateCommands: jest.fn<(templates: any[]) => Promise<void>>().mockResolvedValue(undefined),
+    injectDocumentation: jest.fn<(blocks: any[]) => Promise<void>>().mockResolvedValue(undefined),
+    getCommandPath: jest.fn<() => string>().mockReturnValue(`.${name}/commands`),
+    getTargetFilename: jest.fn<(cmdName: string) => string>((cmdName: string) => `${cmdName}.md`),
   };
 }

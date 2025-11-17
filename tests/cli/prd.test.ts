@@ -8,21 +8,13 @@
  * This file tests CLI-specific concerns: flags, configuration, error handling
  */
 
-// Mock inquirer to prevent interactive prompts in tests
-jest.mock('inquirer', () => ({
-  prompt: jest.fn(),
-}));
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import * as path from 'path';
+import { describe, it, expect } from '@jest/globals';
 
-// Mock chalk to prevent import issues
-jest.mock('chalk', () => ({
-  bold: { cyan: jest.fn((str) => str) },
-  gray: jest.fn((str) => str),
-  dim: jest.fn((str) => str),
-  cyan: jest.fn((str) => str),
-  green: jest.fn((str) => str),
-  yellow: jest.fn((str) => str),
-  red: jest.fn((str) => str),
-}));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('PRD CLI command', () => {
   describe('flag handling', () => {
@@ -57,33 +49,9 @@ describe('PRD CLI command', () => {
     });
   });
 
-  describe('inquirer mock verification', () => {
-    it('should have inquirer properly mocked', () => {
-      const inquirer = require('inquirer');
-
-      expect(inquirer.prompt).toBeDefined();
-      expect(typeof inquirer.prompt).toBe('function');
-    });
-
-    it('should prevent hanging by mocking prompt', async () => {
-      const inquirer = require('inquirer');
-
-      // Setup mock response
-      inquirer.prompt.mockResolvedValueOnce({ answer: 'Test response' });
-
-      const result = await inquirer.prompt([{ name: 'answer', message: 'Test?' }]);
-
-      expect(result.answer).toBe('Test response');
-      expect(inquirer.prompt).toHaveBeenCalledTimes(1);
-
-      // Clean up
-      jest.clearAllMocks();
-    });
-  });
 
   describe('configuration', () => {
     it('should have default template path', () => {
-      const path = require('path');
       const defaultPath = path.join(__dirname, '../../src/templates/prd-questions.md');
 
       expect(defaultPath).toContain('prd-questions.md');

@@ -1,8 +1,8 @@
 import * as path from 'path';
-import { BaseAdapter } from './base-adapter';
-import { ManagedBlock } from '../../types/agent';
-import { FileSystem } from '../../utils/file-system';
-import { IntegrationError } from '../../types/errors';
+import { BaseAdapter } from './base-adapter.js';
+import { ManagedBlock } from '../../types/agent.js';
+import { FileSystem } from '../../utils/file-system.js';
+import { IntegrationError } from '../../types/errors.js';
 
 /**
  * Claude Code agent adapter

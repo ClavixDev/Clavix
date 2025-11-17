@@ -1,4 +1,5 @@
 import { PromptOptimizer } from '../../src/core/prompt-optimizer';
+import { describe, it, expect, beforeEach } from '@jest/globals';
 
 /**
  * Integration test for improve workflow

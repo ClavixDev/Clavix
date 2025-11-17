@@ -3,9 +3,14 @@
  * Covers: backup/restore on failure, multiple blocks, markdown validation
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { DocInjector } from '../../src/core/doc-injector';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('DocInjector - Extended (Backup, Recovery & Edge Cases)', () => {
   const testDir = path.join(__dirname, '../fixtures/doc-injector-extended');
@@ -531,7 +536,7 @@ unbalanced code block
     it('should warn about unbalanced brackets', async () => {
       const filePath = path.join(testDir, 'brackets.md');
 
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       const content = `# File
 

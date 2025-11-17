@@ -9,10 +9,10 @@
  * - Managing session resume capability
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { PromptOptimizer } from './prompt-optimizer';
-import { FileSystem } from '../utils/file-system';
+import { PromptOptimizer } from './prompt-optimizer.js';
+import { FileSystem } from '../utils/file-system.js';
 
 export type PrdSourceType = 'auto' | 'full' | 'quick' | 'mini' | 'prompt';
 

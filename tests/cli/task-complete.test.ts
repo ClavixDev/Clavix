@@ -2,11 +2,16 @@
  * task-complete CLI command tests
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import TaskComplete from '../../src/cli/commands/task-complete';
 import { ConfigManager, ImplementConfig } from '../../src/core/config-manager';
 import { Task } from '../../src/core/task-manager';
+import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Mock stdout to capture output
 const originalLog = console.log;

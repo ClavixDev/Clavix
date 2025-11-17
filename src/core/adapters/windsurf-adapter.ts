@@ -1,5 +1,5 @@
-import { BaseAdapter } from './base-adapter';
-import { FileSystem } from '../../utils/file-system';
+import { BaseAdapter } from './base-adapter.js';
+import { FileSystem } from '../../utils/file-system.js';
 
 /**
  * Windsurf adapter

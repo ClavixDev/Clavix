@@ -1,5 +1,10 @@
-import { FileSystem } from '../../utils/file-system';
+import { FileSystem } from '../../utils/file-system.js';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Generator for Warp WARP.md file

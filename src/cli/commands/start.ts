@@ -2,7 +2,7 @@ import { Command, Flags, Config } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import { SessionManager } from '../../core/session-manager';
+import { SessionManager } from '../../core/session-manager.js';
 
 export default class Start extends Command {
   static description = 'Start an interactive conversation session for iterative prompt development';

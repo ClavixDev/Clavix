@@ -2,12 +2,17 @@
  * Tests for init command functionality
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { AgentManager } from '../../src/core/agent-manager';
 import { FileSystem } from '../../src/utils/file-system';
 import { DEFAULT_CONFIG } from '../../src/types/config';
 import { parseTomlSlashCommand } from '../../src/utils/toml-templates';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Init command', () => {
   const testDir = path.join(__dirname, '../fixtures/test-init');

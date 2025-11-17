@@ -5,9 +5,9 @@ import {
   ManagedBlock,
   ProviderFeatures,
   ValidationResult,
-} from '../../types/agent';
-import { FileSystem } from '../../utils/file-system';
-import { IntegrationError } from '../../types/errors';
+} from '../../types/agent.js';
+import { FileSystem } from '../../utils/file-system.js';
+import { IntegrationError } from '../../types/errors.js';
 
 /**
  * Base adapter class with shared logic for all providers

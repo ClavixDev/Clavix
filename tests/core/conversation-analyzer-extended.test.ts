@@ -5,6 +5,7 @@
 
 import { ConversationAnalyzer } from '../../src/core/conversation-analyzer';
 import { Session } from '../../src/types/session';
+import { describe, it, expect, beforeEach } from '@jest/globals';
 
 describe('ConversationAnalyzer - Extended (Analysis & Extraction)', () => {
   let analyzer: ConversationAnalyzer;

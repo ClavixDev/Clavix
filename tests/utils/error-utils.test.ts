@@ -9,6 +9,7 @@ import {
   toError,
   isNodeError,
 } from '../../src/utils/error-utils';
+import { describe, it, expect } from '@jest/globals';
 
 describe('Error Utilities', () => {
   describe('isError', () => {

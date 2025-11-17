@@ -1,6 +1,11 @@
 import * as path from 'path';
-import { AgentAdapter, CommandTemplate } from '../types/agent';
-import { FileSystem } from './file-system';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { AgentAdapter, CommandTemplate } from '../types/agent.js';
+import { FileSystem } from './file-system.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export async function loadCommandTemplates(_adapter: AgentAdapter): Promise<CommandTemplate[]> {
   // Load from canonical template source (always .md files)

@@ -1,13 +1,13 @@
 import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { TaskManager, PrdSourceType } from '../../core/task-manager';
-import { SessionManager } from '../../core/session-manager';
-import { ConversationAnalyzer } from '../../core/conversation-analyzer';
-import { FileSystem } from '../../utils/file-system';
-import { AgentErrorMessages } from '../../utils/agent-error-messages';
+import { TaskManager, PrdSourceType } from '../../core/task-manager.js';
+import { SessionManager } from '../../core/session-manager.js';
+import { ConversationAnalyzer } from '../../core/conversation-analyzer.js';
+import { FileSystem } from '../../utils/file-system.js';
+import { AgentErrorMessages } from '../../utils/agent-error-messages.js';
 
 export default class Plan extends Command {
   static description = 'Generate implementation task breakdown from PRD';

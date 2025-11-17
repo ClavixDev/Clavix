@@ -2,10 +2,15 @@
  * Tests for CursorAdapter - Cursor IDE specific adapter
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { CursorAdapter } from '../../src/core/adapters/cursor-adapter';
 import { CommandTemplate } from '../../src/types/agent';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('CursorAdapter', () => {
   let adapter: CursorAdapter;

@@ -1,6 +1,6 @@
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { PermissionError, DataError } from '../types/errors';
+import { PermissionError, DataError } from '../types/errors.js';
 
 /**
  * FileSystem utility class for safe file operations

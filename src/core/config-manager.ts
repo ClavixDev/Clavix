@@ -8,10 +8,10 @@
  * - Storing git commit strategy preferences
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { Task } from './task-manager';
-import { CommitStrategy } from './git-manager';
+import { Task } from './task-manager.js';
+import { CommitStrategy } from './git-manager.js';
 
 /**
  * Configuration for task implementation

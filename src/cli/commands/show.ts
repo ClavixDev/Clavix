@@ -1,9 +1,9 @@
 import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
-import { SessionManager } from '../../core/session-manager';
-import { Session } from '../../types/session';
+import { SessionManager } from '../../core/session-manager.js';
+import { Session } from '../../types/session.js';
 
 export default class Show extends Command {
   static description = 'Show detailed information about a session or output';

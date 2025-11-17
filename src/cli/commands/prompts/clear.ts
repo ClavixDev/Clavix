@@ -1,7 +1,7 @@
 import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { PromptManager, PromptFilters } from '../../../core/prompt-manager';
+import { PromptManager, PromptFilters } from '../../../core/prompt-manager.js';
 
 export default class PromptsClear extends Command {
   static description = 'Clear saved prompts with safety checks';

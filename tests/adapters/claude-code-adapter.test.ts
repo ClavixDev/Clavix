@@ -2,11 +2,16 @@
  * Tests for ClaudeCodeAdapter - Claude Code specific adapter
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { ClaudeCodeAdapter } from '../../src/core/adapters/claude-code-adapter';
 import { CommandTemplate, ManagedBlock } from '../../src/types/agent';
 import { IntegrationError } from '../../src/types/errors';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('ClaudeCodeAdapter', () => {
   let adapter: ClaudeCodeAdapter;

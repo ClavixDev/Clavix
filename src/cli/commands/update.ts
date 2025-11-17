@@ -1,16 +1,21 @@
 import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import JSON5 from 'json5';
-import { DocInjector } from '../../core/doc-injector';
-import { AgentManager } from '../../core/agent-manager';
-import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator';
-import { OctoMdGenerator } from '../../core/adapters/octo-md-generator';
-import { WarpMdGenerator } from '../../core/adapters/warp-md-generator';
-import { AgentAdapter } from '../../types/agent';
-import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup';
+import { DocInjector } from '../../core/doc-injector.js';
+import { AgentManager } from '../../core/agent-manager.js';
+import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
+import { OctoMdGenerator } from '../../core/adapters/octo-md-generator.js';
+import { WarpMdGenerator } from '../../core/adapters/warp-md-generator.js';
+import { AgentAdapter } from '../../types/agent.js';
+import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default class Update extends Command {
   static description = 'Update managed blocks and slash commands';

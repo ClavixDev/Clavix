@@ -1,7 +1,7 @@
 import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
-import { PromptOptimizer, CLEARResult, ImprovedPrompt, CLEARScore } from '../../core/prompt-optimizer';
-import { PromptManager } from '../../core/prompt-manager';
+import { PromptOptimizer, CLEARResult, ImprovedPrompt, CLEARScore } from '../../core/prompt-optimizer.js';
+import { PromptManager } from '../../core/prompt-manager.js';
 
 export default class Deep extends Command {
   static description = 'Perform comprehensive deep analysis using full CLEAR framework (Concise, Logical, Explicit, Adaptive, Reflective)';

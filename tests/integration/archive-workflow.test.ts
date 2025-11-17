@@ -4,9 +4,14 @@
  */
 
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { ArchiveManager } from '../../src/core/archive-manager';
 import { TaskManager } from '../../src/core/task-manager';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Archive Workflow Integration', () => {
   const testDir = path.join(__dirname, '../tmp/archive-workflow-test');

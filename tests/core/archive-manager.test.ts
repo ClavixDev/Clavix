@@ -2,9 +2,14 @@
  * ArchiveManager tests
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { ArchiveManager, PrdProject, TaskStatus } from '../../src/core/archive-manager';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('ArchiveManager', () => {
   const testDir = path.join(__dirname, '../fixtures/test-archive-manager');

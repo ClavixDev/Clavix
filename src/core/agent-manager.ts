@@ -1,20 +1,20 @@
-import { AgentAdapter, ValidationResult } from '../types/agent';
-import { ClaudeCodeAdapter } from './adapters/claude-code-adapter';
-import { CursorAdapter } from './adapters/cursor-adapter';
-import { DroidAdapter } from './adapters/droid-adapter';
-import { OpenCodeAdapter } from './adapters/opencode-adapter';
-import { AmpAdapter } from './adapters/amp-adapter';
-import { CrushAdapter } from './adapters/crush-adapter';
-import { WindsurfAdapter } from './adapters/windsurf-adapter';
-import { KilocodeAdapter } from './adapters/kilocode-adapter';
-import { ClineAdapter } from './adapters/cline-adapter';
-import { RoocodeAdapter } from './adapters/roocode-adapter';
-import { IntegrationError } from '../types/errors';
-import { CodeBuddyAdapter } from './adapters/codebuddy-adapter';
-import { GeminiAdapter } from './adapters/gemini-adapter';
-import { QwenAdapter } from './adapters/qwen-adapter';
-import { CodexAdapter } from './adapters/codex-adapter';
-import { AugmentAdapter } from './adapters/augment-adapter';
+import { AgentAdapter, ValidationResult } from '../types/agent.js';
+import { ClaudeCodeAdapter } from './adapters/claude-code-adapter.js';
+import { CursorAdapter } from './adapters/cursor-adapter.js';
+import { DroidAdapter } from './adapters/droid-adapter.js';
+import { OpenCodeAdapter } from './adapters/opencode-adapter.js';
+import { AmpAdapter } from './adapters/amp-adapter.js';
+import { CrushAdapter } from './adapters/crush-adapter.js';
+import { WindsurfAdapter } from './adapters/windsurf-adapter.js';
+import { KilocodeAdapter } from './adapters/kilocode-adapter.js';
+import { ClineAdapter } from './adapters/cline-adapter.js';
+import { RoocodeAdapter } from './adapters/roocode-adapter.js';
+import { IntegrationError } from '../types/errors.js';
+import { CodeBuddyAdapter } from './adapters/codebuddy-adapter.js';
+import { GeminiAdapter } from './adapters/gemini-adapter.js';
+import { QwenAdapter } from './adapters/qwen-adapter.js';
+import { CodexAdapter } from './adapters/codex-adapter.js';
+import { AugmentAdapter } from './adapters/augment-adapter.js';
 
 /**
  * Agent Manager - handles agent detection and registration

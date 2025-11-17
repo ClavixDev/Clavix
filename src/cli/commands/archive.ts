@@ -1,7 +1,7 @@
 import { Command, Flags, Args } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { ArchiveManager, PrdProject } from '../../core/archive-manager';
+import { ArchiveManager, PrdProject } from '../../core/archive-manager.js';
 
 export default class Archive extends Command {
   static description = 'Archive completed PRD projects';

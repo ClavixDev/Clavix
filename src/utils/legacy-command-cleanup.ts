@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { AgentAdapter } from '../types/agent';
-import { FileSystem } from './file-system';
+import { AgentAdapter } from '../types/agent.js';
+import { FileSystem } from './file-system.js';
 
 export async function collectLegacyCommandFiles(
   adapter: AgentAdapter,

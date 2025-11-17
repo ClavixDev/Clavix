@@ -2,12 +2,17 @@
  * Tests for implement command functionality
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { TaskManager } from '../../src/core/task-manager';
 import { GitManager, CommitStrategy } from '../../src/core/git-manager';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const execAsync = promisify(exec);
 

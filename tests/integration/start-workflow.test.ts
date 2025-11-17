@@ -2,9 +2,14 @@
  * Integration tests for the `clavix start` workflow
  */
 
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import { SessionManager } from '../../src/core/session-manager';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Start Command Workflow', () => {
   const testSessionsDir = path.join(__dirname, '../fixtures/test-start-sessions');

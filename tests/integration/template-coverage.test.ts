@@ -1,5 +1,10 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { describe, it, expect } from '@jest/globals';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Template Coverage - v2.7.0 Integration', () => {
   const templatesDir = path.join(__dirname, '../../src/templates');
