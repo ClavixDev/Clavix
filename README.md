@@ -46,6 +46,11 @@ clavix init
 /clavix:execute  # Interactive selection of saved prompts
 /clavix:prompts  # Manage prompt lifecycle
 
+# 4. Implement with task tracking (v2.8+)
+clavix plan              # Generate tasks from PRD
+clavix implement         # Start implementation workflow
+clavix task-complete <taskId>  # Mark tasks done with auto-commit
+
 # Or via CLI
 clavix execute --latest
 clavix prompts list
@@ -68,13 +73,31 @@ Clavix now automatically saves prompts from fast/deep optimization, allowing you
 3. **Execute**: `/clavix:execute` or `clavix execute --latest` → Implement when ready
 4. **Cleanup**: `clavix prompts clear --executed` → Remove completed prompts
 
+**Prompt Saving Modes (v2.8.1 clarification):**
+
+**CLI Usage (Auto-Save)**:
+```bash
+clavix fast "prompt"     # Automatically saves to .clavix/outputs/prompts/fast/
+clavix deep "prompt"     # Automatically saves to .clavix/outputs/prompts/deep/
+```
+CLI has direct file system access – saving is automatic.
+
+**Slash Command Usage (Agent Manual Save)**:
+```bash
+/clavix:fast "prompt"    # Agent must follow template saving instructions
+/clavix:deep "prompt"    # Agent must follow template saving instructions
+```
+Slash commands run through AI agent that must use tools per template.
+
+**Why the difference?** CLI runs directly in Node.js with file access, while slash commands require agent execution of Write tool.
+
 **Storage hygiene:**
 - Age warnings: >7 days = OLD, >30 days = STALE
 - Safety confirmations before deletion
 - Smart recommendations for cleanup
 - Keep <20 active prompts recommended
 
-Learn more: [Complete prompt lifecycle documentation](#prompt-management-commands)
+Learn more: [Complete prompt lifecycle documentation](docs/commands/execute.md)
 
 ### Direct CLI Usage (Alternative)
 

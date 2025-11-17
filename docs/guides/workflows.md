@@ -11,6 +11,40 @@ This guide outlines the typical lifecycle for using Clavix on a project. Each ph
 
 If you already know what you need, use [`clavix prd`](../commands/prd.md) to answer five focused questions and generate both `full-prd.md` and `quick-prd.md`.
 
+### Alternative: Quick prompt optimization (v2.7+)
+
+For smaller features or quick improvements:
+
+1. Run [`clavix fast`](../commands/fast.md) for CLEAR-optimized prompt (Concise, Logical, Explicit)
+2. Or run [`clavix deep`](../commands/deep.md) for comprehensive analysis with alternatives
+3. Prompts auto-save to `.clavix/outputs/prompts/`
+
+## 1.5 Prompt Lifecycle Management (v2.7+)
+
+After optimizing prompts with `fast` or `deep`:
+
+### Review saved prompts
+1. Run [`clavix prompts list`](../commands/prompts.md) to view all saved prompts
+2. Check execution status (○ NEW / ✓ EXECUTED)
+3. Note age warnings ([OLD] / [STALE])
+4. Review storage statistics and cleanup recommendations
+
+### Execute when ready
+1. **Quick execution**: `clavix execute --latest` (auto-selects most recent)
+2. **Filtered execution**: `clavix execute --latest --fast` (or `--deep`)
+3. **Interactive selection**: `clavix execute` (choose from list)
+4. **Specific prompt**: `clavix execute --id <prompt-id>`
+
+The command displays full optimized prompt and marks it as executed.
+
+### Clean up prompts
+1. **Safe cleanup**: `clavix prompts clear --executed` (removes already-used prompts)
+2. **Stale cleanup**: `clavix prompts clear --stale` (>30 days old)
+3. **Source cleanup**: `clavix prompts clear --fast` or `--deep`
+4. **Interactive**: `clavix prompts clear` (menu-driven selection)
+
+**Best practice**: After executing prompts, run `clavix prompts clear --executed` to keep storage lean.
+
 ## 2. Plan implementation
 
 1. Run [`clavix plan`](../commands/plan.md) to convert PRD artifacts (full, quick, mini, or prompt) into a structured `tasks.md` file.
@@ -20,7 +54,18 @@ If you already know what you need, use [`clavix prd`](../commands/prd.md) to ans
 
 1. Launch [`clavix implement`](../commands/implement.md) to pick up the first incomplete task.
 2. Choose an auto-commit strategy or disable git automation entirely.
-3. Follow the on-screen instructions to work through tasks, marking checkboxes and committing progress.
+3. Work on the displayed task implementation.
+4. Run [`clavix task-complete <taskId>`](../commands/task-complete.md) to mark the task done.
+5. The command automatically displays the next incomplete task.
+6. Repeat steps 3-5 until all tasks are complete.
+
+**Git auto-commit strategies:**
+- `none` (default): Manual git workflow
+- `per-task`: Commit after every task
+- `per-5-tasks`: Commit every 5 tasks
+- `per-phase`: Commit when phase completes
+
+Use `--no-git` flag with `task-complete` to skip commits for specific tasks.
 
 ## 4. Archive or iterate
 

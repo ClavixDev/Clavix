@@ -20,6 +20,7 @@ Use these instructions when your agent can only read documentation (no slash-com
 | `clavix prd` | Guided Socratic questions that generate `full-prd.md` and `quick-prd.md`. |
 | `clavix plan` | Transform PRDs or sessions into phase-based `tasks.md`. |
 | `clavix implement [--commit-strategy=<type>]` | Start task execution. Git strategies: per-task, per-5-tasks, per-phase, none (default: none). |
+| `clavix task-complete <taskId>` | Mark task as completed with validation and optional git commit. Auto-displays next task. |
 | `clavix start` | Begin conversational capture session for requirements gathering. |
 | `clavix summarize [session-id]` | Extract mini PRD and optimized prompts from saved sessions. |
 | `clavix list` | List sessions and/or output projects (`--sessions`, `--outputs`, filters). |
