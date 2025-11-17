@@ -41,7 +41,7 @@ clavix init
 /clavix:prd  # Full PRD workflow
 ```
 
-**Supported agents**: Claude Code, Cursor, Windsurf, and [20+ more providers](docs/providers.md)
+**Supported agents**: Claude Code, Cursor, Windsurf, and [15+ more providers](docs/providers.md)
 
 ### Direct CLI Usage (Alternative)
 
