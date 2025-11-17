@@ -5,6 +5,121 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.2] - 2025-11-17
+
+### Added
+
+#### Complete Documentation Coverage for v2.7-v2.8 Features
+
+**Background**: Comprehensive documentation audit revealed critical gaps where recent features (v2.7.0 prompt lifecycle, v2.8.0 task generation, v2.8.1 task-complete) lacked user-facing documentation despite having excellent agent template coverage.
+
+**Audit Results**:
+- **Before**: 75% documentation coverage (15/17 commands documented)
+- **After**: 100% documentation coverage (17/17 commands documented)
+- **Gap**: 3 implemented commands with zero or partial user documentation
+
+**New Command Documentation** (docs/commands/):
+
+1. **task-complete.md** - Mark tasks as completed with validation and git auto-commit
+   - Command syntax, flags (--no-git, --force, --config)
+   - Integration with implement workflow
+   - Git auto-commit strategy behavior (none/per-task/per-5-tasks/per-phase)
+   - Auto-discovery of config files
+   - Next task display after completion
+   - Troubleshooting stale in-memory bug (fixed in v2.8.1)
+   - Recovery options for common errors
+
+2. **execute.md** - Execute saved prompts from fast/deep optimization
+   - Interactive selection mode with status indicators (○ NEW / ✓ EXECUTED)
+   - Auto-selection flags (--latest, --fast, --deep, --id)
+   - Execution status tracking and prompt reusability
+   - Storage cleanup suggestions (≥5 executed prompts)
+   - CLI auto-save vs slash command manual save explanation (v2.8.1)
+   - Troubleshooting prompt discovery and file errors
+
+3. **prompts.md** - Manage saved prompts lifecycle (list/clear subcommands)
+   - **List subcommand**: View prompts with age warnings and storage statistics
+     - Status indicators: ○ NEW, ✓ EXECUTED
+     - Age color coding: Gray (0-7d), Yellow (8-30d), Red (>30d)
+     - Age warning labels: [OLD], [STALE]
+     - Storage hygiene recommendations (stale/executed/total limits)
+   - **Clear subcommand**: Safe cleanup with multiple filtering options
+     - Filter flags: --executed (safe), --stale (>30d), --fast, --deep, --all
+     - Safety mechanisms: unexecuted prompt warnings, confirmation prompts
+     - Interactive mode with 6 cleanup options
+     - Remaining storage statistics after deletion
+
+**Enhanced Documentation** (docs/):
+
+4. **docs/commands/implement.md** - Git Auto-Commit Strategies section (150+ lines)
+   - All 4 strategies documented in detail:
+     - `none` (default since v2.8.1): Manual git workflow
+     - `per-task`: Commit after every task
+     - `per-5-tasks`: Commit every 5 tasks
+     - `per-phase`: Commit when phase completes
+   - When to use each strategy (use cases, project types, team workflows)
+   - Commit message formats with examples
+   - Strategy override mechanisms (--no-git flag, mid-implementation changes)
+   - Git repository detection and validation logic
+   - Breaking change note (v2.8.1 default changed from per-task to none)
+
+5. **docs/commands/plan.md** - Task Generation Algorithm section (280+ lines)
+   - Hierarchical parsing strategy (top-level features vs nested details)
+   - Before/after examples (401 tasks → 25 tasks real-world case study)
+   - Behavior section grouping (numbered feature with Behavior = 1 task)
+   - Warning thresholds:
+     - Feature count warning (>50 top-level features)
+     - Task count warning (>50 tasks per phase)
+   - PRD structuring best practices (Do's and Don'ts)
+   - Algorithm flowchart (PRD → Extract → Filter → Group → Check → Generate)
+   - Troubleshooting (too many/too few tasks, missing details)
+
+6. **docs/guides/workflows.md** - Prompt Lifecycle Management section
+   - Complete v2.7+ workflow: optimize → review → execute → cleanup
+   - Alternative workflow paths (fast/deep/PRD)
+   - Review saved prompts (status, age warnings, statistics)
+   - Execute when ready (quick/filtered/interactive/specific)
+   - Clean up prompts (safe/stale/source/interactive)
+   - Best practice: `clavix prompts clear --executed` after execution
+   - Git auto-commit strategies in "Execute tasks" section
+
+7. **README.md** - Prompt Saving Modes clarification
+   - CLI Usage (Auto-Save): Direct file system access, automatic saving
+   - Slash Command Usage (Agent Manual Save): Requires Write tool execution
+   - Why the difference explained (Node.js vs agent tool architecture)
+   - Added task-complete to quickstart workflow (#4)
+
+**Agent Template Coverage**:
+
+8. **src/templates/slash-commands/_canonical/task-complete.md** - New canonical template
+   - Prerequisites (implement config, tasks.md)
+   - Task ID verification workflow
+   - Git auto-commit behavior by strategy
+   - Command output handling (success/already-complete/all-done)
+   - Error recovery for task not found, config missing, file errors
+   - Best practices (never manual edit, verify completion, use --no-git for experiments)
+
+9. **Provider Template Updates** - All 4 provider templates updated:
+   - `agents.md` - Added task-complete to command reference table
+   - `octo.md` - Added to CLI reference cheat sheet
+   - `warp.md` - Added to common commands list
+   - `copilot-instructions.md` - Added to Strategic Planning section
+
+**Documentation Index Updates**:
+- `docs/commands/README.md` - Added 3 new command entries (task-complete, execute, prompts)
+
+**Impact**:
+- Users can now discover and use task-complete command (previously hidden despite critical workflow role)
+- Prompt lifecycle workflow fully documented end-to-end
+- Git auto-commit strategies explained for informed decision-making
+- Task generation algorithm documented for PRD optimization
+- All 17 CLI commands have comprehensive user-facing documentation
+- Agent templates maintain command parity across all 4 providers
+
+**Files Created**: 4 new documentation files
+**Files Updated**: 9 existing documentation files
+**Lines Added**: ~1,500 lines of comprehensive documentation
+
 ## [2.8.1] - 2025-11-17
 
 ### Fixed

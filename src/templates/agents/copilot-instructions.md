@@ -18,6 +18,7 @@ When working with this project, you can use the following Clavix commands:
 - `clavix prd` - Interactive PRD generation through Socratic questioning
 - `clavix plan` - Transform PRDs into phase-based implementation tasks
 - `clavix implement [--commit-strategy=<type>]` - Execute tasks with progress tracking (git: per-task, per-5-tasks, per-phase, none [default])
+- `clavix task-complete <taskId>` - Mark task as completed with validation and optional git commit
 
 ### Conversational Workflows
 - `clavix start` - Begin conversational session for requirements gathering

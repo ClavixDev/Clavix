@@ -270,6 +270,7 @@ When starting implementation with `clavix implement`:
 | `clavix prd` | Guided questions to create PRDs. |
 | `clavix plan` | Convert PRD artifacts into task lists. |
 | `clavix implement [--commit-strategy=<type>]` | Start task execution (git: per-task, per-5-tasks, per-phase, none [default]). |
+| `clavix task-complete <taskId>` | Mark task completed with validation and optional git commit. Auto-displays next task. |
 | `clavix start` | Capture conversational requirements. |
 | `clavix summarize` | Extract mini PRDs and prompts from sessions. |
 | `clavix list` | List sessions or outputs (use `--sessions`, `--outputs`, `--archived`). |
