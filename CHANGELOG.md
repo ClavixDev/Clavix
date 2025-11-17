@@ -5,6 +5,104 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.3] - 2025-11-17
+
+### Fixed
+
+#### Task ID Persistence in tasks.md
+
+**Problem**: Task IDs were never written to `tasks.md`, only regenerated from phase names on read. This caused mismatches between config expectations and actual task IDs, breaking `clavix task-complete`.
+
+**Symptom**:
+```bash
+# tasks.md showed (user added manually):
+Task ID: phase-1-setup-1
+
+# CLI expected (regenerated from "Phase 1: Project Setup & Configuration"):
+Task ID: phase-1-project-setup-configur-1  # Truncated at 30 chars
+
+# Result:
+✗ Task ID "phase-1-setup-1" not found
+```
+
+**Root Cause**:
+- `writeTasksFile()` never wrote Task ID lines to tasks.md
+- `parseTasksFile()` regenerated IDs from phase names instead of reading from file
+- `sanitizeId()` truncated phase names to 30 chars ("configuration" → "configur")
+- Manual Task IDs added by users/agents were ignored
+
+**Fix**:
+1. **Write Task IDs**: `writeTasksFile()` now writes `  Task ID: {id}` after each task
+2. **Read Task IDs**: `parseTasksFile()` reads IDs from file with fallback to regeneration
+3. **Backward Compatible**: Old tasks.md files without IDs still work (IDs regenerated on read)
+4. **Manual Edits Respected**: Task IDs from file take priority over regeneration
+
+**Impact**:
+- ✅ `clavix task-complete phase-1-setup-1` works with readable IDs
+- ✅ Task IDs persist across write-read cycles
+- ✅ No more truncated/obfuscated IDs
+- ✅ Existing projects continue working (backward compatible)
+
+**Test Coverage**:
+- Write Task IDs to tasks.md
+- Read Task IDs from tasks.md
+- Preserve IDs through write-read cycle
+- Fallback to regeneration for old format
+- Use file IDs over regenerated IDs
+- Mark task complete with readable ID
+
+**Example tasks.md Format**:
+```markdown
+## Phase 1: Setup
+
+- [ ] Initialize React project (ref: Technical Requirements)
+  Task ID: phase-1-setup-1
+- [ ] Configure Tailwind CSS (ref: Technical Requirements)
+  Task ID: phase-1-setup-2
+```
+
+### Changed
+
+#### Enhanced INSTRUCTIONS.md in .clavix Directory
+
+**Update**: Comprehensive rewrite of `.clavix/INSTRUCTIONS.md` created by `clavix init`.
+
+**Improvements**:
+- **Visual Directory Structure**: ASCII tree diagram showing all folders and key files
+- **Complete CLI Reference**: All 17 commands organized by category (Prompt/PRD/Implementation/Management/Config)
+- **Slash Commands Section**: Clear mapping for Claude Code, Cursor, Windsurf users
+- **Workflow Guides**: Step-by-step examples for common patterns
+  - Prompt Lifecycle (v2.7): fast → execute → iterate
+  - PRD to Implementation: prd → plan → implement → task-complete
+  - Archive Management: archive → restore workflows
+- **Per-Project Outputs**: Explanation of `.clavix/outputs/<project-name>/` structure
+- **Prompt Storage**: Documentation of `prompts/fast/` and `prompts/deep/` organization
+- **Flag Documentation**: Comprehensive coverage of command options and strategies
+
+**Before** (2.8.2): Basic command list with minimal context
+**After** (2.8.3): Production-ready reference guide for both CLI and agent users
+
+**Example Addition** - Prompt Lifecycle Workflow:
+```bash
+# 1. Improve prompt
+clavix fast "add user auth"
+
+# 2. Review and execute
+clavix execute --latest
+
+# 3. Iterate if needed
+clavix fast "add password reset to auth"
+clavix execute --latest
+
+# 4. Cleanup when done
+clavix prompts clear --executed
+```
+
+### Chore
+
+- Downgrade jest from 30.2.0 to 29.7.0 (compatibility with ts-jest)
+- Fix ESLint unused variables warnings in task-manager.ts
+
 ## [2.8.2] - 2025-11-17
 
 ### Added
