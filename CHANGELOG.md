@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0] - 2025-11-18
+
+### Changed
+
+#### ESLint 9+ Migration with Flat Config
+
+**Major Upgrade**: Migrated from ESLint 8 (legacy eslintrc) to ESLint 9 with modern flat config format.
+
+**Dependencies Updated**:
+- `eslint`: ^8.57.0 → ^9.17.0
+- Added `@eslint/js@^9.17.0` (required for flat config presets)
+- Added `typescript-eslint@^8.46.4` (unified TypeScript-ESLint package)
+- Kept `@typescript-eslint/eslint-plugin@^8.46.4` and `@typescript-eslint/parser@^8.46.4` (already ESLint 9 compatible)
+
+**Configuration Changes**:
+- Migrated from `.eslintrc.json` to `eslint.config.js` (flat config format)
+- Implemented TypeScript's `projectService` for better performance (faster than legacy `project` option)
+- Uses new `tseslint.config()` wrapper for type-safe configuration
+- Configured separate rules for `src/` files with type-aware linting
+- Excluded test files from linting (matching tsconfig.json exclusions)
+- Updated npm scripts: removed `--ext .ts` flags (now defined in config)
+
+**Preserved Custom Rules**:
+- `@typescript-eslint/no-explicit-any`: warn
+- `@typescript-eslint/explicit-module-boundary-types`: off
+- `@typescript-eslint/no-unused-vars`: error with `argsIgnorePattern: '^_'` and `caughtErrors: 'all'`
+- `no-console`: off
+
+**Benefits**:
+- ✅ Better performance with `projectService` configuration
+- ✅ Modern ESLint 9 recommended ruleset with new safety checks
+- ✅ Cleaner, more maintainable flat config format
+- ✅ Future-proof for upcoming ESLint and TypeScript-ESLint features
+- ✅ All 1,592 tests pass
+- ✅ No breaking changes to source code
+- ✅ CI/CD compatible (no workflow changes needed)
+
+**Migration Details**:
+- Deleted legacy `.eslintrc.json`
+- Created new `eslint.config.js` with ESLint 9 flat config
+- Test files excluded from linting (already excluded from tsconfig.json)
+- Proper Node.js globals configuration
+- Ignores: `dist/`, `node_modules/`, `coverage/`, `bin/`, `tests/`
+
 ## [2.8.3] - 2025-11-17
 
 ### Fixed
