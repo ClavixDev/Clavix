@@ -85,3 +85,26 @@ export function isNodeError(error: unknown): error is NodeJSError {
     typeof (error as { code: unknown }).code === 'string'
   );
 }
+
+/**
+ * Handles CLI errors, formatting OCLIF errors nicely and falling back to default handler.
+ * @param error The error to handle
+ * @param defaultHandler The default handler function (usually handle from @oclif/core)
+ * @param exitFn Optional exit function (defaults to process.exit)
+ */
+export async function handleCliError(
+  error: any,
+  defaultHandler: (err: any) => Promise<void>,
+  exitFn: (code: number) => void = process.exit
+): Promise<void> {
+  // For CLIError, show only the formatted message
+  if (error && error.oclif && error.oclif.exit !== undefined) {
+    // Format error message (hints are now included in error.message)
+    console.error(' ›   Error: ' + error.message);
+    exitFn(error.oclif.exit);
+    return;
+  }
+
+  // For other errors, use default handler
+  return defaultHandler(error);
+}

@@ -8,7 +8,7 @@ import * as path from 'path';
 import { TaskManager } from '../../src/core/task-manager';
 import { PrdGenerator } from '../../src/core/prd-generator';
 import { PromptOptimizer } from '../../src/core/prompt-optimizer';
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,11 +20,13 @@ describe('Coverage Gaps', () => {
   beforeEach(async () => {
     await fs.ensureDir(testDir);
     process.chdir(testDir);
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(async () => {
     process.chdir(path.join(__dirname, '../..'));
     await fs.remove(testDir);
+    jest.restoreAllMocks();
   });
 
   describe('Task Manager - Basic Functionality', () => {

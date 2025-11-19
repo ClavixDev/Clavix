@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import * as path from 'path';
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import Plan from '../../src/cli/commands/plan';
 import { TaskManager } from '../../src/core/task-manager';
 import { SessionManager } from '../../src/core/session-manager';
@@ -16,11 +16,13 @@ describe('Plan command helper behavior', () => {
     testDir = path.join(originalCwd, 'tests', 'tmp', `plan-${Date.now()}`);
     await fs.ensureDir(testDir);
     process.chdir(testDir);
+    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(async () => {
     process.chdir(originalCwd);
     await fs.remove(testDir);
+    jest.restoreAllMocks();
   });
 
   it('validateSessionFlags throws when both flags provided', () => {

@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import { OpenCodeAdapter } from '../../src/core/adapters/opencode-adapter';
 import { CommandTemplate } from '../../src/types/agent';
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest, beforeAll, afterAll } from '@jest/globals';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,6 +16,17 @@ describe('OpenCodeAdapter', () => {
   let adapter: OpenCodeAdapter;
   const testDir = path.join(__dirname, '../fixtures/opencode-adapter');
   let originalCwd: string;
+
+  // Suppress console logs during tests
+  beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 
   beforeEach(async () => {
     // Clean up and setup

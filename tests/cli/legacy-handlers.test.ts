@@ -50,12 +50,14 @@ describe('legacy command cleanup handlers', () => {
     testDir = path.join(originalCwd, 'tests', 'tmp', `legacy-handlers-${Date.now()}`);
     await fs.ensureDir(testDir);
     process.chdir(testDir);
+    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(async () => {
     inquirer.prompt = originalPrompt;
     process.chdir(originalCwd);
     await fs.remove(testDir);
+    jest.restoreAllMocks();
   });
 
   it('Init handler removes legacy files when user confirms', async () => {

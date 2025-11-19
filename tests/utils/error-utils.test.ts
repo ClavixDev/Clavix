@@ -9,7 +9,7 @@ import {
   toError,
   isNodeError,
 } from '../../src/utils/error-utils';
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 
 describe('Error Utilities', () => {
   describe('isError', () => {
@@ -367,6 +367,73 @@ describe('Error Utilities', () => {
         expect(unknownError.code).toBe('ENOENT');
         expect(unknownError.message).toBe('Test');
       }
+    });
+  });
+
+  describe('handleCliError', () => {
+    // Mock console.error
+    const originalConsoleError = console.error;
+    const mockConsoleError = jest.fn();
+    
+    beforeEach(() => {
+      console.error = mockConsoleError;
+      mockConsoleError.mockClear();
+    });
+    
+    afterEach(() => {
+      console.error = originalConsoleError;
+    });
+
+    it('should format OCLIF errors and exit', async () => {
+      const { handleCliError } = await import('../../src/utils/error-utils.js');
+      
+      const mockExit = jest.fn();
+      const mockDefaultHandler = jest.fn().mockImplementation(async () => undefined);
+      
+      const oclifError = {
+        message: 'Command failed',
+        oclif: { exit: 1 }
+      };
+
+      await handleCliError(oclifError, mockDefaultHandler as any, mockExit as any);
+
+      expect(mockConsoleError).toHaveBeenCalledWith(expect.stringContaining('Error: Command failed'));
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(mockDefaultHandler).not.toHaveBeenCalled();
+    });
+
+    it('should pass non-OCLIF errors to default handler', async () => {
+      const { handleCliError } = await import('../../src/utils/error-utils.js');
+      
+      const mockExit = jest.fn();
+      const mockDefaultHandler = jest.fn().mockImplementation(async () => undefined);
+      
+      const regularError = new Error('Regular error');
+
+      await handleCliError(regularError, mockDefaultHandler as any, mockExit as any);
+
+      expect(mockConsoleError).not.toHaveBeenCalled();
+      expect(mockExit).not.toHaveBeenCalled();
+      expect(mockDefaultHandler).toHaveBeenCalledWith(regularError);
+    });
+
+    it('should handle OCLIF errors without exit code by passing to default', async () => {
+      const { handleCliError } = await import('../../src/utils/error-utils.js');
+      
+      const mockExit = jest.fn();
+      const mockDefaultHandler = jest.fn().mockImplementation(async () => undefined);
+      
+      // Error with oclif prop but no exit code
+      const partialOclifError = {
+        message: 'Warning',
+        oclif: {} 
+      };
+
+      await handleCliError(partialOclifError, mockDefaultHandler as any, mockExit as any);
+
+      expect(mockConsoleError).not.toHaveBeenCalled();
+      expect(mockExit).not.toHaveBeenCalled();
+      expect(mockDefaultHandler).toHaveBeenCalledWith(partialOclifError);
     });
   });
 });
