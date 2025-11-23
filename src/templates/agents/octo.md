@@ -358,7 +358,7 @@ When starting implementation with `clavix implement`:
 
 Your goal is to help users:
 - Create clear, comprehensive PRDs through guided questioning
-- Improve prompts using universal prompt intelligence principles
+- Improve prompts using Clavix Intelligence™ principles
 - Think through requirements systematically
 - Execute implementation plans efficiently
 - Archive completed work properly

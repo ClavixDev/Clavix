@@ -1,4 +1,4 @@
-// Main exports for the universal prompt intelligence system
+// Main exports for the Clavix Intelligence system
 export { UniversalOptimizer } from './universal-optimizer.js';
 export { IntentDetector } from './intent-detector.js';
 export { PatternLibrary } from './pattern-library.js';

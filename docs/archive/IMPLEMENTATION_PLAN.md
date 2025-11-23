@@ -144,8 +144,8 @@ Transforming Clavix from CLEAR Framework-dependent to universal prompt intellige
 ### 8. Create New Documentation
 **Priority:** HIGH
 **New Files:**
-1. **docs/prompt-intelligence.md** (~800 lines)
-   - Explain Adaptive Prompt Intelligence™
+1. **docs/clavix-intelligence.md** (~800 lines)
+   - Explain Clavix Intelligence™
    - How intent detection works
    - Pattern library overview
    - Quality dimensions explained

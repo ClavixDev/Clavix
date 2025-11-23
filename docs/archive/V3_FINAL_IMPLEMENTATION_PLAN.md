@@ -137,7 +137,7 @@ Priority 5: Code Generation (default for specific tasks)
 - **Changes**:
   ```
   Before: "CLEAR-Guided Prompt Engineering for AI Agents"
-  After: "Adaptive Prompt Intelligence™ for AI-Assisted Development"
+  After: "Clavix Intelligence™ for AI-Assisted Development"
 
   Before: "Built on the academically validated CLEAR Framework"
   After: "Automatic quality optimization with intelligent intent detection"
@@ -157,7 +157,7 @@ Priority 5: Code Generation (default for specific tasks)
 - **Changes**:
   ```
   Before: "powered by the CLEAR Framework"
-  After: "powered by Adaptive Prompt Intelligence™"
+  After: "powered by Clavix Intelligence™"
 
   Before: "Get CLEAR-optimized prompts"
   After: "Get AI-ready prompts with automatic quality optimization"
@@ -251,7 +251,7 @@ npm test
     - Intent priority rules for edge cases
 
   ### Changed
-  - Website updated to reflect v3.0 branding (Adaptive Prompt Intelligence™)
+  - Website updated to reflect v3.0 branding (Clavix Intelligence™)
   - Intent detector now handles mixed intents and low-confidence scenarios
 
   ### Fixed
@@ -363,7 +363,7 @@ clavix deep "create dashboard"
    - MEDIUM: Completeness Validator
 
 2. **Branding**:
-   - Keep "Adaptive Prompt Intelligence™"
+   - Keep "Clavix Intelligence™"
 
 3. **Approach**:
    - Enhanced keyword matching (no ML)

@@ -133,7 +133,7 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('timestamp:');
       expect(content).toContain('executed: false');
       expect(content).toContain('originalPrompt:');
-      // v3.0: Using Adaptive Prompt Intelligence with quality scores
+      // v3.0+: Using Clavix Intelligence with quality scores
       expect(content).toContain('Quality Scores');
       expect(content).toContain('Clarity');
       expect(content).toContain('Efficiency');

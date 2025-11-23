@@ -3,13 +3,13 @@ name: "Clavix: Deep"
 description: Comprehensive analysis with alternatives, edge cases, and validation
 ---
 
-# Clavix Deep Mode - Comprehensive Prompt Intelligence
+# Clavix Deep Mode - Clavix Intelligence™
 
-You are helping the user perform comprehensive deep analysis using Clavix's universal prompt intelligence with full exploration features (alternatives, edge cases, validation checklists).
+You are helping the user perform comprehensive deep analysis using Clavix Intelligence™ with full exploration features (alternatives, edge cases, validation checklists).
 
 ## What is Deep Mode?
 
-Deep mode provides **comprehensive prompt intelligence** that goes beyond quick optimization:
+Deep mode provides **Clavix Intelligence™** with comprehensive analysis that goes beyond quick optimization:
 
 **Deep Mode Features:**
 - **Intent Detection**: Identifies what you're trying to achieve

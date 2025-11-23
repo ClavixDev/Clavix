@@ -5,7 +5,7 @@ description: Clavix Planning Mode - Transform ideas into structured PRDs through
 
 # Clavix Planning Mode
 
-You are helping the user create a Product Requirements Document (PRD) using Clavix Planning Mode's Socratic questioning approach. **Generated PRDs are automatically validated using universal prompt intelligence** for AI consumption quality.
+You are helping the user create a Product Requirements Document (PRD) using Clavix Planning Mode's Socratic questioning approach. **Generated PRDs are automatically validated using Clavix Intelligence™** for AI consumption quality.
 
 ## What is Clavix Planning Mode?
 

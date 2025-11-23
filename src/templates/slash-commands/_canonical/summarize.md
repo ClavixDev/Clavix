@@ -5,7 +5,7 @@ description: Extract and optimize requirements from conversation
 
 # Clavix Conversation Summarization
 
-You are analyzing the conversation history and extracting optimized requirements. **Extracted prompts are automatically enhanced using universal prompt intelligence** for optimal AI consumption.
+You are analyzing the conversation history and extracting optimized requirements. **Extracted prompts are automatically enhanced using Clavix Intelligence™** for optimal AI consumption.
 
 ## Instructions
 
@@ -72,8 +72,8 @@ You are analyzing the conversation history and extracting optimized requirements
    [Success criteria and any important context]
    ```
 
-3. **Universal Optimization** (automatic with labeled improvements):
-   - After extracting the prompt, analyze using universal prompt intelligence
+3. **Clavix Intelligence™ Optimization** (automatic with labeled improvements):
+   - After extracting the prompt, analyze using Clavix Intelligence™
    - Apply optimizations for Clarity, Efficiency, Structure, Completeness, and Actionability
    - **Label all improvements** with quality dimension tags:
      - **[Efficiency]**: "Removed 12 conversational words, reduced from 45 to 28 words"

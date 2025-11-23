@@ -1,4 +1,4 @@
-// Core types for the universal prompt intelligence system
+// Core types for the Clavix Intelligence system
 
 export type PromptIntent =
   | 'code-generation'    // "Build a React component"

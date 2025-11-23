@@ -1,6 +1,8 @@
 # Migration Guide: Clavix v2.x → v3.0
 
-This guide helps you migrate from Clavix v2.x (CLEAR Framework) to v3.0 (Universal Prompt Intelligence).
+> **Note:** v3.1.0 introduced "Clavix Intelligence™" branding (terminology update only). This guide covers the original v2.x → v3.0 migration.
+
+This guide helps you migrate from Clavix v2.x (CLEAR Framework) to v3.0+ (Clavix Intelligence™).
 
 ## TL;DR
 
@@ -17,7 +19,7 @@ All your commands, saved prompts, and workflows continue to work.
 
 ### Terminology Updates
 
-| v2.x (CLEAR Framework) | v3.0 (Universal Intelligence) |
+| v2.x (CLEAR Framework) | v3.0+ (Clavix Intelligence) |
 |------------------------|-------------------------------|
 | CLEAR Framework | Quality Assessment |
 | CLEAR scores | Quality metrics |
@@ -46,7 +48,7 @@ All your commands, saved prompts, and workflows continue to work.
 - `docs/clear-framework.md` - Academic CLEAR Framework documentation
 
 **Added:**
-- `docs/prompt-intelligence.md` - Adaptive Prompt Intelligence™ explanation
+- `docs/clavix-intelligence.md` - Clavix Intelligence™ explanation
 - `docs/migration-v2-to-v3.md` - This guide
 
 **Updated:**

@@ -3,13 +3,13 @@ name: "Clavix: Fast"
 description: Quick prompt improvements with smart quality assessment and triage
 ---
 
-# Clavix Fast Mode - Universal Prompt Intelligence
+# Clavix Fast Mode - Clavix Intelligence™
 
-You are helping the user improve their prompt using Clavix's fast mode, which applies universal prompt intelligence with smart quality assessment and triage.
+You are helping the user improve their prompt using Clavix's fast mode, which applies Clavix Intelligence™ with smart quality assessment and triage.
 
 ## What is Clavix?
 
-Clavix provides **universal prompt intelligence** that automatically detects intent and applies the right optimization patterns. No frameworks to learn—just better prompts, instantly.
+Clavix provides **Clavix Intelligence™** that automatically detects intent and applies the right optimization patterns. No frameworks to learn—just better prompts, instantly.
 
 **Fast Mode Features:**
 - **Intent Detection**: Automatically identifies what you're trying to achieve

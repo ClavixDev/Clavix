@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2025-11-23
+
+### ✨ Branding Evolution - Clavix Intelligence™
+
+**Major Update**: Rebranded from "Universal Intelligence" and "Adaptive Prompt Intelligence™" to **"Clavix Intelligence™"** across all user-facing content. This establishes Clavix as a distinctive branded methodology rather than generic terminology.
+
+#### What Changed
+- **Marketing & Documentation**: All references to "Universal Intelligence" and "Adaptive Prompt Intelligence™" now use "Clavix Intelligence™"
+- **Brand Identity**: Establishes Clavix as a recognizable methodology and strengthens brand presence
+- **Documentation**: Renamed `docs/prompt-intelligence.md` → `docs/clavix-intelligence.md`
+
+#### What Stayed The Same
+- **Zero Breaking Changes**: All APIs, class names, and imports remain unchanged
+- **Backward Compatibility**: 100% compatible with v3.0.x - no migration required
+- **Functionality**: Same powerful intent detection, quality assessment, and optimization patterns
+
+This is a **non-breaking minor version** focused on brand consistency and market positioning.
+
 ## [3.0.1] - 2025-11-23
 
 ### ✨ Enhancements
@@ -50,19 +68,19 @@ Added 3 production-ready patterns to complete the pattern library:
 
 ### 📚 Documentation
 - Updated clavix-website to remove all CLEAR Framework references
-- Replaced with "Adaptive Prompt Intelligence™" branding
+- Replaced with "Clavix Intelligence™" branding
 - Updated comparison tables, feature descriptions, and terminal demos
 - Improved meta descriptions for SEO
 
 ## [3.0.0] - 2025-11-23
 
-### ⚠️ BREAKING CHANGES - Universal Prompt Intelligence
+### ⚠️ BREAKING CHANGES - Clavix Intelligence
 
-**Major Rebrand**: Clavix has evolved from a CLEAR Framework-based tool to a universal prompt intelligence platform with automatic intent detection and adaptive optimization patterns.
+**Major Rebrand**: Clavix has evolved from a CLEAR Framework-based tool to Clavix Intelligence™—a platform with automatic intent detection and adaptive optimization patterns.
 
 #### What Changed
 
-**From CLEAR Framework → To Universal Prompt Intelligence**
+**From CLEAR Framework → To Clavix Intelligence™**
 - **Before**: Users needed to understand CLEAR Framework (Concise, Logical, Explicit, Adaptive, Reflective) components
 - **After**: Automatic intent detection and pattern selection—no framework knowledge required
 - **Impact**: Zero learning curve for new users, seamless experience for existing users
@@ -89,7 +107,7 @@ Added 3 production-ready patterns to complete the pattern library:
 
 ### ✨ New Features
 
-#### Adaptive Prompt Intelligence™
+#### Clavix Intelligence™
 
 **Core Intelligence Layer** (10 new files):
 - **Intent Detection** - Automatically recognizes 6 intent types:
@@ -132,7 +150,7 @@ Added 3 production-ready patterns to complete the pattern library:
 - `fast.md` - Removed CLEAR Framework references, added 5 quality dimensions
 - `deep.md` - Complete rebrand to "Comprehensive Prompt Intelligence"
 - `prd.md` - Rebranded to "Clavix Planning Mode"
-- `start.md` - Updated to "universal prompt intelligence"
+- `start.md` - Updated to "Clavix Intelligence"
 - `summarize.md` - File naming updated, quality dimensions added
 - `plan.md` - Task quality labeling (Clarity/Structure/Actionability)
 - `implement.md` - Quality principles reference
@@ -152,15 +170,15 @@ Added 3 production-ready patterns to complete the pattern library:
 ### 📚 Documentation Updates
 
 **README.md** - Complete rewrite:
-- New tagline: "Universal prompt intelligence for AI coding"
-- "Why CLEAR?" → "How It Works" (explains Adaptive Prompt Intelligence™)
+- New tagline: "Clavix Intelligence™ for AI coding"
+- "Why CLEAR?" → "How It Works" (explains Clavix Intelligence™)
 - Updated examples to use quality dimensions
 - Removed academic references to CLEAR Framework
 - Added intent detection explanation
 
 **package.json**:
 - Version: `2.9.0` → `3.0.0`
-- Updated description to emphasize universal intelligence
+- Updated description to emphasize Clavix Intelligence
 - Added keywords: `prompt-intelligence`, `intent-detection`, `quality-assessment`
 
 **CHANGELOG.md** - This comprehensive entry

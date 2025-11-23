@@ -1,6 +1,6 @@
-# Adaptive Prompt Intelligence™
+# Clavix Intelligence™
 
-Clavix uses **Adaptive Prompt Intelligence™** to automatically optimize your prompts without requiring you to learn any framework or methodology.
+Clavix uses **Clavix Intelligence™** to automatically optimize your prompts without requiring you to learn any framework or methodology.
 
 ## How It Works
 

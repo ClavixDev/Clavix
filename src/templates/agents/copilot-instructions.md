@@ -1,10 +1,10 @@
 # Clavix Workflows for GitHub Copilot
 
-These instructions enhance GitHub Copilot's understanding of the Clavix universal prompt intelligence toolkit and workflow commands available in this project.
+These instructions enhance GitHub Copilot's understanding of Clavix Intelligence™ and workflow commands available in this project.
 
 ## About Clavix
 
-Clavix is a universal prompt intelligence toolkit that helps improve prompts, generate PRDs, and manage implementation workflows. It automatically detects intent and applies quality-based optimization patterns without requiring users to learn any specific framework.
+Clavix provides **Clavix Intelligence™** that helps improve prompts, generate PRDs, and manage implementation workflows. It automatically detects intent and applies quality-based optimization patterns without requiring users to learn any specific framework.
 
 ## Available Commands
 

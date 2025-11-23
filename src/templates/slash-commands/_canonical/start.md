@@ -5,7 +5,7 @@ description: Start conversational mode for iterative prompt development
 
 # Clavix Conversational Mode
 
-You are starting a Clavix conversational session for iterative prompt and requirements development. **When complete, use `/clavix:summarize` to extract and optimize requirements** using universal prompt intelligence.
+You are starting a Clavix conversational session for iterative prompt and requirements development. **When complete, use `/clavix:summarize` to extract and optimize requirements** using Clavix Intelligence™.
 
 ## Instructions
 
@@ -67,7 +67,7 @@ You are starting a Clavix conversational session for iterative prompt and requir
 
 After the conversational session, `/clavix:summarize` will:
 - Extract requirements from the conversation
-- Apply universal prompt intelligence optimization
+- Apply Clavix Intelligence™ optimization
 - Analyze intent and assess quality (Clarity, Efficiency, Structure, Completeness, Actionability)
 - Generate both original extraction and optimized version
 - Display quality scores and improvements

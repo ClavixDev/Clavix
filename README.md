@@ -1,5 +1,5 @@
 # Clavix
-> Universal prompt intelligence for AI coding. Transform rough ideas into production-ready prompts with automatic quality optimization—no framework to learn.
+> **Clavix Intelligence™** for AI coding. Transform rough ideas into production-ready prompts with automatic quality optimization—no framework to learn.
 
 ## Table of contents
 - [Why Clavix?](#why-clavix)
@@ -12,7 +12,8 @@
 
 | Version | Highlights | Details |
 | --- | --- | --- |
-| **v3.0.1** (Latest) | Adaptive Prompt Intelligence™ with 95%+ intent detection | [Changelog](CHANGELOG.md#301---2025-11-22) |
+| **v3.1.0** (Latest) | Clavix Intelligence™ brand evolution | [Changelog](CHANGELOG.md#310---2025-11-23) |
+| **v3.0.1** | Enhanced intent detection (95%+ accuracy) | [Changelog](CHANGELOG.md#301---2025-11-22) |
 | **v2.8.0** | Pure ESM package (breaking change) | [Changelog](CHANGELOG.md#280---2025-11-17) |
 | **v2.7.0** | Prompt lifecycle management | [Changelog](CHANGELOG.md#270---2025-11-15) |
 
@@ -30,7 +31,7 @@ Better prompts lead to better code. Clavix automatically detects what you're try
 Learn more in [docs/why-clavix.md](docs/why-clavix.md).
 
 ## How It Works
-Clavix uses **Adaptive Prompt Intelligence™** (v3.0+) to automatically:
+Clavix uses **Clavix Intelligence™** (v3.0+) to automatically:
 - **Detect intent** - 95%+ accuracy with weighted scoring, phrase detection, and context analysis
 - **Assess quality** - Evaluates across 5 dimensions: Clarity, Efficiency, Structure, Completeness, Actionability
 - **Apply patterns** - 6 optimization patterns automatically selected and prioritized for your specific need
@@ -99,7 +100,7 @@ clavix prd
 - Overview & navigation: [docs/README.md](docs/README.md)
 - Command reference: [docs/commands/](docs/commands/README.md)
 - Providers: [docs/providers.md](docs/providers.md)
-- Prompt Intelligence: [docs/prompt-intelligence.md](docs/prompt-intelligence.md)
+- Clavix Intelligence: [docs/clavix-intelligence.md](docs/clavix-intelligence.md)
 - Guides: [docs/guides/](docs/guides/workflows.md)
 
 ## Requirements

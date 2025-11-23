@@ -25,7 +25,7 @@ export class UniversalOptimizer {
   }
 
   /**
-   * Optimize a prompt using the universal intelligence system
+   * Optimize a prompt using Clavix Intelligence
    */
   async optimize(prompt: string, mode: OptimizationMode): Promise<OptimizationResult> {
     const startTime = Date.now();
