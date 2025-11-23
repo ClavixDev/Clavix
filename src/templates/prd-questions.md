@@ -1,7 +1,7 @@
 # PRD Question Flow
 
 Generate a focused Product Requirements Document optimized for vibecoding.
-Built with CLEAR framework principles for fast iteration without losing quality.
+Built with Clavix Planning Mode for fast iteration without losing quality.
 
 ## Question 1
 

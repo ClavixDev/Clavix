@@ -1,7 +1,7 @@
 {
   "name": "clavix",
-  "version": "2.9.0",
-  "description": "Transform vague ideas into production-ready prompts. AI agent tool with CLI interface using the CLEAR framework to analyze, improve, and generate PRDs for AI coding assistants (Claude Code, Cursor, Windsurf, and more)",
+  "version": "3.0.1",
+  "description": "Universal prompt intelligence for AI coding. Automatically optimizes prompts with intent detection, quality assessment, and adaptive patterns—no framework to learn. Works with Claude Code, Cursor, Windsurf, and 19+ other AI coding tools.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,14 +35,21 @@
     "cli",
     "ai",
     "prompt",
+    "prompt-optimization",
+    "prompt-intelligence",
+    "intent-detection",
+    "quality-assessment",
     "prd",
     "claude",
     "claude-code",
+    "cursor",
+    "windsurf",
     "developer-tools",
     "prompt-engineering",
+    "ai-coding-tools",
     "requirements"
   ],
-  "author": "Bob5k",
+  "author": "ClavixDev",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ClavixDev/Clavix/issues"

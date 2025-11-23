@@ -1,35 +1,36 @@
 ---
 name: "Clavix: Deep"
-description: Full CLEAR framework analysis (C, L, E, A, R components)
+description: Comprehensive analysis with alternatives, edge cases, and validation
 ---
 
-# Clavix Deep Mode - Full CLEAR Framework Analysis
+# Clavix Deep Mode - Comprehensive Prompt Intelligence
 
-You are helping the user perform a comprehensive deep analysis using the full CLEAR Framework (all 5 components: Concise, Logical, Explicit, Adaptive, Reflective).
+You are helping the user perform comprehensive deep analysis using Clavix's universal prompt intelligence with full exploration features (alternatives, edge cases, validation checklists).
 
-## CLEAR Framework (Deep Mode)
+## What is Deep Mode?
 
-**What is CLEAR?**
-An academically-validated prompt engineering framework by Dr. Leo Lo (University of New Mexico).
+Deep mode provides **comprehensive prompt intelligence** that goes beyond quick optimization:
 
-**Deep Mode Uses ALL Components:**
-- **[C] Concise**: Remove verbosity, pleasantries, unnecessary words
-- **[L] Logical**: Ensure coherent sequencing (context → requirements → constraints → output)
-- **[E] Explicit**: Add persona, format, tone, success criteria
-- **[A] Adaptive**: Generate alternative phrasings, structures, flexibility
-- **[R] Reflective**: Create validation checklists, edge cases, quality criteria
+**Deep Mode Features:**
+- **Intent Detection**: Identifies what you're trying to achieve
+- **Quality Assessment**: 5-dimension deep analysis (Clarity, Efficiency, Structure, Completeness, Actionability)
+- **Advanced Optimization**: Applies all available patterns
+- **Alternative Approaches**: Multiple ways to phrase and structure your prompt
+- **Edge Case Analysis**: Identifies potential issues and failure modes
+- **Validation Checklists**: Steps to verify successful completion
+- **Risk Assessment**: "What could go wrong" analysis
 
 ## Instructions
 
 1. Take the user's prompt: `{{ARGS}}`
 
-2. **Apply Full CLEAR Framework** (C, L, E, A, R):
-
-   - **Conciseness [C]**: Detailed verbosity analysis
-   - **Logic [L]**: Comprehensive flow analysis
-   - **Explicitness [E]**: Complete specification check
-   - **Adaptiveness [A]**: Multiple variations and approaches
-   - **Reflectiveness [R]**: Full validation and edge case analysis
+2. **Intent Detection** - Analyze what the user is trying to achieve:
+   - **code-generation**: Writing new code or functions
+   - **planning**: Designing architecture or breaking down tasks
+   - **refinement**: Improving existing code or prompts
+   - **debugging**: Finding and fixing issues
+   - **documentation**: Creating docs or explanations
+   - **prd-generation**: Creating requirements documents
 
 3. **Strategic Scope Detection** (before detailed analysis):
 
@@ -41,49 +42,77 @@ An academically-validated prompt engineering framework by Dr. Leo Lo (University
    - **Business Impact**: ROI, business metrics, KPIs, stakeholder impact, market analysis
 
    **If 3+ strategic keywords detected**:
-   Ask the user: "I notice this involves strategic decisions around [detected themes]. These topics benefit from PRD-style planning with business context and architectural considerations. Would you like to:
+   Ask the user: "I notice this involves strategic decisions around [detected themes]. These topics benefit from Clavix Planning Mode with business context and architectural considerations. Would you like to:
    - Switch to `/clavix:prd` for comprehensive strategic planning (recommended)
    - Continue with deep mode for prompt-level analysis only"
 
    **If user chooses to continue**, proceed with deep analysis but remind them at the end that `/clavix:prd` is available for strategic planning.
 
-4. **Generate Comprehensive Output**:
+4. **Comprehensive Quality Assessment** - Evaluate across 5 dimensions:
 
-   a. **CLEAR Assessment** (all 5 components with scores)
+   - **Clarity**: Is the objective clear and unambiguous?
+   - **Efficiency**: Is the prompt concise without losing critical information?
+   - **Structure**: Is information organized logically?
+   - **Completeness**: Are all necessary details provided?
+   - **Actionability**: Can AI take immediate action on this prompt?
 
-   b. **CLEAR-Optimized Prompt** (applying all components)
+   Score each dimension 0-100%, calculate weighted overall score.
 
-   c. **CLEAR Changes Made** (labeled with [C], [L], [E], [A], [R])
+5. **Generate Comprehensive Output**:
 
-   d. **Adaptive Variations [A]**:
-      - 2-3 alternative phrasings
-      - Alternative structures (user story, job story, structured)
-      - Temperature recommendations
-      - Explain when each approach is most appropriate
+   a. **Intent Analysis** (type, confidence, characteristics)
 
-   e. **Reflection Checklist [R]**:
-      - Validation steps for accuracy
-      - Edge cases to consider
-      - "What could go wrong" analysis
-      - Fact-checking steps
-      - Quality criteria
+   b. **Quality Assessment** (5 dimensions with detailed feedback)
 
-4. **CLEAR-labeled educational feedback**:
-   - Label all changes with CLEAR component tags
-   - Example: "[C] Removed 15 unnecessary pleasantries"
-   - Example: "[A] See Alternative Structures for 3 different approaches"
-   - Example: "[R] See Reflection Checklist for 5 validation steps"
+   c. **Optimized Prompt** (applying all patterns)
 
-5. Present everything in comprehensive, CLEAR-organized format.
+   d. **Improvements Applied** (labeled with quality dimensions)
+
+   e. **Alternative Approaches**:
+      - 2-3 different ways to phrase the request
+      - Alternative structures (user story, job story, structured sections)
+      - When each approach is most appropriate
+      - Temperature/model recommendations
+
+   f. **Alternative Structures**:
+      - **Step-by-step**: Break into sequential steps
+      - **Template-based**: Provide code/document template to fill
+      - **Example-driven**: Show concrete examples of desired output
+
+   g. **Validation Checklist**:
+      - Steps to verify accuracy
+      - Requirements match checks
+      - Edge case handling verification
+      - Error handling appropriateness
+      - Output format validation
+      - Performance considerations
+
+   h. **Edge Cases to Consider**:
+      - Intent-specific edge cases
+      - Error conditions and recovery
+      - Unexpected inputs or behavior
+      - Resource limitations
+      - Compatibility concerns
+
+6. **Quality-labeled educational feedback**:
+   - Label all improvements with quality dimension tags
+   - Example: "[Efficiency] Removed 15 unnecessary phrases"
+   - Example: "[Structure] Reorganized into logical sections"
+   - Example: "[Completeness] Added missing technical constraints"
+
+7. Present everything in comprehensive, well-organized format.
 
 ## Deep Mode Features
 
-**Include (Full CLEAR Framework):**
-- **[C, L, E]**: All fast mode analysis (conciseness, logic, explicitness)
-- **[A] Adaptive**: Alternative phrasings, structures, flexibility, temperature
-- **[R] Reflective**: Validation checklist, edge cases, quality criteria, fact-checking
-- **CLEAR Assessment**: All 5 component scores
-- **CLEAR-labeled Changes**: Educational feedback showing which component improved what
+**Include:**
+- **Intent Detection**: Automatic classification with confidence
+- **Quality Assessment**: All 5 dimensions with detailed analysis
+- **Advanced Optimization**: All applicable patterns
+- **Alternative Approaches**: Multiple phrasings and perspectives
+- **Alternative Structures**: Different organization approaches
+- **Validation Checklist**: Steps to verify completion
+- **Edge Case Analysis**: Potential issues and failure modes
+- **Risk Assessment**: "What could go wrong" analysis
 
 **Do NOT include (these belong in `/clavix:prd`):**
 - System architecture recommendations
@@ -97,67 +126,173 @@ If user provides: "Create a login page"
 
 Output:
 ```
-## Analysis
-[All fast mode analysis: gaps, ambiguities, strengths, suggestions]
+## Clavix Deep Mode Analysis
 
-## Changes Made
-- Added authentication context and user needs
-- Specified technical stack and constraints
-- Defined success criteria and expected output
+### Intent Detection:
+Type: code-generation
+Confidence: 85%
+Characteristics:
+  • Has code context: No
+  • Technical terms: Minimal
+  • Open-ended: Yes
+  • Needs structure: Yes
 
-## Alternative Phrasings
-1. "Implement a user authentication interface that enables secure access to the platform"
-2. "Design and build a login system that validates user credentials and manages sessions"
-3. "Create an authentication flow that allows registered users to access their accounts"
+### Quality Assessment:
 
-## Edge Cases to Consider
-- What happens when a user enters incorrect credentials 3+ times?
-- How to handle users who've forgotten both email and password?
-- What about users trying to log in from a new device?
-- How to handle session expiration during active use?
+Clarity: 35%
+    • "Create" is ambiguous - design mockup? implement? both?
+    • No authentication method specified
+    • Missing user experience requirements
 
-## Implementation Examples
-**Good:**
-- Prompt specifies authentication method, error handling, and accessibility requirements
-- Includes context about existing auth system and integration points
-- Defines measurable success criteria (load time, accessibility score)
+Efficiency: 60%
+    • Brief but too minimal
+    • Missing context that would prevent back-and-forth
 
-**Bad:**
-- "Make a login page" - no context, constraints, or success criteria
-- Missing technical stack and integration requirements
-- No consideration of security or user experience
+Structure: 40%
+    • Single sentence, no organization
+    • Suggested flow: Objective → Requirements → Constraints → Output
 
-## Alternative Prompt Structures
-1. **User Story**: "As a registered user, I want to log into my account so that I can access my personalized dashboard"
-   → Focuses on user value and benefits
+Completeness: 15%
+    • Missing: tech stack, authentication context, success criteria
+    • No user flows or error handling specified
+    • Missing integration requirements
 
-2. **Job Story**: "When I visit the app, I want to authenticate securely, so I can access my saved data"
-   → Emphasizes context and motivation
+Actionability: 25%
+    • Too vague to start implementation
+    • Needs specific technical requirements
+    • Unclear acceptance criteria
 
-3. **Structured Sections**: Objective, Requirements, Constraints, Success Criteria
-   → Provides comprehensive organization
+Overall Quality: 35% (needs-significant-improvement)
 
-## What Could Go Wrong
-- Without security requirements, implementation might miss OWASP best practices
-- Vague "login page" could be interpreted as OAuth, email/password, or social login
-- Missing error handling specification could lead to poor UX
-- No accessibility requirements might exclude users with disabilities
+### Optimized Prompt:
 
-## Improved Prompt
-[Structured prompt with all sections]
+Objective: Build a secure user authentication login page
+
+Requirements:
+- Email and password input fields with validation
+- "Remember me" checkbox for session persistence
+- "Forgot password" link
+- Clear error messages for invalid credentials
+- Responsive design for mobile and desktop
+- Loading states during authentication
+
+Technical Constraints:
+- Use React with TypeScript
+- Integrate with existing JWT authentication API at /api/auth/login
+- Follow WCAG 2.1 AA accessibility standards
+- Support keyboard navigation
+
+Expected Output:
+- Fully functional login component
+- Unit tests with >80% coverage
+- Storybook stories for different states
+
+Success Criteria:
+- Users can log in successfully with valid credentials
+- Invalid credentials show appropriate error messages
+- Page is accessible via keyboard navigation
+- Component passes automated accessibility audit
+
+### Improvements Applied:
+
+[Clarity] Defined "create" as full implementation with specific features
+[Efficiency] Focused on essential authentication features without over-engineering
+[Structure] Organized into Objective → Requirements → Constraints → Output → Success Criteria
+[Completeness] Added tech stack (React/TypeScript), API endpoint, accessibility standards, testing requirements
+[Actionability] Converted vague request into specific, measurable implementation requirements
+
+### Alternative Approaches:
+
+1. **Functional Decomposition**: "Build a React login component that: (1) validates email/password inputs, (2) calls JWT auth API, (3) handles errors gracefully, (4) manages session persistence"
+   → Best for: Step-by-step implementation, clarity on sequence
+
+2. **User-Centric**: "As a user, I need to log into my account securely using email/password, with clear feedback if credentials are invalid"
+   → Best for: Emphasizing user experience and value
+
+3. **Example-Driven**: "Create a login page similar to [reference], with email/password fields, validation, and integration with our JWT API"
+   → Best for: When you have a reference implementation
+
+### Alternative Structures:
+
+**Step-by-step approach:**
+1. Create form with email/password inputs and validation
+2. Implement API integration with JWT endpoint
+3. Add error handling and user feedback
+4. Implement "remember me" and "forgot password" features
+5. Add accessibility and responsive design
+6. Write tests and documentation
+
+**Template-based approach:**
+Provide a component template with:
+- Form structure with input fields
+- Validation logic placeholders
+- API call hooks
+- Error state management
+- Accessibility attributes
+
+**Example-driven approach:**
+Show concrete examples of:
+- Login form HTML structure
+- Validation error messages
+- Success/failure API responses
+- Loading and error states
+
+### Validation Checklist:
+
+Before considering this task complete, verify:
+☐ Email and password fields validate input correctly
+☐ Invalid credentials show appropriate, user-friendly error messages
+☐ Successful login redirects to correct page or updates auth state
+☐ "Remember me" persists session across browser sessions
+☐ "Forgot password" link navigates to password reset flow
+☐ Form is keyboard accessible (tab navigation, enter to submit)
+☐ Screen readers announce errors and state changes
+☐ Loading state prevents duplicate submissions
+☐ Component renders correctly on mobile and desktop
+☐ Unit tests cover success, failure, and edge cases (>80% coverage)
+
+### Edge Cases to Consider:
+
+• **Empty or invalid inputs**: How to handle blank email, malformed email, empty password?
+• **API failures**: What happens if auth API is down or times out?
+• **Slow network**: How to indicate loading state and prevent double-submission?
+• **Expired sessions**: How to handle JWT expiration during login attempt?
+• **Account locked**: What if user account is temporarily locked after failed attempts?
+• **Password reset in progress**: How to handle user who requested reset but tries to login?
+• **Browser autofill**: Does component work correctly with password managers?
+• **Concurrent logins**: What happens if user logs in on multiple devices?
+
+### What Could Go Wrong:
+
+• **Missing security requirements**: Implementation might miss OWASP best practices, leading to vulnerabilities
+• **Vague authentication method**: "Login" could mean OAuth, email/password, social login, or magic links
+• **No error handling specification**: Poor UX with cryptic error messages or silent failures
+• **Missing accessibility requirements**: Excluding users with disabilities, potential legal issues
+• **No performance criteria**: Slow authentication could frustrate users
+• **Undefined session management**: Security issues with improper session handling
+
+### Patterns Applied:
+
+• ConcisenessFilter: Removed unnecessary phrases while preserving intent
+• ObjectiveClarifier: Extracted clear goal statement
+• TechnicalContextEnricher: Added React/TypeScript stack and JWT API details
+
+### Recommendation:
+
+Consider using `/clavix:prd` if this login page is part of a larger authentication system requiring architectural decisions about session management, token refresh, multi-factor authentication, or integration with identity providers.
 ```
 
 ## When to Use Deep vs Fast vs PRD
 
-- **Fast mode** (`/clavix:fast`): C, L, E components - quick CLEAR cleanup
-- **Deep mode** (`/clavix:deep`): Full CLEAR (C, L, E, A, R) - comprehensive analysis with alternatives and validation
-- **PRD mode** (`/clavix:prd`): CLEAR-validated PRD generation - strategic planning with architecture decisions
+- **Fast mode** (`/clavix:fast`): Quick optimization - best for simple, clear requests
+- **Deep mode** (`/clavix:deep`): Comprehensive analysis - best for complex prompts needing exploration
+- **PRD mode** (`/clavix:prd`): Strategic planning - best for features requiring architecture/business decisions
 
 ## Next Steps (v2.7+)
 
 ### Saving the Prompt (REQUIRED)
 
-After displaying the CLEAR-optimized prompt, you MUST save it to ensure it's available for the prompt lifecycle workflow.
+After displaying the optimized prompt, you MUST save it to ensure it's available for the prompt lifecycle workflow.
 
 **If user ran CLI command** (`clavix deep "prompt"`):
 - Prompt is automatically saved ✓
@@ -194,23 +329,27 @@ originalPrompt: <user's original prompt text>
 
 # Improved Prompt
 
-<Insert the CLEAR-optimized prompt content from your analysis above>
+<Insert the optimized prompt content from your analysis above>
 
-## CLEAR Scores
-- **C** (Conciseness): <percentage>%
-- **L** (Logic): <percentage>%
-- **E** (Explicitness): <percentage>%
-- **A** (Adaptiveness): <percentage>%
-- **R** (Reflectiveness): <percentage>%
+## Quality Scores
+- **Clarity**: <percentage>%
+- **Efficiency**: <percentage>%
+- **Structure**: <percentage>%
+- **Completeness**: <percentage>%
+- **Actionability**: <percentage>%
 - **Overall**: <percentage>% (<rating>)
 
 ## Alternative Variations
 
-<Insert adaptive variations from your analysis>
+<Insert alternative approaches from your analysis>
 
-## Reflection Checklist
+## Validation Checklist
 
-<Insert reflective validation from your analysis>
+<Insert validation checklist from your analysis>
+
+## Edge Cases
+
+<Insert edge cases from your analysis>
 
 ## Original Prompt
 ```
@@ -273,29 +412,29 @@ clavix prompts clear --deep
 
 ## Workflow Navigation
 
-**You are here:** Deep Mode (Comprehensive CLEAR Analysis)
+**You are here:** Deep Mode (Comprehensive Prompt Intelligence)
 
 **Common workflows:**
 - **Quick execute**: `/clavix:deep` → `/clavix:execute` → Implement
 - **Review first**: `/clavix:deep` → `/clavix:prompts` → `/clavix:execute`
-- **Thorough analysis**: `/clavix:deep` → Use optimized prompt + alternatives
+- **Thorough analysis**: `/clavix:deep` → Use optimized prompt + alternatives + validation
 - **Escalate to strategic**: `/clavix:deep` → (detects strategic scope) → `/clavix:prd` → Plan → Implement → Archive
-- **From fast mode**: `/clavix:fast` → (suggests) `/clavix:deep` → Full analysis with A & R components
+- **From fast mode**: `/clavix:fast` → (suggests) `/clavix:deep` → Full analysis with alternatives & validation
 
 **Related commands:**
 - `/clavix:execute` - Execute saved prompt
 - `/clavix:prompts` - Manage saved prompts
-- `/clavix:fast` - Quick CLEAR improvements (C, L, E only)
-- `/clavix:prd` - Strategic PRD generation for architecture/business decisions
+- `/clavix:fast` - Quick improvements (basic optimization only)
+- `/clavix:prd` - Strategic PRD generation (Clavix Planning Mode) for architecture/business decisions
 - `/clavix:start` - Conversational mode for exploring unclear requirements
 
 ## Tips
 
-- **Apply full CLEAR framework** systematically: all 5 components
-- Label all changes with CLEAR components for education
-- Deep mode focuses on **prompt-level** CLEAR analysis, not strategic architecture
-- Use **[A] Adaptive** to explore alternative approaches
-- Use **[R] Reflective** to identify edge cases and validation needs
+- **Intent-aware optimization**: Clavix automatically detects what you're trying to achieve
+- Deep mode provides comprehensive exploration with alternatives and validation
+- Label all changes with quality dimensions for education
+- Use **alternative approaches** to explore different perspectives
+- Use **validation checklist** to ensure complete implementation
 - For architecture, security, and scalability, recommend `/clavix:prd`
 
 ## Troubleshooting
@@ -326,16 +465,16 @@ echo '{"version":"1.0","prompts":[]}' > .clavix/outputs/prompts/deep/.index.json
 **Solution**:
 - Proceed with deep mode as requested
 - Remind at end that `/clavix:prd` is available for strategic planning
-- Focus on prompt-level CLEAR analysis, exclude architecture recommendations
+- Focus on prompt-level analysis, exclude architecture recommendations
 
 ### Issue: Too many alternative variations making output overwhelming
-**Cause**: Adaptive component generating many options
+**Cause**: Generating too many options
 **Solution**:
 - Limit to 2-3 most distinct alternatives
 - Focus on meaningfully different approaches (not minor wording changes)
 - Group similar variations together
 
-### Issue: Reflective validation finding too many edge cases
+### Issue: Validation checklist finding too many edge cases
 **Cause**: Complex prompt with many potential failure modes
 **Solution**:
 - Prioritize most likely or highest-impact edge cases

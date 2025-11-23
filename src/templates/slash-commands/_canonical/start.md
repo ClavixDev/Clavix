@@ -3,9 +3,9 @@ name: "Clavix: Start"
 description: Start conversational mode for iterative prompt development
 ---
 
-# Clavix Conversational Mode - CLEAR Framework Enhanced
+# Clavix Conversational Mode
 
-You are starting a Clavix conversational session for iterative prompt and requirements development. **When complete, use `/clavix:summarize` to extract and CLEAR-optimize requirements** (Concise, Logical, Explicit).
+You are starting a Clavix conversational session for iterative prompt and requirements development. **When complete, use `/clavix:summarize` to extract and optimize requirements** using universal prompt intelligence.
 
 ## Instructions
 
@@ -14,7 +14,7 @@ You are starting a Clavix conversational session for iterative prompt and requir
    Let's build something great together! Tell me about what you want to create.
 
    I'll ask clarifying questions as we go, and we can refine the requirements together.
-   When we're done, use /clavix:summarize to extract a CLEAR-optimized prompt from our conversation.
+   When we're done, use /clavix:summarize to extract an optimized prompt from our conversation.
    ```
 
 2. As the user describes their needs:
@@ -61,16 +61,17 @@ You are starting a Clavix conversational session for iterative prompt and requir
    - Offer suggestions when helpful
    - Validate their thinking
 
-5. Remind them to use `/clavix:summarize` when ready to extract a CLEAR-optimized prompt.
+5. Remind them to use `/clavix:summarize` when ready to extract an optimized prompt.
 
-## CLEAR Framework Connection
+## How Summarization Works
 
 After the conversational session, `/clavix:summarize` will:
 - Extract requirements from the conversation
-- Apply CLEAR framework optimization (Concise, Logical, Explicit)
-- Generate both raw extraction and CLEAR-enhanced version
-- Display CLEAR scores and improvements
-- Save `clear-optimized-prompt.md` for optimal AI consumption
+- Apply universal prompt intelligence optimization
+- Analyze intent and assess quality (Clarity, Efficiency, Structure, Completeness, Actionability)
+- Generate both original extraction and optimized version
+- Display quality scores and improvements
+- Save `optimized-prompt.md` for optimal AI consumption
 
 ## Example Flow
 
@@ -89,13 +90,13 @@ After the conversational session, `/clavix:summarize` will:
 **You are here:** Conversational Mode (Iterative Exploration)
 
 **Common workflows:**
-- **Exploration to prompt**: `/clavix:start` → [conversation] → `/clavix:summarize` → CLEAR-optimized prompt
+- **Exploration to prompt**: `/clavix:start` → [conversation] → `/clavix:summarize` → Optimized prompt
 - **Exploration to PRD**: `/clavix:start` → [conversation] → `/clavix:prd` (answer questions with discussed info)
 - **Exploration to planning**: `/clavix:start` → `/clavix:summarize` → `/clavix:plan` → Implement
 
 **Related commands:**
-- `/clavix:summarize` - Extract and CLEAR-optimize conversation (typical next step)
-- `/clavix:prd` - Switch to structured PRD generation
+- `/clavix:summarize` - Extract and optimize conversation (typical next step)
+- `/clavix:prd` - Switch to Clavix Planning Mode for structured PRD generation
 - `/clavix:fast` or `/clavix:deep` - Direct prompt improvement instead of conversation
 
 ## Note

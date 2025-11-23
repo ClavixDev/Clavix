@@ -66,7 +66,7 @@ You are helping the user implement tasks from their task plan with AI assistance
 
    d. **Implement the task**:
       - Write/modify code as needed
-      - Follow CLEAR principles
+      - Follow quality principles (clarity, structure, actionability)
       - Use PRD requirements as your guide
       - Ask user for clarification if needed
 

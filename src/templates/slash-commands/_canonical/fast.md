@@ -1,38 +1,50 @@
 ---
 name: "Clavix: Fast"
-description: CLEAR-guided quick improvements (C, L, E components)
+description: Quick prompt improvements with smart quality assessment and triage
 ---
 
-# Clavix Fast Mode - CLEAR Framework Quick Improvement
+# Clavix Fast Mode - Universal Prompt Intelligence
 
-You are helping the user improve their prompt using Clavix's fast mode, which applies the CLEAR Framework (Concise, Logical, Explicit components) with smart triage.
+You are helping the user improve their prompt using Clavix's fast mode, which applies universal prompt intelligence with smart quality assessment and triage.
 
-## CLEAR Framework (Fast Mode)
+## What is Clavix?
 
-**What is CLEAR?**
-An academically-validated prompt engineering framework by Dr. Leo Lo (University of New Mexico).
+Clavix provides **universal prompt intelligence** that automatically detects intent and applies the right optimization patterns. No frameworks to learn—just better prompts, instantly.
 
-**Fast Mode Uses:**
-- **[C] Concise**: Remove verbosity, pleasantries, unnecessary words
-- **[L] Logical**: Ensure coherent sequencing (context → requirements → constraints → output)
-- **[E] Explicit**: Add persona, format, tone, success criteria
+**Fast Mode Features:**
+- **Intent Detection**: Automatically identifies what you're trying to achieve
+- **Quality Assessment**: 5-dimension analysis (Clarity, Efficiency, Structure, Completeness, Actionability)
+- **Smart Optimization**: Applies proven patterns based on your intent
+- **Intelligent Triage**: Recommends deep mode when comprehensive analysis would help
 
-**Deep Mode Adds:** [A] Adaptive variations, [R] Reflective validation (use `/clavix:deep` for these)
+**Deep Mode Adds:** Alternative approaches, edge case analysis, validation checklists (use `/clavix:deep` for these)
 
 ## Instructions
 
 1. Take the user's prompt: `{{ARGS}}`
 
-2. **CLEAR Analysis** - Assess the prompt using three components:
+2. **Intent Detection** - Analyze what the user is trying to achieve:
+   - **code-generation**: Writing new code or functions
+   - **planning**: Designing architecture or breaking down tasks
+   - **refinement**: Improving existing code or prompts
+   - **debugging**: Finding and fixing issues
+   - **documentation**: Creating docs or explanations
+   - **prd-generation**: Creating requirements documents
 
-   - **Conciseness [C]**: Identify verbose language, pleasantries ("please", "could you"), unnecessary qualifiers
-   - **Logic [L]**: Check sequencing and flow - is information presented coherently?
-   - **Explicitness [E]**: Verify specifications - persona, output format, tone, success criteria
+3. **Quality Assessment** - Evaluate across 5 dimensions:
 
-3. **CLEAR-Aware Smart Triage**: Use multi-factor content-quality assessment to determine if deep analysis is needed:
+   - **Clarity**: Is the objective clear and unambiguous?
+   - **Efficiency**: Is the prompt concise without losing critical information?
+   - **Structure**: Is information organized logically?
+   - **Completeness**: Are all necessary details provided?
+   - **Actionability**: Can AI take immediate action on this prompt?
 
-   **Primary Indicators** (CLEAR scores - most important):
-   - **Low CLEAR scores**: Conciseness < 60%, Logic < 60%, or Explicitness < 50%
+   Score each dimension 0-100%, calculate weighted overall score.
+
+4. **Smart Triage** - Determine if deep analysis is needed:
+
+   **Primary Indicators** (quality scores - most important):
+   - **Low quality scores**: Overall < 65%, or any dimension < 50%
 
    **Secondary Indicators** (content quality):
    - **Missing critical elements**: 3+ missing from (context, tech stack, success criteria, user needs, expected output)
@@ -41,39 +53,43 @@ An academically-validated prompt engineering framework by Dr. Leo Lo (University
    - **Context depth**: Extremely brief (<15 words) OR overly verbose (>100 words without structure)
 
    **Escalation Decision**:
-   - If **Low CLEAR scores** + **2+ Secondary Indicators**: **Strongly recommend `/clavix:deep`**
-   - If **Low CLEAR scores** only: **Suggest `/clavix:deep`** but can proceed with fast mode
-   - Explain which CLEAR component needs deeper analysis and why
+   - If **Low quality scores** + **2+ Secondary Indicators**: **Strongly recommend `/clavix:deep`**
+   - If **Low quality scores** only: **Suggest `/clavix:deep`** but can proceed with fast mode
+   - Explain which quality dimension needs deeper analysis and why
 
    Ask the user:
    - Switch to deep mode (recommended when strongly recommended)
    - Continue with fast mode (acceptable for suggestion-level, but at their own risk for strong recommendation)
 
-4. Generate a **CLEAR-optimized** structured prompt with these sections:
+5. Generate an **optimized** structured prompt with these sections:
    **Objective**: Clear, specific goal
    **Requirements**: Detailed, actionable requirements
    **Technical Constraints**: Technologies, performance needs, integrations
    **Expected Output**: What the result should look like
    **Success Criteria**: How to measure completion
 
-5. **CLEAR Changes Made**: List improvements with CLEAR component labels:
-   - **[C]** "Removed 15 unnecessary words and pleasantries"
-   - **[L]** "Restructured: context → requirements → constraints → output"
-   - **[E]** "Added explicit persona (senior developer), output format (React component), tone (production-ready)"
+6. **Improvements Applied**: List enhancements with quality dimension labels:
+   - **[Efficiency]** "Removed 15 unnecessary words and pleasantries"
+   - **[Structure]** "Reorganized: objective → requirements → constraints → output"
+   - **[Clarity]** "Added explicit persona (senior developer), output format (React component), tone (production-ready)"
+   - **[Completeness]** "Added missing tech stack and success criteria"
+   - **[Actionability]** "Converted vague request into specific, executable tasks"
 
-6. Present the CLEAR-optimized prompt in a code block for easy copying.
+7. Present the optimized prompt in a code block for easy copying.
 
 ## Fast Mode Features
 
-**Include (CLEAR C, L, E):**
-- **CLEAR Assessment** (Conciseness, Logic, Explicitness scores with issues)
-- Single CLEAR-optimized improved prompt
-- **CLEAR Changes Made** (labeled with [C], [L], [E] components)
-- Recommendation to use deep mode for Adaptive & Reflective components
+**Include:**
+- **Intent Analysis** (detected intent type with confidence)
+- **Quality Assessment** (5 dimensions: Clarity, Efficiency, Structure, Completeness, Actionability)
+- Single optimized improved prompt
+- **Improvements Applied** (labeled with quality dimensions)
+- Recommendation to use deep mode for comprehensive analysis
 
 **Skip (use `/clavix:deep` instead):**
-- **[A] Adaptive**: Alternative phrasings, structures, flexibility
-- **[R] Reflective**: Validation checklists, edge cases, quality criteria
+- Alternative phrasings and structures
+- Validation checklists and edge cases
+- Quality criteria and risk assessment
 - Strategic analysis (architecture, security - that's for `/clavix:prd`)
 
 ## Example
@@ -82,29 +98,41 @@ If user provides: "Please could you maybe help me create a login page?"
 
 Output:
 ```
-## CLEAR Analysis (Fast Mode)
+## Clavix Fast Mode Analysis
 
-### CLEAR Framework Assessment:
+### Intent Detection:
+Type: code-generation
+Confidence: 85%
 
-[C] Conciseness: 45%
-    • 4 unnecessary pleasantries detected ("Please", "could you", "maybe", "help me")
+### Quality Assessment:
+
+Clarity: 40%
+    • Objective unclear - "create" vs "design" vs "implement"?
+    • No specifics about authentication method
+
+Efficiency: 35%
+    • 4 unnecessary pleasantries ("Please", "could you", "maybe", "help me")
     • Low signal-to-noise ratio (core request is only 4 words)
 
-[L] Logic: 85%
+Structure: 85%
     • Single request, coherent but minimal
-    • Suggested flow: Context → Requirements → Constraints → Output
+    • Suggested flow: Objective → Requirements → Constraints → Output
 
-[E] Explicitness: 25%
-    • Missing: persona, output format, tone, success criteria, technical constraints
-    • No authentication context specified
+Completeness: 20%
+    • Missing: tech stack, authentication context, success criteria, constraints
+    • No authentication method specified
 
-Overall CLEAR Score: 51% (needs-improvement)
+Actionability: 30%
+    • Too vague to start implementation
+    • Missing technical specifications
+
+Overall Quality: 42% (needs-improvement)
 
 Recommendation:
-For Adaptive variations (A) and Reflective validation (R), use:
+For comprehensive analysis with alternatives, edge cases, and validation checklists, use:
   clavix deep "<your prompt>"
 
-### CLEAR-Optimized Prompt:
+### Optimized Prompt:
 
 Objective: Build a secure user authentication login page
 
@@ -129,18 +157,20 @@ Success Criteria:
 - Invalid credentials show appropriate errors
 - Page is accessible via keyboard navigation
 
-### CLEAR Changes Made:
+### Improvements Applied:
 
-[C] Removed 4 pleasantries ("Please", "could you", "maybe", "help me"), reduced from 11 words to core intent
-[L] Structured logical flow: Objective → Requirements → Technical Constraints → Expected Output → Success Criteria
-[E] Added explicit specifications: React TypeScript persona, component output format, production-ready tone, accessibility criteria
+[Efficiency] Removed 4 pleasantries ("Please", "could you", "maybe", "help me"), reduced from 11 words to core intent
+[Structure] Organized logical flow: Objective → Requirements → Technical Constraints → Expected Output → Success Criteria
+[Clarity] Added explicit specifications: React TypeScript persona, component output format, production-ready tone
+[Completeness] Added tech stack (React/TypeScript), authentication method (JWT), accessibility standards (WCAG 2.1 AA)
+[Actionability] Converted vague "create" into specific implementation requirements with measurable success criteria
 ```
 
 ## Next Steps (v2.7+)
 
 ### Saving the Prompt (REQUIRED)
 
-After displaying the CLEAR-optimized prompt, you MUST save it to ensure it's available for the prompt lifecycle workflow.
+After displaying the optimized prompt, you MUST save it to ensure it's available for the prompt lifecycle workflow.
 
 **If user ran CLI command** (`clavix fast "prompt"`):
 - Prompt is automatically saved ✓
@@ -177,12 +207,14 @@ originalPrompt: <user's original prompt text>
 
 # Improved Prompt
 
-<Insert the CLEAR-optimized prompt content from your analysis above>
+<Insert the optimized prompt content from your analysis above>
 
-## CLEAR Scores
-- **C** (Conciseness): <percentage>%
-- **L** (Logic): <percentage>%
-- **E** (Explicitness): <percentage>%
+## Quality Scores
+- **Clarity**: <percentage>%
+- **Efficiency**: <percentage>%
+- **Structure**: <percentage>%
+- **Completeness**: <percentage>%
+- **Actionability**: <percentage>%
 - **Overall**: <percentage>% (<rating>)
 
 ## Original Prompt
@@ -246,7 +278,7 @@ clavix prompts clear --fast
 
 ## Workflow Navigation
 
-**You are here:** Fast Mode (Quick CLEAR Improvement)
+**You are here:** Fast Mode (Quick Prompt Intelligence)
 
 **Common workflows:**
 - **Quick cleanup**: `/clavix:fast` → `/clavix:execute` → Implement
@@ -257,18 +289,18 @@ clavix prompts clear --fast
 **Related commands:**
 - `/clavix:execute` - Execute saved prompt
 - `/clavix:prompts` - Manage saved prompts
-- `/clavix:deep` - Full CLEAR analysis (all 5 components: C, L, E, A, R)
-- `/clavix:prd` - Generate PRD for strategic planning
+- `/clavix:deep` - Comprehensive analysis with alternatives, edge cases, validation
+- `/clavix:prd` - Generate PRD for strategic planning (Clavix Planning Mode)
 - `/clavix:start` - Conversational exploration before prompting
 
 ## Tips
 
-- **Apply CLEAR framework** systematically: C, L, E components
-- Use **CLEAR-aware triage** to prevent inadequate analysis
-- Label all changes with CLEAR components for education
-- For comprehensive analysis with [A] and [R], recommend `/clavix:deep`
+- **Intent-aware optimization**: Clavix automatically detects what you're trying to achieve
+- Use **smart triage** to prevent inadequate analysis
+- Label all changes with quality dimensions for education
+- For comprehensive analysis with alternatives and validation, recommend `/clavix:deep`
 - For strategic planning, recommend `/clavix:prd`
-- Focus on making prompts **CLEAR** quickly
+- Focus on making prompts **actionable** quickly
 
 ## Troubleshooting
 
@@ -294,22 +326,22 @@ echo '{"version":"1.0","prompts":[]}' > .clavix/outputs/prompts/fast/.index.json
 - Try creating the directory structure again
 
 ### Issue: Triage keeps recommending deep mode
-**Cause**: Prompt has low CLEAR scores + multiple secondary indicators
+**Cause**: Prompt has low quality scores + multiple secondary indicators
 **Solution**:
 - Accept the recommendation - deep mode will provide better analysis
 - OR improve prompt manually before running fast mode again
-- Check which CLEAR component is scoring low and address it
+- Check which quality dimension is scoring low and address it
 
 ### Issue: Can't determine if prompt is complex enough for deep mode
-**Cause**: Borderline CLEAR scores or unclear content quality
+**Cause**: Borderline quality scores or unclear content quality
 **Solution**:
 - Err on side of fast mode first
 - If output feels insufficient, escalate to `/clavix:deep`
 - Use triage as guidance, not absolute rule
 
 ### Issue: Improved prompt still feels incomplete
-**Cause**: Fast mode only applies C, L, E components
+**Cause**: Fast mode only applies basic optimizations
 **Solution**:
-- Use `/clavix:deep` for Adaptive variations and Reflective validation
+- Use `/clavix:deep` for alternative approaches, edge cases, and validation checklists
 - OR use `/clavix:prd` if strategic planning is needed
 - Fast mode is for quick cleanup, not comprehensive analysis

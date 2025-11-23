@@ -39,35 +39,39 @@ Detect user intent from keywords and trigger appropriate workflow. Use Octofrien
 ---
 
 ### Fast Prompt Improvement Workflow
-**Trigger Keywords:** improve prompt, quick fix, make better, optimize prompt, fast improvement, CLEAR framework
+**Trigger Keywords:** improve prompt, quick fix, make better, optimize prompt, fast improvement
 
 **When to use:** User wants quick improvements to their prompt
 
 **Process:**
-1. Analyze the prompt using CLEAR Framework (C, L, E components):
-   - **[C] Conciseness**: Identify verbosity, pleasantries, unnecessary words
-   - **[L] Logic**: Check sequencing and coherent flow
-   - **[E] Explicitness**: Verify persona, format, tone, success criteria
+1. Analyze the prompt using quality assessment (5 dimensions):
+   - **Clarity**: Is the objective clear and unambiguous?
+   - **Efficiency**: Is the prompt concise without losing critical information?
+   - **Structure**: Is information organized logically?
+   - **Completeness**: Are all necessary details provided?
+   - **Actionability**: Can AI take immediate action on this prompt?
 
 2. Assess if deep analysis is needed:
    - Prompt < 20 characters?
    - Missing 3+ critical elements?
    - Contains vague words ("app", "system") without context?
-   - Low CLEAR scores (C<60%, L<60%, E<50%)?
+   - Low quality scores (Overall <65%, or any dimension <50%)?
 
    **If YES:** Recommend deep analysis instead and explain why
 
-3. Generate CLEAR-optimized structured prompt with sections:
+3. Generate optimized structured prompt with sections:
    - **Objective**: Clear, specific goal
    - **Requirements**: Detailed, actionable requirements
    - **Technical Constraints**: Technologies, performance, integrations
    - **Expected Output**: What result should look like
    - **Success Criteria**: How to measure completion
 
-4. List **CLEAR Changes Made** with component labels:
-   - [C] "Removed 15 unnecessary words"
-   - [L] "Restructured: context → requirements → output"
-   - [E] "Added explicit persona, format, tone"
+4. List **Improvements Applied** with quality dimension labels:
+   - [Efficiency] "Removed 15 unnecessary words"
+   - [Structure] "Reorganized: context → requirements → output"
+   - [Clarity] "Added explicit persona, format, tone"
+   - [Completeness] "Added missing tech stack and success criteria"
+   - [Actionability] "Converted vague goals into specific requirements"
 
 5. Present optimized prompt in code block for easy copying
 
@@ -76,28 +80,29 @@ Detect user intent from keywords and trigger appropriate workflow. Use Octofrien
 ---
 
 ### Deep Prompt Analysis Workflow
-**Trigger Keywords:** deep analysis, comprehensive review, thorough examination, full CLEAR analysis, deep dive
+**Trigger Keywords:** deep analysis, comprehensive review, thorough examination, deep dive, alternatives
 
-**When to use:** User wants comprehensive prompt analysis with all CLEAR components
+**When to use:** User wants comprehensive prompt analysis with alternatives and validation
 
 **Octofriend Tip:** This is an ideal use case for model switching. Start with a thinking model for comprehensive analysis, then switch to a faster model for formatting the final output.
 
 **Process:**
-1. Apply **Full CLEAR Framework** (C, L, E, A, R):
-   - **[C] Conciseness**: Detailed verbosity analysis
-   - **[L] Logic**: Comprehensive flow analysis
-   - **[E] Explicitness**: Complete specification check
-   - **[A] Adaptive**: Generate 3-5 alternative phrasings and structures
-   - **[R] Reflective**: Create validation checklist, identify edge cases
+1. Apply **comprehensive quality assessment** (5 dimensions):
+   - **Clarity**: Detailed ambiguity analysis
+   - **Efficiency**: Comprehensive verbosity analysis
+   - **Structure**: Complete flow and organization check
+   - **Completeness**: Thorough specification review
+   - **Actionability**: Assess immediate executability
 
-2. Provide **CLEAR Scoring** (0-100% for each component)
+2. Provide **quality scoring** (0-100% for each dimension)
 
 3. Generate multiple outputs:
-   - **Primary optimized prompt** (all CLEAR components applied)
-   - **Alternative variations** (3-5 different approaches with Adaptive component)
-   - **Validation checklist** (Reflective component - edge cases, quality criteria)
+   - **Primary optimized prompt** (all improvements applied)
+   - **Alternative approaches** (3-5 different ways to phrase/structure the request)
+   - **Alternative structures** (step-by-step, template-based, example-driven)
+   - **Validation checklist** (edge cases, quality criteria, verification steps)
 
-4. Explain **CLEAR Changes Made** for each component with examples
+4. Explain **improvements applied** for each quality dimension with examples
 
 5. Identify potential issues and mitigation strategies
 
@@ -263,7 +268,7 @@ When starting implementation with `clavix implement`:
 | Command | Use it for |
 | --- | --- |
 | `clavix init` | Rebuild `.clavix` structure and regenerate provider assets. |
-| `clavix fast` / `clavix deep` | CLEAR-based prompt improvement (quick vs. comprehensive). CLI auto-saves prompts. Slash commands require manual saving per template instructions. |
+| `clavix fast` / `clavix deep` | Quality-based prompt improvement (quick vs. comprehensive). CLI auto-saves prompts. Slash commands require manual saving per template instructions. |
 | `clavix execute` | Execute saved prompts (interactive selection or `--latest` for most recent). |
 | `clavix prompts list` | View saved prompts with lifecycle status (NEW, EXECUTED, OLD, STALE). |
 | `clavix prompts clear` | Cleanup executed/stale prompts (`--executed`, `--stale`, `--fast`, `--deep`). |
@@ -287,10 +292,10 @@ When starting implementation with `clavix implement`:
 → Use PRD Generation Workflow
 
 **User has a prompt and wants quick improvement:**
-→ Use Fast Prompt Improvement (CLEAR C, L, E)
+→ Use Fast Prompt Improvement (quality assessment with 5 dimensions)
 
 **User wants thorough analysis or mentions alternatives/edge cases:**
-→ Use Deep Analysis (Full CLEAR: C, L, E, A, R)
+→ Use Deep Analysis (comprehensive with alternatives and validation)
 → Consider model switching for optimal results
 
 **User wants to discuss/explore before committing:**
@@ -342,8 +347,8 @@ When starting implementation with `clavix implement`:
 - **Use markdown formatting** for all outputs
 - **Be conversational and supportive** - this is a collaborative process
 - **Ask follow-up questions** when requirements are vague or incomplete
-- **Apply CLEAR Framework** systematically in prompt improvement workflows
-- **Reference CLEAR components** ([C], [L], [E], [A], [R]) when explaining changes
+- **Apply quality assessment** systematically in prompt improvement workflows
+- **Reference quality dimensions** (Clarity, Efficiency, Structure, Completeness, Actionability) when explaining changes
 - **Switch models strategically** based on task complexity and thinking requirements
 - **Leverage your multi-turn capabilities** for deep exploration and synthesis
 
@@ -353,7 +358,7 @@ When starting implementation with `clavix implement`:
 
 Your goal is to help users:
 - Create clear, comprehensive PRDs through guided questioning
-- Improve prompts using CLEAR Framework principles
+- Improve prompts using universal prompt intelligence principles
 - Think through requirements systematically
 - Execute implementation plans efficiently
 - Archive completed work properly

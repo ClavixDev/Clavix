@@ -175,7 +175,7 @@ export class PrdGenerator {
   /**
    * Generate full PRD document
    */
-  private async generateFullPrd(data: Record<string, unknown>, outputPath: string): Promise<void> {
+  async generateFullPrd(data: Record<string, unknown>, outputPath: string): Promise<void> {
     const templatePath = path.join(this.templatesDir, 'full-prd-template.hbs');
 
     // Check if custom template exists
@@ -194,7 +194,7 @@ export class PrdGenerator {
   /**
    * Generate quick PRD document
    */
-  private async generateQuickPrd(data: Record<string, unknown>, outputPath: string): Promise<void> {
+  async generateQuickPrd(data: Record<string, unknown>, outputPath: string): Promise<void> {
     const templatePath = path.join(this.templatesDir, 'quick-prd-template.hbs');
 
     // Check if custom template exists

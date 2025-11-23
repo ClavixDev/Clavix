@@ -127,16 +127,16 @@ describe('Template Coverage - v2.7.0 Integration', () => {
 
       expect(content).toContain('Step 5: Verify Saving Succeeded');
 
-      // Check for file format specification (deep includes A & R scores)
+      // Check for file format specification (deep includes enhanced features)
       expect(content).toContain('id:');
       expect(content).toContain('source: deep');
       expect(content).toContain('timestamp:');
       expect(content).toContain('executed: false');
       expect(content).toContain('originalPrompt:');
-      expect(content).toContain('A** (Adaptiveness)');
-      expect(content).toContain('R** (Reflectiveness)');
-      expect(content).toContain('Alternative Variations');
-      expect(content).toContain('Reflection Checklist');
+      // v3.0: Using Adaptive Prompt Intelligence with quality scores
+      expect(content).toContain('Quality Scores');
+      expect(content).toContain('Clarity');
+      expect(content).toContain('Efficiency');
 
       // Check for troubleshooting
       expect(content).toContain('Issue: Prompt Not Saved');

@@ -5,7 +5,7 @@ description: Generate implementation task breakdown from PRD
 
 # Clavix Plan - Task Breakdown Generator
 
-You are helping the user generate a CLEAR-optimized implementation task breakdown from their PRD.
+You are helping the user generate an optimized implementation task breakdown from their PRD.
 
 ## Instructions
 
@@ -54,12 +54,12 @@ If you have the full PRD content in memory and want to generate tasks directly:
 
 ### Part B: Behavioral Guidance (Task Breakdown Strategy)
 
-3. **How to structure tasks** (CLEAR-optimized task breakdown):
+3. **How to structure tasks** (optimized task breakdown):
 
    **Task Granularity Principles:**
-   - **[C] Concise**: Each task = 1 clear action (not "Build authentication system", but "Create user registration endpoint")
-   - **[L] Logical**: Tasks flow in implementation order (database schema → backend logic → frontend UI)
-   - **[E] Explicit**: Tasks specify deliverable (not "Add tests", but "Write unit tests for user service with >80% coverage")
+   - **Clarity**: Each task = 1 clear action (not "Build authentication system", but "Create user registration endpoint")
+   - **Structure**: Tasks flow in implementation order (database schema → backend logic → frontend UI)
+   - **Actionability**: Tasks specify deliverable (not "Add tests", but "Write unit tests for user service with >80% coverage")
 
    **Atomic Task Guidelines:**
    - **Ideal size**: Completable in 15-60 minutes
@@ -74,7 +74,7 @@ If you have the full PRD content in memory and want to generate tasks directly:
 
 4. **Review and customize generated tasks**:
    - The command will generate `tasks.md` in the PRD folder
-   - Tasks are organized into logical phases with CLEAR principles
+   - Tasks are organized into logical phases with quality principles
    - Each task includes:
      - Checkbox `- [ ]` for tracking
      - Clear deliverable description
@@ -85,11 +85,11 @@ If you have the full PRD content in memory and want to generate tasks directly:
      - Reorder for better flow
      - Add notes or sub-tasks
 
-5. **CLEAR Task Labeling** (optional, for education):
+5. **Task Quality Labeling** (optional, for education):
    When reviewing tasks, you can annotate improvements:
-   - **[C]**: "Split vague 'Add UI' into 3 concrete tasks"
-   - **[L]**: "Reordered tasks: database schema before API endpoints"
-   - **[E]**: "Added specific acceptance criteria (>80% test coverage)"
+   - **[Clarity]**: "Split vague 'Add UI' into 3 concrete tasks"
+   - **[Structure]**: "Reordered tasks: database schema before API endpoints"
+   - **[Actionability]**: "Added specific acceptance criteria (>80% test coverage)"
 
 6. **Next steps**:
    - Review and edit `tasks.md` if needed
@@ -221,7 +221,7 @@ The generated `tasks.md` will look like:
 
 ## Tips
 
-- Tasks are automatically optimized using CLEAR framework
+- Tasks are automatically optimized for clarity, structure, and actionability
 - Each task is concise and actionable
 - Tasks can reference specific PRD sections
 - Supports mini-PRD outputs from `/clavix:summarize` and session workflows via `--session` or `--active-session`
@@ -285,7 +285,7 @@ The generated `tasks.md` will look like:
    - Cut and paste tasks to correct order
    - Preserve task ID format
    - Maintain phase groupings
-4. Follow CLEAR [L] Logic principle: ensure sequential coherence
+4. Follow structure principle: ensure sequential coherence
 
 ### Issue: Tasks conflict with PRD or duplicate work
 **Cause**: Misinterpretation of PRD or redundant task generation

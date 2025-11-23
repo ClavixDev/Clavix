@@ -1,11 +1,11 @@
 ---
 name: "Clavix: Summarize"
-description: Extract and CLEAR-optimize requirements from conversation
+description: Extract and optimize requirements from conversation
 ---
 
-# Clavix Conversation Summarization - CLEAR Framework Enhanced
+# Clavix Conversation Summarization
 
-You are analyzing the conversation history and extracting optimized requirements. **Extracted prompts are automatically enhanced using the CLEAR Framework** (Concise, Logical, Explicit) for optimal AI consumption.
+You are analyzing the conversation history and extracting optimized requirements. **Extracted prompts are automatically enhanced using universal prompt intelligence** for optimal AI consumption.
 
 ## Instructions
 
@@ -72,18 +72,20 @@ You are analyzing the conversation history and extracting optimized requirements
    [Success criteria and any important context]
    ```
 
-3. **CLEAR Framework Optimization** (automatic with labeled improvements):
-   - After extracting the optimized prompt, analyze using CLEAR framework
-   - Apply Conciseness, Logic, and Explicitness enhancements
-   - **Label all improvements** with CLEAR component tags:
-     - **[C]**: "Removed 12 conversational words, reduced from 45 to 28 words"
-     - **[L]**: "Restructured flow: context → requirements → constraints → success criteria"
-     - **[E]**: "Added explicit output format (React component), persona (senior dev), success metrics (load time < 2s)"
-   - Display both raw extraction and CLEAR-enhanced version
-   - Show CLEAR scores (before/after) and labeled improvements
+3. **Universal Optimization** (automatic with labeled improvements):
+   - After extracting the prompt, analyze using universal prompt intelligence
+   - Apply optimizations for Clarity, Efficiency, Structure, Completeness, and Actionability
+   - **Label all improvements** with quality dimension tags:
+     - **[Efficiency]**: "Removed 12 conversational words, reduced from 45 to 28 words"
+     - **[Structure]**: "Reorganized flow: context → requirements → constraints → success criteria"
+     - **[Clarity]**: "Added explicit output format (React component), persona (senior dev)"
+     - **[Completeness]**: "Added missing success metrics (load time < 2s, user adoption rate)"
+     - **[Actionability]**: "Converted vague goals into specific, measurable requirements"
+   - Display both raw extraction and optimized version
+   - Show quality scores (before/after) and labeled improvements
    - Save both versions:
-     - `optimized-prompt.md` (raw extraction)
-     - `clear-optimized-prompt.md` (CLEAR-enhanced with improvement notes)
+     - `original-prompt.md` (raw extraction from conversation)
+     - `optimized-prompt.md` (enhanced with improvements)
 
 4. Highlight key insights discovered during the conversation.
 
@@ -91,16 +93,19 @@ You are analyzing the conversation history and extracting optimized requirements
 
 6. If anything is still unclear or missing, point it out and suggest areas for further discussion.
 
-## CLEAR Enhancement
+## Quality Enhancement
 
 **What gets optimized:**
-- **[C] Concise**: Remove any verbosity from extracted requirements
-- **[L] Logical**: Ensure coherent flow (context → requirements → constraints → output)
-- **[E] Explicit**: Add missing specifications, formats, success criteria
+- **Clarity**: Remove ambiguity from extracted requirements
+- **Efficiency**: Remove verbosity and conversational fluff
+- **Structure**: Ensure logical flow (context → requirements → constraints → output)
+- **Completeness**: Add missing specifications, formats, success criteria
+- **Actionability**: Make requirements specific and executable
 
 **Output files:**
-- `optimized-prompt.md` - Raw extraction from conversation
-- `clear-optimized-prompt.md` - CLEAR-enhanced version (recommended for AI agents)
+- `original-prompt.md` - Raw extraction from conversation
+- `optimized-prompt.md` - Enhanced version (recommended for AI agents)
+- `mini-prd.md` - Structured requirements document
 
 ## Quality Checks
 
@@ -109,14 +114,14 @@ You are analyzing the conversation history and extracting optimized requirements
 - Technical constraints identified
 - Success criteria defined
 - User needs considered
-- CLEAR framework applied for AI consumption
+- Universal prompt intelligence applied for AI consumption
 
 ## Workflow Navigation
 
 **You are here:** Summarize (Conversation Extraction)
 
 **Common workflows:**
-- **Standard flow**: `/clavix:start` → [conversation] → `/clavix:summarize` → Use CLEAR-optimized prompt
+- **Standard flow**: `/clavix:start` → [conversation] → `/clavix:summarize` → Use optimized prompt
 - **To implementation**: `/clavix:summarize` → `/clavix:plan` → `/clavix:implement` → `/clavix:archive`
 - **Standalone use**: [Any conversation] → `/clavix:summarize` → Extract and optimize
 
@@ -129,6 +134,11 @@ You are analyzing the conversation history and extracting optimized requirements
 
 From conversation about "analytics dashboard for sales team"...
 
+**Original Extraction**:
+```
+We discussed building a dashboard for the sales team that shows analytics. They want to see revenue trends and who's performing well. It should update in real-time and help managers spot problems. We talked about using React and connecting to Salesforce.
+```
+
 **Optimized Prompt**:
 ```
 Build a real-time sales analytics dashboard for the sales team showing revenue trends, top performers, pipeline status, and conversion rates. The dashboard should update live as deals progress, support filtering by date range/region/rep, and display key metrics prominently. Users need to quickly identify at-risk deals and celebrate wins.
@@ -137,6 +147,13 @@ Technical stack: React + TypeScript frontend, integrate with existing Salesforce
 
 Success: Sales managers can identify issues within 30 seconds of opening, dashboard loads in <2 seconds, 90% of team uses it daily within first month.
 ```
+
+**Improvements Applied**:
+- **[Efficiency]**: Removed 8 conversational phrases, increased information density
+- **[Structure]**: Organized into objective → requirements → technical → success
+- **[Clarity]**: Specified exact features (filtering, metrics display) instead of vague "shows analytics"
+- **[Completeness]**: Added performance requirements (10K+ deals, <2s load), success metrics (30s to identify issues, 90% adoption)
+- **[Actionability]**: Converted "help managers spot problems" into specific, measurable outcome
 
 ## Troubleshooting
 
@@ -156,12 +173,12 @@ Success: Sales managers can identify issues within 30 seconds of opening, dashbo
 - Mark multi-topic extraction with [MULTI-TOPIC] indicator
 - Suggest breaking into separate PRDs for each topic
 
-### Issue: CLEAR optimization doesn't significantly improve extracted prompt
+### Issue: Optimization doesn't significantly improve extracted prompt
 **Cause**: Conversation was already well-structured and detailed
 **Solution**:
 - Minor improvements are normal for good conversations
-- Show CLEAR scores (should be high: >80%)
-- Still provide both versions but note that original extraction was already CLEAR
+- Show quality scores (should be high: >80%)
+- Still provide both versions but note that original extraction was already high quality
 
 ### Issue: Low confidence indicators across all extracted elements
 **Cause**: Conversation was too vague or high-level

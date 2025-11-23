@@ -1,18 +1,32 @@
 # Clavix
-> Transform vague ideas into production-ready prompts. Analyze gaps, generate PRDs, and supercharge your AI coding workflow with the CLEAR framework.
+> Universal prompt intelligence for AI coding. Transform rough ideas into production-ready prompts with automatic quality optimization—no framework to learn.
 
 ## Table of contents
 - [Why Clavix?](#why-clavix)
-- [Why CLEAR?](#why-clear)
+- [How It Works](#how-it-works)
 - [Providers](#providers)
 - [Quickstart](#quickstart)
 - [Full documentation](#full-documentation)
 
 ## Why Clavix?
-Better prompts lead to better code. Clavix analyzes gaps, generates PRDs, and integrates with your AI tooling so you can move from idea to implementation quickly. Learn more in [docs/why-clavix.md](docs/why-clavix.md).
+Better prompts lead to better code. Clavix automatically detects what you're trying to do and applies the right optimization patterns—no framework to learn, no methodology to master. Just describe what you want, and Clavix makes it AI-ready.
 
-## Why CLEAR?
-Clavix is built on CLEAR (Concise, Logical, Explicit, Adaptive, Reflective), an academically validated prompt engineering methodology. Read the full overview in [docs/clear-framework.md](docs/clear-framework.md).
+**What makes Clavix v3.0 unique:**
+- **95%+ Intent Detection Accuracy** - Weighted keyword scoring, phrase-based detection, and negation handling
+- **6 Production-Ready Optimization Patterns** - Automatically applied based on intent and quality assessment
+- **Zero Learning Curve** - Works with your natural language, adapts to your style
+- **Universal Integration** - Supports 20+ AI coding assistants with native slash commands
+
+Learn more in [docs/why-clavix.md](docs/why-clavix.md).
+
+## How It Works
+Clavix uses **Adaptive Prompt Intelligence™** (v3.0+) to automatically:
+- **Detect intent** - 95%+ accuracy with weighted scoring, phrase detection, and context analysis
+- **Assess quality** - Evaluates across 5 dimensions: Clarity, Efficiency, Structure, Completeness, Actionability
+- **Apply patterns** - 6 optimization patterns automatically selected and prioritized for your specific need
+- **Generate output** - Production-ready prompts optimized for AI coding assistants
+
+**The magic happens automatically**—no frameworks to learn, no manual analysis required. Just describe what you want in plain language, and Clavix transforms it into an AI-ready prompt using battle-tested optimization patterns.
 
 ## Providers
 
@@ -122,7 +136,7 @@ clavix prd
 - Overview & navigation: [docs/index.md](docs/index.md)
 - Command reference: [docs/commands/](docs/commands/README.md)
 - Providers: [docs/providers.md](docs/providers.md)
-- CLEAR Framework: [docs/clear-framework.md](docs/clear-framework.md)
+- Prompt Intelligence: [docs/prompt-intelligence.md](docs/prompt-intelligence.md)
 - Guides: [docs/guides/](docs/guides/workflows.md)
 
 ## Requirements

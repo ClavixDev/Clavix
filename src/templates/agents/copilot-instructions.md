@@ -1,18 +1,18 @@
 # Clavix Workflows for GitHub Copilot
 
-These instructions enhance GitHub Copilot's understanding of the Clavix prompt engineering framework and workflow commands available in this project.
+These instructions enhance GitHub Copilot's understanding of the Clavix universal prompt intelligence toolkit and workflow commands available in this project.
 
 ## About Clavix
 
-Clavix is a CLEAR Framework-validated prompt engineering toolkit that helps improve prompts, generate PRDs, and manage implementation workflows. The CLEAR Framework (Concise, Logical, Explicit, Adaptive, Reflective) is an academically-validated approach developed by Dr. Leo Lo at the University of New Mexico.
+Clavix is a universal prompt intelligence toolkit that helps improve prompts, generate PRDs, and manage implementation workflows. It automatically detects intent and applies quality-based optimization patterns without requiring users to learn any specific framework.
 
 ## Available Commands
 
 When working with this project, you can use the following Clavix commands:
 
 ### Prompt Improvement
-- `clavix fast "<prompt>"` - Quick CLEAR analysis (C/L/E components) with improved prompt output. CLI auto-saves; slash commands require manual saving per template instructions.
-- `clavix deep "<prompt>"` - Comprehensive CLEAR analysis (all 5 components: C/L/E/A/R) with alternatives and validation. CLI auto-saves; slash commands require manual saving per template instructions.
+- `clavix fast "<prompt>"` - Quick quality assessment (5 dimensions) with improved prompt output. CLI auto-saves; slash commands require manual saving per template instructions.
+- `clavix deep "<prompt>"` - Comprehensive analysis with alternatives, edge cases, and validation checklists. CLI auto-saves; slash commands require manual saving per template instructions.
 
 ### Strategic Planning
 - `clavix prd` - Interactive PRD generation through Socratic questioning
@@ -62,12 +62,12 @@ Clavix now automatically saves optimized prompts from fast/deep commands for lat
 
 ### Quick Prompt Improvement
 1. User provides a rough prompt
-2. Run `clavix fast "<prompt>"` for quick CLEAR-validated improvements
+2. Run `clavix fast "<prompt>"` for quick quality-based improvements
 3. Use the optimized prompt for better results
 
 ### Comprehensive Prompt Analysis
 1. User has a complex requirement
-2. Run `clavix deep "<prompt>"` for full CLEAR analysis
+2. Run `clavix deep "<prompt>"` for comprehensive analysis
 3. Review alternative variations and validation checklists
 4. Select the best approach
 
@@ -82,15 +82,15 @@ Clavix now automatically saves optimized prompts from fast/deep commands for lat
 2. Discuss requirements naturally with the user
 3. Run `clavix summarize` to extract structured requirements and prompts
 
-## CLEAR Framework Components
+## Quality Dimensions
 
-When analyzing or improving prompts, apply these CLEAR Framework principles:
+When analyzing or improving prompts, consider these 5 quality dimensions:
 
-- **[C] Concise**: Remove verbosity, pleasantries, unnecessary qualifiers
-- **[L] Logical**: Ensure coherent sequencing (context → requirements → constraints → output)
-- **[E] Explicit**: Add clear specifications for persona, format, tone, success criteria
-- **[A] Adaptive**: Provide alternative phrasings and flexible structures
-- **[R] Reflective**: Include validation checklists and quality criteria
+- **Clarity**: Is the objective clear and unambiguous?
+- **Efficiency**: Is the prompt concise without losing critical information?
+- **Structure**: Is information organized logically (context → requirements → constraints → output)?
+- **Completeness**: Are all necessary specifications provided (persona, format, tone, success criteria)?
+- **Actionability**: Can AI take immediate action on this prompt?
 
 ## Output Locations
 
@@ -103,7 +103,7 @@ Clavix stores artifacts in the `.clavix/` directory:
 ## Best Practices
 
 1. **Start with the right mode**: Use fast mode for simple prompts, deep mode for complex requirements, and PRD mode for strategic planning
-2. **Leverage CLEAR Framework**: Always consider the 5 CLEAR components when crafting prompts
+2. **Focus on quality**: Always consider the 5 quality dimensions (Clarity, Efficiency, Structure, Completeness, Actionability) when crafting prompts
 3. **Document requirements**: Use PRD workflow for significant features to ensure clear requirements
 4. **Track progress**: Use implement command to maintain structured task execution
 5. **Archive completed work**: Keep project organized by archiving finished projects
@@ -114,6 +114,6 @@ When users ask for help with prompts or requirements:
 1. Suggest running the appropriate Clavix command
 2. Explain the expected output and benefits
 3. Help interpret Clavix-generated outputs
-4. Apply CLEAR Framework principles in your responses
+4. Apply quality assessment principles in your responses
 
 This integration makes GitHub Copilot aware of Clavix workflows and can suggest using Clavix commands when appropriate.

@@ -7,13 +7,13 @@ import { dirname } from 'path';
 import fs from 'fs-extra';
 import { QuestionEngine } from '../../core/question-engine.js';
 import { PrdGenerator } from '../../core/prd-generator.js';
-import { PromptOptimizer } from '../../core/prompt-optimizer.js';
+import { UniversalOptimizer } from '../../core/intelligence/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default class Prd extends Command {
-  static description = 'Generate a Product Requirements Document through Socratic questioning';
+  static description = 'Launch Clavix Planning Mode - transform ideas into structured PRDs through strategic questions';
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
@@ -35,17 +35,16 @@ export default class Prd extends Command {
       char: 't',
       description: 'Path to custom question template',
     }),
-    'skip-validation': Flags.boolean({
-      description: 'Skip CLEAR framework validation of generated PRD',
-      default: false,
-    }),
   };
 
   async run(): Promise<void> {
     const { flags } = await this.parse(Prd);
 
-    console.log(chalk.bold.cyan('\nPRD Generator\n'));
-    console.log(chalk.gray("Let's create a comprehensive Product Requirements Document through strategic questions.\n"));
+    console.log(chalk.bold.cyan('\n🔑 Clavix Planning Mode\n'));
+    console.log(chalk.gray('Transform your idea into structured requirements through strategic questions.\n'));
+    console.log(chalk.gray('This will generate two documents:'));
+    console.log(chalk.gray('  📄 Full PRD - Comprehensive team-facing document'));
+    console.log(chalk.gray('  ⚡ Quick PRD - AI-optimized 2-3 paragraph version\n'));
 
     try {
       // Initialize QuestionEngine
@@ -96,17 +95,30 @@ export default class Prd extends Command {
           answer = response.answer;
         } else {
           // Text input
-          // Capture question reference for closure
           const currentQuestion = question;
-          let messageText = currentQuestion.text;
 
-          // Smart tech stack detection for Q3
-          if (currentQuestion.id === 'q3' && !stackDetectionDone) {
+          // Special handling for tech stack question - auto-detect
+          if (question.id === 'techStack' && !stackDetectionDone) {
             detectedStack = await this.detectProjectTechStack();
             stackDetectionDone = true;
 
             if (detectedStack) {
-              messageText = `${currentQuestion.text}\n  ${chalk.cyan('Detected:')} ${chalk.green(detectedStack)} ${chalk.dim('(press Enter to use, or type to override)')}`;
+              console.log(chalk.cyan(`\n💡 Detected: ${detectedStack}\n`));
+              const useDetected = await inquirer.prompt([
+                {
+                  type: 'confirm',
+                  name: 'use',
+                  message: 'Use detected tech stack?',
+                  default: true,
+                },
+              ]);
+
+              if (useDetected.use) {
+                answer = detectedStack;
+                engine.submitAnswer(question.id, answer);
+                question = engine.getNextQuestion();
+                continue;
+              }
             }
           }
 
@@ -114,89 +126,97 @@ export default class Prd extends Command {
             {
               type: 'input',
               name: 'answer',
-              message: messageText,
-              default: currentQuestion.default as string,
-              validate: (input: string) => {
-                // Check if required
+              message: question.text,
+              default: question.default,
+              validate: question.validate || ((input: string) => {
                 if (currentQuestion.required && !input.trim()) {
-                  return 'This question is required';
+                  return 'This field is required';
                 }
-
-                // Run custom validation if exists
-                if (currentQuestion.validate) {
-                  const result = currentQuestion.validate(input);
-                  if (result !== true) {
-                    return result as string;
-                  }
-                }
-
                 return true;
-              },
+              }),
             },
           ]);
           answer = response.answer;
-
-          // If Q3 and answer is empty but we have detected stack, use it
-          if (currentQuestion.id === 'q3' && !answer.trim() && detectedStack) {
-            answer = detectedStack;
-            console.log(chalk.dim(`  Using detected: ${detectedStack}`));
-          }
         }
 
-        // Submit answer (only if not empty or if it's a detected stack for Q3)
-        if (answer && answer.toString().trim() && question) {
-          const submitResult = engine.submitAnswer(question.id, answer);
-          if (submitResult !== true) {
-            console.log(chalk.red(`\n${submitResult}\n`));
-            continue; // Ask again
-          }
-          answers[question.id] = answer;
-        }
-
-        console.log(); // Add spacing
+        // Submit answer and get next question
+        engine.submitAnswer(question.id, answer);
+        answers[question.id] = answer;
         question = engine.getNextQuestion();
+
+        console.log();
       }
 
-      // All questions answered
-      console.log(chalk.bold.green('\nAll questions answered!\n'));
+      console.log(chalk.green('\n✓ All questions answered\n'));
 
-      // Generate PRDs
-      console.log(chalk.dim('Generating PRD documents...\n'));
+      // Determine project name
+      const projectName = flags.project || this.deriveProjectName(answers);
+
+      // Generate PRD documents
+      console.log(chalk.cyan('📝 Generating PRD documents...\n'));
 
       const generator = new PrdGenerator();
-      const projectName = flags.project || generator.extractProjectName(answers);
+      const outputPath = path.join(process.cwd(), '.clavix', 'outputs', projectName);
 
-      const outputPath = await generator.generate(answers, {
-        projectName,
-        outputDir: '.clavix/outputs',
-      });
+      await fs.ensureDir(outputPath);
 
-      // Display success message
-      console.log(chalk.bold.green('PRD documents generated successfully!\n'));
-      console.log(chalk.bold('Output location:'));
-      console.log(chalk.cyan(`  ${outputPath}`));
-      console.log();
-      console.log(chalk.bold('Generated files:'));
-      console.log(chalk.gray(`  • full-prd.md`) + chalk.dim(' - Comprehensive PRD for team alignment'));
-      console.log(chalk.gray(`  • quick-prd.md`) + chalk.dim(' - Condensed prompt for AI agents'));
-      console.log();
+      // Generate both full and quick PRDs
+      await generator.generateFullPrd(answers, outputPath);
+      await generator.generateQuickPrd(answers, outputPath);
 
-      // CLEAR validation of quick-prd.md (unless skipped)
-      if (!flags['skip-validation']) {
-        await this.validatePrdWithClear(outputPath);
-      }
+      console.log(chalk.green('✓ PRD documents generated\n'));
 
-      console.log(chalk.gray('Tip: Use quick-prd.md as input for your AI agent to start development\n'));
+      // Validate the quick PRD for AI consumption quality
+      await this.validatePrdQuality(outputPath);
+
+      // Display output locations
+      console.log(chalk.bold.cyan('📄 Documents Generated:\n'));
+      console.log(chalk.cyan(`  • full-prd.md - Comprehensive team-facing document`));
+      console.log(chalk.cyan(`  • quick-prd.md - AI-optimized 2-3 paragraph version\n`));
+      console.log(chalk.gray(`Location: ${outputPath}\n`));
+
+      // Next steps
+      console.log(chalk.bold.blue('💡 Next Steps:\n'));
+      console.log(chalk.blue('  1. Review the generated documents'));
+      console.log(chalk.blue('  2. Run: clavix plan (generate task breakdown)'));
+      console.log(chalk.blue('  3. Run: clavix implement (start implementation)\n'));
 
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      this.error(errorMessage);
+      if (error instanceof Error) {
+        console.log(chalk.red(`\n✗ Error: ${error.message}\n`));
+      } else {
+        console.log(chalk.red('\n✗ An unexpected error occurred\n'));
+      }
+      this.exit(1);
     }
   }
 
   /**
-   * Detect project tech stack from common config files
-   * Returns a string describing detected technologies or null if none found
+   * Derive a project name from the answers
+   */
+  private deriveProjectName(answers: Record<string, unknown>): string {
+    // Try to extract from first answer (usually "what are we building")
+    const firstAnswer = Object.values(answers)[0];
+
+    if (typeof firstAnswer === 'string') {
+      // Extract first few words, convert to kebab-case
+      const words = firstAnswer.toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '')
+        .split(/\s+/)
+        .filter(w => w.length > 0)
+        .slice(0, 3);
+
+      if (words.length > 0) {
+        return words.join('-');
+      }
+    }
+
+    // Fallback to timestamp
+    return `project-${Date.now()}`;
+  }
+
+  /**
+   * Auto-detect project tech stack from common config files
    */
   private async detectProjectTechStack(): Promise<string | null> {
     const detectedTech: string[] = [];
@@ -266,23 +286,21 @@ export default class Prd extends Command {
   }
 
   /**
-   * Validate the generated quick-prd.md using CLEAR framework
-   * Focuses on C, L, E components for AI consumption quality
+   * Validate the generated quick-prd.md for AI consumption quality
    */
-  private async validatePrdWithClear(outputPath: string): Promise<void> {
+  private async validatePrdQuality(outputPath: string): Promise<void> {
     try {
       const quickPrdPath = path.join(outputPath, 'quick-prd.md');
 
       // Read the generated quick-prd.md
       const prdContent = await fs.readFile(quickPrdPath, 'utf-8');
 
-      console.log(chalk.bold.cyan('📊 CLEAR Framework Validation\n'));
-      console.log(chalk.gray('Analyzing quick-prd.md for AI consumption quality...\n'));
+      console.log(chalk.bold.cyan('✅ Validating Quick PRD Quality\n'));
+      console.log(chalk.gray('Analyzing for AI consumption quality...\n'));
 
-      // Run CLEAR analysis (C, L, E only for PRDs)
-      const optimizer = new PromptOptimizer();
-      const clearResult = optimizer.applyCLEARFramework(prdContent, 'fast');
-      const clearScore = optimizer.calculateCLEARScore(clearResult);
+      // Run quality assessment
+      const optimizer = new UniversalOptimizer();
+      const result = await optimizer.optimize(prdContent, 'fast');
 
       const getScoreColor = (score: number) => {
         if (score >= 80) return chalk.green;
@@ -290,77 +308,37 @@ export default class Prd extends Command {
         return chalk.red;
       };
 
-      // Display CLEAR assessment for AI consumption
-      console.log(chalk.bold('AI Consumption Quality Assessment:\n'));
+      // Display quality assessment
+      console.log(chalk.bold('📊 Quality Assessment:\n'));
 
-      // Conciseness
-      const cColor = getScoreColor(clearScore.conciseness);
-      console.log(cColor.bold(`  [C] Concise: ${clearScore.conciseness.toFixed(0)}%`));
-      if (clearResult.conciseness.suggestions.length > 0) {
-        clearResult.conciseness.suggestions.slice(0, 2).forEach((s: string) => {
-          console.log(cColor(`      ${s}`));
-        });
-      }
-      console.log();
+      console.log(getScoreColor(result.quality.clarity)(`  Clarity: ${result.quality.clarity.toFixed(0)}%`));
+      console.log(getScoreColor(result.quality.structure)(`  Structure: ${result.quality.structure.toFixed(0)}%`));
+      console.log(getScoreColor(result.quality.completeness)(`  Completeness: ${result.quality.completeness.toFixed(0)}%`));
+      console.log(getScoreColor(result.quality.overall).bold(`\n  Overall: ${result.quality.overall.toFixed(0)}%\n`));
 
-      // Logic
-      const lColor = getScoreColor(clearScore.logic);
-      console.log(lColor.bold(`  [L] Logical: ${clearScore.logic.toFixed(0)}%`));
-      if (clearResult.logic.suggestions.length > 0) {
-        clearResult.logic.suggestions.slice(0, 2).forEach((s: string) => {
-          console.log(lColor(`      ${s}`));
-        });
-      }
-      console.log();
-
-      // Explicitness
-      const eColor = getScoreColor(clearScore.explicitness);
-      console.log(eColor.bold(`  [E] Explicit: ${clearScore.explicitness.toFixed(0)}%`));
-      if (clearResult.explicitness.suggestions.length > 0) {
-        clearResult.explicitness.suggestions.slice(0, 2).forEach((s: string) => {
-          console.log(eColor(`      ${s}`));
-        });
-      }
-      console.log();
-
-      // Overall
-      const overallColor = getScoreColor(clearScore.overall);
-      console.log(overallColor.bold(`  Overall CLEAR Score: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})\n`));
-
-      // Recommendations
-      if (clearScore.overall < 80) {
-        console.log(chalk.yellow('💡 PRD Quality Tips:\n'));
-
-        if (clearScore.conciseness < 80 && clearResult.conciseness.suggestions.length > 0) {
-          console.log(chalk.yellow('  [C] Consider making the PRD more concise:'));
-          clearResult.conciseness.suggestions.slice(0, 2).forEach((s: string) => {
-            console.log(chalk.yellow(`      • ${s}`));
-          });
-          console.log();
-        }
-
-        if (clearScore.logic < 80 && clearResult.logic.suggestions.length > 0) {
-          console.log(chalk.yellow('  [L] Improve logical structure:'));
-          clearResult.logic.suggestions.slice(0, 2).forEach((s: string) => {
-            console.log(chalk.yellow(`      • ${s}`));
-          });
-          console.log();
-        }
-
-        if (clearScore.explicitness < 80 && clearResult.explicitness.suggestions.length > 0) {
-          console.log(chalk.yellow('  [E] Add more explicit details:'));
-          clearResult.explicitness.suggestions.slice(0, 2).forEach((s: string) => {
-            console.log(chalk.yellow(`      • ${s}`));
+      if (result.quality.overall >= 80) {
+        console.log(chalk.green('✨ Excellent! Your Quick PRD is AI-ready.\n'));
+      } else if (result.quality.overall >= 70) {
+        console.log(chalk.yellow('✓ Good quality. Consider the suggestions below:\n'));
+        if (result.quality.improvements && result.quality.improvements.length > 0) {
+          result.quality.improvements.forEach((imp: string) => {
+            console.log(chalk.yellow(`  • ${imp}`));
           });
           console.log();
         }
       } else {
-        console.log(chalk.green('✨ Excellent! This PRD is well-optimized for AI consumption.\n'));
+        console.log(chalk.yellow('💡 Suggestions for improvement:\n'));
+        if (result.quality.improvements && result.quality.improvements.length > 0) {
+          result.quality.improvements.forEach((imp: string) => {
+            console.log(chalk.yellow(`  • ${imp}`));
+          });
+          console.log();
+        }
       }
 
-    } catch {
-      // Don't fail the whole command if validation fails
-      console.log(chalk.yellow('⚠ Could not validate PRD with CLEAR framework\n'));
+    } catch (error) {
+      console.log(chalk.yellow('⚠️  Could not validate PRD quality'));
+      console.log(chalk.gray('Continuing without validation...\n'));
     }
   }
 }
