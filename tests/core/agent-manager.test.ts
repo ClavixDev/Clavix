@@ -35,17 +35,18 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('codex');
     });
 
-    it('should have exactly 15 built-in adapters', () => {
+    it('should have exactly 16 built-in adapters', () => {
       const adapters = manager.getAdapters();
 
       // Note: Copilot was removed as an adapter and is now handled via CopilotInstructionsGenerator
       // which injects into .github/copilot-instructions.md instead
-      expect(adapters.length).toBe(15);
+      expect(adapters.length).toBe(16);
 
       // Verify new adapters are registered
       const adapterNames = adapters.map(a => a.name);
       expect(adapterNames).toContain('windsurf');
       expect(adapterNames).toContain('kilocode');
+      expect(adapterNames).toContain('llxprt');
       expect(adapterNames).toContain('cline');
       expect(adapterNames).toContain('roocode');
       expect(adapterNames).toContain('augment');

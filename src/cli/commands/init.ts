@@ -113,6 +113,10 @@ export default class Init extends Command {
               value: 'kilocode',
             },
             {
+              name: 'LLXPRT (.llxprt/commands/clavix/)',
+              value: 'llxprt',
+            },
+            {
               name: 'Roocode (.roo/commands/)',
               value: 'roocode',
             },

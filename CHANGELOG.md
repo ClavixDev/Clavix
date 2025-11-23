@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2025-11-23
+
+### ✨ New Provider Support
+
+#### LLXPRT Integration
+Added support for **LLXPRT** - a new AI coding CLI tool with TOML-based custom commands.
+
+**Features**:
+- TOML format with `prompt = """..."""` wrapper
+- Namespace support: commands accessible as `/clavix:fast`, `/clavix:deep`, etc.
+- Commands generated in `.llxprt/commands/clavix/` directory
+- Argument placeholder: `{{args}}`
+- Subdirectory support enabled
+
+**What Changed**:
+- New `LlxprtAdapter` class following established Clavix patterns
+- Added to provider selection in `clavix init` command
+- Full test coverage with 6 new tests
+- Documentation updated in `docs/providers.md`
+
+**Total Providers**: Now supports **16 built-in adapters** + 4 universal adapters (20 total integrations)
+
+This is a **non-breaking minor version** - existing configurations remain unchanged.
+
 ## [3.1.0] - 2025-11-23
 
 ### ✨ Branding Evolution - Clavix Intelligence™

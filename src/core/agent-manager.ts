@@ -15,6 +15,7 @@ import { GeminiAdapter } from './adapters/gemini-adapter.js';
 import { QwenAdapter } from './adapters/qwen-adapter.js';
 import { CodexAdapter } from './adapters/codex-adapter.js';
 import { AugmentAdapter } from './adapters/augment-adapter.js';
+import { LlxprtAdapter } from './adapters/llxprt-adapter.js';
 
 /**
  * Agent Manager - handles agent detection and registration
@@ -32,6 +33,7 @@ export class AgentManager {
     this.registerAdapter(new CrushAdapter());
     this.registerAdapter(new WindsurfAdapter());
     this.registerAdapter(new KilocodeAdapter());
+    this.registerAdapter(new LlxprtAdapter());
     this.registerAdapter(new ClineAdapter());
     this.registerAdapter(new RoocodeAdapter());
     this.registerAdapter(new AugmentAdapter());
