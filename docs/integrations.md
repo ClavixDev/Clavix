@@ -1,26 +1,26 @@
-# Supported providers
+# Supported Integrations
 
 Clavix can generate slash commands and documentation snippets for a wide range of IDEs and CLI agents. The tables below summarize where command files are written, whether subdirectories are supported, and which argument placeholders are used.
 
 ## Template architecture
 
-Starting with v2.4.0, Clavix uses **canonical templates** that are automatically formatted for each provider at runtime. This architecture ensures:
+Starting with v2.4.0, Clavix uses **canonical templates** that are automatically formatted for each integration at runtime. This architecture ensures:
 
-- **Consistency**: All providers receive identical template content and logic
+- **Consistency**: All integrations receive identical template content and logic
 - **Maintainability**: Single source of truth in `src/templates/slash-commands/_canonical/`
 - **Efficiency**: 67% smaller package size (1.5MB → 830KB unpacked)
-- **Quality**: Updates and bug fixes apply automatically to all providers
+- **Quality**: Updates and bug fixes apply automatically to all integrations
 
-Provider-specific formatting is handled by each adapter's `formatCommand()` method:
-- **Markdown providers**: Use canonical content as-is or with minimal formatting
-- **TOML providers** (Gemini, Qwen): Convert to TOML with `prompt = """..."""` wrapper
-- **Special providers** (Crush): Apply custom placeholder transformations
+Integration-specific formatting is handled by each adapter's `formatCommand()` method:
+- **Markdown integrations**: Use canonical content as-is or with minimal formatting
+- **TOML integrations** (Gemini, Qwen): Convert to TOML with `prompt = """..."""` wrapper
+- **Special integrations** (Crush): Apply custom placeholder transformations
 
 For detailed information on template customization and override options, see [Template customization guide](guides/templates.md).
 
 ## IDEs and editor extensions
 
-| Provider | Command location | Subdirectories | Placeholder |
+| Integration | Command location | Subdirectories | Placeholder |
 | --- | --- | --- | --- |
 | Cursor | `.cursor/commands/` | No | *(implicit)* |
 | Windsurf | `.windsurf/workflows/` | Yes | *(implicit)* |
@@ -30,7 +30,7 @@ For detailed information on template customization and override options, see [Te
 
 ## CLI agents and toolchains
 
-| Provider | Command location | Subdirectories | Placeholder |
+| Integration | Command location | Subdirectories | Placeholder |
 | --- | --- | --- | --- |
 | Claude Code | `.claude/commands/clavix/` | Yes | *(implicit — command templates inject arguments directly)* |
 | Droid CLI | `.factory/commands/` | No | `$ARGUMENTS` |
@@ -53,6 +53,6 @@ For detailed information on template customization and override options, see [Te
 
 ### Multi-select during `clavix init`
 
-`clavix init` uses an interactive checkbox list so you can enable multiple providers at once. Clavix remembers the providers in `.clavix/config.json` and `clavix update` regenerates the corresponding commands on demand.
+`clavix init` uses an interactive checkbox list so you can enable multiple integrations at once. Clavix remembers the integrations in `.clavix/config.json` and `clavix update` regenerates the corresponding commands on demand.
 
 For a complete walkthrough of the initialization flow, see [clavix init](commands/init.md).

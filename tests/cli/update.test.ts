@@ -26,7 +26,7 @@ describe('Update command', () => {
     // Create config
     const config = {
       version: '1.0.0',
-      providers: ['claude-code'],
+      integrations: ['claude-code'],
     };
     await fs.writeJSON(configPath, config, { spaces: 2 });
 
@@ -77,14 +77,14 @@ describe('Update command', () => {
     it('should use providers from config', async () => {
       const customConfig = {
         version: '1.0.0',
-        providers: ['claude-code', 'cursor'],
+        integrations: ['claude-code', 'cursor'],
       };
       await fs.writeJSON(configPath, customConfig, { spaces: 2 });
 
       const config = await fs.readJSON(configPath);
 
-      expect(config.providers).toContain('claude-code');
-      expect(config.providers).toContain('cursor');
+      expect(config.integrations).toContain('claude-code');
+      expect(config.integrations).toContain('cursor');
     });
 
     it('should default to claude-code if no providers specified', async () => {
@@ -94,7 +94,7 @@ describe('Update command', () => {
       await fs.writeJSON(configPath, minimalConfig, { spaces: 2 });
 
       const config = await fs.readJSON(configPath);
-      const providers = config.providers || ['claude-code'];
+      const providers = config.integrations || ['claude-code'];
 
       expect(providers).toContain('claude-code');
     });
@@ -207,38 +207,38 @@ describe('Update command', () => {
     it('should handle empty providers array', async () => {
       const config = {
         version: '1.0.0',
-        providers: [],
+        integrations: [],
       };
       await fs.writeJSON(configPath, config, { spaces: 2 });
 
       const loadedConfig = await fs.readJSON(configPath);
-      const providers = loadedConfig.providers.length === 0 ? ['claude-code'] : loadedConfig.providers;
+      const integrations = loadedConfig.integrations.length === 0 ? ['claude-code'] : loadedConfig.integrations;
 
-      expect(providers).toEqual(['claude-code']);
+      expect(integrations).toEqual(['claude-code']);
     });
 
-    it('should handle unknown provider names gracefully', async () => {
+    it('should handle unknown integration names gracefully', async () => {
       const config = {
         version: '1.0.0',
-        providers: ['unknown-provider'],
+        integrations: ['unknown-integration'],
       };
       await fs.writeJSON(configPath, config, { spaces: 2 });
 
-      // The command should skip unknown providers without crashing
+      // The command should skip unknown integrations without crashing
       const loadedConfig = await fs.readJSON(configPath);
-      expect(loadedConfig.providers).toContain('unknown-provider');
+      expect(loadedConfig.integrations).toContain('unknown-integration');
     });
 
-    it('should handle special provider names', async () => {
+    it('should handle special integration names', async () => {
       const config = {
         version: '1.0.0',
-        providers: ['agents-md', 'octo-md'],
+        integrations: ['agents-md', 'octo-md'],
       };
       await fs.writeJSON(configPath, config, { spaces: 2 });
 
       const loadedConfig = await fs.readJSON(configPath);
-      expect(loadedConfig.providers).toContain('agents-md');
-      expect(loadedConfig.providers).toContain('octo-md');
+      expect(loadedConfig.integrations).toContain('agents-md');
+      expect(loadedConfig.integrations).toContain('octo-md');
     });
   });
 

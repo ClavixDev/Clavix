@@ -47,7 +47,7 @@ Clavix uses **Clavix Intelligence™** (v3.0+) to automatically:
 | CLI agents | Claude Code · Droid CLI · CodeBuddy CLI · OpenCode · Gemini CLI · Qwen Code · LLXPRT · Amp · Crush CLI · Codex CLI · Augment CLI |
 | Universal adapters | AGENTS.md · GitHub Copilot · OCTO.md · WARP.md |
 
-Provider paths and argument placeholders are listed in [docs/providers.md](docs/providers.md).
+Provider paths and argument placeholders are listed in [docs/integrations.md](docs/integrations.md).
 
 ## Quickstart
 
@@ -81,7 +81,7 @@ clavix implement         # Start implementation workflow
 clavix task-complete <taskId>  # Mark tasks done with auto-commit
 ```
 
-**Supported agents**: Claude Code, Cursor, Windsurf, and [17+ more providers](docs/providers.md)
+**Supported agents**: Claude Code, Cursor, Windsurf, and [17+ more providers](docs/integrations.md)
 
 Learn more: [Complete prompt lifecycle documentation](docs/commands/execute.md)
 
@@ -99,7 +99,7 @@ clavix prd
 ## Full documentation
 - Overview & navigation: [docs/README.md](docs/README.md)
 - Command reference: [docs/commands/](docs/commands/README.md)
-- Providers: [docs/providers.md](docs/providers.md)
+- Providers: [docs/integrations.md](docs/integrations.md)
 - Clavix Intelligence: [docs/clavix-intelligence.md](docs/clavix-intelligence.md)
 - Guides: [docs/guides/](docs/guides/workflows.md)
 

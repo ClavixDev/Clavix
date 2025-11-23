@@ -21,6 +21,7 @@ const buildAdapter = ({ name, commandPath, fileExtension = '.md' }: AdapterOverr
   fileExtension,
   detectProject: noopDetect,
   generateCommands: async (_templates: CommandTemplate[]) => {},
+  removeAllCommands: async () => 0,
   injectDocumentation: async (_blocks: ManagedBlock[]) => {},
   getCommandPath: () => commandPath,
   getTargetFilename: (commandName: string) => `clavix-${commandName}${fileExtension}`,

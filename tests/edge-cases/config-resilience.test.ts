@@ -34,7 +34,7 @@ describe('Config Resilience', () => {
     it('should handle syntax error - missing closing brace', async () => {
       const malformed = `{
   "version": "1.4.0",
-  "providers": ["claude-code"]`;
+  "integrations": ["claude-code"]`;
 
       await fs.writeFile(configPath, malformed);
 
@@ -52,7 +52,7 @@ describe('Config Resilience', () => {
     it('should handle syntax error - trailing comma', async () => {
       const malformed = `{
   "version": "1.4.0",
-  "providers": ["claude-code"],
+  "integrations": ["claude-code"],
 }`;
 
       await fs.writeFile(configPath, malformed);
@@ -70,7 +70,7 @@ describe('Config Resilience', () => {
     it('should handle syntax error - unquoted keys', async () => {
       const malformed = `{
   version: "1.4.0",
-  providers: ["claude-code"]
+  integrations: ["claude-code"]
 }`;
 
       await fs.writeFile(configPath, malformed);
@@ -144,7 +144,7 @@ describe('Config Resilience', () => {
   describe('Missing Required Fields', () => {
     it('should detect missing version field', () => {
       const config = {
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: DEFAULT_CONFIG.templates,
         outputs: DEFAULT_CONFIG.outputs,
         preferences: DEFAULT_CONFIG.preferences,
@@ -167,7 +167,7 @@ describe('Config Resilience', () => {
     it('should detect missing templates field', () => {
       const config = {
         version: '1.4.0',
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         outputs: DEFAULT_CONFIG.outputs,
         preferences: DEFAULT_CONFIG.preferences,
       };
@@ -178,7 +178,7 @@ describe('Config Resilience', () => {
     it('should detect missing outputs field', () => {
       const config = {
         version: '1.4.0',
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: DEFAULT_CONFIG.templates,
         preferences: DEFAULT_CONFIG.preferences,
       };
@@ -189,7 +189,7 @@ describe('Config Resilience', () => {
     it('should detect missing preferences field', () => {
       const config = {
         version: '1.4.0',
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: DEFAULT_CONFIG.templates,
         outputs: DEFAULT_CONFIG.outputs,
       };
@@ -212,7 +212,7 @@ describe('Config Resilience', () => {
     it('should detect version as number instead of string', () => {
       const config = {
         version: 1.4,
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: DEFAULT_CONFIG.templates,
         outputs: DEFAULT_CONFIG.outputs,
         preferences: DEFAULT_CONFIG.preferences,
@@ -221,22 +221,22 @@ describe('Config Resilience', () => {
       expect(typeof config.version).not.toBe('string');
     });
 
-    it('should detect providers as string instead of array', () => {
+    it('should detect integrations as string instead of array', () => {
       const config = {
         version: '1.4.0',
-        providers: 'claude-code',
+        integrations: 'claude-code' as any,
         templates: DEFAULT_CONFIG.templates,
         outputs: DEFAULT_CONFIG.outputs,
         preferences: DEFAULT_CONFIG.preferences,
       };
 
-      expect(Array.isArray(config.providers)).toBe(false);
+      expect(Array.isArray(config.integrations)).toBe(false);
     });
 
     it('should detect invalid output format', () => {
       const config = {
         version: '1.4.0',
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: DEFAULT_CONFIG.templates,
         outputs: { ...DEFAULT_CONFIG.outputs, format: 'html' as 'markdown' },
         preferences: DEFAULT_CONFIG.preferences,
@@ -248,7 +248,7 @@ describe('Config Resilience', () => {
     it('should detect boolean values as strings', () => {
       const config = {
         version: '1.4.0',
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: DEFAULT_CONFIG.templates,
         outputs: DEFAULT_CONFIG.outputs,
         preferences: {
@@ -265,7 +265,7 @@ describe('Config Resilience', () => {
     it('should detect null values where objects expected', () => {
       const config = {
         version: '1.4.0',
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: null,
         outputs: DEFAULT_CONFIG.outputs,
         preferences: DEFAULT_CONFIG.preferences,
@@ -277,13 +277,13 @@ describe('Config Resilience', () => {
     it('should detect undefined values', () => {
       const config = {
         version: '1.4.0',
-        providers: undefined,
+        integrations: undefined as any,
         templates: DEFAULT_CONFIG.templates,
         outputs: DEFAULT_CONFIG.outputs,
         preferences: DEFAULT_CONFIG.preferences,
       };
 
-      expect(config.providers).toBeUndefined();
+      expect(config.integrations).toBeUndefined();
     });
   });
 
@@ -299,8 +299,8 @@ describe('Config Resilience', () => {
 
       const migrated = migrateConfig(legacy);
 
-      expect(migrated.version).toBe('1.4.0');
-      expect(migrated.providers).toEqual(['claude-code']);
+      expect(migrated.version).toBe('3.5.0');
+      expect(migrated.integrations).toEqual(['claude-code']);
       expect('agent' in migrated).toBe(false);
     });
 
@@ -332,7 +332,7 @@ describe('Config Resilience', () => {
     it('should correctly identify new config format', () => {
       const newConfig = {
         version: '1.4.0',
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
         templates: {},
       };
 
@@ -412,7 +412,7 @@ describe('Config Resilience', () => {
     it('should have valid default config', () => {
       expect(DEFAULT_CONFIG.version).toBeDefined();
       expect(typeof DEFAULT_CONFIG.version).toBe('string');
-      expect(Array.isArray(DEFAULT_CONFIG.providers)).toBe(true);
+      expect(Array.isArray(DEFAULT_CONFIG.integrations)).toBe(true);
     });
 
     it('should have valid default templates', () => {
@@ -447,7 +447,7 @@ describe('Config Resilience', () => {
         const c = config as Partial<ClavixConfig>;
         return !!(
           c.version &&
-          c.providers &&
+          c.integrations &&
           c.templates &&
           c.outputs &&
           c.preferences
@@ -460,13 +460,13 @@ describe('Config Resilience', () => {
     });
 
     it('should validate provider names are non-empty strings', () => {
-      const valid: ClavixConfig = { ...DEFAULT_CONFIG, providers: ['claude-code', 'cursor'] };
-      const invalid1: ClavixConfig = { ...DEFAULT_CONFIG, providers: [''] };
-      const invalid2 = { ...DEFAULT_CONFIG, providers: [123] };
+      const valid: ClavixConfig = { ...DEFAULT_CONFIG, integrations: ['claude-code', 'cursor'] };
+      const invalid1: ClavixConfig = { ...DEFAULT_CONFIG, integrations: [''] };
+      const invalid2 = { ...DEFAULT_CONFIG, integrations: [123] };
 
-      expect(valid.providers.every(p => typeof p === 'string' && p.length > 0)).toBe(true);
-      expect(invalid1.providers.every(p => typeof p === 'string' && p.length > 0)).toBe(false);
-      expect(invalid2.providers.every(p => typeof p === 'string')).toBe(false);
+      expect(valid.integrations.every(p => typeof p === 'string' && p.length > 0)).toBe(true);
+      expect(invalid1.integrations.every(p => typeof p === 'string' && p.length > 0)).toBe(false);
+      expect(invalid2.integrations.every(p => typeof p === 'string')).toBe(false);
     });
   });
 
@@ -474,13 +474,13 @@ describe('Config Resilience', () => {
     it('should handle config with many providers', () => {
       const config: ClavixConfig = {
         ...DEFAULT_CONFIG,
-        providers: Array.from({ length: 100 }, (_, i) => `provider-${i}`),
+        integrations: Array.from({ length: 100 }, (_, i) => `provider-${i}`),
       };
 
       const serialized = JSON.stringify(config);
       const deserialized = JSON.parse(serialized);
 
-      expect(deserialized.providers).toHaveLength(100);
+      expect(deserialized.integrations).toHaveLength(100);
     });
 
     it('should handle very long experimental values', () => {

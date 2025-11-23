@@ -12,7 +12,7 @@ export default class Config extends Command {
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> get providers',
+    '<%= config.bin %> <%= command.id %> get integrations',
     '<%= config.bin %> <%= command.id %> set preferences.verboseLogging true',
   ];
 
@@ -100,7 +100,7 @@ export default class Config extends Command {
           message: 'What would you like to do?',
           choices: [
             { name: 'View current configuration', value: 'view' },
-            { name: 'Manage providers (add/remove)', value: 'providers' },
+            { name: 'Manage integrations (add/remove)', value: 'integrations' },
             { name: 'Edit preferences', value: 'edit-preferences' },
             { name: 'Reset to defaults', value: 'reset' },
             { name: 'Exit', value: 'exit' },
@@ -112,8 +112,8 @@ export default class Config extends Command {
         case 'view':
           // Already displayed above
           break;
-        case 'providers':
-          await this.manageProviders(config, configPath);
+        case 'integrations':
+          await this.manageIntegrations(config, configPath);
           break;
         case 'edit-preferences':
           await this.editPreferences(configPath, config);
@@ -128,18 +128,18 @@ export default class Config extends Command {
     }
   }
 
-  private async manageProviders(config: ClavixConfig, configPath: string): Promise<void> {
+  private async manageIntegrations(config: ClavixConfig, configPath: string): Promise<void> {
     const agentManager = new AgentManager();
 
     while (true) {
-      // Show current providers
-      this.log(chalk.cyan('\n📦 Current Providers:'));
-      if (config.providers.length === 0) {
+      // Show current integrations
+      this.log(chalk.cyan('\n📦 Current Integrations:'));
+      if (config.integrations.length === 0) {
         this.log(chalk.gray('  (none configured)'));
       } else {
-        for (const providerName of config.providers) {
-          const adapter = agentManager.getAdapter(providerName);
-          const displayName = adapter?.displayName || providerName;
+        for (const integrationName of config.integrations) {
+          const adapter = agentManager.getAdapter(integrationName);
+          const displayName = adapter?.displayName || integrationName;
           this.log(chalk.gray(`  • ${displayName}`));
         }
       }
@@ -151,9 +151,9 @@ export default class Config extends Command {
           name: 'action',
           message: 'What would you like to do?',
           choices: [
-            { name: 'Add provider', value: 'add' },
-            { name: 'Remove provider', value: 'remove' },
-            { name: 'Replace all providers', value: 'replace' },
+            { name: 'Add integration', value: 'add' },
+            { name: 'Remove integration', value: 'remove' },
+            { name: 'Replace all integrations', value: 'replace' },
             { name: 'Back to main menu', value: 'back' },
           ],
         },
@@ -163,13 +163,13 @@ export default class Config extends Command {
 
       switch (action) {
         case 'add':
-          await this.addProviders(config, configPath);
+          await this.addIntegrations(config, configPath);
           break;
         case 'remove':
-          await this.removeProviders(config, configPath);
+          await this.removeIntegrations(config, configPath);
           break;
         case 'replace':
-          await this.replaceProviders(config, configPath);
+          await this.replaceIntegrations(config, configPath);
           break;
       }
 
@@ -178,25 +178,25 @@ export default class Config extends Command {
     }
   }
 
-  private async addProviders(config: ClavixConfig, configPath: string): Promise<void> {
+  private async addIntegrations(config: ClavixConfig, configPath: string): Promise<void> {
     const agentManager = new AgentManager();
-    const allProviders = agentManager.getAdapters();
+    const allIntegrations = agentManager.getAdapters();
 
     // Show only non-selected providers
-    const availableToAdd = allProviders.filter(
-      (a) => !config.providers.includes(a.name)
+    const availableToAdd = allIntegrations.filter(
+      (a) => !config.integrations.includes(a.name)
     );
 
     if (availableToAdd.length === 0) {
-      this.log(chalk.yellow('\n✓ All providers already added!'));
+      this.log(chalk.yellow('\n✓ All integrations already added!'));
       return;
     }
 
     // Multi-select checkbox
-    const { newProviders } = await inquirer.prompt([
+    const { newIntegrations } = await inquirer.prompt([
       {
         type: 'checkbox',
-        name: 'newProviders',
+        name: 'newIntegrations',
         message: 'Select providers to add:',
         choices: availableToAdd.map((adapter) => ({
           name: `${adapter.displayName} (${adapter.directory})`,
@@ -205,20 +205,20 @@ export default class Config extends Command {
       },
     ]);
 
-    if (newProviders.length === 0) {
-      this.log(chalk.gray('No providers selected'));
+    if (newIntegrations.length === 0) {
+      this.log(chalk.gray('No integrations selected'));
       return;
     }
 
     // Add to config
-    config.providers.push(...newProviders);
+    config.integrations.push(...newIntegrations);
     this.saveConfig(configPath, config);
 
-    this.log(chalk.gray('\n🔧 Generating commands for new providers...'));
+    this.log(chalk.gray('\n🔧 Generating commands for new integrations...'));
 
-    // Generate commands for new providers
-    for (const providerName of newProviders) {
-      const adapter = agentManager.getAdapter(providerName);
+    // Generate commands for new integrations
+    for (const integrationName of newIntegrations) {
+      const adapter = agentManager.getAdapter(integrationName);
       if (!adapter) continue;
 
       const templates = await loadCommandTemplates(adapter);
@@ -226,24 +226,24 @@ export default class Config extends Command {
       this.log(chalk.green(`  ✓ Generated ${templates.length} command(s) for ${adapter.displayName}`));
     }
 
-    this.log(chalk.green('\n✅ Providers added successfully!'));
+    this.log(chalk.green('\n✅ Integrations added successfully!'));
   }
 
-  private async removeProviders(config: ClavixConfig, configPath: string): Promise<void> {
-    if (config.providers.length === 0) {
-      this.log(chalk.yellow('\n⚠ No providers configured!'));
+  private async removeIntegrations(config: ClavixConfig, configPath: string): Promise<void> {
+    if (config.integrations.length === 0) {
+      this.log(chalk.yellow('\n⚠ No integrations configured!'));
       return;
     }
 
     const agentManager = new AgentManager();
 
-    // Multi-select from current providers
-    const { providersToRemove } = await inquirer.prompt([
+    // Multi-select from current integrations
+    const { integrationsToRemove } = await inquirer.prompt([
       {
         type: 'checkbox',
-        name: 'providersToRemove',
+        name: 'integrationsToRemove',
         message: 'Select providers to remove:',
-        choices: config.providers.map((name) => {
+        choices: config.integrations.map((name) => {
           const adapter = agentManager.getAdapter(name);
           return {
             name: `${adapter?.displayName || name} (${adapter?.directory || 'unknown'})`,
@@ -251,16 +251,16 @@ export default class Config extends Command {
           };
         }),
         validate: (answer: string[]) => {
-          if (answer.length === config.providers.length) {
-            return 'You must keep at least one provider. Use "Reset to defaults" to reconfigure completely.';
+          if (answer.length === config.integrations.length) {
+            return 'You must keep at least one integration. Use "Reset to defaults" to reconfigure completely.';
           }
           return true;
         },
       },
     ]);
 
-    if (providersToRemove.length === 0) {
-      this.log(chalk.gray('No providers selected'));
+    if (integrationsToRemove.length === 0) {
+      this.log(chalk.gray('No integrations selected'));
       return;
     }
 
@@ -269,22 +269,22 @@ export default class Config extends Command {
       {
         type: 'confirm',
         name: 'cleanup',
-        message: 'Remove command files for these providers?',
+        message: 'Remove command files for these integrations?',
         default: true,
       },
     ]);
 
     // Remove from config
-    config.providers = config.providers.filter(
-      (p) => !providersToRemove.includes(p)
+    config.integrations = config.integrations.filter(
+      (p) => !integrationsToRemove.includes(p)
     );
     this.saveConfig(configPath, config);
 
     // Clean up command files
     if (cleanup) {
       this.log(chalk.gray('\n🗑️  Cleaning up command files...'));
-      for (const providerName of providersToRemove) {
-        const adapter = agentManager.getAdapter(providerName);
+      for (const integrationName of integrationsToRemove) {
+        const adapter = agentManager.getAdapter(integrationName);
         if (adapter) {
           const removed = await adapter.removeAllCommands();
           this.log(chalk.gray(`  ✓ Removed ${removed} command(s) from ${adapter.displayName}`));
@@ -292,30 +292,30 @@ export default class Config extends Command {
       }
     }
 
-    this.log(chalk.green('\n✅ Providers removed successfully!'));
+    this.log(chalk.green('\n✅ Integrations removed successfully!'));
   }
 
-  private async replaceProviders(config: ClavixConfig, configPath: string): Promise<void> {
+  private async replaceIntegrations(config: ClavixConfig, configPath: string): Promise<void> {
     const agentManager = new AgentManager();
 
     // Use shared provider selector
-    const { selectProviders } = await import('../../utils/provider-selector.js');
-    const newProviders = await selectProviders(agentManager, config.providers);
+    const { selectIntegrations } = await import('../../utils/integration-selector.js');
+    const newIntegrations = await selectIntegrations(agentManager, config.integrations);
 
-    if (newProviders.length === 0) {
-      this.log(chalk.gray('No providers selected'));
+    if (newIntegrations.length === 0) {
+      this.log(chalk.gray('No integrations selected'));
       return;
     }
 
-    // Find deselected providers
-    const deselected = config.providers.filter((p) => !newProviders.includes(p));
+    // Find deselected integrations
+    const deselected = config.integrations.filter((p) => !newIntegrations.includes(p));
 
     // Handle cleanup if providers were deselected
     if (deselected.length > 0) {
       this.log(chalk.yellow('\n⚠ Previously configured but not selected:'));
-      for (const providerName of deselected) {
-        const adapter = agentManager.getAdapter(providerName);
-        const displayName = adapter?.displayName || providerName;
+      for (const integrationName of deselected) {
+        const adapter = agentManager.getAdapter(integrationName);
+        const displayName = adapter?.displayName || integrationName;
         const directory = adapter?.directory || 'unknown';
         this.log(chalk.gray(`  • ${displayName} (${directory})`));
       }
@@ -324,7 +324,7 @@ export default class Config extends Command {
         {
           type: 'list',
           name: 'cleanupAction',
-          message: 'What would you like to do with these providers?',
+          message: 'What would you like to do with these integrations?',
           choices: [
             { name: 'Clean up (remove all command files)', value: 'cleanup' },
             { name: 'Skip (leave as-is)', value: 'skip' },
@@ -333,9 +333,9 @@ export default class Config extends Command {
       ]);
 
       if (cleanupAction === 'cleanup') {
-        this.log(chalk.gray('\n🗑️  Cleaning up deselected providers...'));
-        for (const providerName of deselected) {
-          const adapter = agentManager.getAdapter(providerName);
+        this.log(chalk.gray('\n🗑️  Cleaning up deselected integrations...'));
+        for (const integrationName of deselected) {
+          const adapter = agentManager.getAdapter(integrationName);
           if (adapter) {
             const removed = await adapter.removeAllCommands();
             this.log(chalk.gray(`  ✓ Removed ${removed} command(s) from ${adapter.displayName}`));
@@ -345,7 +345,7 @@ export default class Config extends Command {
     }
 
     // Update config
-    config.providers = newProviders;
+    config.integrations = newIntegrations;
     this.saveConfig(configPath, config);
 
     // Prompt to run update
@@ -359,12 +359,12 @@ export default class Config extends Command {
     ]);
 
     if (runUpdate) {
-      this.log(chalk.gray('\n🔧 Regenerating commands for all providers...\n'));
+      this.log(chalk.gray('\n🔧 Regenerating commands for all integrations...\n'));
       const Update = (await import('./update.js')).default;
       await Update.run([]);
     }
 
-    this.log(chalk.green('\n✅ Providers replaced successfully!'));
+    this.log(chalk.green('\n✅ Integrations replaced successfully!'));
   }
 
   private async getConfig(configPath: string, key?: string): Promise<void> {
@@ -429,11 +429,11 @@ export default class Config extends Command {
     const config = this.loadConfig(configPath);
     const defaultConfig = {
       ...DEFAULT_CONFIG,
-      providers: config.providers, // Keep existing providers
+      providers: config.integrations, // Keep existing integrations
     };
 
     this.saveConfig(configPath, defaultConfig);
-    this.log(chalk.green('✅ Configuration reset to defaults (providers preserved)'));
+    this.log(chalk.green('✅ Configuration reset to defaults (integrations preserved)'));
   }
 
   private async editPreferences(configPath: string, config: ClavixConfig): Promise<void> {
@@ -494,7 +494,7 @@ export default class Config extends Command {
 
   private displayConfig(config: ClavixConfig): void {
     this.log(`  ${chalk.gray('Version:')} ${config.version}`);
-    this.log(`  ${chalk.gray('Providers:')} ${config.providers.map(p => chalk.cyan(p)).join(', ') || chalk.gray('(none)')}`);
+    this.log(`  ${chalk.gray('Integrations:')} ${config.integrations.map(p => chalk.cyan(p)).join(', ') || chalk.gray('(none)')}`);
 
     if (config.preferences) {
       this.log(`\n  ${chalk.bold('Preferences:')}`);

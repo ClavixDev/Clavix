@@ -3,14 +3,14 @@ import {
   AgentAdapter,
   CommandTemplate,
   ManagedBlock,
-  ProviderFeatures,
+  IntegrationFeatures,
   ValidationResult,
 } from '../../types/agent.js';
 import { FileSystem } from '../../utils/file-system.js';
 import { IntegrationError } from '../../types/errors.js';
 
 /**
- * Base adapter class with shared logic for all providers
+ * Base adapter class with shared logic for all integrations
  * Ensures consistency and reduces code duplication
  */
 export abstract class BaseAdapter implements AgentAdapter {
@@ -18,14 +18,14 @@ export abstract class BaseAdapter implements AgentAdapter {
   abstract readonly displayName: string;
   abstract readonly directory: string;
   abstract readonly fileExtension: string;
-  readonly features?: ProviderFeatures;
+  readonly features?: IntegrationFeatures;
 
   abstract detectProject(): Promise<boolean>;
   abstract getCommandPath(): string;
 
   /**
    * Determine the target filename for a generated command
-   * Providers can override to customize filename conventions
+   * Integrations can override to customize filename conventions
    */
   getTargetFilename(name: string): string {
     return `${name}${this.fileExtension}`;
@@ -118,7 +118,7 @@ export abstract class BaseAdapter implements AgentAdapter {
 
   /**
    * Determine if a file is a Clavix-generated command
-   * Override in adapters for provider-specific patterns
+   * Override in adapters for integration-specific patterns
    * @param filename The filename to check
    * @returns true if this is a Clavix-generated command file
    */
@@ -129,7 +129,7 @@ export abstract class BaseAdapter implements AgentAdapter {
 
   /**
    * Generate commands - default implementation
-   * Creates command files in the provider's directory
+   * Creates command files in the integration's directory
    */
   async generateCommands(templates: CommandTemplate[]): Promise<void> {
     const commandPath = this.getCommandPath();
@@ -154,9 +154,9 @@ export abstract class BaseAdapter implements AgentAdapter {
   }
 
   /**
-   * Format command content for this provider
+   * Format command content for this integration
    * Default: return content as-is
-   * Override for provider-specific formatting (frontmatter, placeholders, etc.)
+   * Override for integration-specific formatting (frontmatter, placeholders, etc.)
    */
   protected formatCommand(template: CommandTemplate): string {
     return template.content;
@@ -164,7 +164,7 @@ export abstract class BaseAdapter implements AgentAdapter {
 
   /**
    * Default documentation injection - no-op
-   * Override if provider needs doc injection (like Claude Code)
+   * Override if integration needs doc injection (like Claude Code)
    */
   async injectDocumentation(_blocks: ManagedBlock[]): Promise<void> {
     // Default: no documentation injection

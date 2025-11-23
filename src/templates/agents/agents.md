@@ -11,7 +11,7 @@ Use these instructions when your agent can only read documentation (no slash-com
 
 | Command | Purpose |
 | --- | --- |
-| `clavix init` | Interactive setup. Select providers and generate documentation/command files. |
+| `clavix init` | Interactive setup. Select integrations and generate documentation/command files. |
 | `clavix fast "<prompt>"` | Quick prompt optimization with quality assessment (Clarity, Efficiency, Structure, Completeness, Actionability). CLI auto-saves to `.clavix/outputs/prompts/fast/`. When using slash commands, agent must save manually per template instructions. |
 | `clavix deep "<prompt>"` | Comprehensive analysis with alternatives, edge cases, and validation checklists. CLI auto-saves to `.clavix/outputs/prompts/deep/`. When using slash commands, agent must save manually per template instructions. |
 | `clavix execute [--latest]` | Execute saved prompts from fast/deep optimization. Interactive selection or `--latest` for most recent. |

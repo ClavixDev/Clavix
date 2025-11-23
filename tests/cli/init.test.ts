@@ -81,8 +81,8 @@ describe('Init command', () => {
     });
 
     it('should have default providers', () => {
-      expect(DEFAULT_CONFIG.providers).toBeDefined();
-      expect(Array.isArray(DEFAULT_CONFIG.providers)).toBe(true);
+      expect(DEFAULT_CONFIG.integrations).toBeDefined();
+      expect(Array.isArray(DEFAULT_CONFIG.integrations)).toBe(true);
     });
 
     it('should have templates configuration', () => {
@@ -192,25 +192,25 @@ describe('Init command', () => {
 
   describe('provider validation', () => {
     it('should validate that at least one provider is selected', () => {
-      const selectedProviders: string[] = [];
+      const selectedIntegrations: string[] = [];
 
-      const isValid = selectedProviders.length > 0;
+      const isValid = selectedIntegrations.length > 0;
 
       expect(isValid).toBe(false);
     });
 
     it('should accept single provider selection', () => {
-      const selectedProviders = ['claude-code'];
+      const selectedIntegrations = ['claude-code'];
 
-      const isValid = selectedProviders.length > 0;
+      const isValid = selectedIntegrations.length > 0;
 
       expect(isValid).toBe(true);
     });
 
     it('should accept multiple provider selection', () => {
-      const selectedProviders = ['claude-code', 'cursor', 'droid'];
+      const selectedIntegrations = ['claude-code', 'cursor', 'droid'];
 
-      const isValid = selectedProviders.length > 0;
+      const isValid = selectedIntegrations.length > 0;
 
       expect(isValid).toBe(true);
     });
@@ -223,7 +223,7 @@ describe('Init command', () => {
 
       const config = {
         ...DEFAULT_CONFIG,
-        providers: ['claude-code'],
+        integrations: ['claude-code'],
       };
 
       await fs.writeJSON(configPath, config, { spaces: 2 });
@@ -231,7 +231,7 @@ describe('Init command', () => {
       const savedConfig = await fs.readJSON(configPath);
 
       expect(savedConfig.version).toBe(config.version);
-      expect(savedConfig.providers).toEqual(['claude-code']);
+      expect(savedConfig.integrations).toEqual(['claude-code']);
     });
 
     it('should preserve config structure', async () => {
@@ -243,7 +243,7 @@ describe('Init command', () => {
       const savedConfig = await fs.readJSON(configPath);
 
       expect(savedConfig).toHaveProperty('version');
-      expect(savedConfig).toHaveProperty('providers');
+      expect(savedConfig).toHaveProperty('integrations');
       expect(savedConfig).toHaveProperty('templates');
       expect(savedConfig).toHaveProperty('outputs');
       expect(savedConfig).toHaveProperty('preferences');
@@ -255,17 +255,17 @@ describe('Init command', () => {
 
       const customConfig = {
         ...DEFAULT_CONFIG,
-        providers: ['claude-code', 'cursor', 'agents-md'],
+        integrations: ['claude-code', 'cursor', 'agents-md'],
       };
 
       await fs.writeJSON(configPath, customConfig, { spaces: 2 });
 
       const savedConfig = await fs.readJSON(configPath);
 
-      expect(savedConfig.providers).toHaveLength(3);
-      expect(savedConfig.providers).toContain('claude-code');
-      expect(savedConfig.providers).toContain('cursor');
-      expect(savedConfig.providers).toContain('agents-md');
+      expect(savedConfig.integrations).toHaveLength(3);
+      expect(savedConfig.integrations).toContain('claude-code');
+      expect(savedConfig.integrations).toContain('cursor');
+      expect(savedConfig.integrations).toContain('agents-md');
     });
   });
 
@@ -290,7 +290,7 @@ describe('Init command', () => {
 
       const originalConfig = {
         ...DEFAULT_CONFIG,
-        providers: ['claude-code', 'cursor'],
+        integrations: ['claude-code', 'cursor'],
       };
 
       await fs.writeJSON(configPath, originalConfig, { spaces: 2 });
@@ -298,8 +298,8 @@ describe('Init command', () => {
       // Simulate reading config before reinitialization
       const existingConfig = await fs.readJSON(configPath);
 
-      expect(existingConfig.providers).toContain('claude-code');
-      expect(existingConfig.providers).toContain('cursor');
+      expect(existingConfig.integrations).toContain('claude-code');
+      expect(existingConfig.integrations).toContain('cursor');
     });
   });
 
@@ -369,7 +369,7 @@ describe('Init command', () => {
     });
 
     it('should have valid providers array', () => {
-      expect(Array.isArray(DEFAULT_CONFIG.providers)).toBe(true);
+      expect(Array.isArray(DEFAULT_CONFIG.integrations)).toBe(true);
     });
 
     it('should have valid output path', () => {

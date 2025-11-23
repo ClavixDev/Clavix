@@ -46,40 +46,40 @@ export default class Init extends Command {
 
       // Load existing config if re-initializing
       const agentManager = new AgentManager();
-      let existingProviders: string[] = [];
+      let existingIntegrations: string[] = [];
 
       if (await FileSystem.exists('.clavix/config.json')) {
         try {
           const configContent = await FileSystem.readFile('.clavix/config.json');
           const config = JSON.parse(configContent);
-          existingProviders = config.providers || [];
+          existingIntegrations = config.integrations || config.providers || [];
         } catch (error) {
           // Ignore parse errors, will use empty array
         }
       }
 
-      // Select providers using shared utility
+      // Select integrations using shared utility
       console.log(chalk.gray('Select AI development tools to support:\n'));
       console.log(chalk.gray('(Space to select, Enter to confirm)\n'));
 
-      const { selectProviders } = await import('../../utils/provider-selector.js');
-      const selectedProviders = await selectProviders(agentManager, existingProviders);
+      const { selectIntegrations } = await import('../../utils/integration-selector.js');
+      const selectedIntegrations = await selectIntegrations(agentManager, existingIntegrations);
 
-      if (!selectedProviders || selectedProviders.length === 0) {
-        console.log(chalk.red('\n✗ No providers selected\n'));
+      if (!selectedIntegrations || selectedIntegrations.length === 0) {
+        console.log(chalk.red('\n✗ No integrations selected\n'));
         return;
       }
 
-      // Handle deselected providers (cleanup prompt)
-      const deselectedProviders = existingProviders.filter(
-        (p) => !selectedProviders.includes(p)
+      // Handle deselected integrations (cleanup prompt)
+      const deselectedIntegrations = existingIntegrations.filter(
+        (p) => !selectedIntegrations.includes(p)
       );
 
-      if (deselectedProviders.length > 0) {
+      if (deselectedIntegrations.length > 0) {
         console.log(chalk.yellow('\n⚠ Previously configured but not selected:'));
-        for (const providerName of deselectedProviders) {
-          const adapter = agentManager.getAdapter(providerName);
-          const displayName = adapter?.displayName || providerName;
+        for (const integrationName of deselectedIntegrations) {
+          const adapter = agentManager.getAdapter(integrationName);
+          const displayName = adapter?.displayName || integrationName;
           const directory = adapter?.directory || 'unknown';
           console.log(chalk.gray(`  • ${displayName} (${directory})`));
         }
@@ -88,7 +88,7 @@ export default class Init extends Command {
           {
             type: 'list',
             name: 'cleanupAction',
-            message: 'What would you like to do with these providers?',
+            message: 'What would you like to do with these integrations?',
             choices: [
               { name: 'Clean up (remove all command files)', value: 'cleanup' },
               { name: 'Keep (also update their commands)', value: 'update' },
@@ -98,9 +98,9 @@ export default class Init extends Command {
         ]);
 
         if (cleanupAction === 'cleanup') {
-          console.log(chalk.gray('\n🗑️  Cleaning up deselected providers...'));
-          for (const providerName of deselectedProviders) {
-            const adapter = agentManager.getAdapter(providerName);
+          console.log(chalk.gray('\n🗑️  Cleaning up deselected integrations...'));
+          for (const integrationName of deselectedIntegrations) {
+            const adapter = agentManager.getAdapter(integrationName);
             if (adapter) {
               const removed = await adapter.removeAllCommands();
               console.log(
@@ -110,8 +110,8 @@ export default class Init extends Command {
           }
         } else if (cleanupAction === 'update') {
           // Add them back to selection
-          selectedProviders.push(...deselectedProviders);
-          console.log(chalk.gray('\n✓ Keeping all providers\n'));
+          selectedIntegrations.push(...deselectedIntegrations);
+          console.log(chalk.gray('\n✓ Keeping all integrations\n'));
         }
         // If 'skip': do nothing
       }
@@ -122,47 +122,47 @@ export default class Init extends Command {
 
       // Generate config
       console.log(chalk.cyan('⚙️  Generating configuration...'));
-      await this.generateConfig(selectedProviders);
+      await this.generateConfig(selectedIntegrations);
 
       // Generate INSTRUCTIONS.md
       await this.generateInstructions();
 
-      // Generate commands for each selected provider
+      // Generate commands for each selected integration
       console.log(
         chalk.cyan(
-          `\n📝 Generating commands for ${selectedProviders.length} provider(s)...\n`
+          `\n📝 Generating commands for ${selectedIntegrations.length} integration(s)...\n`
         )
       );
 
-      for (const providerName of selectedProviders) {
+      for (const integrationName of selectedIntegrations) {
         // Handle agents-md separately (it's not an adapter)
-        if (providerName === 'agents-md') {
+        if (integrationName === 'agents-md') {
           console.log(chalk.gray('  ✓ Generating AGENTS.md...'));
           await AgentsMdGenerator.generate();
           continue;
         }
 
         // Handle copilot-instructions separately (it's not an adapter)
-        if (providerName === 'copilot-instructions') {
+        if (integrationName === 'copilot-instructions') {
           console.log(chalk.gray('  ✓ Generating .github/copilot-instructions.md...'));
           await CopilotInstructionsGenerator.generate();
           continue;
         }
 
         // Handle octo-md separately (it's not an adapter)
-        if (providerName === 'octo-md') {
+        if (integrationName === 'octo-md') {
           console.log(chalk.gray('  ✓ Generating OCTO.md...'));
           await OctoMdGenerator.generate();
           continue;
         }
 
-        if (providerName === 'warp-md') {
+        if (integrationName === 'warp-md') {
           console.log(chalk.gray('  ✓ Generating WARP.md...'));
           await WarpMdGenerator.generate();
           continue;
         }
 
-        let adapter: AgentAdapter = agentManager.requireAdapter(providerName);
+        let adapter: AgentAdapter = agentManager.requireAdapter(integrationName);
 
         console.log(chalk.gray(`  ✓ Generating ${adapter.displayName} commands...`));
 
@@ -260,7 +260,7 @@ export default class Init extends Command {
         }
 
         // Inject documentation blocks (Claude Code only)
-        if (providerName === 'claude-code') {
+        if (integrationName === 'claude-code') {
           console.log(chalk.gray('  ✓ Injecting CLAUDE.md documentation...'));
           await this.injectDocumentation(adapter);
         }
@@ -297,10 +297,10 @@ export default class Init extends Command {
     }
   }
 
-  private async generateConfig(providers: string[]): Promise<void> {
+  private async generateConfig(integrations: string[]): Promise<void> {
     const config: ClavixConfig = {
       ...DEFAULT_CONFIG,
-      providers,
+      integrations,
     };
 
     const configPath = '.clavix/config.json';

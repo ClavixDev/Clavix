@@ -429,6 +429,7 @@ function createMockAdapter(
     fileExtension: '.md',
     detectProject: jest.fn<() => Promise<boolean>>().mockResolvedValue(false),
     generateCommands: jest.fn<(templates: any[]) => Promise<void>>().mockResolvedValue(undefined),
+    removeAllCommands: jest.fn<() => Promise<number>>().mockResolvedValue(0),
     injectDocumentation: jest.fn<(blocks: any[]) => Promise<void>>().mockResolvedValue(undefined),
     getCommandPath: jest.fn<() => string>().mockReturnValue(`.${name}/commands`),
     getTargetFilename: jest.fn<(cmdName: string) => string>((cmdName: string) => `${cmdName}.md`),

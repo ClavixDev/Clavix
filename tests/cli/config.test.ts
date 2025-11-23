@@ -106,8 +106,8 @@ describe('Config Command', () => {
     });
 
     it('should display specific key value', async () => {
-      const cmd = await runCommand(['get', 'agent']);
-      
+      const cmd = await runCommand(['get', 'integrations']);
+
       expect(cmd.log).toHaveBeenCalled();
       const output = (cmd.log as any).mock.calls.flat().join('\n');
       expect(output).toContain('Claude Code');

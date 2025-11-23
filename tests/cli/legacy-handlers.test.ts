@@ -20,6 +20,7 @@ const buildAdapter = (name: string, commandPath: string): AgentAdapter => ({
   fileExtension: '.md',
   detectProject: noopDetect,
   generateCommands: async (_templates: CommandTemplate[]) => {},
+  removeAllCommands: async () => 0,
   injectDocumentation: async (_blocks: ManagedBlock[]) => {},
   getCommandPath: () => commandPath,
   getTargetFilename: (commandName: string) => `clavix-${commandName}.md`,

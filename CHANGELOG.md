@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0] - 2025-01-24
+
+### 🔄 Breaking Changes (With Automatic Migration)
+
+#### Terminology Update: "Providers" → "Integrations"
+Renamed core terminology from "providers" to "integrations" throughout Clavix for improved semantic clarity and industry alignment.
+
+**What Changed**:
+- **Configuration**: `config.integrations` replaces `config.providers` in `.clavix/config.json`
+- **TypeScript Types**:
+  - `ClavixConfig.integrations` replaces `ClavixConfig.providers`
+  - `IntegrationFeatures` replaces `ProviderFeatures` (deprecated type alias maintained for backward compatibility)
+- **CLI Commands**:
+  - `clavix config` menu now shows "Manage integrations (add/remove)"
+  - `clavix init` displays "integration" terminology throughout
+  - `clavix update` uses "integrations" in all output messages
+- **Documentation**:
+  - Renamed `docs/providers.md` → `docs/integrations.md`
+  - Updated all references across README, guides, and templates
+- **Utilities**: Renamed `provider-selector.ts` → `integration-selector.ts`
+
+**Why**: The term "provider" implied Clavix receives a service FROM these tools, when actually Clavix integrates WITH them. "Integration" more accurately describes the relationship (Clavix ↔ AI Tools) and aligns with industry standards (VS Code integrations, Zapier integrations, etc.).
+
+**Backward Compatibility**:
+- ✅ **Automatic Migration**: Old configs with `"providers": []` are automatically migrated to `"integrations": []`
+- ✅ **Zero User Action Required**: Migration happens transparently on first config load
+- ✅ **Type Alias**: `ProviderFeatures` maintained as deprecated alias (removed in v4.0.0)
+- ✅ **Config Fallback**: `config.providers` reads work during transition period
+
+**Impact**:
+- **For End Users**: Seamless upgrade with automatic migration - no manual changes needed
+- **For TypeScript Users**: If importing `ProviderFeatures` type, update to `IntegrationFeatures` (deprecation warning added)
+
+This follows the same proven migration pattern used in v1.4.0 (`agent` → `providers`).
+
 ## [3.4.0] - 2025-11-23
 
 ### 🐛 Bug Fixes
@@ -43,7 +78,7 @@ Fixed incorrect categorization of LLXPRT provider in `clavix init` command.
 **What Changed**:
 - Moved LLXPRT from "IDE & IDE Extensions" section to "CLI Tools" section
 - LLXPRT now appears alphabetically between Gemini CLI and OpenCode
-- Documentation in `docs/providers.md` was already correct (no changes needed)
+- Documentation in `docs/integrations.md` was already correct (no changes needed)
 
 **Why**: LLXPRT is a CLI tool, not an IDE extension. This fix ensures proper categorization in the interactive provider selection menu.
 
@@ -67,7 +102,7 @@ Added support for **LLXPRT** - a new AI coding CLI tool with TOML-based custom c
 - New `LlxprtAdapter` class following established Clavix patterns
 - Added to provider selection in `clavix init` command
 - Full test coverage with 6 new tests
-- Documentation updated in `docs/providers.md`
+- Documentation updated in `docs/integrations.md`
 
 **Total Providers**: Now supports **16 built-in adapters** + 4 universal adapters (20 total integrations)
 
@@ -1344,7 +1379,7 @@ CLEANUP    → clavix prompts clear --executed
 
 ### 📚 Documentation
 - Updated README.md: Copilot now listed under "Universal adapters"
-- Updated docs/providers.md: Changed Copilot entry to GitHub Copilot with `.github/copilot-instructions.md` path
+- Updated docs/integrations.md: Changed Copilot entry to GitHub Copilot with `.github/copilot-instructions.md` path
 - CHANGELOG.md: This entry
 
 ### 🎯 Migration Guide

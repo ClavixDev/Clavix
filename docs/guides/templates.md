@@ -58,7 +58,7 @@ Clavix generates slash commands from canonical templates with automatic provider
 4. Adjust the content or metadata:
    - **YAML frontmatter** (canonical `.md`): `name: "..."` and `description: "..."`
    - **TOML description** (Gemini/Qwen): `description = "..."`
-   - **Argument placeholders**: Use conventions from [Supported providers](../providers.md)
+   - **Argument placeholders**: Use conventions from [Supported providers](../integrations.md)
 5. Run `clavix update --commands-only` to regenerate command files with your overrides
 
 ### Template format reference
@@ -88,7 +88,7 @@ Use {{args}} for user input placeholder.
 """
 ```
 
-Provider adapters enforce the argument placeholder conventions described in [Supported providers](../providers.md). The canonical `{{ARGS}}` placeholder is automatically transformed to the provider-specific format (e.g., `{{args}}` for TOML providers, `$PROMPT` for Crush).
+Provider adapters enforce the argument placeholder conventions described in [Supported providers](../integrations.md). The canonical `{{ARGS}}` placeholder is automatically transformed to the provider-specific format (e.g., `{{args}}` for TOML providers, `$PROMPT` for Crush).
 
 ## Validation and troubleshooting
 

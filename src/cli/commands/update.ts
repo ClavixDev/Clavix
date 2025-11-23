@@ -59,9 +59,9 @@ export default class Update extends Command {
 
     this.log(chalk.bold.cyan('🔄 Updating Clavix integration...\n'));
 
-    // Load config to determine providers
+    // Load config to determine integrations
     const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-    const providers = config.providers || ['claude-code'];
+    const integrations = config.integrations || config.providers || ['claude-code'];
 
     const agentManager = new AgentManager();
 
@@ -71,9 +71,9 @@ export default class Update extends Command {
     let updatedCount = 0;
 
     // Update for each provider
-    for (const providerName of providers) {
+    for (const integrationName of integrations) {
       // Handle AGENTS.md separately
-      if (providerName === 'agents-md') {
+      if (integrationName === 'agents-md') {
         if (updateDocs) {
           updatedCount += await this.updateAgentsMd(flags.force);
         }
@@ -81,7 +81,7 @@ export default class Update extends Command {
       }
 
       // Handle Warp separately
-      if (providerName === 'warp-md') {
+      if (integrationName === 'warp-md') {
         if (updateDocs) {
           updatedCount += await this.updateWarpMd(flags.force);
         }
@@ -89,23 +89,23 @@ export default class Update extends Command {
       }
 
       // Handle Octofriend separately
-      if (providerName === 'octo-md') {
+      if (integrationName === 'octo-md') {
         if (updateDocs) {
           updatedCount += await this.updateOctoMd(flags.force);
         }
         continue;
       }
 
-      const adapter = agentManager.getAdapter(providerName);
+      const adapter = agentManager.getAdapter(integrationName);
 
       if (!adapter) {
-        this.log(chalk.yellow(`  ⚠ Unknown provider: ${providerName}, skipping...`));
+        this.log(chalk.yellow(`  ⚠ Unknown integration: ${integrationName}, skipping...`));
         continue;
       }
 
       // Update documentation blocks (Claude Code only)
-      if (updateDocs && providerName === 'claude-code') {
-        updatedCount += await this.updateDocumentation(adapter, providerName, flags.force);
+      if (updateDocs && integrationName === 'claude-code') {
+        updatedCount += await this.updateDocumentation(adapter, integrationName, flags.force);
       }
 
       // Update slash commands

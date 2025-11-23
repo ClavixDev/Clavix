@@ -7,7 +7,7 @@ export interface AgentAdapter {
   displayName: string;
   directory: string;
   fileExtension: string;
-  features?: ProviderFeatures;
+  features?: IntegrationFeatures;
 
   detectProject(): Promise<boolean>;
   generateCommands(templates: CommandTemplate[]): Promise<void>;
@@ -18,13 +18,18 @@ export interface AgentAdapter {
   validate?(): Promise<ValidationResult>;
 }
 
-export interface ProviderFeatures {
+export interface IntegrationFeatures {
   supportsFrontmatter?: boolean;
   supportsExecutableCommands?: boolean;
   supportsSubdirectories?: boolean;
   argumentPlaceholder?: string;
   frontmatterFields?: string[];
 }
+
+/**
+ * @deprecated Use IntegrationFeatures instead. Will be removed in v4.0.0
+ */
+export type ProviderFeatures = IntegrationFeatures;
 
 export interface ValidationResult {
   valid: boolean;

@@ -23,6 +23,7 @@ describe('loadCommandTemplates', () => {
     fileExtension: '.md',
     detectProject: async () => true,
     generateCommands: async () => {},
+    removeAllCommands: async () => 0,
     injectDocumentation: async () => {},
     getCommandPath: () => '/test/.clavix/commands',
     getTargetFilename: (name: string) => `${name}.md`,

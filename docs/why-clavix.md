@@ -16,4 +16,4 @@ Clavix helps developers transform vague requests into precise, implementation-re
 - Improving ad-hoc prompts for editors like Claude Code, Cursor, Windsurf, or CLI agents such as Droid and CodeBuddy.
 - Archiving completed projects while keeping session histories and outputs consistent across tooling.
 
-For a deeper look at the methodology that powers Clavix, read [Clavix Intelligence™](clavix-intelligence.md). To explore the tools and environments we integrate with, visit [Supported providers](providers.md).
+For a deeper look at the methodology that powers Clavix, read [Clavix Intelligence™](clavix-intelligence.md). To explore the tools and environments we integrate with, visit [Supported providers](integrations.md).

@@ -1,5 +1,5 @@
 /**
- * Integration test for multi-provider workflow
+ * Integration test for multi-integration workflow
  * Tests integration across multiple AI provider adapters
  */
 
@@ -13,8 +13,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-describe('Multi-Provider Workflow Integration', () => {
-  const testDir = path.join(__dirname, '../tmp/multi-provider-test');
+describe('Multi-Integration Workflow Integration', () => {
+  const testDir = path.join(__dirname, '../tmp/multi-integration-test');
   let agentManager: AgentManager;
   let originalHomeOverride: string | undefined;
   let testHomeDir: string;
@@ -126,7 +126,7 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(detected[0].name).toBe('cursor');
     });
 
-    it('should detect multiple providers in same project', async () => {
+    it('should detect multiple integrations in same project', async () => {
       await fs.ensureDir('.claude');
       await fs.ensureDir('.cursor');
       await fs.ensureDir('.agents');
@@ -140,7 +140,7 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(names).toContain('amp');
     });
 
-    it('should detect all providers when all markers present', async () => {
+    it('should detect all integrations when all markers present', async () => {
       await fs.ensureDir('.claude');
       await fs.ensureDir('.cursor');
       await fs.ensureDir('.factory');
@@ -181,7 +181,7 @@ describe('Multi-Provider Workflow Integration', () => {
     });
   });
 
-  describe('Command Generation Across Providers', () => {
+  describe('Command Generation Across Integrations', () => {
     const testTemplates: CommandTemplate[] = [
       {
         name: 'fast',
@@ -252,7 +252,7 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(content).not.toContain('---'); // No frontmatter
     });
 
-    it('should generate same content for all providers simultaneously', async () => {
+    it('should generate same content for all integrations simultaneously', async () => {
       const adapters = [
         'claude-code',
         'cursor',
@@ -339,7 +339,7 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(dirs).toHaveLength(0);
     });
 
-    it('should use flat structure for all providers except Claude Code', async () => {
+    it('should use flat structure for all integrations except Claude Code', async () => {
       // Note: copilot removed as it's now handled via CopilotInstructionsGenerator
       const flatProviders = ['cursor', 'droid', 'opencode', 'amp', 'codebuddy', 'kilocode', 'cline', 'roocode'];
       const templates: CommandTemplate[] = [
@@ -431,16 +431,16 @@ describe('Multi-Provider Workflow Integration', () => {
   });
 
   describe('Cross-Provider Command Sync', () => {
-    it('should sync same commands across all providers', async () => {
+    it('should sync same commands across all integrations', async () => {
       const templates: CommandTemplate[] = [
         {
           name: 'shared-cmd',
           description: 'Shared command',
-          content: 'This command is shared across all providers',
+          content: 'This command is shared across all integrations',
         },
       ];
 
-      // Generate for all providers
+      // Generate for all integrations
       for (const name of agentManager.getAvailableAgents()) {
         const adapter = agentManager.requireAdapter(name);
         await adapter.generateCommands(templates);
@@ -452,9 +452,9 @@ describe('Multi-Provider Workflow Integration', () => {
       const ampContent = await fs.readFile('.agents/commands/clavix-shared-cmd.md', 'utf-8');
 
       // Core content should be present in all (even if formatted differently)
-      expect(claudeContent).toContain('shared across all providers');
-      expect(cursorContent).toContain('shared across all providers');
-      expect(ampContent).toContain('shared across all providers');
+      expect(claudeContent).toContain('shared across all integrations');
+      expect(cursorContent).toContain('shared across all integrations');
+      expect(ampContent).toContain('shared across all integrations');
     });
   });
 
@@ -464,7 +464,7 @@ describe('Multi-Provider Workflow Integration', () => {
         { name: 'duplicate', description: 'Duplicate', content: 'Content' },
       ];
 
-      // Should not conflict - each provider has its own directory
+      // Should not conflict - each integration has its own directory
       for (const name of agentManager.getAvailableAgents()) {
         const adapter = agentManager.requireAdapter(name);
         await adapter.generateCommands(templates);

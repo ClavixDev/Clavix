@@ -2,18 +2,18 @@ import inquirer from 'inquirer';
 import { AgentManager } from '../core/agent-manager.js';
 
 /**
- * Interactive provider selection utility
- * Displays multi-select checkbox for all available providers
+ * Interactive integration selection utility
+ * Displays multi-select checkbox for all available integrations
  * Used by both init and config commands
  */
-export async function selectProviders(
+export async function selectIntegrations(
   agentManager: AgentManager,
   preSelected: string[] = []
 ): Promise<string[]> {
-  const { selectedProviders } = await inquirer.prompt([
+  const { selectedIntegrations } = await inquirer.prompt([
     {
       type: 'checkbox',
-      name: 'selectedProviders',
+      name: 'selectedIntegrations',
       message: 'Which AI tools are you using?',
       choices: [
         new inquirer.Separator('=== CLI Tools ==='),
@@ -57,12 +57,12 @@ export async function selectProviders(
       }),
       validate: (answer: string[]) => {
         if (answer.length === 0) {
-          return 'You must select at least one provider.';
+          return 'You must select at least one integration.';
         }
         return true;
       },
     },
   ]);
 
-  return selectedProviders;
+  return selectedIntegrations;
 }

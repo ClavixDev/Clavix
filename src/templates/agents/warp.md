@@ -8,7 +8,7 @@ Clavix helps Warp developers turn rough ideas into quality, AI-ready prompts and
 - Verify setup: `clavix version`
 
 ### Common commands
-- `clavix init` – interactive provider setup (regenerates docs & commands)
+- `clavix init` – interactive integration setup (regenerates docs & commands)
 - `clavix fast "<prompt>"` – quick quality assessment (5 dimensions) and improved prompt. CLI auto-saves; slash commands need manual saving per template instructions.
 - `clavix deep "<prompt>"` – comprehensive analysis with alternatives, edge cases, and validation checklists. CLI auto-saves; slash commands need manual saving per template instructions.
 - `clavix execute [--latest]` – execute saved prompts from fast/deep. Interactive selection or `--latest` for most recent.
