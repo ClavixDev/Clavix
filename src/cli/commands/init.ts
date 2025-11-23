@@ -305,7 +305,7 @@ export default class Init extends Command {
     };
 
     const configPath = '.clavix/config.json';
-    const configContent = JSON5.stringify(config, null, 2);
+    const configContent = JSON.stringify(config, null, 2);
     await FileSystem.writeFileAtomic(configPath, configContent);
   }
 
