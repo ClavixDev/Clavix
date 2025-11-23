@@ -44,7 +44,7 @@ describe('Multi-Provider Workflow Integration', () => {
       const adapters = agentManager.getAdapters();
 
       // Note: Copilot is now handled via CopilotInstructionsGenerator, not as an adapter
-      expect(adapters).toHaveLength(15);
+      expect(adapters).toHaveLength(16);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
@@ -54,6 +54,7 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(agentManager.hasAgent('crush')).toBe(true);
       expect(agentManager.hasAgent('windsurf')).toBe(true);
       expect(agentManager.hasAgent('kilocode')).toBe(true);
+      expect(agentManager.hasAgent('llxprt')).toBe(true);
       expect(agentManager.hasAgent('cline')).toBe(true);
       expect(agentManager.hasAgent('roocode')).toBe(true);
       expect(agentManager.hasAgent('codebuddy')).toBe(true);
@@ -399,13 +400,14 @@ describe('Multi-Provider Workflow Integration', () => {
       const choices = agentManager.getAdapterChoices();
 
       // Note: Copilot is now handled via CopilotInstructionsGenerator, not as an adapter
-      expect(choices).toHaveLength(15);
+      expect(choices).toHaveLength(16);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
 
       // Verify new providers are included
       expect(choices.find(c => c.value === 'windsurf')).toBeDefined();
       expect(choices.find(c => c.value === 'kilocode')).toBeDefined();
+      expect(choices.find(c => c.value === 'llxprt')).toBeDefined();
       expect(choices.find(c => c.value === 'cline')).toBeDefined();
       expect(choices.find(c => c.value === 'roocode')).toBeDefined();
       expect(choices.find(c => c.value === 'augment')).toBeDefined();

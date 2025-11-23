@@ -38,6 +38,7 @@ For detailed information on template customization and override options, see [Te
 | OpenCode | `.opencode/command/` | No | `$ARGUMENTS` |
 | Gemini CLI | `.gemini/commands/clavix/` by default (optional `.gemini/commands/`) | Yes | `{{args}}` |
 | Qwen Code | `.qwen/commands/clavix/` by default (optional `.qwen/commands/`) | Yes | `{{args}}` |
+| LLXPRT | `.llxprt/commands/clavix/` | Yes | `{{args}}` |
 | Amp | `.agents/commands/` | No | *(raw prompt — no placeholder)* |
 | Crush CLI | `.crush/commands/clavix/` | Yes | `$PROMPT` |
 | Codex CLI | `~/.codex/prompts` | No | `$ARGUMENTS` |

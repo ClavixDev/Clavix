@@ -59,6 +59,7 @@ export type AgentType =
   | 'droid'
   | 'gemini'
   | 'kilocode'
+  | 'llxprt'
   | 'octo-md'
   | 'opencode'
   | 'qwen'
