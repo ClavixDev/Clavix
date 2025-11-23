@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.1] - 2025-11-23
+
+### 🐛 Bug Fix
+
+#### LLXPRT Provider Categorization
+Fixed incorrect categorization of LLXPRT provider in `clavix init` command.
+
+**What Changed**:
+- Moved LLXPRT from "IDE & IDE Extensions" section to "CLI Tools" section
+- LLXPRT now appears alphabetically between Gemini CLI and OpenCode
+- Documentation in `docs/providers.md` was already correct (no changes needed)
+
+**Why**: LLXPRT is a CLI tool, not an IDE extension. This fix ensures proper categorization in the interactive provider selection menu.
+
+This is a **patch release** with no breaking changes or functional impact.
+
 ## [3.2.0] - 2025-11-23
 
 ### ✨ New Provider Support

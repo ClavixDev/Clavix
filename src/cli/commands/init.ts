@@ -91,6 +91,10 @@ export default class Init extends Command {
               value: 'gemini',
             },
             {
+              name: 'LLXPRT (.llxprt/commands/clavix/)',
+              value: 'llxprt',
+            },
+            {
               name: 'OpenCode (.opencode/command/)',
               value: 'opencode',
             },
@@ -111,10 +115,6 @@ export default class Init extends Command {
             {
               name: 'Kilocode (.kilocode/workflows/)',
               value: 'kilocode',
-            },
-            {
-              name: 'LLXPRT (.llxprt/commands/clavix/)',
-              value: 'llxprt',
             },
             {
               name: 'Roocode (.roo/commands/)',
