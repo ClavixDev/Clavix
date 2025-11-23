@@ -32,6 +32,12 @@ Provider paths and argument placeholders are listed in [docs/providers.md](docs/
 
 Most Clavix users work through AI coding assistants:
 
+> **💡 Choosing Your Mode:**
+> - **Fast/Deep** – Modifying or improving existing features
+> - **PRD** – Developing something completely new
+>
+> See [Choosing the Right Mode](docs/guides/workflows.md#choosing-the-right-mode) for detailed guidance.
+
 ```bash
 # 1. Initialize in your project
 npm install -g clavix
