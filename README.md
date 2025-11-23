@@ -96,7 +96,7 @@ clavix prd
 ```
 
 ## Full documentation
-- Overview & navigation: [docs/index.md](docs/index.md)
+- Overview & navigation: [docs/README.md](docs/README.md)
 - Command reference: [docs/commands/](docs/commands/README.md)
 - Providers: [docs/providers.md](docs/providers.md)
 - Prompt Intelligence: [docs/prompt-intelligence.md](docs/prompt-intelligence.md)
