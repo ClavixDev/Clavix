@@ -2,6 +2,54 @@
 
 This guide outlines the typical lifecycle for using Clavix on a project. Each phase links to relevant command documentation for deeper detail.
 
+## Choosing the Right Mode
+
+Before starting any workflow, it's important to select the right mode for your task:
+
+### Quick Decision Tree
+
+**Are you modifying or improving something that already exists?**
+→ Use [`clavix fast`](../commands/fast.md) or [`clavix deep`](../commands/deep.md)
+
+**Are you developing something completely new?**
+→ Use [`clavix prd`](../commands/prd.md)
+
+### Mode Details
+
+**Fast Mode** – Quick improvements and clarifications
+- Changing UI elements (e.g., button colors, text, spacing)
+- Small modifications to existing features
+- Adding/modifying sections within existing pages
+- Quick refinement when you know generally what you want
+
+**Deep Mode** – Comprehensive analysis with alternatives
+- When you want thorough evaluation and multiple approaches
+- Learning better prompt engineering techniques
+- Complex modifications requiring careful consideration
+- Most tasks work well with either fast or deep mode
+
+**PRD Mode** – New feature development
+- Building completely new features, pages, or sections
+- Discovery-to-specs conversation with structured requirements
+- Greenfield projects with multiple requirements to cover
+- When you need a clear plan with defined tasks
+
+### Real-World Example: Business Website
+
+**Existing page modifications** (use Fast or Deep):
+- Add a new section to the homepage
+- Change content in the "About Us" section
+- Update styling on the contact page
+- Modify navigation menu items
+
+**New development** (use PRD):
+- Create an entirely new "Services" subpage
+- Build a complete blog section from scratch
+- Develop a new customer portal
+- Design a new checkout flow
+
+**Rule of thumb:** For the majority of tasks, **fast** or **deep** mode will be more than enough. Use **PRD** when you're developing something that doesn't exist yet.
+
 ## 1. Gather requirements
 
 1. Run [`clavix start`](../commands/start.md) to capture a free-form conversation or brainstorming session.
