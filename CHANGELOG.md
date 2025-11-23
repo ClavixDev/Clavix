@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2025-11-23
+
+### 🐛 Bug Fixes
+
+#### Provider Categorization in `clavix init`
+Fixed multiple provider categorization issues in the interactive provider selection menu.
+
+**What Changed**:
+- **CLI Tools** - Properly categorized:
+  - Moved Claude Code from IDE to CLI section
+  - Moved CodeBuddy from IDE to CLI section
+  - Moved Crush from IDE to CLI section
+- **IDE Tools** - Properly categorized:
+  - Moved Kilocode from CLI to IDE section
+  - Moved Roocode from CLI to IDE section
+- **Universal Adapters**:
+  - Added missing WARP.md option (implementation existed but was not in selector)
+  - Removed non-functional "Custom" option (had no adapter implementation)
+- **Display Names**:
+  - Cleaned up Qwen display name (removed Chinese symbols "通义灵码")
+  - Improved clarity of Universal Adapter names
+
+**Why**: The v3.3.0 refactor that extracted providers into a shared utility (`provider-selector.ts`) introduced categorization errors. This release corrects all misclassifications and ensures the provider list matches the actual tool types.
+
+**Impact**: Users will now see providers correctly organized by type (CLI Tools, IDE & IDE Extensions, Universal Adapters) when running `clavix init` or `clavix config`.
+
+This is a **minor version bump** due to the addition of WARP.md as a new selectable option.
+
 ## [3.2.1] - 2025-11-23
 
 ### 🐛 Bug Fix
