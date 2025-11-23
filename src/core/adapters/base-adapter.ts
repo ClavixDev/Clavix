@@ -86,6 +86,48 @@ export abstract class BaseAdapter implements AgentAdapter {
   }
 
   /**
+   * Remove all existing Clavix-generated commands for this adapter
+   * Called before regenerating to ensure clean state
+   * @returns Number of files removed
+   */
+  async removeAllCommands(): Promise<number> {
+    const commandPath = this.getCommandPath();
+
+    // If directory doesn't exist, nothing to remove
+    if (!(await FileSystem.exists(commandPath))) {
+      return 0;
+    }
+
+    const files = await FileSystem.listFiles(commandPath);
+    const clavixCommands = files.filter((f: string) => this.isClavixGeneratedCommand(f));
+
+    let removed = 0;
+    for (const file of clavixCommands) {
+      const filePath = path.join(commandPath, file);
+      try {
+        await FileSystem.remove(filePath);
+        removed++;
+      } catch (error) {
+        // Log warning but continue with other files
+        console.warn(`Failed to remove ${filePath}: ${error}`);
+      }
+    }
+
+    return removed;
+  }
+
+  /**
+   * Determine if a file is a Clavix-generated command
+   * Override in adapters for provider-specific patterns
+   * @param filename The filename to check
+   * @returns true if this is a Clavix-generated command file
+   */
+  protected isClavixGeneratedCommand(filename: string): boolean {
+    // Default: match files with our extension
+    return filename.endsWith(this.fileExtension);
+  }
+
+  /**
    * Generate commands - default implementation
    * Creates command files in the provider's directory
    */

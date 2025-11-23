@@ -32,6 +32,16 @@ export class ClaudeCodeAdapter extends BaseAdapter {
     return this.directory;
   }
 
+  /**
+   * Determine if a file is a Clavix-generated command
+   * For Claude Code: Any .md file in .claude/commands/clavix/ is ours
+   */
+  protected isClavixGeneratedCommand(filename: string): boolean {
+    // Only remove .md files (our slash commands)
+    // This is safe because we control the entire .claude/commands/clavix/ directory
+    return filename.endsWith('.md');
+  }
+
   // generateCommands is inherited from BaseAdapter
 
   /**

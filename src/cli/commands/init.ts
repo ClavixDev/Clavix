@@ -271,6 +271,12 @@ export default class Init extends Command {
           }
         }
 
+        // Remove all existing commands before regenerating (ensures clean state)
+        const removed = await adapter.removeAllCommands();
+        if (removed > 0) {
+          console.log(chalk.gray(`    Removed ${removed} existing command(s)`));
+        }
+
         // Generate slash commands
         const generatedTemplates = await this.generateSlashCommands(adapter);
 
@@ -402,6 +408,8 @@ Welcome to Clavix! This directory contains your local Clavix configuration and d
 ## Slash Commands (AI Agents)
 
 If using Claude Code, Cursor, or Windsurf, the following slash commands are available:
+
+**Note:** Running \`clavix init\` or \`clavix update\` will regenerate all slash commands from templates. Any manual edits to generated commands will be lost. If you need custom commands, create new command files instead of modifying generated ones.
 
 ### Prompt Improvement
 - \`/clavix:fast [prompt]\` - Quick prompt improvements

@@ -11,6 +11,7 @@ export interface AgentAdapter {
 
   detectProject(): Promise<boolean>;
   generateCommands(templates: CommandTemplate[]): Promise<void>;
+  removeAllCommands(): Promise<number>;
   injectDocumentation(blocks: ManagedBlock[]): Promise<void>;
   getCommandPath(): string;
   getTargetFilename(name: string): string;

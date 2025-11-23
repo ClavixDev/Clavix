@@ -173,63 +173,31 @@ export default class Update extends Command {
   private async updateCommands(adapter: AgentAdapter, force: boolean): Promise<number> {
     this.log(chalk.cyan(`\n🔧 Updating slash commands for ${adapter.displayName}...`));
 
-    const commandsDir = adapter.getCommandPath();
-    const commandsPath = path.join(process.cwd(), commandsDir);
-    const extension = adapter.fileExtension;
-
-    // Dynamically scan template directory for all command templates
-    const templatesDir = path.join(__dirname, '..', '..', 'templates', 'slash-commands', adapter.name);
-
-    if (!fs.existsSync(templatesDir)) {
-      this.log(chalk.yellow(`  ⚠ Templates directory not found: ${templatesDir}`));
-      return 0;
+    // Remove all existing commands first (force regeneration)
+    const removed = await adapter.removeAllCommands();
+    if (removed > 0) {
+      this.log(chalk.gray(`  Removed ${removed} existing command(s)`));
     }
 
-    // Get all .md template files
-    const templateFiles = fs.readdirSync(templatesDir)
-      .filter(file => file.endsWith(extension))
-      .map(file => file.slice(0, -extension.length));
+    // Load templates using the canonical template loader
+    const { loadCommandTemplates } = await import('../../utils/template-loader.js');
+    const templates = await loadCommandTemplates(adapter);
 
-    if (templateFiles.length === 0) {
+    if (templates.length === 0) {
       this.log(chalk.yellow('  ⚠ No command templates found'));
       return 0;
     }
 
-    // Ensure commands directory exists
-    if (!fs.existsSync(commandsPath)) {
-      fs.mkdirpSync(commandsPath);
-      this.log(chalk.gray(`  ✓ Created commands directory: ${commandsDir}`));
-    }
+    // Generate fresh commands from templates
+    await adapter.generateCommands(templates);
 
-    let updated = 0;
+    this.log(chalk.gray(`  ✓ Generated ${templates.length} command(s)`));
 
-    for (const command of templateFiles) {
-      const filename = adapter.getTargetFilename(command);
-      const commandFile = path.join(commandsPath, filename);
-      const templatePath = path.join(templatesDir, `${command}${extension}`);
+    // Handle legacy commands (cleanup old naming patterns)
+    const commandNames = templates.map(t => t.name);
+    const legacyRemoved = await this.handleLegacyCommands(adapter, commandNames, force);
 
-      const newContent = fs.readFileSync(templatePath, 'utf-8');
-
-      if (fs.existsSync(commandFile)) {
-        const currentContent = fs.readFileSync(commandFile, 'utf-8');
-
-        if (force || currentContent !== newContent) {
-          fs.writeFileSync(commandFile, newContent);
-          this.log(chalk.gray(`  ✓ Updated ${filename}`));
-          updated++;
-        } else {
-          this.log(chalk.gray(`  • ${filename} already up to date`));
-        }
-      } else {
-        fs.writeFileSync(commandFile, newContent);
-        this.log(chalk.gray(`  ✓ Created ${filename}`));
-        updated++;
-      }
-    }
-
-    updated += await this.handleLegacyCommands(adapter, templateFiles, force);
-
-    return updated;
+    return removed + templates.length + legacyRemoved;
   }
 
   private async handleLegacyCommands(adapter: AgentAdapter, commandNames: string[], force: boolean): Promise<number> {
