@@ -2,7 +2,6 @@ import { Command } from '@oclif/core';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import * as path from 'path';
-import JSON5 from 'json5';
 import { AgentManager } from '../../core/agent-manager.js';
 import { DocInjector } from '../../core/doc-injector.js';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
@@ -52,7 +51,7 @@ export default class Init extends Command {
       if (await FileSystem.exists('.clavix/config.json')) {
         try {
           const configContent = await FileSystem.readFile('.clavix/config.json');
-          const config = JSON5.parse(configContent);
+          const config = JSON.parse(configContent);
           existingProviders = config.providers || [];
         } catch (error) {
           // Ignore parse errors, will use empty array

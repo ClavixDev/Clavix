@@ -5,7 +5,6 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import JSON5 from 'json5';
 import { DocInjector } from '../../core/doc-injector.js';
 import { AgentManager } from '../../core/agent-manager.js';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
@@ -61,7 +60,7 @@ export default class Update extends Command {
     this.log(chalk.bold.cyan('🔄 Updating Clavix integration...\n'));
 
     // Load config to determine providers
-    const config = JSON5.parse(fs.readFileSync(configPath, 'utf-8'));
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     const providers = config.providers || ['claude-code'];
 
     const agentManager = new AgentManager();
