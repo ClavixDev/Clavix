@@ -45,117 +45,76 @@ export default class Init extends Command {
         }
       }
 
-      // Select providers (multi-select)
+      // Load existing config if re-initializing
       const agentManager = new AgentManager();
+      let existingProviders: string[] = [];
 
+      if (await FileSystem.exists('.clavix/config.json')) {
+        try {
+          const configContent = await FileSystem.readFile('.clavix/config.json');
+          const config = JSON5.parse(configContent);
+          existingProviders = config.providers || [];
+        } catch (error) {
+          // Ignore parse errors, will use empty array
+        }
+      }
+
+      // Select providers using shared utility
       console.log(chalk.gray('Select AI development tools to support:\n'));
       console.log(chalk.gray('(Space to select, Enter to confirm)\n'));
 
-      const { selectedProviders } = await inquirer.prompt([
-        {
-          type: 'checkbox',
-          name: 'selectedProviders',
-          message: 'Which AI tools are you using?',
-          choices: [
-            // CLI Tools
-            {
-              name: 'Amp (.agents/commands/)',
-              value: 'amp',
-            },
-            {
-              name: 'Augment CLI (.augment/commands/clavix/)',
-              value: 'augment',
-            },
-            {
-              name: 'Codex CLI (~/.codex/prompts)',
-              value: 'codex',
-            },
-            {
-              name: 'CodeBuddy (.codebuddy/commands/)',
-              value: 'codebuddy',
-            },
-            {
-              name: 'Crush CLI (.crush/commands/clavix/)',
-              value: 'crush',
-            },
-            {
-              name: 'Claude Code (.claude/commands/clavix/)',
-              value: 'claude-code',
-            },
-            {
-              name: 'Droid CLI (.factory/commands/)',
-              value: 'droid',
-            },
-            {
-              name: 'Gemini CLI (.gemini/commands/clavix/)',
-              value: 'gemini',
-            },
-            {
-              name: 'LLXPRT (.llxprt/commands/clavix/)',
-              value: 'llxprt',
-            },
-            {
-              name: 'OpenCode (.opencode/command/)',
-              value: 'opencode',
-            },
-            {
-              name: 'Qwen Code (.qwen/commands/clavix/)',
-              value: 'qwen',
-            },
-            new inquirer.Separator(),
-            // IDE & IDE Extensions
-            {
-              name: 'Cursor (.cursor/commands/)',
-              value: 'cursor',
-            },
-            {
-              name: 'Windsurf (.windsurf/workflows/)',
-              value: 'windsurf',
-            },
-            {
-              name: 'Kilocode (.kilocode/workflows/)',
-              value: 'kilocode',
-            },
-            {
-              name: 'Roocode (.roo/commands/)',
-              value: 'roocode',
-            },
-            {
-              name: 'Cline (.clinerules/workflows/)',
-              value: 'cline',
-            },
-            new inquirer.Separator(),
-            // Universal Adapters
-            {
-              name: 'Agents (AGENTS.md - Universal - for tools without slash commands)',
-              value: 'agents-md',
-            },
-            {
-              name: 'GitHub Copilot (.github/copilot-instructions.md)',
-              value: 'copilot-instructions',
-            },
-            {
-              name: 'Warp (WARP.md - optimized for Warp)',
-              value: 'warp-md',
-            },
-            {
-              name: 'Octofriend (OCTO.md - optimized for Octofriend)',
-              value: 'octo-md',
-            },
-            new inquirer.Separator(),
-          ],
-          validate: (answer: string[]) => {
-            if (answer.length === 0) {
-              return 'You must select at least one provider.';
-            }
-            return true;
-          },
-        },
-      ]);
+      const { selectProviders } = await import('../../utils/provider-selector.js');
+      const selectedProviders = await selectProviders(agentManager, existingProviders);
 
       if (!selectedProviders || selectedProviders.length === 0) {
         console.log(chalk.red('\n✗ No providers selected\n'));
         return;
+      }
+
+      // Handle deselected providers (cleanup prompt)
+      const deselectedProviders = existingProviders.filter(
+        (p) => !selectedProviders.includes(p)
+      );
+
+      if (deselectedProviders.length > 0) {
+        console.log(chalk.yellow('\n⚠ Previously configured but not selected:'));
+        for (const providerName of deselectedProviders) {
+          const adapter = agentManager.getAdapter(providerName);
+          const displayName = adapter?.displayName || providerName;
+          const directory = adapter?.directory || 'unknown';
+          console.log(chalk.gray(`  • ${displayName} (${directory})`));
+        }
+
+        const { cleanupAction } = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'cleanupAction',
+            message: 'What would you like to do with these providers?',
+            choices: [
+              { name: 'Clean up (remove all command files)', value: 'cleanup' },
+              { name: 'Keep (also update their commands)', value: 'update' },
+              { name: 'Skip (leave as-is)', value: 'skip' },
+            ],
+          },
+        ]);
+
+        if (cleanupAction === 'cleanup') {
+          console.log(chalk.gray('\n🗑️  Cleaning up deselected providers...'));
+          for (const providerName of deselectedProviders) {
+            const adapter = agentManager.getAdapter(providerName);
+            if (adapter) {
+              const removed = await adapter.removeAllCommands();
+              console.log(
+                chalk.gray(`  ✓ Removed ${removed} command(s) from ${adapter.displayName}`)
+              );
+            }
+          }
+        } else if (cleanupAction === 'update') {
+          // Add them back to selection
+          selectedProviders.push(...deselectedProviders);
+          console.log(chalk.gray('\n✓ Keeping all providers\n'));
+        }
+        // If 'skip': do nothing
       }
 
       // Create .clavix directory structure

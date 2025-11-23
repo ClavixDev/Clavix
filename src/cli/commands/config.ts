@@ -4,35 +4,16 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import inquirer from 'inquirer';
 import { AgentManager } from '../../core/agent-manager.js';
-
-interface ClavixConfig {
-  version: string;
-  agent: string;
-  templates?: {
-    prdQuestions?: string;
-    fullPrd?: string;
-    quickPrd?: string;
-  };
-  outputs?: {
-    path?: string;
-    format?: string;
-  };
-  preferences?: {
-    autoOpenOutputs?: boolean;
-    verboseLogging?: boolean;
-    preserveSessions?: boolean;
-  };
-  experimental?: Record<string, unknown>;
-}
+import { ClavixConfig, DEFAULT_CONFIG, isLegacyConfig, migrateConfig } from '../../types/config.js';
+import { loadCommandTemplates } from '../../utils/template-loader.js';
 
 export default class Config extends Command {
   static description = 'Manage Clavix configuration';
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> get agent',
-    '<%= config.bin %> <%= command.id %> set agent cursor',
-    '<%= config.bin %> <%= command.id %> edit',
+    '<%= config.bin %> <%= command.id %> get providers',
+    '<%= config.bin %> <%= command.id %> set preferences.verboseLogging true',
   ];
 
   static args = {
@@ -104,42 +85,286 @@ export default class Config extends Command {
   }
 
   private async showInteractiveMenu(configPath: string): Promise<void> {
-    const config = this.loadConfig(configPath);
+    let continueMenu = true;
 
-    this.log(chalk.bold.cyan('⚙️  Clavix Configuration\n'));
-    this.displayConfig(config);
+    while (continueMenu) {
+      const config = this.loadConfig(configPath);
 
-    const { action } = await inquirer.prompt([
+      this.log(chalk.bold.cyan('\n⚙️  Clavix Configuration\n'));
+      this.displayConfig(config);
+
+      const { action } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'action',
+          message: 'What would you like to do?',
+          choices: [
+            { name: 'View current configuration', value: 'view' },
+            { name: 'Manage providers (add/remove)', value: 'providers' },
+            { name: 'Edit preferences', value: 'edit-preferences' },
+            { name: 'Reset to defaults', value: 'reset' },
+            { name: 'Exit', value: 'exit' },
+          ],
+        },
+      ]);
+
+      switch (action) {
+        case 'view':
+          // Already displayed above
+          break;
+        case 'providers':
+          await this.manageProviders(config, configPath);
+          break;
+        case 'edit-preferences':
+          await this.editPreferences(configPath, config);
+          break;
+        case 'reset':
+          await this.resetConfig(configPath);
+          break;
+        case 'exit':
+          continueMenu = false;
+          break;
+      }
+    }
+  }
+
+  private async manageProviders(config: ClavixConfig, configPath: string): Promise<void> {
+    const agentManager = new AgentManager();
+
+    while (true) {
+      // Show current providers
+      this.log(chalk.cyan('\n📦 Current Providers:'));
+      if (config.providers.length === 0) {
+        this.log(chalk.gray('  (none configured)'));
+      } else {
+        for (const providerName of config.providers) {
+          const adapter = agentManager.getAdapter(providerName);
+          const displayName = adapter?.displayName || providerName;
+          this.log(chalk.gray(`  • ${displayName}`));
+        }
+      }
+
+      // Submenu
+      const { action } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'action',
+          message: 'What would you like to do?',
+          choices: [
+            { name: 'Add provider', value: 'add' },
+            { name: 'Remove provider', value: 'remove' },
+            { name: 'Replace all providers', value: 'replace' },
+            { name: 'Back to main menu', value: 'back' },
+          ],
+        },
+      ]);
+
+      if (action === 'back') break;
+
+      switch (action) {
+        case 'add':
+          await this.addProviders(config, configPath);
+          break;
+        case 'remove':
+          await this.removeProviders(config, configPath);
+          break;
+        case 'replace':
+          await this.replaceProviders(config, configPath);
+          break;
+      }
+
+      // Reload config after modifications
+      config = this.loadConfig(configPath);
+    }
+  }
+
+  private async addProviders(config: ClavixConfig, configPath: string): Promise<void> {
+    const agentManager = new AgentManager();
+    const allProviders = agentManager.getAdapters();
+
+    // Show only non-selected providers
+    const availableToAdd = allProviders.filter(
+      (a) => !config.providers.includes(a.name)
+    );
+
+    if (availableToAdd.length === 0) {
+      this.log(chalk.yellow('\n✓ All providers already added!'));
+      return;
+    }
+
+    // Multi-select checkbox
+    const { newProviders } = await inquirer.prompt([
       {
-        type: 'list',
-        name: 'action',
-        message: 'What would you like to do?',
-        choices: [
-          { name: 'View current configuration', value: 'view' },
-          { name: 'Change agent', value: 'change-agent' },
-          { name: 'Edit preferences', value: 'edit-preferences' },
-          { name: 'Reset to defaults', value: 'reset' },
-          { name: 'Exit', value: 'exit' },
-        ],
+        type: 'checkbox',
+        name: 'newProviders',
+        message: 'Select providers to add:',
+        choices: availableToAdd.map((adapter) => ({
+          name: `${adapter.displayName} (${adapter.directory})`,
+          value: adapter.name,
+        })),
       },
     ]);
 
-    switch (action) {
-      case 'view':
-        // Already displayed above
-        break;
-      case 'change-agent':
-        await this.changeAgent(configPath, config);
-        break;
-      case 'edit-preferences':
-        await this.editPreferences(configPath, config);
-        break;
-      case 'reset':
-        await this.resetConfig(configPath);
-        break;
-      case 'exit':
-        return;
+    if (newProviders.length === 0) {
+      this.log(chalk.gray('No providers selected'));
+      return;
     }
+
+    // Add to config
+    config.providers.push(...newProviders);
+    this.saveConfig(configPath, config);
+
+    this.log(chalk.gray('\n🔧 Generating commands for new providers...'));
+
+    // Generate commands for new providers
+    for (const providerName of newProviders) {
+      const adapter = agentManager.getAdapter(providerName);
+      if (!adapter) continue;
+
+      const templates = await loadCommandTemplates(adapter);
+      await adapter.generateCommands(templates);
+      this.log(chalk.green(`  ✓ Generated ${templates.length} command(s) for ${adapter.displayName}`));
+    }
+
+    this.log(chalk.green('\n✅ Providers added successfully!'));
+  }
+
+  private async removeProviders(config: ClavixConfig, configPath: string): Promise<void> {
+    if (config.providers.length === 0) {
+      this.log(chalk.yellow('\n⚠ No providers configured!'));
+      return;
+    }
+
+    const agentManager = new AgentManager();
+
+    // Multi-select from current providers
+    const { providersToRemove } = await inquirer.prompt([
+      {
+        type: 'checkbox',
+        name: 'providersToRemove',
+        message: 'Select providers to remove:',
+        choices: config.providers.map((name) => {
+          const adapter = agentManager.getAdapter(name);
+          return {
+            name: `${adapter?.displayName || name} (${adapter?.directory || 'unknown'})`,
+            value: name,
+          };
+        }),
+        validate: (answer: string[]) => {
+          if (answer.length === config.providers.length) {
+            return 'You must keep at least one provider. Use "Reset to defaults" to reconfigure completely.';
+          }
+          return true;
+        },
+      },
+    ]);
+
+    if (providersToRemove.length === 0) {
+      this.log(chalk.gray('No providers selected'));
+      return;
+    }
+
+    // Confirm cleanup
+    const { cleanup } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'cleanup',
+        message: 'Remove command files for these providers?',
+        default: true,
+      },
+    ]);
+
+    // Remove from config
+    config.providers = config.providers.filter(
+      (p) => !providersToRemove.includes(p)
+    );
+    this.saveConfig(configPath, config);
+
+    // Clean up command files
+    if (cleanup) {
+      this.log(chalk.gray('\n🗑️  Cleaning up command files...'));
+      for (const providerName of providersToRemove) {
+        const adapter = agentManager.getAdapter(providerName);
+        if (adapter) {
+          const removed = await adapter.removeAllCommands();
+          this.log(chalk.gray(`  ✓ Removed ${removed} command(s) from ${adapter.displayName}`));
+        }
+      }
+    }
+
+    this.log(chalk.green('\n✅ Providers removed successfully!'));
+  }
+
+  private async replaceProviders(config: ClavixConfig, configPath: string): Promise<void> {
+    const agentManager = new AgentManager();
+
+    // Use shared provider selector
+    const { selectProviders } = await import('../../utils/provider-selector.js');
+    const newProviders = await selectProviders(agentManager, config.providers);
+
+    if (newProviders.length === 0) {
+      this.log(chalk.gray('No providers selected'));
+      return;
+    }
+
+    // Find deselected providers
+    const deselected = config.providers.filter((p) => !newProviders.includes(p));
+
+    // Handle cleanup if providers were deselected
+    if (deselected.length > 0) {
+      this.log(chalk.yellow('\n⚠ Previously configured but not selected:'));
+      for (const providerName of deselected) {
+        const adapter = agentManager.getAdapter(providerName);
+        const displayName = adapter?.displayName || providerName;
+        const directory = adapter?.directory || 'unknown';
+        this.log(chalk.gray(`  • ${displayName} (${directory})`));
+      }
+
+      const { cleanupAction } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'cleanupAction',
+          message: 'What would you like to do with these providers?',
+          choices: [
+            { name: 'Clean up (remove all command files)', value: 'cleanup' },
+            { name: 'Skip (leave as-is)', value: 'skip' },
+          ],
+        },
+      ]);
+
+      if (cleanupAction === 'cleanup') {
+        this.log(chalk.gray('\n🗑️  Cleaning up deselected providers...'));
+        for (const providerName of deselected) {
+          const adapter = agentManager.getAdapter(providerName);
+          if (adapter) {
+            const removed = await adapter.removeAllCommands();
+            this.log(chalk.gray(`  ✓ Removed ${removed} command(s) from ${adapter.displayName}`));
+          }
+        }
+      }
+    }
+
+    // Update config
+    config.providers = newProviders;
+    this.saveConfig(configPath, config);
+
+    // Prompt to run update
+    const { runUpdate } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'runUpdate',
+        message: 'Run update to regenerate all commands?',
+        default: true,
+      },
+    ]);
+
+    if (runUpdate) {
+      this.log(chalk.gray('\n🔧 Regenerating commands for all providers...\n'));
+      const Update = (await import('./update.js')).default;
+      await Update.run([]);
+    }
+
+    this.log(chalk.green('\n✅ Providers replaced successfully!'));
   }
 
   private async getConfig(configPath: string, key?: string): Promise<void> {
@@ -202,66 +427,36 @@ export default class Config extends Command {
     }
 
     const config = this.loadConfig(configPath);
-    const defaultConfig = this.getDefaultConfig(config.agent);
+    const defaultConfig = {
+      ...DEFAULT_CONFIG,
+      providers: config.providers, // Keep existing providers
+    };
 
     this.saveConfig(configPath, defaultConfig);
-    this.log(chalk.green('✅ Configuration reset to defaults'));
-  }
-
-  private async changeAgent(configPath: string, config: ClavixConfig): Promise<void> {
-    const agentManager = new AgentManager();
-    const availableAgents = await agentManager.detectAgents();
-
-    if (availableAgents.length === 0) {
-      this.error('No supported agents detected in this project');
-    }
-
-    const { newAgent } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'newAgent',
-        message: 'Select agent:',
-        choices: availableAgents.map(agent => ({
-          name: agent.displayName,
-          value: agent.name,
-        })),
-        default: config.agent,
-      },
-    ]);
-
-    if (newAgent === config.agent) {
-      this.log(chalk.gray('No changes made'));
-      return;
-    }
-
-    config.agent = newAgent;
-    this.saveConfig(configPath, config);
-
-    this.log(chalk.green(`✅ Agent changed to ${newAgent}`));
-    this.log(chalk.yellow('\n⚠️  Run ') + chalk.cyan('clavix update') + chalk.yellow(' to update slash commands'));
+    this.log(chalk.green('✅ Configuration reset to defaults (providers preserved)'));
   }
 
   private async editPreferences(configPath: string, config: ClavixConfig): Promise<void> {
-    const preferences = config.preferences || {};
+    const preferences = config.preferences || DEFAULT_CONFIG.preferences;
 
     const answers = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'autoOpenOutputs',
         message: 'Auto-open generated outputs?',
-        default: preferences.autoOpenOutputs || false,
+        default: preferences.autoOpenOutputs,
       },
       {
         type: 'confirm',
         name: 'verboseLogging',
         message: 'Enable verbose logging?',
-        default: preferences.verboseLogging || false,
+        default: preferences.verboseLogging,
       },
       {
         type: 'confirm',
         name: 'preserveSessions',
         message: 'Preserve completed sessions?',
-        default: preferences.preserveSessions !== false, // Default to true
+        default: preferences.preserveSessions,
       },
     ]);
 
@@ -273,7 +468,17 @@ export default class Config extends Command {
 
   private loadConfig(configPath: string): ClavixConfig {
     try {
-      return JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+      const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+
+      // Check if legacy config and migrate
+      if (isLegacyConfig(rawConfig)) {
+        this.warn(chalk.yellow('Detected legacy config format. Migrating to new format...'));
+        const migratedConfig = migrateConfig(rawConfig);
+        this.saveConfig(configPath, migratedConfig);
+        return migratedConfig;
+      }
+
+      return rawConfig as ClavixConfig;
     } catch (error) {
       this.error(chalk.red(`Failed to load configuration: ${(error as Error).message}`));
     }
@@ -289,19 +494,19 @@ export default class Config extends Command {
 
   private displayConfig(config: ClavixConfig): void {
     this.log(`  ${chalk.gray('Version:')} ${config.version}`);
-    this.log(`  ${chalk.gray('Agent:')} ${chalk.cyan(config.agent)}`);
+    this.log(`  ${chalk.gray('Providers:')} ${config.providers.map(p => chalk.cyan(p)).join(', ') || chalk.gray('(none)')}`);
 
     if (config.preferences) {
       this.log(`\n  ${chalk.bold('Preferences:')}`);
       this.log(`    ${chalk.gray('Auto-open outputs:')} ${config.preferences.autoOpenOutputs ? chalk.green('yes') : chalk.gray('no')}`);
       this.log(`    ${chalk.gray('Verbose logging:')} ${config.preferences.verboseLogging ? chalk.green('yes') : chalk.gray('no')}`);
-      this.log(`    ${chalk.gray('Preserve sessions:')} ${config.preferences.preserveSessions !== false ? chalk.green('yes') : chalk.gray('no')}`);
+      this.log(`    ${chalk.gray('Preserve sessions:')} ${config.preferences.preserveSessions ? chalk.green('yes') : chalk.gray('no')}`);
     }
 
     if (config.outputs) {
       this.log(`\n  ${chalk.bold('Outputs:')}`);
-      this.log(`    ${chalk.gray('Path:')} ${config.outputs.path || '.clavix/outputs'}`);
-      this.log(`    ${chalk.gray('Format:')} ${config.outputs.format || 'markdown'}`);
+      this.log(`    ${chalk.gray('Path:')} ${config.outputs.path}`);
+      this.log(`    ${chalk.gray('Format:')} ${config.outputs.format}`);
     }
 
     this.log('');
@@ -324,27 +529,5 @@ export default class Config extends Command {
       return current[key] as Record<string, unknown>;
     }, obj);
     target[lastKey] = value;
-  }
-
-  private getDefaultConfig(agent: string): ClavixConfig {
-    return {
-      version: '1.0.0',
-      agent,
-      templates: {
-        prdQuestions: 'default',
-        fullPrd: 'default',
-        quickPrd: 'default',
-      },
-      outputs: {
-        path: '.clavix/outputs',
-        format: 'markdown',
-      },
-      preferences: {
-        autoOpenOutputs: false,
-        verboseLogging: false,
-        preserveSessions: true,
-      },
-      experimental: {},
-    };
   }
 }
