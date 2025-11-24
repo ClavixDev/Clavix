@@ -12,10 +12,10 @@
 
 | Version | Highlights | Details |
 | --- | --- | --- |
-| **v3.4.0** (Latest) | Provider categorization fixes | [Changelog](CHANGELOG.md#340---2025-11-24) |
-| **v3.3.1** | JSON5/JSON config bug fix | [Changelog](CHANGELOG.md#331---2025-11-23) |
-| **v3.3.0** | Provider management & interactive config | [Changelog](CHANGELOG.md#330---2025-11-23) |
-| **v3.1.0** | Clavix Intelligence™ brand evolution | [Changelog](CHANGELOG.md#310---2025-11-23) |
+| **v3.6.1** (Latest) | Documentation hierarchy & verbosity reduction | [Changelog](CHANGELOG.md#361---2025-11-24) |
+| **v3.6.0** | Enhanced generic connector instructions | [Changelog](CHANGELOG.md#360---2025-11-24) |
+| **v3.5.0** | "Providers" → "Integrations" terminology | [Changelog](CHANGELOG.md#350---2025-01-24) |
+| **v3.4.0** | Provider categorization fixes | [Changelog](CHANGELOG.md#340---2025-11-24) |
 
 **Requirements:** Node.js ≥ 16.0.0 (ESM support required)
 

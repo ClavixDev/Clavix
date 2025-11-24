@@ -57,7 +57,8 @@ describe('Config Command', () => {
     // We can replace the methods on the instance.
     cmd.log = jest.fn() as any;
     cmd.error = jest.fn() as any; // this.error throws by default in oclif, we might want to catch it
-    
+    cmd.warn = jest.fn() as any; // Suppress warnings during tests
+
     // We need to override error to NOT exit but just throw/log for testing
     cmd.error = jest.fn((msg: any) => { throw new Error(msg); }) as any;
 

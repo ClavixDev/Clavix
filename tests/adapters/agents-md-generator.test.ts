@@ -64,7 +64,7 @@ describe('AgentsMdGenerator', () => {
       await AgentsMdGenerator.generate();
 
       const content = await fs.readFile('AGENTS.md', 'utf-8');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
     });
 
     it('should update existing AGENTS.md with Clavix block', async () => {
@@ -76,7 +76,7 @@ describe('AgentsMdGenerator', () => {
       const content = await fs.readFile('AGENTS.md', 'utf-8');
       expect(content).toContain('# Existing Content');
       expect(content).toContain('<!-- CLAVIX:START -->');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
     });
 
     it('should replace existing Clavix block', async () => {
@@ -93,7 +93,7 @@ Other content`;
       await AgentsMdGenerator.generate();
 
       const content = await fs.readFile('AGENTS.md', 'utf-8');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
       expect(content).not.toContain('Old Clavix content');
       expect(content).toContain('Other content');
     });
@@ -116,7 +116,7 @@ Content after`;
       const content = await fs.readFile('AGENTS.md', 'utf-8');
       expect(content).toContain('# Header');
       expect(content).toContain('Content before');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
       expect(content).toContain('Content after');
       expect(content).not.toContain('Old block');
     });
@@ -206,19 +206,19 @@ Content after`;
       await AgentsMdGenerator.generate();
 
       const content = await fs.readFile('AGENTS.md', 'utf-8');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
     });
 
     it('should handle multiple updates in sequence', async () => {
       // First generation
       await AgentsMdGenerator.generate();
       let content = await fs.readFile('AGENTS.md', 'utf-8');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
 
       // Second generation (should replace existing block)
       await AgentsMdGenerator.generate();
       content = await fs.readFile('AGENTS.md', 'utf-8');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
 
       // Should only have one Clavix block
       const startCount = (content.match(/<!-- CLAVIX:START -->/g) || []).length;
@@ -236,7 +236,7 @@ Content after`;
       const content = await fs.readFile('AGENTS.md', 'utf-8');
       expect(content).toContain('$pecial ch@racters!');
       expect(content).toContain('🚀');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
     });
   });
 
@@ -246,7 +246,7 @@ Content after`;
 
       // File should exist and be readable
       const content = await fs.readFile('AGENTS.md', 'utf-8');
-      expect(content).toContain('# Clavix Workflows');
+      expect(content).toContain('# Clavix Instructions for Generic Agents');
     });
   });
 });

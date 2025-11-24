@@ -2,6 +2,35 @@
 
 Clavix helps Warp developers turn rough ideas into quality, AI-ready prompts and Product Requirements Documents without leaving the terminal.
 
+---
+
+### ⚠️ CLAVIX MODE: Requirements & Planning Only
+
+**When using Clavix workflows, you are in PLANNING mode, NOT implementation mode.**
+
+**YOUR ROLE:**
+- ✓ Generate PRDs and prompts
+- ✓ Extract requirements
+- ✓ Optimize prompt quality
+
+**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
+- ✗ DO NOT write application code during Clavix workflows
+- ✗ DO NOT implement features being planned
+
+**ONLY implement if user explicitly says: "Now implement this"**
+
+---
+
+### 📁 Detailed Workflow Instructions
+
+For complete step-by-step workflows, see `.clavix/instructions/`:
+- `.clavix/instructions/workflows/start.md` - Conversational mode
+- `.clavix/instructions/workflows/summarize.md` - Extract requirements
+- `.clavix/instructions/workflows/prd.md` - PRD generation
+- `.clavix/instructions/troubleshooting/` - Common issues
+
+---
+
 ### Quick start
 - Install globally: `npm install -g clavix`
 - Or run ad hoc: `npx clavix@latest init`

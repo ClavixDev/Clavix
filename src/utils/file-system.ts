@@ -118,6 +118,25 @@ export class FileSystem {
   }
 
   /**
+   * Read directory contents
+   */
+  static async readdir(
+    dirPath: string,
+    options?: { withFileTypes: true }
+  ): Promise<fs.Dirent[]>;
+  static async readdir(dirPath: string): Promise<string[]>;
+  static async readdir(
+    dirPath: string,
+    options?: { withFileTypes?: boolean }
+  ): Promise<string[] | fs.Dirent[]> {
+    const fullPath = path.resolve(dirPath);
+    if (options?.withFileTypes) {
+      return fs.readdir(fullPath, { withFileTypes: true });
+    }
+    return fs.readdir(fullPath);
+  }
+
+  /**
    * Check if path is writable
    */
   static async isWritable(filePath: string): Promise<boolean> {
