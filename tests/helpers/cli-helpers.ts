@@ -6,6 +6,12 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { Command } from '@oclif/core';
+import { fileURLToPath } from 'url';
+import { jest } from '@jest/globals';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Mock inquirer responses for testing interactive prompts
@@ -57,6 +63,134 @@ export function setupInquirerMock(responses: MockInquirerResponses = {}) {
       }),
     },
   };
+}
+
+
+/**
+ * Result of running a CLI command
+ */
+export interface CliResult {
+  stdout: string;
+  stderr: string;
+  error?: Error;
+  exitCode?: number;
+}
+
+/**
+ * Helper to run an Oclif command class in a test environment
+ */
+export async function runCliCommand(
+  CommandClass: typeof Command,
+  argv: string[] = [],
+  cwd?: string,
+  env?: Record<string, string>
+): Promise<CliResult> {
+  const originalCwd = process.cwd();
+  const originalEnv = { ...process.env };
+  
+  if (cwd) process.chdir(cwd);
+  if (env) {
+    Object.assign(process.env, env);
+  }
+
+  let stdout = '';
+  let stderr = '';
+
+  // Spy on console methods to capture output
+  const logSpy = jest.spyOn(console, 'log').mockImplementation((...args) => {
+    stdout += args.join(' ') + '\n';
+  });
+  const errorSpy = jest.spyOn(console, 'error').mockImplementation((...args) => {
+    stderr += args.join(' ') + '\n';
+  });
+  
+  // Prevent process.exit from actually exiting the runner
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+    throw new Error(`Process exited with code ${code}`);
+  });
+
+  let error: Error | undefined;
+  let exitCode = 0;
+
+  try {
+    await CommandClass.run(argv);
+  } catch (err: any) {
+    error = err;
+    // Check if it's an oclif exit error
+    if (err.oclif && err.code === 'EEXIT') {
+      exitCode = err.exitCode || 1;
+      // Don't treat expected exits as errors if we want to assert on exit code
+      if (exitCode !== 0) error = err;
+    } else {
+      exitCode = 1;
+    }
+  } finally {
+    logSpy.mockRestore();
+    errorSpy.mockRestore();
+    exitSpy.mockRestore();
+    
+    if (cwd) process.chdir(originalCwd);
+    process.env = originalEnv;
+  }
+
+  return { stdout, stderr, error, exitCode };
+}
+
+/**
+ * Create file system scenarios for testing
+ */
+export type FsScenarioType = 'missing-config' | 'partial-templates' | 'read-only' | 'existing-project';
+
+export async function createFsScenario(testDir: string, type: FsScenarioType): Promise<void> {
+  await fs.ensureDir(testDir);
+  
+  switch (type) {
+    case 'missing-config':
+      // Just ensure dir exists, empty
+      break;
+      
+    case 'partial-templates':
+      await fs.ensureDir(path.join(testDir, '.clavix/templates'));
+      await fs.writeFile(path.join(testDir, '.clavix/templates/custom.txt'), 'template content');
+      break;
+      
+    case 'read-only':
+      // Create some content then lock it
+      await fs.writeFile(path.join(testDir, 'file.txt'), 'content');
+      await fs.chmod(testDir, 0o444);
+      break;
+      
+    case 'existing-project':
+      await fs.ensureDir(path.join(testDir, '.clavix'));
+      await fs.writeJson(path.join(testDir, '.clavix/config.json'), {
+        version: '1.0.0',
+        integrations: ['claude-code']
+      });
+      break;
+  }
+}
+
+/**
+ * Create git scenarios for testing
+ */
+export type GitScenarioType = 'clean-repo' | 'dirty-repo' | 'detached-head' | 'no-git-binary' | 'no-repo';
+
+export async function createGitScenario(testDir: string, type: GitScenarioType): Promise<void> {
+  const gitDir = path.join(testDir, '.git');
+  
+  if (type === 'no-repo') {
+    return;
+  }
+
+  await fs.ensureDir(gitDir);
+  await fs.writeFile(path.join(gitDir, 'config'), '[core]\n\trepositoryformatversion = 0\n');
+  await fs.writeFile(path.join(gitDir, 'HEAD'), 'ref: refs/heads/main\n');
+  
+  if (type === 'dirty-repo') {
+    // Simulate dirty state (this is a mock, actual git commands might need real repo)
+    // For mocks reading .git, this might be enough. 
+    // If the code uses `git status` command, we might need to mock execa/child_process instead.
+  }
 }
 
 /**

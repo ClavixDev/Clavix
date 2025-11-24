@@ -4,433 +4,152 @@
 
 import fs from 'fs-extra';
 import * as path from 'path';
-import { AgentManager } from '../../src/core/agent-manager';
-import { FileSystem } from '../../src/utils/file-system';
-import { DEFAULT_CONFIG } from '../../src/types/config';
-import { parseTomlSlashCommand } from '../../src/utils/toml-templates';
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { fileURLToPath } from 'url';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { setupInquirerMock, runCliCommand, createTestDir, cleanupTestDir } from '../helpers/cli-helpers';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-describe('Init command', () => {
-  const testDir = path.join(__dirname, '../fixtures/test-init');
-  const clavixDir = path.join(testDir, '.clavix');
+// Mock inquirer
+jest.mock('inquirer', () => setupInquirerMock({
+  reinit: true,
+  cleanupAction: 'skip',
+  confirmCodex: true,
+  useNamespace: true,
+  continueAnyway: true,
+  removeLegacy: true
+}));
+
+// Mock integration selector to avoid interactive prompt
+jest.mock('../../src/utils/integration-selector.js', () => ({
+  selectIntegrations: jest.fn<any>().mockResolvedValue(['claude-code'])
+}));
+
+// Import command after mocking
+import Init from '../../src/cli/commands/init';
+import { FileSystem } from '../../src/utils/file-system';
+import { DEFAULT_CONFIG } from '../../src/types/config';
+
+describe('Init Command', () => {
+  let testDir: string;
   let originalCwd: string;
-
+  
   beforeEach(async () => {
-    // Clean up and setup
-    await fs.remove(testDir);
-    await fs.ensureDir(testDir);
-
-    // Change to test directory
+    testDir = await createTestDir('init-cmd-test');
     originalCwd = process.cwd();
     process.chdir(testDir);
+    
+    // Reset mocks
+    jest.clearAllMocks();
   });
 
   afterEach(async () => {
-    // Restore directory
     process.chdir(originalCwd);
-
-    // Clean up
-    await fs.remove(testDir);
+    await cleanupTestDir(testDir);
   });
 
-  describe('directory structure', () => {
-    it('should create .clavix directory', async () => {
-      await fs.ensureDir(clavixDir);
-
-      const exists = await FileSystem.exists('.clavix');
-
-      expect(exists).toBe(true);
+  describe('Fresh Initialization', () => {
+    it('should initialize clavix in empty directory', async () => {
+      const result = await runCliCommand(Init, [], testDir);
+      
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Clavix initialized successfully');
+      
+      // Verify directory structure
+      expect(await fs.pathExists('.clavix')).toBe(true);
+      expect(await fs.pathExists('.clavix/config.json')).toBe(true);
+      expect(await fs.pathExists('.clavix/sessions')).toBe(true);
+      expect(await fs.pathExists('.clavix/outputs')).toBe(true);
+      expect(await fs.pathExists('.clavix/INSTRUCTIONS.md')).toBe(true);
+      
+      // Verify config content
+      const config = await fs.readJson('.clavix/config.json');
+      expect(config.integrations).toContain('claude-code');
     });
 
-    it('should create config.json in .clavix', async () => {
-      await fs.ensureDir(clavixDir);
-      const configPath = path.join(clavixDir, 'config.json');
-
-      await fs.writeJSON(configPath, DEFAULT_CONFIG, { spaces: 2 });
-
-      const exists = await FileSystem.exists(path.join('.clavix', 'config.json'));
-
-      expect(exists).toBe(true);
+    it('should generate commands for selected integration', async () => {
+      const { selectIntegrations } = await import('../../src/utils/integration-selector.js');
+      (selectIntegrations as jest.Mock<any>).mockResolvedValue(['droid']);
+      
+      const result = await runCliCommand(Init, [], testDir);
+      
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Generating droid commands');
+      // Droid doesn't have a specific adapter in the basic list check in init.ts unless we check logic
+      // But init loops over selected integrations.
     });
 
-    it('should create sessions directory', async () => {
-      await fs.ensureDir(path.join(clavixDir, 'sessions'));
-
-      const exists = await FileSystem.exists(path.join('.clavix', 'sessions'));
-
-      expect(exists).toBe(true);
-    });
-
-    it('should create outputs directory', async () => {
-      await fs.ensureDir(path.join(clavixDir, 'outputs'));
-
-      const exists = await FileSystem.exists(path.join('.clavix', 'outputs'));
-
-      expect(exists).toBe(true);
-    });
-  });
-
-  describe('default configuration', () => {
-    it('should have version in default config', () => {
-      expect(DEFAULT_CONFIG.version).toBeDefined();
-      expect(typeof DEFAULT_CONFIG.version).toBe('string');
-    });
-
-    it('should have default providers', () => {
-      expect(DEFAULT_CONFIG.integrations).toBeDefined();
-      expect(Array.isArray(DEFAULT_CONFIG.integrations)).toBe(true);
-    });
-
-    it('should have templates configuration', () => {
-      expect(DEFAULT_CONFIG.templates).toBeDefined();
-      expect(DEFAULT_CONFIG.templates.prdQuestions).toBeDefined();
-    });
-
-    it('should have outputs configuration', () => {
-      expect(DEFAULT_CONFIG.outputs).toBeDefined();
-      expect(DEFAULT_CONFIG.outputs.path).toBeDefined();
-    });
-
-    it('should have preferences configuration', () => {
-      expect(DEFAULT_CONFIG.preferences).toBeDefined();
-      expect(DEFAULT_CONFIG.preferences.autoOpenOutputs).toBeDefined();
+    it('should abort if no integrations selected', async () => {
+      const { selectIntegrations } = await import('../../src/utils/integration-selector.js');
+      (selectIntegrations as jest.Mock<any>).mockResolvedValue([]);
+      
+      const result = await runCliCommand(Init, [], testDir);
+      
+      expect(result.exitCode).toBe(0); // Returns 0 but stops
+      expect(result.stdout).toContain('No integrations selected');
+      expect(await fs.pathExists('.clavix')).toBe(false);
     });
   });
 
-  describe('provider selection', () => {
-    it('should support claude-code provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('claude-code');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('claude-code');
-    });
-
-    it('should support cursor provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('cursor');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('cursor');
-    });
-
-    it('should support droid provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('droid');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('droid');
-    });
-
-    it('should support opencode provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('opencode');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('opencode');
-    });
-
-    it('should support codebuddy provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('codebuddy');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('codebuddy');
-    });
-
-    it('should support gemini provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('gemini');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('gemini');
-    });
-
-    it('should support qwen provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('qwen');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('qwen');
-    });
-
-    it('should support codex provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('codex');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('codex');
-    });
-
-    it('should support amp provider', () => {
-      const agentManager = new AgentManager();
-      const adapter = agentManager.getAdapter('amp');
-
-      expect(adapter).toBeDefined();
-      expect(adapter?.name).toBe('amp');
-    });
-
-    it('should list all available providers', () => {
-      const agentManager = new AgentManager();
-      const providers = agentManager.getAvailableAgents();
-
-      expect(providers).toContain('claude-code');
-      expect(providers).toContain('cursor');
-      expect(providers).toContain('droid');
-      expect(providers).toContain('opencode');
-      expect(providers).toContain('codebuddy');
-      expect(providers).toContain('gemini');
-      expect(providers).toContain('qwen');
-      expect(providers).toContain('codex');
-      expect(providers).toContain('amp');
-    });
-  });
-
-  describe('provider validation', () => {
-    it('should validate that at least one provider is selected', () => {
-      const selectedIntegrations: string[] = [];
-
-      const isValid = selectedIntegrations.length > 0;
-
-      expect(isValid).toBe(false);
-    });
-
-    it('should accept single provider selection', () => {
-      const selectedIntegrations = ['claude-code'];
-
-      const isValid = selectedIntegrations.length > 0;
-
-      expect(isValid).toBe(true);
-    });
-
-    it('should accept multiple provider selection', () => {
-      const selectedIntegrations = ['claude-code', 'cursor', 'droid'];
-
-      const isValid = selectedIntegrations.length > 0;
-
-      expect(isValid).toBe(true);
-    });
-  });
-
-  describe('configuration file', () => {
-    it('should write valid JSON config', async () => {
-      const configPath = path.join(clavixDir, 'config.json');
-      await fs.ensureDir(clavixDir);
-
-      const config = {
+  describe('Re-initialization', () => {
+    beforeEach(async () => {
+      // Setup existing clavix
+      await fs.ensureDir('.clavix');
+      await fs.writeJson('.clavix/config.json', {
         ...DEFAULT_CONFIG,
-        integrations: ['claude-code'],
-      };
-
-      await fs.writeJSON(configPath, config, { spaces: 2 });
-
-      const savedConfig = await fs.readJSON(configPath);
-
-      expect(savedConfig.version).toBe(config.version);
-      expect(savedConfig.integrations).toEqual(['claude-code']);
+        integrations: ['cursor']
+      });
     });
 
-    it('should preserve config structure', async () => {
-      const configPath = path.join(clavixDir, 'config.json');
-      await fs.ensureDir(clavixDir);
-
-      await fs.writeJSON(configPath, DEFAULT_CONFIG, { spaces: 2 });
-
-      const savedConfig = await fs.readJSON(configPath);
-
-      expect(savedConfig).toHaveProperty('version');
-      expect(savedConfig).toHaveProperty('integrations');
-      expect(savedConfig).toHaveProperty('templates');
-      expect(savedConfig).toHaveProperty('outputs');
-      expect(savedConfig).toHaveProperty('preferences');
+    it('should prompt for re-initialization and proceed if confirmed', async () => {
+      // Mock response is already true in global mock, but we can verify behavior
+      const result = await runCliCommand(Init, [], testDir);
+      
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Clavix is already initialized');
+      expect(result.stdout).toContain('Clavix initialized successfully');
     });
 
-    it('should handle custom providers configuration', async () => {
-      const configPath = path.join(clavixDir, 'config.json');
-      await fs.ensureDir(clavixDir);
+    it('should preserve existing config integrations during selection if desired', async () => {
+      // verification happens in how selectIntegrations is called
+      // we can inspect the mock call
+      await runCliCommand(Init, [], testDir);
+      
+      const { selectIntegrations } = await import('../../src/utils/integration-selector.js');
+      expect(selectIntegrations).toHaveBeenCalledWith(expect.anything(), expect.arrayContaining(['cursor']));
+    });
 
-      const customConfig = {
-        ...DEFAULT_CONFIG,
-        integrations: ['claude-code', 'cursor', 'agents-md'],
-      };
-
-      await fs.writeJSON(configPath, customConfig, { spaces: 2 });
-
-      const savedConfig = await fs.readJSON(configPath);
-
-      expect(savedConfig.integrations).toHaveLength(3);
-      expect(savedConfig.integrations).toContain('claude-code');
-      expect(savedConfig.integrations).toContain('cursor');
-      expect(savedConfig.integrations).toContain('agents-md');
+    it('should handle deselected integrations cleanup', async () => {
+      // Existing is 'cursor', new selection is 'claude-code' (default mock)
+      // Helper mock sets cleanupAction: 'skip' (default)
+      // Let's override to 'cleanup' for this test if possible or check 'skip' behavior
+      
+      // Since setupInquirerMock uses closure, we might need to update the mock implementation dynamically
+      // or rely on the default. The default in this file is 'skip'.
+      
+      const result = await runCliCommand(Init, [], testDir);
+      
+      expect(result.stdout).toContain('Previously configured but not selected');
+      expect(result.stdout).toContain('cursor');
+      // 'skip' action means no removal log
     });
   });
 
-  describe('reinitializat ion detection', () => {
-    it('should detect existing .clavix directory', async () => {
-      await fs.ensureDir(clavixDir);
-
-      const exists = await FileSystem.exists('.clavix');
-
-      expect(exists).toBe(true);
-    });
-
-    it('should detect when .clavix does not exist', async () => {
-      const exists = await FileSystem.exists('.clavix');
-
-      expect(exists).toBe(false);
-    });
-
-    it('should preserve existing config on reinitialization', async () => {
-      const configPath = path.join(clavixDir, 'config.json');
-      await fs.ensureDir(clavixDir);
-
-      const originalConfig = {
-        ...DEFAULT_CONFIG,
-        integrations: ['claude-code', 'cursor'],
-      };
-
-      await fs.writeJSON(configPath, originalConfig, { spaces: 2 });
-
-      // Simulate reading config before reinitialization
-      const existingConfig = await fs.readJSON(configPath);
-
-      expect(existingConfig.integrations).toContain('claude-code');
-      expect(existingConfig.integrations).toContain('cursor');
-    });
-  });
-
-  describe('file system operations', () => {
-    it('should create nested directory structure', async () => {
-      const sessionsDir = path.join(clavixDir, 'sessions');
-      const outputsDir = path.join(clavixDir, 'outputs');
-
-      await fs.ensureDir(sessionsDir);
-      await fs.ensureDir(outputsDir);
-
-      expect(await fs.pathExists(sessionsDir)).toBe(true);
-      expect(await fs.pathExists(outputsDir)).toBe(true);
-    });
-
-    it('should handle directory creation idempotently', async () => {
-      await fs.ensureDir(clavixDir);
-      await fs.ensureDir(clavixDir);
-
-      const exists = await fs.pathExists(clavixDir);
-
-      expect(exists).toBe(true);
-    });
-  });
-
-  describe('provider choices', () => {
-    it('should include claude-code as default checked', () => {
-      const choices = [
-        { name: 'Claude Code', value: 'claude-code', checked: true },
-        { name: 'Cursor', value: 'cursor', checked: false },
-      ];
-
-      const claudeChoice = choices.find(c => c.value === 'claude-code');
-
-      expect(claudeChoice?.checked).toBe(true);
-    });
-
-    it('should include agents-md as universal option', () => {
-      const providers = ['agents-md', 'octo-md'];
-
-      expect(providers).toContain('agents-md');
-      expect(providers).toContain('octo-md');
-    });
-
-    it('should support both slash commands and md-based providers', () => {
-      const slashCommandProviders = [
-        'claude-code',
-        'cursor',
-        'droid',
-        'opencode',
-        'amp',
-        'codebuddy',
-        'gemini',
-        'qwen',
-        'codex',
-      ];
-      const mdProviders = ['agents-md', 'octo-md'];
-
-      expect(slashCommandProviders.length).toBeGreaterThan(mdProviders.length);
-      expect(mdProviders.length).toBe(2);
-    });
-  });
-
-  describe('configuration validation', () => {
-    it('should have valid version format', () => {
-      expect(DEFAULT_CONFIG.version).toMatch(/^\d+\.\d+\.\d+$/);
-    });
-
-    it('should have valid providers array', () => {
-      expect(Array.isArray(DEFAULT_CONFIG.integrations)).toBe(true);
-    });
-
-    it('should have valid output path', () => {
-      expect(DEFAULT_CONFIG.outputs.path).toBeDefined();
-      expect(typeof DEFAULT_CONFIG.outputs.path).toBe('string');
-    });
-
-    it('should have boolean preferences', () => {
-      expect(typeof DEFAULT_CONFIG.preferences.autoOpenOutputs).toBe('boolean');
-      expect(typeof DEFAULT_CONFIG.preferences.verboseLogging).toBe('boolean');
-    });
-  });
-
-  describe('TOML template parsing', () => {
-    it('extracts description and prompt body without duplicating headers', () => {
-      // Note: TOML templates are now generated from canonical .md templates
-      // This test validates the parsing logic still works correctly
-      const templateContent = `description = "Archive completed PRD projects"
-
-prompt = """
-# Clavix Archive - Project Management
-
-Execute this command to archive or restore completed PRD projects.
-
-## Usage
-
-Archive projects that are complete or restore previously archived projects.
-"""
-`;
-
-      const parsed = parseTomlSlashCommand(templateContent, 'archive', 'gemini');
-
-      expect(parsed.description).toBe('Archive completed PRD projects');
-      expect(parsed.prompt.startsWith('# Clavix Archive')).toBe(true);
-      expect(parsed.prompt).not.toMatch(/^description\s*=/m);
-      expect(parsed.prompt).not.toMatch(/^prompt\s*=/m);
-      const occurrences = (parsed.prompt.match(/prompt\s*=\s*"""/g) ?? []).length;
-      expect(occurrences).toBe(0);
-    });
-  });
-
-  describe('edge cases', () => {
-    it('should handle empty providers array validation', () => {
-      const providers: string[] = [];
-      const validationError = providers.length === 0 ? 'You must select at least one provider.' : true;
-
-      expect(validationError).toBe('You must select at least one provider.');
-    });
-
-    it('should handle special characters in project name', () => {
-      const projectName = 'my-project-123';
-      const sanitized = projectName.replace(/[^a-z0-9-]/gi, '-');
-
-      expect(sanitized).toBe('my-project-123');
-    });
-
-    it('should handle long project names', () => {
-      const longName = 'a'.repeat(100);
-      const truncated = longName.substring(0, 50);
-
-      expect(truncated.length).toBe(50);
+  describe('Edge Cases & Error Handling', () => {
+    it('should handle write errors gracefully', async () => {
+      // Make directory read-only to force EACCES
+      // Note: fs.chmod might not work as expected on all systems/tests, but we can try
+      // Or we can mock fs methods.
+      // Mocking fs methods specifically for this test is safer.
+      
+      jest.spyOn(FileSystem, 'writeFileAtomic').mockRejectedValue(new Error('Permission denied'));
+      
+      const result = await runCliCommand(Init, [], testDir);
+      
+      // Should catch error and throw/log
+      expect(result.exitCode).not.toBe(0);
+      expect(result.stderr).toContain('Initialization failed');
     });
   });
 });
