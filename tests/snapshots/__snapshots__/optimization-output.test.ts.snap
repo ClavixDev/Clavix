@@ -1,0 +1,218 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Optimization Output Snapshots deep mode output structure should produce consistent structure with alternatives: deep-mode-with-alternatives 1`] = `
+"{
+  "appliedPatterns": [
+    {
+      "description": "Reorders information into logical sections",
+      "impact": "low",
+      "name": "Structure Organizer"
+    },
+    {
+      "description": "Ensures all necessary requirements are present",
+      "impact": "high",
+      "name": "Completeness Validator"
+    }
+  ],
+  "enhanced": "## Objective/n/nAdd dark mode to my app/n/n---/n/n**Completeness Check**: 20% (1/5 elements present)/n/n**Missing Information** (please specify):/n/n- **Tech Stack**: Which technologies/frameworks? (e.g., React, Node.js, PostgreSQL)/n- **Success Criteria**: How will you know it works? What metrics matter?/n- **Constraints**: Any limitations? (time, budget, performance, compatibility)/n- **Expected Output**: What should the result look like? (component, API, file, etc.)",
+  "improvements": [
+    {
+      "description": "Added section headers for clarity",
+      "dimension": "structure",
+      "impact": "low"
+    },
+    {
+      "description": "Added 4 missing element prompts (20% complete)",
+      "dimension": "completeness",
+      "impact": "high"
+    }
+  ],
+  "intent": {
+    "characteristics": {
+      "hasCodeContext": false,
+      "hasTechnicalTerms": false,
+      "isOpenEnded": false,
+      "needsStructure": true
+    },
+    "confidence": 50,
+    "primaryIntent": "code-generation",
+    "suggestedMode": "deep"
+  },
+  "mode": "deep",
+  "original": "Add dark mode to my app",
+  "processingTimeMs": "[PROCESSING_TIME]",
+  "quality": {
+    "actionability": 65,
+    "clarity": 100,
+    "completeness": 90,
+    "efficiency": 95,
+    "improvements": [
+      "Added missing context and specifications",
+      "Added clear objective statement"
+    ],
+    "overall": 86.75,
+    "strengths": [
+      "Clear objective and goals",
+      "Concise and focused",
+      "Well-structured with logical flow",
+      "Comprehensive with all necessary details"
+    ],
+    "structure": 90
+  }
+}"
+`;
+
+exports[`Optimization Output Snapshots fast mode output structure should produce consistent structure for complex prompts: fast-mode-complex-prompt 1`] = `
+"{
+  "appliedPatterns": [
+    {
+      "description": "Removes unnecessary pleasantries, fluff words, and redundancy",
+      "impact": "low",
+      "name": "Conciseness Filter"
+    },
+    {
+      "description": "Extracts or infers clear goal statement",
+      "impact": "high",
+      "name": "Objective Clarifier"
+    },
+    {
+      "description": "Adds missing technical context (language, framework, versions)",
+      "impact": "medium",
+      "name": "Technical Context Enricher"
+    },
+    {
+      "description": "Ensures all necessary requirements are present",
+      "impact": "medium",
+      "name": "Completeness Validator"
+    }
+  ],
+  "enhanced": "# Objective/nbuild a user authentication system that supports: - Email/password login - OAuth with Google and GitHub - Two-factor authentication - Password reset flow Please include security best practices/n/nI need to build a user authentication system that supports: - Email/password login - OAuth with Google and GitHub - Two-factor authentication - Password reset flow Please include security best practices./n/n# Technical Constraints/n- Language: Go (please specify version if critical)/n/n---/n/n**Completeness Check**: 60% (3/5 elements present)/n/n**Missing Information** (please specify):/n/n- **Success Criteria**: How will you know it works? What metrics matter?/n- **Expected Output**: What should the result look like? (component, API, file, etc.)",
+  "improvements": [
+    {
+      "description": "Removed 0 unnecessary phrases for conciseness",
+      "dimension": "efficiency",
+      "impact": "low"
+    },
+    {
+      "description": "Added clear objective statement",
+      "dimension": "clarity",
+      "impact": "high"
+    },
+    {
+      "description": "Added 1 technical context specifications",
+      "dimension": "completeness",
+      "impact": "medium"
+    },
+    {
+      "description": "Added 2 missing element prompts (60% complete)",
+      "dimension": "completeness",
+      "impact": "medium"
+    }
+  ],
+  "intent": {
+    "characteristics": {
+      "hasCodeContext": false,
+      "hasTechnicalTerms": true,
+      "isOpenEnded": true,
+      "needsStructure": false
+    },
+    "confidence": 100,
+    "primaryIntent": "code-generation",
+    "suggestedMode": "deep"
+  },
+  "mode": "fast",
+  "original": "/n        I need to build a user authentication system that supports:/n        - Email/password login/n        - OAuth with Google and GitHub/n        - Two-factor authentication/n        - Password reset flow/n        Please include security best practices./n      ",
+  "processingTimeMs": "[PROCESSING_TIME]",
+  "quality": {
+    "actionability": 90,
+    "clarity": 100,
+    "completeness": 90,
+    "efficiency": 80,
+    "improvements": [
+      "Added missing context and specifications",
+      "Added clear objective statement",
+      "Added technical context"
+    ],
+    "overall": 91.5,
+    "strengths": [
+      "Clear objective and goals",
+      "Well-structured with logical flow",
+      "Comprehensive with all necessary details",
+      "Immediately actionable"
+    ],
+    "structure": 90
+  }
+}"
+`;
+
+exports[`Optimization Output Snapshots fast mode output structure should produce consistent structure for simple prompts: fast-mode-simple-prompt 1`] = `
+"{
+  "appliedPatterns": [
+    {
+      "description": "Extracts or infers clear goal statement",
+      "impact": "high",
+      "name": "Objective Clarifier"
+    },
+    {
+      "description": "Ensures all necessary requirements are present",
+      "impact": "high",
+      "name": "Completeness Validator"
+    }
+  ],
+  "enhanced": "# Objective/na login page/n/nCreate a login page/n/n---/n/n**Completeness Check**: 20% (1/5 elements present)/n/n**Missing Information** (please specify):/n/n- **Tech Stack**: Which technologies/frameworks? (e.g., React, Node.js, PostgreSQL)/n- **Success Criteria**: How will you know it works? What metrics matter?/n- **Constraints**: Any limitations? (time, budget, performance, compatibility)/n- **Expected Output**: What should the result look like? (component, API, file, etc.)",
+  "improvements": [
+    {
+      "description": "Added clear objective statement",
+      "dimension": "clarity",
+      "impact": "high"
+    },
+    {
+      "description": "Added 4 missing element prompts (20% complete)",
+      "dimension": "completeness",
+      "impact": "high"
+    }
+  ],
+  "intent": {
+    "characteristics": {
+      "hasCodeContext": false,
+      "hasTechnicalTerms": false,
+      "isOpenEnded": false,
+      "needsStructure": true
+    },
+    "confidence": 100,
+    "primaryIntent": "code-generation",
+    "suggestedMode": "deep"
+  },
+  "mode": "fast",
+  "original": "Create a login page",
+  "processingTimeMs": "[PROCESSING_TIME]",
+  "quality": {
+    "actionability": 65,
+    "clarity": 100,
+    "completeness": 90,
+    "efficiency": 95,
+    "improvements": [
+      "Added missing context and specifications",
+      "Added clear objective statement"
+    ],
+    "overall": 86.75,
+    "strengths": [
+      "Clear objective and goals",
+      "Concise and focused",
+      "Well-structured with logical flow",
+      "Comprehensive with all necessary details"
+    ],
+    "structure": 90
+  }
+}"
+`;
+
+exports[`Optimization Output Snapshots quality assessment structure quality dimension keys should match snapshot structure: quality-dimension-keys 1`] = `
+[
+  "actionability",
+  "clarity",
+  "completeness",
+  "efficiency",
+  "structure",
+]
+`;

@@ -1,0 +1,517 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CLI Command Metadata Snapshots PRD commands implement command metadata should match snapshot: implement-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [],
+  "description": "Start implementing tasks from the task plan",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> --project my-app",
+    "<%= config.bin %> <%= command.id %> --no-git"
+  ],
+  "flags": [
+    {
+      "description": "PRD project name (defaults to most recent)",
+      "name": "project",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Direct path to tasks.md file",
+      "name": "tasks-path",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Skip git auto-commit setup",
+      "name": "no-git",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Auto-commit strategy: per-task, per-5-tasks, per-phase, none (default: none)",
+      "name": "commit-strategy",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots PRD commands plan command metadata should match snapshot: plan-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [],
+  "description": "Generate implementation task breakdown from PRD",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> --project my-app",
+    "<%= config.bin %> <%= command.id %> --prd-path .clavix/outputs/my-project",
+    "<%= config.bin %> <%= command.id %> --session 1234-5678"
+  ],
+  "flags": [
+    {
+      "description": "PRD project name (defaults to most recent)",
+      "name": "project",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Direct path to PRD directory",
+      "name": "prd-path",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Session ID to plan from (generates mini-prd.md automatically)",
+      "name": "session",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Use the most recent active session as input",
+      "name": "active-session",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Preferred PRD source (auto|full|quick|mini|prompt)",
+      "name": "source",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Maximum tasks per phase",
+      "name": "max-tasks",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Overwrite existing tasks.md file",
+      "name": "overwrite",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots PRD commands prd command metadata should match snapshot: prd-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [],
+  "description": "Launch Clavix Planning Mode - transform ideas into structured PRDs through strategic questions",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> --quick",
+    "<%= config.bin %> <%= command.id %> --project my-app"
+  ],
+  "flags": [
+    {
+      "description": "Use quick mode with fewer questions",
+      "name": "quick",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Project name for organizing outputs",
+      "name": "project",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Path to custom question template",
+      "name": "template",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots PRD commands task-complete command metadata should match snapshot: task-complete-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [
+    {
+      "description": "Task ID to mark as completed",
+      "name": "taskId",
+      "required": true
+    }
+  ],
+  "description": "Mark a task as completed with validation and optional git commit",
+  "examples": [
+    "<%= config.bin %> <%= command.id %> phase-1-auth-1",
+    "<%= config.bin %> <%= command.id %> phase-2-api-3 --no-git",
+    "<%= config.bin %> <%= command.id %> setup-1 --force"
+  ],
+  "flags": [
+    {
+      "description": "Skip git commit even if strategy is enabled",
+      "name": "no-git",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Force completion even if already marked complete",
+      "name": "force",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Path to config file (defaults to auto-discover)",
+      "name": "config",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots prompt improvement commands deep command metadata should match snapshot: deep-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [
+    {
+      "description": "The prompt to analyze deeply",
+      "name": "prompt",
+      "required": true
+    }
+  ],
+  "description": "Perform comprehensive deep analysis with alternative approaches, edge cases, and validation checklists",
+  "examples": [
+    "<%= config.bin %> <%= command.id %> /"Create a login page/"",
+    "<%= config.bin %> <%= command.id %> /"Build an API for user management/"",
+    "<%= config.bin %> <%= command.id %> /"Design a notification system/""
+  ],
+  "flags": [
+    {
+      "description": "Show only quality analysis without improved prompt",
+      "name": "analysis-only",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots prompt improvement commands fast command metadata should match snapshot: fast-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [
+    {
+      "description": "The prompt to improve",
+      "name": "prompt",
+      "required": true
+    }
+  ],
+  "description": "Quickly improve a prompt with smart quality assessment and triage",
+  "examples": [
+    "<%= config.bin %> <%= command.id %> /"Create a login page/"",
+    "<%= config.bin %> <%= command.id %> /"Build an API for user management/""
+  ],
+  "flags": [
+    {
+      "description": "Show only quality analysis without improved prompt",
+      "name": "analysis-only",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots session commands list command metadata should match snapshot: list-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [],
+  "description": "List sessions and outputs",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> --sessions",
+    "<%= config.bin %> <%= command.id %> --outputs",
+    "<%= config.bin %> <%= command.id %> --project my-feature"
+  ],
+  "flags": [
+    {
+      "description": "List only sessions",
+      "name": "sessions",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "List only outputs",
+      "name": "outputs",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Include archived projects in outputs",
+      "name": "archived",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Filter by project name",
+      "name": "project",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Limit number of results",
+      "name": "limit",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots session commands show command metadata should match snapshot: show-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [
+    {
+      "description": "Session ID to show",
+      "name": "sessionId",
+      "required": false
+    }
+  ],
+  "description": "Show detailed information about a session or output",
+  "examples": [
+    "<%= config.bin %> <%= command.id %> session-[ID]",
+    "<%= config.bin %> <%= command.id %> session-[ID] --full",
+    "<%= config.bin %> <%= command.id %> --output project-name"
+  ],
+  "flags": [
+    {
+      "description": "Show output directory contents",
+      "name": "output",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Show full conversation history",
+      "name": "full",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Limit number of messages to show",
+      "name": "limit",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots session commands start command metadata should match snapshot: start-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [],
+  "description": "Start an interactive conversation session for iterative prompt development",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> --project my-app",
+    "<%= config.bin %> <%= command.id %> --description /"Planning new feature/""
+  ],
+  "flags": [
+    {
+      "description": "Project name for this session",
+      "name": "project",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Session description",
+      "name": "description",
+      "required": false,
+      "type": "option"
+    },
+    {
+      "description": "Comma-separated tags for this session",
+      "name": "tags",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots session commands summarize command metadata should match snapshot: summarize-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [
+    {
+      "description": "Session ID to summarize",
+      "name": "sessionId",
+      "required": false
+    }
+  ],
+  "description": "Analyze a conversation session and extract structured requirements with automatic optimization",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> <session-[ID]>",
+    "<%= config.bin %> <%= command.id %> --active"
+  ],
+  "flags": [
+    {
+      "description": "Summarize the most recent active session",
+      "name": "active",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Output directory (defaults to .clavix/outputs/[session-[ID]])",
+      "name": "output",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots setup commands config command metadata should match snapshot: config-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [
+    {
+      "description": "Action to perform (get, set, edit, reset)",
+      "name": "action",
+      "required": false
+    },
+    {
+      "description": "Configuration key",
+      "name": "key",
+      "required": false
+    },
+    {
+      "description": "Configuration value (for set action)",
+      "name": "value",
+      "required": false
+    }
+  ],
+  "description": "Manage Clavix configuration",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> get integrations",
+    "<%= config.bin %> <%= command.id %> set preferences.verboseLogging true"
+  ],
+  "flags": [
+    {
+      "description": "Use global configuration (not implemented yet)",
+      "name": "global",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots setup commands init command metadata should match snapshot: init-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [],
+  "description": "Initialize Clavix in the current project",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>"
+  ],
+  "flags": [],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots setup commands update command metadata should match snapshot: update-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [],
+  "description": "Update managed blocks and slash commands",
+  "examples": [
+    "<%= config.bin %> <%= command.id %>",
+    "<%= config.bin %> <%= command.id %> --docs-only",
+    "<%= config.bin %> <%= command.id %> --commands-only"
+  ],
+  "flags": [
+    {
+      "description": "Update only documentation blocks (AGENTS.md, CLAUDE.md, OCTO.md, WARP.md)",
+      "name": "docs-only",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Update only slash command files",
+      "name": "commands-only",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Force update even if files haven't changed",
+      "name": "force",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "hidden": false
+}"
+`;
+
+exports[`CLI Command Metadata Snapshots utility commands archive command metadata should match snapshot: archive-command-metadata 1`] = `
+"{
+  "aliases": [],
+  "args": [
+    {
+      "description": "Name of the project to archive",
+      "name": "project",
+      "required": false
+    }
+  ],
+  "description": "Archive completed PRD projects",
+  "examples": [
+    "<%= config.bin %> <%= command.id %> # Interactive selection",
+    "<%= config.bin %> <%= command.id %> my-project # Archive specific project",
+    "<%= config.bin %> <%= command.id %> --list # List archived projects",
+    "<%= config.bin %> <%= command.id %> my-project --force # Force archive",
+    "<%= config.bin %> <%= command.id %> --restore my-project # Restore from archive"
+  ],
+  "flags": [
+    {
+      "description": "List archived projects",
+      "name": "list",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Force archive even if tasks are incomplete",
+      "name": "force",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Skip all confirmation prompts (agent-friendly)",
+      "name": "yes",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Restore an archived project",
+      "name": "restore",
+      "required": false,
+      "type": "option"
+    }
+  ],
+  "hidden": false
+}"
+`;

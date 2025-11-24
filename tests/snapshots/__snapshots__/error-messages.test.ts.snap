@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Error Messages Snapshots ClavixError base class should format basic error correctly: clavix-error-basic 1`] = `"Something went wrong"`;
+
+exports[`Error Messages Snapshots ClavixError base class should include hint: clavix-error-with-hint 1`] = `"Operation failed"`;
+
+exports[`Error Messages Snapshots DataError for config issues should format invalid config error: config-error-invalid 1`] = `"Invalid configuration: "integrations" must be an array"`;
+
+exports[`Error Messages Snapshots DataError for config issues should format legacy config error: config-error-legacy 1`] = `"Legacy configuration format detected"`;
+
+exports[`Error Messages Snapshots DataError for config issues should format missing config file error: config-error-missing-file 1`] = `"Configuration file not found"`;
+
+exports[`Error Messages Snapshots DataError should format corrupted data error: data-error-corrupted 1`] = `"Failed to parse session file: Invalid JSON"`;
+
+exports[`Error Messages Snapshots DataError should format file not found error: data-error-file-not-found 1`] = `"File not found: prd.md"`;
+
+exports[`Error Messages Snapshots DataError should format markdown validation error: data-error-markdown 1`] = `"Invalid markdown: Unbalanced code blocks"`;
+
+exports[`Error Messages Snapshots IntegrationError should format adapter not found error: integration-error-adapter-not-found 1`] = `"Adapter "invalid-adapter" not found"`;
+
+exports[`Error Messages Snapshots IntegrationError should format command generation error: integration-error-command-gen 1`] = `"Failed to generate slash commands for Cursor"`;
+
+exports[`Error Messages Snapshots IntegrationError should format initialization error: integration-error-init-failed 1`] = `"Failed to initialize Claude Code integration"`;
+
+exports[`Error Messages Snapshots PermissionError should format directory permission error: permission-error-directory 1`] = `"Permission denied: Cannot create directory .clavix"`;
+
+exports[`Error Messages Snapshots PermissionError should format read permission error: permission-error-read 1`] = `"Permission denied: Cannot read .git/config"`;
+
+exports[`Error Messages Snapshots PermissionError should format write permission error: permission-error-write 1`] = `"Permission denied: Cannot write to .clavix/config.json"`;
+
+exports[`Error Messages Snapshots ValidationError should format prompt validation error: validation-error-empty-prompt 1`] = `"Prompt cannot be empty"`;
+
+exports[`Error Messages Snapshots ValidationError should format session validation error: validation-error-invalid-session 1`] = `"Invalid session: No messages found"`;
+
+exports[`Error Messages Snapshots ValidationError should format task validation error: validation-error-task-not-found 1`] = `"Task ID "task-123" not found in tasks.md"`;
+
+exports[`Error Messages Snapshots error message consistency all error types should format consistently: error-consistency 1`] = `
+[
+  {
+    "hasHint": true,
+    "name": "ClavixError",
+  },
+  {
+    "hasHint": true,
+    "name": "IntegrationError",
+  },
+  {
+    "hasHint": true,
+    "name": "ValidationError",
+  },
+  {
+    "hasHint": true,
+    "name": "DataError",
+  },
+  {
+    "hasHint": true,
+    "name": "PermissionError",
+  },
+]
+`;

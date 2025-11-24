@@ -144,7 +144,8 @@ export class GitManager {
 
     try {
       // Read tasks.md file
-      const fs = await import('fs-extra');
+      const fsExtra = await import('fs-extra');
+      const fs = fsExtra.default || fsExtra;
       if (!(await fs.pathExists(tasksPath))) {
         errors.push(`Tasks file not found: ${tasksPath}`);
         return { valid: false, errors };
