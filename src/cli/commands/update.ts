@@ -15,7 +15,7 @@ import { AgentAdapter } from '../../types/agent.js';
 import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _dirname = dirname(__filename); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export default class Update extends Command {
   static description = 'Update managed blocks and slash commands';
@@ -37,7 +37,7 @@ export default class Update extends Command {
     }),
     force: Flags.boolean({
       char: 'f',
-      description: 'Force update even if files haven\'t changed',
+      description: "Force update even if files haven't changed",
       default: false,
     }),
   };
@@ -51,10 +51,10 @@ export default class Update extends Command {
     if (!fs.existsSync(clavixDir) || !fs.existsSync(configPath)) {
       this.error(
         chalk.red('No .clavix directory found.') +
-        '\n' +
-        chalk.yellow('Run ') +
-        chalk.cyan('clavix init') +
-        chalk.yellow(' to initialize Clavix in this project.')
+          '\n' +
+          chalk.yellow('Run ') +
+          chalk.cyan('clavix init') +
+          chalk.yellow(' to initialize Clavix in this project.')
       );
     }
 
@@ -67,7 +67,8 @@ export default class Update extends Command {
     const agentManager = new AgentManager();
 
     const updateDocs = flags['docs-only'] || (!flags['docs-only'] && !flags['commands-only']);
-    const updateCommands = flags['commands-only'] || (!flags['docs-only'] && !flags['commands-only']);
+    const updateCommands =
+      flags['commands-only'] || (!flags['docs-only'] && !flags['commands-only']);
 
     let updatedCount = 0;
 
@@ -131,7 +132,11 @@ export default class Update extends Command {
     }
   }
 
-  private async updateDocumentation(_adapter: AgentAdapter, agentType: string, force: boolean): Promise<number> {
+  private async updateDocumentation(
+    _adapter: AgentAdapter,
+    agentType: string,
+    force: boolean
+  ): Promise<number> {
     this.log(chalk.cyan('📝 Updating documentation blocks...'));
 
     let updated = 0;
@@ -202,13 +207,17 @@ export default class Update extends Command {
     this.log(chalk.gray(`  ✓ Generated ${templates.length} command(s)`));
 
     // Handle legacy commands (cleanup old naming patterns)
-    const commandNames = templates.map(t => t.name);
+    const commandNames = templates.map((t) => t.name);
     const legacyRemoved = await this.handleLegacyCommands(adapter, commandNames, force);
 
     return removed + templates.length + legacyRemoved;
   }
 
-  private async handleLegacyCommands(adapter: AgentAdapter, commandNames: string[], force: boolean): Promise<number> {
+  private async handleLegacyCommands(
+    adapter: AgentAdapter,
+    commandNames: string[],
+    force: boolean
+  ): Promise<number> {
     if (commandNames.length === 0) {
       return 0;
     }
@@ -283,7 +292,7 @@ clavix deep "Build a user auth system"
 clavix start
 \`\`\`
 
-Learn more: https://github.com/Bob5k/Clavix`;
+Learn more: https://github.com/clavixdev/clavix`;
   }
 
   private getClaudeContent(): string {
