@@ -10,6 +10,7 @@ import { AgentManager } from '../../core/agent-manager.js';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
 import { OctoMdGenerator } from '../../core/adapters/octo-md-generator.js';
 import { WarpMdGenerator } from '../../core/adapters/warp-md-generator.js';
+import { InstructionsGenerator } from '../../core/adapters/instructions-generator.js';
 import { AgentAdapter } from '../../types/agent.js';
 import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
 
@@ -112,6 +113,14 @@ export default class Update extends Command {
       if (updateCommands) {
         updatedCount += await this.updateCommands(adapter, flags.force);
       }
+    }
+
+    // Update .clavix/instructions/ folder for generic integrations
+    if (updateDocs && InstructionsGenerator.needsGeneration(integrations)) {
+      this.log(chalk.gray('\n📁 Updating .clavix/instructions/ reference folder...'));
+      await InstructionsGenerator.generate();
+      this.log(chalk.gray('  ✓ Updated detailed workflow guides'));
+      updatedCount++;
     }
 
     this.log('');

@@ -5,6 +5,174 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.1] - 2025-11-24
+
+### 📐 Documentation Hierarchy & Verbosity Reduction
+
+**Comprehensive refactoring of instruction architecture to reduce verbosity and improve maintainability.**
+
+#### Fixed Issues
+
+- **Fixed**: Generic connector files (octo.md, agents.md, copilot-instructions.md) were too large (7-20K) with extensive workflow duplication
+- **Fixed**: Ambiguous terminology - "CLAVIX MODE" didn't distinguish planning vs implementation workflows clearly
+- **Fixed**: Inconsistent workflow references between canonical templates, instruction files, and generic connectors
+- **Fixed**: Missing documentation hierarchy principles causing maintenance confusion
+
+#### New Features
+
+- **Added**: Comprehensive `src/templates/instructions/README.md` documenting three-layer hierarchy (Canonical → Instructions → Connectors)
+- **Added**: Explicit mode distinction - "CLAVIX PLANNING MODE" vs "CLAVIX IMPLEMENTATION MODE" terminology throughout
+- **Added**: Standard workflow documentation (PRD → Plan → Implement → Archive) across all files
+- **Added**: Command categorization table showing which commands implement vs plan
+
+#### Improvements
+
+**Instruction Files Expanded** (to match canonical 100%):
+- `workflows/fast.md`: 2.7K → 13K (expanded with complete workflow, intent detection, quality assessment, smart triage)
+- `workflows/deep.md`: 3.2K → 17K (added strategic scope detection, alternatives, validation, edge cases, risk assessment)
+- `workflows/prd.md`: 4.2K → 14K (expanded with complete 5-question Socratic sequence, validation criteria, file-saving protocol)
+- `workflows/start.md`: Updated terminology (CLAVIX MODE → CLAVIX PLANNING MODE)
+- `workflows/summarize.md`: Updated terminology and mode boundaries
+
+**Core Documentation Updated**:
+- `core/clavix-mode.md`: Complete restructure with mode table, standard workflow, planning vs implementation distinction
+
+**Generic Connectors Simplified** (removed duplicate workflows):
+- `agents/octo.md`: 20K → 7.3K (64% reduction, 504 → 211 lines)
+  - Removed all duplicate workflow descriptions
+  - Kept only Octofriend-specific guidance (model switching, multi-turn thinking, zero telemetry)
+  - Added workflow reference table pointing to instruction files
+- `agents/agents.md`: 5.6K → 6.5K (restructured with tables, removed implementation workflow details)
+- `agents/copilot-instructions.md`: 7K → 6.2K (12% reduction, 158 → 153 lines)
+
+#### Technical Changes
+
+**Documentation Architecture**:
+```
+Canonical Templates (SOURCE OF TRUTH)
+  ↓ (inform)
+Instruction Files (AGENT-CONSUMABLE)
+  ↓ (reference)
+Generic Connectors (THIN WRAPPERS + PLATFORM-SPECIFIC)
+  ↓ (integrated into)
+Platform Files (.clavix/ directory in user projects)
+```
+
+**Key Principles**:
+1. **Single Source of Truth**: Canonical templates define authoritative behavior
+2. **DRY Principle**: Instruction files implement canonical, connectors reference instructions
+3. **Platform Focus**: Connector files focus on platform-specific value only
+
+**Mode Distinction**:
+- Planning workflows: `/clavix:start`, `/clavix:summarize`, `/clavix:fast`, `/clavix:deep`, `/clavix:prd`, `/clavix:plan` - DO NOT implement
+- Implementation workflows: `/clavix:implement`, `/clavix:execute`, `/clavix:task-complete` - DO implement code
+
+#### Files Updated
+
+**Instruction Files Expanded**:
+- `src/templates/instructions/workflows/fast.md` (2.7K → 13K)
+- `src/templates/instructions/workflows/deep.md` (3.2K → 17K)
+- `src/templates/instructions/workflows/prd.md` (4.2K → 14K)
+- `src/templates/instructions/workflows/start.md` (terminology updated)
+- `src/templates/instructions/workflows/summarize.md` (terminology updated)
+- `src/templates/instructions/core/clavix-mode.md` (comprehensive restructure)
+
+**Generic Connectors Simplified**:
+- `src/templates/agents/octo.md` (20K → 7.3K, 64% reduction)
+- `src/templates/agents/agents.md` (restructured with reference tables)
+- `src/templates/agents/copilot-instructions.md` (7K → 6.2K, 12% reduction)
+
+**New Documentation**:
+- `src/templates/instructions/README.md` (comprehensive hierarchy principles, maintenance workflow, troubleshooting)
+
+#### Migration
+
+No migration needed. Run `clavix update` to regenerate improved instructions:
+
+```bash
+clavix update
+# or
+clavix init --force
+```
+
+This will deploy updated instruction files and generic connectors with improved structure and reduced verbosity.
+
+---
+
+## [3.6.0] - 2025-11-24
+
+### 🎯 Enhanced Generic Connector Instructions
+
+**Major improvements to AI agent instruction clarity for generic integrations (agents.md, octo.md, warp.md, GitHub Copilot)**
+
+#### Fixed Issues
+
+- **Fixed**: Agents jumping to implementation in `/clavix:start` conversational mode instead of gathering requirements
+- **Fixed**: Agents skipping file creation in `/clavix:summarize` workflow (files not created despite instructions)
+- **Fixed**: Ambiguous mode boundaries causing premature feature implementation
+
+#### New Features
+
+- **Added**: `.clavix/instructions/` reference folder with detailed workflow guides for generic integrations
+- **Added**: Explicit "CLAVIX MODE" boundary at start of all workflows
+- **Added**: Step-by-step file creation instructions with Write tool guidance (copied from proven fast.md pattern)
+- **Added**: Verification checkpoints for critical workflow steps
+- **Added**: Self-correction prompts for common agent failures
+- **Added**: Comprehensive troubleshooting guides for workflow issues
+
+#### Improvements
+
+- **Improved**: `/clavix:start` workflow now explicitly prevents premature implementation with repeated "DO NOT IMPLEMENT" instructions
+- **Improved**: `/clavix:summarize` workflow with mandatory file creation at step 3 (moved from step 5)
+- **Improved**: All generic connector instructions (agents.md, octo.md, warp.md) with CLAVIX MODE blocks and instruction references
+- **Improved**: GitHub Copilot integration with adapted workflows and fallback instructions
+- **Improved**: Instruction clarity using repetition and explicit commands instead of passive suggestions
+
+#### Technical Changes
+
+- Restructured canonical templates (`start.md`, `summarize.md`) for stronger agent compliance
+- Added hybrid instruction architecture (inline summaries + detailed reference files)
+- Strengthened mode enforcement with redundant boundaries and checkpoints
+- Replaced suggestive language ("suggest saving") with imperative commands ("you MUST create")
+- Added explicit Write tool instructions for all file operations
+- Copied proven file creation pattern from `fast.md` to `summarize.md`
+
+#### Files Updated
+
+**Canonical Templates:**
+- `src/templates/slash-commands/_canonical/start.md` - Mode enforcement + checkpoints
+- `src/templates/slash-commands/_canonical/summarize.md` - File creation fix (step 3)
+- `src/templates/slash-commands/_canonical/fast.md` - CLAVIX MODE block
+- `src/templates/slash-commands/_canonical/deep.md` - CLAVIX MODE block
+- `src/templates/slash-commands/_canonical/prd.md` - CLAVIX MODE block
+
+**Generic Connectors:**
+- `src/templates/agents/agents.md` - CLAVIX MODE + instructions reference
+- `src/templates/agents/octo.md` - CLAVIX MODE + strengthened workflows
+- `src/templates/agents/warp.md` - CLAVIX MODE + instructions reference
+- `src/templates/agents/copilot-instructions.md` - CLAVIX MODE + Copilot adaptations
+
+**New Instruction Reference Files:**
+- Added: `src/templates/instructions/` directory structure with 10 new reference files:
+  - Core: `clavix-mode.md`, `file-operations.md`, `verification.md`
+  - Workflows: `start.md`, `summarize.md`, `fast.md`, `deep.md`, `prd.md`
+  - Troubleshooting: `jumped-to-implementation.md`, `skipped-file-creation.md`, `mode-confusion.md`
+
+#### Migration
+
+No migration needed. Run `clavix init` or `clavix update` to regenerate improved instructions with new `.clavix/instructions/` folder.
+
+**For users of generic integrations** (Octofriend, agents.md, Warp, GitHub Copilot):
+```bash
+clavix update
+# or
+clavix init --force
+```
+
+This will regenerate instruction files with significantly improved agent compliance.
+
+---
+
 ## [3.5.0] - 2025-01-24
 
 ### 🔄 Breaking Changes (With Automatic Migration)

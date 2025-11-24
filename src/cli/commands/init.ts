@@ -8,6 +8,7 @@ import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
 import { OctoMdGenerator } from '../../core/adapters/octo-md-generator.js';
 import { WarpMdGenerator } from '../../core/adapters/warp-md-generator.js';
 import { CopilotInstructionsGenerator } from '../../core/adapters/copilot-instructions-generator.js';
+import { InstructionsGenerator } from '../../core/adapters/instructions-generator.js';
 import { FileSystem } from '../../utils/file-system.js';
 import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config.js';
 import { CommandTemplate, AgentAdapter } from '../../types/agent.js';
@@ -264,6 +265,13 @@ export default class Init extends Command {
           console.log(chalk.gray('  ✓ Injecting CLAUDE.md documentation...'));
           await this.injectDocumentation(adapter);
         }
+      }
+
+      // Generate .clavix/instructions/ folder for generic integrations
+      if (InstructionsGenerator.needsGeneration(selectedIntegrations)) {
+        console.log(chalk.gray('\n📁 Generating .clavix/instructions/ reference folder...'));
+        await InstructionsGenerator.generate();
+        console.log(chalk.gray('  ✓ Created detailed workflow guides for generic integrations'));
       }
 
       // Success message

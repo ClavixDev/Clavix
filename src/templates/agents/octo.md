@@ -1,367 +1,224 @@
 # Clavix Instructions for Octofriend
 
-This file provides Clavix workflows optimized for Octofriend's capabilities including model switching, multi-LLM support, and thinking token management.
-
-## 🔍 Workflow Detection
-
-Detect user intent from keywords and trigger appropriate workflow. Use Octofriend's model switching capabilities when needed for complex tasks.
-
-### PRD Generation Workflow
-**Trigger Keywords:** prd, product requirements, specification, strategic planning, requirements document
-
-**When to use:** User wants to create a Product Requirements Document through guided questions
-
-**Process:**
-1. Explain that you'll guide them through 7 strategic questions to create a comprehensive PRD
-2. Ask questions one at a time (wait for answer before proceeding):
-   - **Q1**: What problem are you solving? Who experiences it?
-   - **Q2**: Who will use this? Key characteristics and needs?
-   - **Q3**: Must-have features (3-5 core features)?
-   - **Q4**: How will you measure success? Key metrics?
-   - **Q5**: Technical requirements, integrations, performance needs?
-   - **Q6**: What's explicitly NOT in scope for this version?
-   - **Q7**: Any deadlines or milestones?
-
-3. After collecting all answers, generate TWO documents:
-   - **Full PRD** (comprehensive with all sections: Problem Statement, Target Users, Requirements, Success Metrics, Out of Scope, Timeline)
-   - **Quick PRD** (2-3 concise paragraphs optimized for AI consumption)
-
-4. Save both to `.clavix/outputs/[project-name]/`:
-   - `PRD.md` - Full comprehensive version
-   - `PRD-quick.md` - AI-optimized version
-
-5. Display file paths and suggest next steps
-
-**Octofriend Tip:** For complex PRD analysis, consider switching to a thinking model (like Claude Sonnet with extended thinking) to better reason about edge cases and system architecture.
-
-**Important:** Be conversational, ask follow-up questions if answers are vague, help users think through edge cases.
+Clavix workflows optimized for Octofriend's capabilities: model switching, multi-turn thinking, and zero telemetry.
 
 ---
 
-### Fast Prompt Improvement Workflow
-**Trigger Keywords:** improve prompt, quick fix, make better, optimize prompt, fast improvement
+## CLAVIX PLANNING MODE
 
-**When to use:** User wants quick improvements to their prompt
+**Know which mode you're in:**
 
-**Process:**
-1. Analyze the prompt using quality assessment (5 dimensions):
-   - **Clarity**: Is the objective clear and unambiguous?
-   - **Efficiency**: Is the prompt concise without losing critical information?
-   - **Structure**: Is information organized logically?
-   - **Completeness**: Are all necessary details provided?
-   - **Actionability**: Can AI take immediate action on this prompt?
+**PLANNING workflows** (requirements & documentation):
+- start, summarize, fast, deep, prd, plan
+- Your role: Ask questions, create PRDs/prompts, extract requirements
+- **DO NOT implement features during these workflows**
 
-2. Assess if deep analysis is needed:
-   - Prompt < 20 characters?
-   - Missing 3+ critical elements?
-   - Contains vague words ("app", "system") without context?
-   - Low quality scores (Overall <65%, or any dimension <50%)?
+**IMPLEMENTATION workflows** (code execution):
+- implement, execute, task-complete
+- Your role: Write code, execute tasks, implement features
+- **DO implement code during these workflows**
 
-   **If YES:** Recommend deep analysis instead and explain why
-
-3. Generate optimized structured prompt with sections:
-   - **Objective**: Clear, specific goal
-   - **Requirements**: Detailed, actionable requirements
-   - **Technical Constraints**: Technologies, performance, integrations
-   - **Expected Output**: What result should look like
-   - **Success Criteria**: How to measure completion
-
-4. List **Improvements Applied** with quality dimension labels:
-   - [Efficiency] "Removed 15 unnecessary words"
-   - [Structure] "Reorganized: context → requirements → output"
-   - [Clarity] "Added explicit persona, format, tone"
-   - [Completeness] "Added missing tech stack and success criteria"
-   - [Actionability] "Converted vague goals into specific requirements"
-
-5. Present optimized prompt in code block for easy copying
-
-**Octofriend Tip:** Fast improvements work great with faster models (GPT-4 Turbo, Claude Haiku). Save thinking models for deep analysis.
+See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 
 ---
 
-### Deep Prompt Analysis Workflow
-**Trigger Keywords:** deep analysis, comprehensive review, thorough examination, deep dive, alternatives
+## 📁 Detailed Workflow Instructions
 
-**When to use:** User wants comprehensive prompt analysis with alternatives and validation
+**Complete step-by-step workflows** in `.clavix/instructions/workflows/`:
 
-**Octofriend Tip:** This is an ideal use case for model switching. Start with a thinking model for comprehensive analysis, then switch to a faster model for formatting the final output.
+| Workflow | File | Purpose |
+|----------|------|---------|
+| Conversational mode | `start.md` | Natural requirements gathering |
+| Extract requirements | `summarize.md` | Convert conversation → PRD + prompts |
+| Quick improvements | `fast.md` | Prompt optimization with triage |
+| Deep analysis | `deep.md` | Comprehensive analysis + alternatives |
+| PRD generation | `prd.md` | Strategic planning through questions |
 
-**Process:**
-1. Apply **comprehensive quality assessment** (5 dimensions):
-   - **Clarity**: Detailed ambiguity analysis
-   - **Efficiency**: Comprehensive verbosity analysis
-   - **Structure**: Complete flow and organization check
-   - **Completeness**: Thorough specification review
-   - **Actionability**: Assess immediate executability
+**Core references:**
+- `core/clavix-mode.md` - Mode boundaries (planning vs implementation)
+- `core/file-operations.md` - Proven file creation patterns
+- `core/verification.md` - Checkpoint patterns
 
-2. Provide **quality scoring** (0-100% for each dimension)
+**Troubleshooting:**
+- `troubleshooting/jumped-to-implementation.md` - If you start implementing
+- `troubleshooting/skipped-file-creation.md` - If files aren't created
+- `troubleshooting/mode-confusion.md` - Planning vs implementation confusion
 
-3. Generate multiple outputs:
-   - **Primary optimized prompt** (all improvements applied)
-   - **Alternative approaches** (3-5 different ways to phrase/structure the request)
-   - **Alternative structures** (step-by-step, template-based, example-driven)
-   - **Validation checklist** (edge cases, quality criteria, verification steps)
-
-4. Explain **improvements applied** for each quality dimension with examples
-
-5. Identify potential issues and mitigation strategies
-
-**Model Switching Strategy:**
-- Use thinking models (Claude Sonnet with thinking, o1) for Reflective analysis and edge case identification
-- Switch to faster models for formatting and presentation if needed
-- Leverage multi-turn thinking for complex architectural decisions
+**For Octo/Kimi users:** These instruction files have explicit step-by-step guidance that works well with structured processing. Always reference them when executing workflows.
 
 ---
 
-### Conversational Mode Workflow
-**Trigger Keywords:** start conversational mode, let's discuss requirements, talk through this, iterative development
+## 🔍 Workflow Detection Keywords
 
-**When to use:** User wants natural discussion about requirements before formalizing them
+| Keywords | Workflow | Mode |
+|----------|----------|------|
+| prd, product requirements, specification | `prd` | Planning |
+| fast, quick, improve prompt | `fast` | Planning |
+| deep, comprehensive, analysis | `deep` | Planning |
+| start, conversational, discuss | `start` | Planning |
+| summarize, extract, requirements | `summarize` | Planning |
+| implement, build, execute | `implement` | Implementation |
 
-**Process:**
-1. Acknowledge entering conversational mode
-2. Engage in natural discussion about requirements:
-   - Ask clarifying questions as needed
-   - Explore implications and alternatives
-   - Track key points throughout conversation
-3. Remind user they can say "summarize" when ready to extract structured prompt
-4. Stay in this mode until user triggers summarization
-
-**Octofriend Tip:** Conversational mode is perfect for your multi-turn thinking capabilities. Use them to explore trade-offs and architectural decisions deeply.
+**When detected:** Reference the corresponding `.clavix/instructions/workflows/{workflow}.md` file.
 
 ---
 
-### Summarization Workflow
-**Trigger Keywords:** summarize conversation, extract requirements, create prompt from discussion
-
-**When to use:** User wants to extract structured prompt from conversational discussion
-
-**Process:**
-1. Analyze the entire conversation thread
-2. Extract:
-   - Core problem/objective
-   - Key requirements and constraints
-   - Technical specifications mentioned
-   - Success criteria discussed
-   - Important context and assumptions
-
-3. Generate two outputs:
-   - **Structured prompt** (2-3 well-formed paragraphs ready for AI)
-   - **Mini-PRD** (if discussion was substantial - include Problem, Solution, Requirements, Success Metrics)
-
-4. Save to `.clavix/sessions/[timestamp].md` if filesystem access available
-
-5. Present in markdown with clear sections
-
-**Octofriend Tip:** Your context handling across multiple messages makes this particularly effective. You can reference and synthesize insights from the entire conversation history.
-
----
-
-### PRD-to-Implementation Workflow
-**Trigger Keywords:** plan implementation, create tasks, generate task list, implementation plan
-
-**When to use:** User has a PRD and wants to create an implementation task breakdown
-
-**Process:**
-1. Locate the PRD file in `.clavix/outputs/[project-name]/PRD.md`
-2. Analyze the PRD structure, focusing on:
-   - Must-Have Features section
-   - Technical Requirements
-   - Success Metrics
-3. Generate phase-based task breakdown:
-   - Extract features as phases
-   - Break down each feature into actionable tasks
-   - Add PRD section references
-   - Use checkbox format `- [ ]` for task tracking
-4. Save to `.clavix/outputs/[project-name]/tasks.md`
-5. Show first incomplete task and ask if user wants to begin implementation
-
-**Octofriend Tip:** For complex PRDs, use a thinking model to ensure no requirements are missed and task dependencies are properly identified.
-
----
-
-### Implementation Execution Workflow
-**Trigger Keywords:** implement tasks, start implementation, execute plan, next task
-
-**When to use:** User wants to execute implementation tasks from a task list
-
-**Process:**
-1. Load tasks from `.clavix/outputs/[project-name]/tasks.md`
-2. Find first incomplete task (unchecked `- [ ]`)
-3. Implement the task:
-   - Create/modify necessary files
-   - Follow project conventions
-   - Add appropriate error handling and tests
-4. After completion, mark task as done: `- [x]`
-5. Ask if user wants to continue with next task
-6. Repeat until all tasks completed or user stops
-
-**Octofriend Tip:**
-- Use faster models for straightforward implementation tasks
-- Switch to thinking models when encountering complex architectural decisions or debugging
-- Your autofix capabilities help recover from tool call failures automatically
-
-**Git Auto-Commit Strategy (Agent-Friendly):**
-
-When starting implementation with `clavix implement`:
-
-1. **Check task complexity** (optional, only if >3 phases in tasks.md):
-   - Ask user: "Git auto-commit preferences? (per-task, per-5-tasks, per-phase, none)"
-   - Default to 'none' if user doesn't specify
-
-2. **Run with explicit strategy**:
-   ```bash
-   # If user wants commits:
-   clavix implement --commit-strategy=per-phase
-
-   # Otherwise (or no preference):
-   clavix implement
-   ```
-
-3. **Default behavior**: No `--commit-strategy` flag → defaults to 'none' (manual git workflow)
-
----
-
-### Archive Workflow
-**Trigger Keywords:** archive prd, archive project, move to archive, completed project
-
-**When to use:** User wants to archive a completed PRD project
-
-**Process:**
-1. Check if all tasks in `tasks.md` are completed (all `[x]`)
-2. If incomplete tasks exist:
-   - Show list of incomplete tasks
-   - Ask user for confirmation before archiving
-3. Move project folder from `.clavix/outputs/[project-name]/` to `.clavix/outputs/archive/[project-name]/`
-4. Confirm archival and show new location
-
-**CLI Command:** Users with Clavix CLI can run `clavix archive` for interactive archiving or `clavix archive [project-name]` for direct archiving.
-
----
-
-### Prompt Execution Workflow
-**Trigger Keywords:** execute prompt, implement saved prompt, run optimized prompt, use saved optimization
-
-**When to use:** User has saved prompts from fast/deep optimization and wants to execute them
-
-**Process:**
-1. List saved prompts: `clavix prompts list`
-   - Shows all prompts with status (NEW, EXECUTED, OLD, STALE)
-   - Displays age warnings and storage statistics
-2. Execute interactively: `clavix execute` (select from list)
-   - Or execute latest: `clavix execute --latest`
-   - Or execute specific: `clavix execute --id <prompt-id>`
-3. Prompt is marked as EXECUTED after display
-4. Implement the requirements from the optimized prompt
-5. Cleanup after completion: `clavix prompts clear --executed`
-
-**Octofriend Tip:**
-- Execute complex prompts with thinking models for better analysis
-- Execute simple prompts with fast models for quick implementation
-- Your autofix capabilities help recover from implementation failures
-- Use `--latest` flag for streamlined workflow automation
-
----
-
-### CLI reference cheat sheet
-
-| Command | Use it for |
-| --- | --- |
-| `clavix init` | Rebuild `.clavix` structure and regenerate integration assets. |
-| `clavix fast` / `clavix deep` | Quality-based prompt improvement (quick vs. comprehensive). CLI auto-saves prompts. Slash commands require manual saving per template instructions. |
-| `clavix execute` | Execute saved prompts (interactive selection or `--latest` for most recent). |
-| `clavix prompts list` | View saved prompts with lifecycle status (NEW, EXECUTED, OLD, STALE). |
-| `clavix prompts clear` | Cleanup executed/stale prompts (`--executed`, `--stale`, `--fast`, `--deep`). |
-| `clavix prd` | Guided questions to create PRDs. |
-| `clavix plan` | Convert PRD artifacts into task lists. |
-| `clavix implement [--commit-strategy=<type>]` | Start task execution (git: per-task, per-5-tasks, per-phase, none [default]). |
-| `clavix task-complete <taskId>` | Mark task completed with validation and optional git commit. Auto-displays next task. |
-| `clavix start` | Capture conversational requirements. |
-| `clavix summarize` | Extract mini PRDs and prompts from sessions. |
-| `clavix list` | List sessions or outputs (use `--sessions`, `--outputs`, `--archived`). |
-| `clavix show` | Inspect sessions or output directories. |
-| `clavix archive` | Archive or restore project outputs. |
-| `clavix config` | View/update `.clavix/config.json`. |
-| `clavix update` | Refresh documentation and slash commands. |
-| `clavix version` | Display installed CLI version. |
-
-
-## 📝 Workflow Selection Guide
-
-**User mentions PRD, requirements doc, strategic planning:**
-→ Use PRD Generation Workflow
-
-**User has a prompt and wants quick improvement:**
-→ Use Fast Prompt Improvement (quality assessment with 5 dimensions)
-
-**User wants thorough analysis or mentions alternatives/edge cases:**
-→ Use Deep Analysis (comprehensive with alternatives and validation)
-→ Consider model switching for optimal results
-
-**User wants to discuss/explore before committing:**
-→ Use Conversational Mode
-→ Leverage multi-turn thinking capabilities
-
-**After conversation, user wants to formalize:**
-→ Use Summarization Workflow
-
-**User has PRD and needs implementation plan:**
-→ Use PRD-to-Implementation Workflow
-
-**User wants to execute implementation tasks:**
-→ Use Implementation Execution Workflow
-→ Switch models based on task complexity
-
-**User wants to archive completed work:**
-→ Use Archive Workflow
-
----
-
-## 🎯 Octofriend-Specific Best Practices
+## 🎯 Octofriend-Specific Guidance
 
 ### Model Switching Strategy
-- **Fast models** (GPT-4 Turbo, Claude Haiku): Quick improvements, formatting, simple implementations
-- **Thinking models** (Claude Sonnet with thinking, o1): Deep analysis, architecture decisions, edge cases
-- **Mid-range models** (Claude Sonnet, GPT-4): Balanced performance for most tasks
+
+**Fast models** (Qwen-Max, etc.):
+- Quick improvements (`fast` workflow)
+- Formatting and structure
+- Straightforward questions
+
+**Thinking models** (DeepSeek-R1, etc.):
+- Deep analysis (`deep` workflow)
+- Architectural decisions
+- Complex problem-solving
+- PRD generation (`prd` workflow)
+
+**Switch models based on task complexity** - Octofriend makes this seamless.
 
 ### Multi-Turn Thinking
-- Enable for complex architectural decisions
-- Use for comprehensive PRD analysis
-- Leverage for debugging and problem-solving
+
+Enable multi-turn for:
+- Architectural decisions
+- Comprehensive analysis
+- Strategic planning
+- Complex problem decomposition
+
+Multi-turn helps thinking models explore solution space thoroughly.
 
 ### Zero Telemetry Advantage
-- Users can safely share sensitive project requirements
-- Encourage detailed, honest feedback about business problems
-- Assure privacy when collecting PRD information
+
+Users can share sensitive requirements safely:
+- Proprietary business logic
+- Confidential features
+- Internal system details
+- Competitive information
+
+Octofriend's zero telemetry makes it ideal for planning confidential projects.
 
 ### Custom Autofix
-- Trust the autofix system for tool call failures
-- Don't manually retry failed operations unnecessarily
-- Let autofix handle code edit failures
+
+Trust Octofriend's autofix for:
+- Tool call failures
+- Parameter corrections
+- Retry logic
+
+Autofix handles edge cases gracefully - let it work.
 
 ---
 
-## 💡 Usage Tips
+## 📋 CLI Quick Reference
 
-- **Always save outputs** to `.clavix/outputs/` when possible
-- **Use markdown formatting** for all outputs
-- **Be conversational and supportive** - this is a collaborative process
-- **Ask follow-up questions** when requirements are vague or incomplete
-- **Apply quality assessment** systematically in prompt improvement workflows
-- **Reference quality dimensions** (Clarity, Efficiency, Structure, Completeness, Actionability) when explaining changes
-- **Switch models strategically** based on task complexity and thinking requirements
-- **Leverage your multi-turn capabilities** for deep exploration and synthesis
+| Command | Purpose | Output |
+|---------|---------|--------|
+| `clavix init` | Setup Clavix in project | `.clavix/config.json` |
+| `clavix prd` | Generate PRD through questions | `full-prd.md` + `quick-prd.md` |
+| `clavix fast "<prompt>"` | Quick prompt improvement (CLI auto-saves prompts; Slash commands require manual saving per template instructions) | Saved to `.clavix/outputs/prompts/fast/` |
+| `clavix deep "<prompt>"` | Comprehensive analysis (CLI auto-saves prompts; Slash commands require manual saving per template instructions) | Saved to `.clavix/outputs/prompts/deep/` |
+| `clavix execute [--latest]` | Execute prompt (interactive or --latest for most recent) | Implementation |
+| `clavix prompts list` | View all saved prompts with status | NEW, EXECUTED, OLD, STALE |
+| `clavix prompts clear` | Manage cleanup (--executed, --stale, --fast, --deep, --all) | Cleanup report |
+| `clavix start` | Conversational requirements | Session captured |
+| `clavix summarize` | Extract from conversation | `mini-prd.md` + prompts |
+| `clavix plan` | Generate tasks from PRD | `tasks.md` |
+| `clavix implement` | Execute tasks | Implementation + commits |
+| `clavix list` | Show sessions/outputs | List view |
+| `clavix update` | Refresh documentation | Updates managed files |
 
 ---
 
-## 🎯 Success Criteria
+## 🔄 Prompt Execution Workflow
 
-Your goal is to help users:
-- Create clear, comprehensive PRDs through guided questioning
-- Improve prompts using Clavix Intelligence™ principles
-- Think through requirements systematically
-- Execute implementation plans efficiently
-- Archive completed work properly
-- Produce outputs that lead to better AI interactions
+**When you have a saved prompt to execute prompt:**
 
-Always prioritize **clarity, completeness, and actionability** in all outputs. Use Octofriend's unique capabilities (model switching, thinking tokens, multi-LLM support) to provide superior assistance.
+1. **List available prompts**: `clavix prompts list` - See all saved prompts with status
+2. **execute prompt**: `clavix execute --latest` - implement saved prompt interactively
+3. **implement saved prompt**: Agent executes the optimized prompt and implements the feature
+
+**Note:** CLI auto-saves prompts from fast/deep commands. Slash commands require manual saving per template instructions.
+
+---
+
+## 🔄 Standard Workflow
+
+**Complete project flow:**
+
+1. **Planning** (`clavix prd`)
+   - Creates PRD (full + quick versions)
+   - Saves to `.clavix/outputs/{project}/`
+
+2. **Task Preparation** (`clavix plan`)
+   - Transforms PRD → curated tasks.md
+   - Phase-based organization
+
+3. **Implementation** (`clavix implement`)
+   - Agent executes tasks systematically
+   - Uses `clavix task-complete` for progress
+   - Optional git commit strategies
+
+4. **Completion** (`clavix archive`)
+   - Archives completed project
+
+**Alternative quick paths:**
+- **Quick improvement**: `clavix fast` → `clavix execute` → Done
+- **Deep analysis**: `clavix deep` → `clavix execute` → Done
+- **Conversational**: `clavix start` → `clavix summarize` → `clavix execute` → Done
+
+---
+
+## 💡 Best Practices for Octofriend
+
+1. **Use thinking models for planning** - DeepSeek-R1 excels at strategic thinking
+2. **Switch to fast models for execution** - Qwen-Max handles implementation well
+3. **Enable multi-turn for complex decisions** - Let the model think thoroughly
+4. **Reference instruction files explicitly** - "See `.clavix/instructions/workflows/prd.md`"
+5. **Trust file operations** - Octofriend's Write tool is reliable
+6. **Leverage zero telemetry** - Share proprietary details safely
+7. **Follow the standard workflow** - PRD → Plan → Implement → Archive
+
+---
+
+## ⚠️ Common Mistakes
+
+### ❌ Implementing during planning workflows
+**Wrong:** User runs `clavix prd`, you generate PRD then start building features
+
+**Right:** User runs `clavix prd`, you generate PRD, save files, suggest `clavix plan` as next step
+
+### ❌ Skipping file creation
+**Wrong:** Display optimized prompt, stop there
+
+**Right:** Display prompt, save to `.clavix/outputs/`, verify, show path
+
+### ❌ Not referencing instruction files
+**Wrong:** Trying to remember workflow details from this file
+
+**Right:** "See `.clavix/instructions/workflows/fast.md` for complete workflow"
+
+### ❌ Using wrong model for task
+**Wrong:** Using fast model for complex architectural planning
+
+**Right:** Switch to thinking model (DeepSeek-R1) for strategic decisions
+
+---
+
+## 🆘 When in Doubt
+
+1. **Check which command was run** - Determines your mode (planning vs implementation)
+2. **Reference instruction files** - They have complete step-by-step guidance
+3. **Ask the user** - "Should I implement this (run `clavix implement`), or continue planning?"
+4. **Switch models** - Use thinking models for complex planning tasks
+
+---
+
+**For complete workflows:** Always reference `.clavix/instructions/workflows/{workflow}.md`
+
+**For troubleshooting:** Check `.clavix/instructions/troubleshooting/`
+
+**For mode clarification:** See `.clavix/instructions/core/clavix-mode.md`
+
+Octofriend + Clavix = Strategic planning with zero telemetry, perfect for confidential projects.
