@@ -1,30 +1,35 @@
+/**
+ * Tests for plan command functionality
+ *
+ * Uses jest.unstable_mockModule for ESM module mocking.
+ */
 
 import fs from 'fs-extra';
 import * as path from 'path';
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { fileURLToPath } from 'url';
-import Plan from '../../src/cli/commands/plan.js';
-import { TaskManager } from '../../src/core/task-manager.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Mock TaskManager
-const mockGenerateTasks = jest.fn();
-const mockDetectSources = jest.fn();
-const mockFindPrd = jest.fn();
+// Mock TaskManager - define mocks before jest.unstable_mockModule
+const mockGenerateTasks = jest.fn<() => Promise<any>>();
+const mockDetectSources = jest.fn<() => Promise<string[]>>();
+const mockFindPrd = jest.fn<() => Promise<string>>();
 
-jest.mock('../../src/core/task-manager.js', () => {
-  return {
-    TaskManager: jest.fn().mockImplementation(() => ({
-      generateTasksFromPrd: mockGenerateTasks,
-      detectAvailableSources: mockDetectSources,
-      findPrdDirectory: mockFindPrd,
-      readTasksFile: jest.fn(), 
-      getTaskStats: jest.fn()
-    }))
-  };
-});
+jest.unstable_mockModule('../../src/core/task-manager.js', () => ({
+  TaskManager: jest.fn().mockImplementation(() => ({
+    generateTasksFromPrd: mockGenerateTasks,
+    detectAvailableSources: mockDetectSources,
+    findPrdDirectory: mockFindPrd,
+    readTasksFile: jest.fn(),
+    getTaskStats: jest.fn(),
+  })),
+  PrdSourceType: {},
+}));
+
+// Import after mock
+const { default: Plan } = await import('../../src/cli/commands/plan.js');
 
 describe('Plan Command', () => {
   const testDir = path.join(__dirname, '../fixtures/test-plan-cmd');
@@ -43,10 +48,10 @@ describe('Plan Command', () => {
     };
 
     const cmd = new Plan(args, mockOclifConfig as any);
-    
+
     // Spy on console.log
     const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    
+
     // Mock parse
     (cmd as any).parse = jest.fn().mockImplementation(async () => {
       // Simple flag parsing for test
@@ -55,17 +60,19 @@ describe('Plan Command', () => {
         'prd-path': args.includes('--prd-path') ? args[args.indexOf('--prd-path') + 1] : undefined,
         overwrite: args.includes('--overwrite') || args.includes('-o'),
         source: 'auto',
-        'max-tasks': 20
+        'max-tasks': 20,
       };
       return { flags, args: {} };
     });
 
     cmd.log = jest.fn() as any;
-    cmd.error = jest.fn((msg: any) => { throw new Error(msg instanceof Error ? msg.message : msg); }) as any;
+    cmd.error = jest.fn((msg: any) => {
+      throw new Error(msg instanceof Error ? msg.message : msg);
+    }) as any;
     cmd.warn = jest.fn() as any;
 
     await cmd.run();
-    
+
     // Return spy for assertions
     return { cmd, logSpy };
   };
@@ -74,7 +81,7 @@ describe('Plan Command', () => {
     await fs.remove(testDir);
     await fs.ensureDir(projectDir);
     jest.spyOn(process, 'cwd').mockReturnValue(testDir);
-    
+
     // Reset mocks
     mockDetectSources.mockReset();
     mockGenerateTasks.mockReset();
@@ -86,7 +93,7 @@ describe('Plan Command', () => {
       phases: [{ name: 'Phase 1', tasks: [{ description: 'Task 1' }] }],
       totalTasks: 1,
       outputPath: path.join(projectDir, 'tasks.md'),
-      sourcePath: path.join(projectDir, 'full-prd.md')
+      sourcePath: path.join(projectDir, 'full-prd.md'),
     });
     mockFindPrd.mockResolvedValue(projectDir);
   });
@@ -99,9 +106,9 @@ describe('Plan Command', () => {
   it('should generate tasks for a project', async () => {
     // Create dummy PRD
     await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# PRD');
-    
+
     const { logSpy } = await runCommand(['--project', 'test-project']);
-    
+
     expect(logSpy).toHaveBeenCalled();
     const output = logSpy.mock.calls.flat().join('\n');
     expect(output).toContain('Task plan generated successfully');
@@ -109,9 +116,9 @@ describe('Plan Command', () => {
 
   it('should accept direct PRD path', async () => {
     await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# PRD');
-    
+
     const { logSpy } = await runCommand(['--prd-path', projectDir]);
-    
+
     expect(logSpy).toHaveBeenCalled();
     const output = logSpy.mock.calls.flat().join('\n');
     expect(output).toContain('Task plan generated successfully');
@@ -120,36 +127,32 @@ describe('Plan Command', () => {
   it('should fail if PRD not found', async () => {
     // Mock TaskManager to fail detecting sources
     mockDetectSources.mockResolvedValue([]);
-    mockFindPrd.mockImplementation(() => { throw new Error('Not found'); });
+    mockFindPrd.mockImplementation(() => {
+      throw new Error('Not found');
+    });
 
-    await expect(runCommand(['--project', 'non-existent']))
-      .rejects.toThrow();
+    await expect(runCommand(['--project', 'non-existent'])).rejects.toThrow();
   });
 
   it('should warn if tasks.md exists and not overwriting', async () => {
     await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# PRD');
     await fs.writeFile(path.join(projectDir, 'tasks.md'), '# Tasks');
 
-    // Using console.log directly in command might need spying on console.log
-    // But we mocked cmd.log, which catches this.log. 
-    // The code uses console.log directly in some places? 
-    // Checking Plan.ts: yes, it uses console.log.
-    
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    
+
     await runCommand(['--project', 'test-project']);
-    
+
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('already exists'));
-    
+
     consoleSpy.mockRestore();
   });
 
   it('should overwrite if flag provided', async () => {
     await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# PRD');
     await fs.writeFile(path.join(projectDir, 'tasks.md'), '# Tasks');
-    
+
     await runCommand(['--project', 'test-project', '--overwrite']);
-    
+
     // Mock should have been called
     expect(mockGenerateTasks).toHaveBeenCalled();
   });

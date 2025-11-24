@@ -79,6 +79,9 @@ describe('UniversalOptimizer', () => {
     });
 
     it('should handle pattern failures gracefully', async () => {
+      // Suppress expected console.error for this test
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
       const failingPattern = {
         id: 'fail',
         name: 'Fail',
@@ -91,7 +94,10 @@ describe('UniversalOptimizer', () => {
 
       expect(result.enhanced).toBe('test'); // Unchanged
       expect(result.improvements.length).toBe(0);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Error applying pattern'), expect.any(Error));
       // Should not throw
+
+      consoleErrorSpy.mockRestore();
     });
 
     it('should optimize unstructured prompts', async () => {
