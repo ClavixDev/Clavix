@@ -44,6 +44,9 @@ describe('Plan Command', () => {
 
     const cmd = new Plan(args, mockOclifConfig as any);
     
+    // Spy on console.log
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    
     // Mock parse
     (cmd as any).parse = jest.fn().mockImplementation(async () => {
       // Simple flag parsing for test
@@ -62,7 +65,9 @@ describe('Plan Command', () => {
     cmd.warn = jest.fn() as any;
 
     await cmd.run();
-    return cmd;
+    
+    // Return spy for assertions
+    return { cmd, logSpy };
   };
 
   beforeEach(async () => {
@@ -95,20 +100,20 @@ describe('Plan Command', () => {
     // Create dummy PRD
     await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# PRD');
     
-    const cmd = await runCommand(['--project', 'test-project']);
+    const { logSpy } = await runCommand(['--project', 'test-project']);
     
-    expect(cmd.log).toHaveBeenCalled();
-    const output = (cmd.log as any).mock.calls.flat().join('\n');
+    expect(logSpy).toHaveBeenCalled();
+    const output = logSpy.mock.calls.flat().join('\n');
     expect(output).toContain('Task plan generated successfully');
   });
 
   it('should accept direct PRD path', async () => {
     await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# PRD');
     
-    const cmd = await runCommand(['--prd-path', projectDir]);
+    const { logSpy } = await runCommand(['--prd-path', projectDir]);
     
-    expect(cmd.log).toHaveBeenCalled();
-    const output = (cmd.log as any).mock.calls.flat().join('\n');
+    expect(logSpy).toHaveBeenCalled();
+    const output = logSpy.mock.calls.flat().join('\n');
     expect(output).toContain('Task plan generated successfully');
   });
 

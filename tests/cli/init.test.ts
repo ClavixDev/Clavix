@@ -2,7 +2,7 @@
  * Tests for init command functionality
  */
 
-import fs from 'fs-extra';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
@@ -23,7 +23,8 @@ jest.mock('inquirer', () => setupInquirerMock({
 
 // Mock integration selector to avoid interactive prompt
 jest.mock('../../src/utils/integration-selector.js', () => ({
-  selectIntegrations: jest.fn<any>().mockResolvedValue(['claude-code'])
+  __esModule: true,
+  selectIntegrations: jest.fn().mockResolvedValue(['claude-code'])
 }));
 
 // Import command after mocking
