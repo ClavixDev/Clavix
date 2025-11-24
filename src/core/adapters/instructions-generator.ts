@@ -27,23 +27,86 @@ export class InstructionsGenerator {
    * Generate .clavix/instructions/ folder with all reference files
    */
   static async generate(): Promise<void> {
-    const templatePath = path.join(
+    const staticInstructionsPath = path.join(
       __dirname,
       '../../templates/instructions'
     );
 
-    // Check if template exists
-    if (!(await FileSystem.exists(templatePath))) {
+    // Check if static template exists
+    if (!(await FileSystem.exists(staticInstructionsPath))) {
       throw new Error(
-        `.clavix/instructions template not found at ${templatePath}`
+        `.clavix/instructions static files not found at ${staticInstructionsPath}`
       );
     }
 
     // Create target directory
     await FileSystem.ensureDir(this.TARGET_DIR);
 
-    // Copy all instruction files recursively
-    await this.copyDirectory(templatePath, this.TARGET_DIR);
+    // Step 1: Copy static instruction files (core/, troubleshooting/, README.md)
+    // Note: This skips workflows/ directory if it exists
+    await this.copyStaticInstructions(staticInstructionsPath, this.TARGET_DIR);
+
+    // Step 2: Copy ALL canonical workflows → .clavix/instructions/workflows/
+    await this.copyCanonicalWorkflows();
+  }
+
+  /**
+   * Copy static instruction files (core/, troubleshooting/, README.md)
+   * Excludes workflows/ directory - that comes from canonical templates
+   */
+  private static async copyStaticInstructions(src: string, dest: string): Promise<void> {
+    const entries = await FileSystem.readdir(src, { withFileTypes: true });
+
+    for (const entry of entries) {
+      // Skip workflows/ directory - it will be populated from canonical
+      if (entry.isDirectory() && entry.name === 'workflows') {
+        continue;
+      }
+
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+
+      if (entry.isDirectory()) {
+        await FileSystem.ensureDir(destPath);
+        await this.copyDirectory(srcPath, destPath);
+      } else {
+        const content = await FileSystem.readFile(srcPath);
+        await FileSystem.writeFileAtomic(destPath, content);
+      }
+    }
+  }
+
+  /**
+   * Copy ALL canonical templates to .clavix/instructions/workflows/
+   * This ensures generic integrations have access to complete workflow set
+   */
+  private static async copyCanonicalWorkflows(): Promise<void> {
+    const canonicalPath = path.join(
+      __dirname,
+      '../../templates/slash-commands/_canonical'
+    );
+
+    const workflowsTarget = path.join(this.TARGET_DIR, 'workflows');
+
+    if (!(await FileSystem.exists(canonicalPath))) {
+      throw new Error(
+        `Canonical templates not found at ${canonicalPath}`
+      );
+    }
+
+    // Create workflows directory
+    await FileSystem.ensureDir(workflowsTarget);
+
+    // Copy all .md files from canonical
+    const entries = await FileSystem.readdir(canonicalPath, { withFileTypes: true });
+    const mdFiles = entries.filter(f => f.isFile() && f.name.endsWith('.md'));
+
+    for (const file of mdFiles) {
+      const srcPath = path.join(canonicalPath, file.name);
+      const destPath = path.join(workflowsTarget, file.name);
+      const content = await FileSystem.readFile(srcPath);
+      await FileSystem.writeFileAtomic(destPath, content);
+    }
   }
 
   /**
