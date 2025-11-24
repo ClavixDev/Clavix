@@ -13,23 +13,19 @@ Canonical Templates (SOURCE OF TRUTH)
   ├── start.md, summarize.md
   ├── plan.md, implement.md, execute.md
   └── archive.md, prompts.md
-    ↓ (inform)
-Instruction Files (AGENT-CONSUMABLE)
-  src/templates/instructions/
-  ├── workflows/         - Complete step-by-step workflows
-  ├── core/             - Foundational concepts and patterns
-  └── troubleshooting/  - Common issues and solutions
-    ↓ (reference)
-Generic Connectors (THIN WRAPPERS + PLATFORM-SPECIFIC)
-  src/templates/agents/
-  ├── agents.md          - Generic agents (no slash command support)
-  ├── octo.md           - Octofriend-specific guidance
-  ├── copilot-instructions.md - GitHub Copilot integration
-  └── warp.md           - Warp AI-specific guidance
-    ↓ (integrated into)
-Platform Files (.clavix/ directory in user projects)
+    ↓ (copied during clavix init)
+Instruction Files (AUTO-GENERATED)
   .clavix/instructions/
-  └── [Same structure as src/templates/instructions/]
+  ├── workflows/         - Complete workflows (COPIED from canonical)
+  ├── core/             - Foundational concepts (static)
+  └── troubleshooting/  - Common issues (static)
+    ↓ (reference)
+Generic Connectors (THIN WRAPPERS)
+  src/templates/agents/
+  ├── agents.md          - Generic agents
+  ├── octo.md           - Octofriend-specific
+  ├── copilot-instructions.md - GitHub Copilot
+  └── warp.md           - Warp AI
 ```
 
 ---
@@ -137,26 +133,24 @@ Problem → Solution guides:
    - All steps, examples, edge cases
    - This is the official reference
 
-2. **Create instruction file** in `src/templates/instructions/workflows/`
-   - Match canonical 100% in substance
-   - Reorganize for agent consumption
-   - Add checkpoints, self-correction, common mistakes
-   - Reference troubleshooting files
+2. **NO NEED to create instruction file** - It's auto-copied during init
+   - During `clavix init`, canonical templates are automatically copied to `.clavix/instructions/workflows/`
+   - User projects get fresh copy on init/update
+   - **Single source of truth:** Only maintain canonical template
 
-3. **Update generic connectors** in `src/templates/agents/`
-   - Add brief mention + reference to instruction file
-   - Update workflow detection keywords table
-   - Update CLI quick reference if new command
+3. **Update generic connectors** in `src/templates/agents/` (if needed)
+   - Add table reference to new workflow
+   - Update workflow detection keywords
    - DO NOT duplicate workflow steps
 
 4. **Update this README** if new pattern/principle introduced
 
 ### When Modifying Existing Workflow
 
-1. **Update canonical template first** - This is source of truth
-2. **Update instruction file to match** - Ensure 100% alignment
-3. **Update connector files** - Only if platform-specific guidance changes
-4. **Test with `clavix update`** - Verify templates deployed correctly
+1. **Update canonical template** - This is source of truth
+2. **Users run `clavix update`** - Refreshes `.clavix/instructions/workflows/` from canonical
+3. **Test:** Verify `clavix update` propagates changes correctly
+4. **No manual duplication needed** - InstructionsGenerator copies from canonical automatically
 
 ### When Reporting Verbosity Issues
 
