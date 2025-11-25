@@ -91,6 +91,7 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
    - **migration**: Version upgrades, porting code between frameworks
    - **security-review**: Security audits, vulnerability checks
    - **learning**: Conceptual understanding, tutorials, explanations
+   - **summarization**: Extracting requirements from conversations
 
 3. **Quality Assessment** - Evaluate across 6 dimensions:
 

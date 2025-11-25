@@ -5,6 +5,76 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.3.2] - 2025-11-25
+
+### PRD & Conversational Intelligence Release
+
+**Extends Clavix Intelligence to PRD mode (`/clavix:prd`) and Conversational mode (`/clavix:start`) with 7 new dedicated patterns and "Supportive Companion" UX for non-intrusive quality tracking.**
+
+#### New Patterns (7 total)
+
+**PRD Mode Patterns (4):**
+| Pattern | Priority | Purpose |
+|---------|----------|---------|
+| RequirementPrioritizer | P7 | Separates must-have from nice-to-have requirements |
+| UserPersonaEnricher | P6 | Adds missing user context and personas |
+| SuccessMetricsEnforcer | P7 | Ensures measurable success criteria exist |
+| DependencyIdentifier | P5 | Identifies technical and external dependencies |
+
+**Conversational Mode Patterns (3):**
+| Pattern | Priority | Purpose |
+|---------|----------|---------|
+| ConversationSummarizer | P8 | Extracts structured requirements from messages |
+| TopicCoherenceAnalyzer | P6 | Detects topic shifts and multi-topic conversations |
+| ImplicitRequirementExtractor | P7 | Surfaces requirements mentioned indirectly |
+
+#### Core Infrastructure Updates
+
+- **New Types:** `OptimizationPhase`, `DocumentType` for phase-aware pattern selection
+- **Extended `OptimizationMode`:** Now includes `'prd'` and `'conversational'` modes
+- **Enhanced `PatternContext`:** Added `phase`, `documentType`, `questionId` fields
+- **New Pattern Selection:** `selectPatternsForMode()` method with phase-aware filtering
+- **PRD Answer Validation:** `validatePRDAnswer()` method with adaptive threshold (< 50%)
+
+#### "Supportive Companion" UX for Conversational Mode
+
+New `ConversationQualityTracker` class implementing UX-first design:
+- Silent tracking during normal conversation flow
+- Positive checkpoints: "📝 Shaping up nicely! Covered: features, constraints..."
+- Gentle nudges only for critical gaps (max 1 per session)
+- Reassuring end message: "✨ Clavix Intelligence will enhance your summary"
+
+#### Updated Pattern Counts
+
+| Mode | Patterns Available |
+|------|-------------------|
+| Fast | 21 core patterns |
+| Deep | 27 total patterns |
+| PRD | 15 patterns |
+| Conversational | 11 patterns |
+
+#### Files Added
+- `src/core/intelligence/patterns/requirement-prioritizer.ts`
+- `src/core/intelligence/patterns/user-persona-enricher.ts`
+- `src/core/intelligence/patterns/success-metrics-enforcer.ts`
+- `src/core/intelligence/patterns/dependency-identifier.ts`
+- `src/core/intelligence/patterns/conversation-summarizer.ts`
+- `src/core/intelligence/patterns/topic-coherence-analyzer.ts`
+- `src/core/intelligence/patterns/implicit-requirement-extractor.ts`
+- `src/core/conversation-quality-tracker.ts`
+
+#### Files Modified
+- `src/core/intelligence/types.ts` - New types and extended interfaces
+- `src/core/intelligence/pattern-library.ts` - Phase-aware selection, new pattern registration
+- `src/core/intelligence/universal-optimizer.ts` - Context override support, PRD validation
+- `src/core/intelligence/intent-detector.ts` - Added 'summarization' intent
+- `src/core/intelligence/quality-assessor.ts` - Added summarization requirements
+- `src/templates/slash-commands/_components/sections/pattern-visibility.md` - New pattern tables
+- `src/templates/slash-commands/_canonical/fast.md` - Added summarization intent
+- `src/templates/slash-commands/_canonical/deep.md` - Added summarization intent
+
+---
+
 ## [4.1.1] - 2025-11-25
 
 ### Bug Fixes

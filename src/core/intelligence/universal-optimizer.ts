@@ -4,12 +4,24 @@ import { QualityAssessor } from './quality-assessor.js';
 import {
   OptimizationResult,
   OptimizationMode,
+  OptimizationPhase,
+  DocumentType,
   Improvement,
   PatternSummary,
   PatternContext,
   EscalationAnalysis,
   EscalationReason,
 } from './types.js';
+
+/**
+ * v4.3.2: Extended context options for PRD and Conversational modes
+ */
+export interface OptimizationContextOverride {
+  phase?: OptimizationPhase;
+  documentType?: DocumentType;
+  questionId?: string;
+  intent?: string; // Override intent detection
+}
 
 export class UniversalOptimizer {
   private intentDetector: IntentDetector;
@@ -28,15 +40,31 @@ export class UniversalOptimizer {
 
   /**
    * Optimize a prompt using Clavix Intelligence
+   * @param prompt The prompt to optimize
+   * @param mode The optimization mode
+   * @param contextOverride Optional context override for PRD/Conversational modes
    */
-  async optimize(prompt: string, mode: OptimizationMode): Promise<OptimizationResult> {
+  async optimize(
+    prompt: string,
+    mode: OptimizationMode,
+    contextOverride?: OptimizationContextOverride
+  ): Promise<OptimizationResult> {
     const startTime = Date.now();
 
-    // Step 1: Detect intent
-    const intent = this.intentDetector.analyze(prompt);
+    // Step 1: Detect intent (or use override)
+    let intent = this.intentDetector.analyze(prompt);
+    if (contextOverride?.intent) {
+      intent = {
+        ...intent,
+        primaryIntent: contextOverride.intent as import('./types.js').PromptIntent,
+      };
+    }
 
-    // Step 2: Select applicable patterns
-    const patterns = this.patternLibrary.selectPatterns(intent, mode);
+    // Step 2: Select applicable patterns using mode-aware selection
+    const patterns =
+      mode === 'prd' || mode === 'conversational'
+        ? this.patternLibrary.selectPatternsForMode(mode, intent, contextOverride?.phase)
+        : this.patternLibrary.selectPatterns(intent, mode);
 
     // Step 3: Apply patterns sequentially
     let enhanced = prompt;
@@ -47,6 +75,10 @@ export class UniversalOptimizer {
       intent,
       mode,
       originalPrompt: prompt,
+      // v4.3.2: Extended context
+      phase: contextOverride?.phase,
+      documentType: contextOverride?.documentType,
+      questionId: contextOverride?.questionId,
     };
 
     for (const pattern of patterns) {
@@ -84,6 +116,65 @@ export class UniversalOptimizer {
       mode,
       processingTimeMs,
     };
+  }
+
+  /**
+   * v4.3.2: Validate a PRD answer and provide friendly suggestions
+   * Uses adaptive threshold (< 50% quality triggers suggestions)
+   */
+  async validatePRDAnswer(
+    answer: string,
+    questionId: string
+  ): Promise<{
+    needsClarification: boolean;
+    suggestion?: string;
+    quality: number;
+  }> {
+    const result = await this.optimize(answer, 'prd', {
+      phase: 'question-validation',
+      questionId,
+      intent: 'prd-generation',
+    });
+
+    // Adaptive threshold: only suggest improvements for very vague answers
+    if (result.quality.overall < 50) {
+      return {
+        needsClarification: true,
+        suggestion: this.generateFriendlySuggestion(result, questionId),
+        quality: result.quality.overall,
+      };
+    }
+
+    return {
+      needsClarification: false,
+      quality: result.quality.overall,
+    };
+  }
+
+  /**
+   * v4.3.2: Generate a friendly, non-intrusive suggestion for low-quality answers
+   */
+  private generateFriendlySuggestion(result: OptimizationResult, questionId: string): string {
+    const suggestions: Record<string, string[]> = {
+      q1: ["the problem you're solving", 'why this matters', 'who benefits'],
+      q2: ['specific features', 'user actions', 'key functionality'],
+      q3: ['technologies', 'frameworks', 'constraints'],
+      q4: ["what's explicitly out of scope", 'features to avoid', 'limitations'],
+      q5: ['additional context', 'constraints', 'timeline considerations'],
+    };
+
+    const questionSuggestions = suggestions[questionId] || suggestions.q5;
+
+    // Pick the most relevant suggestion based on what's missing
+    let detail = questionSuggestions[0];
+    if (result.quality.completeness < 40) {
+      detail = questionSuggestions[Math.min(1, questionSuggestions.length - 1)];
+    }
+    if (result.quality.specificity < 40) {
+      detail = questionSuggestions[Math.min(2, questionSuggestions.length - 1)];
+    }
+
+    return `adding ${detail} would help`;
   }
 
   /**

@@ -93,6 +93,7 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
    - **migration**: Version upgrades, porting code between frameworks
    - **security-review**: Security audits, vulnerability checks
    - **learning**: Conceptual understanding, tutorials, explanations
+   - **summarization**: Extracting requirements from conversations
 
 3. **Strategic Scope Detection** (before detailed analysis):
 

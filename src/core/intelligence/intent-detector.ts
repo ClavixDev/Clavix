@@ -336,6 +336,8 @@ export class IntentDetector {
       migration: this.calculateIntentScore(lowerPrompt, words, 'migration'),
       'security-review': this.calculateIntentScore(lowerPrompt, words, 'security-review'),
       learning: this.calculateIntentScore(lowerPrompt, words, 'learning'),
+      // v4.3.2: Conversational mode intent
+      summarization: 0, // Summarization is explicit command, not inferred
     };
 
     // Apply intent priority rules
@@ -816,6 +818,7 @@ export class IntentDetector {
       migration: this.calculateIntentScore(lowerPrompt, words, 'migration'),
       'security-review': this.calculateIntentScore(lowerPrompt, words, 'security-review'),
       learning: this.calculateIntentScore(lowerPrompt, words, 'learning'),
+      summarization: 0, // v4.3.2: Explicit command
     };
 
     // Get secondary intents (top 2-3 after primary, with score > 10)
