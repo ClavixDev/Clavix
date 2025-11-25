@@ -32,12 +32,46 @@ import { ConversationSummarizer } from './patterns/conversation-summarizer.js';
 import { TopicCoherenceAnalyzer } from './patterns/topic-coherence-analyzer.js';
 import { ImplicitRequirementExtractor } from './patterns/implicit-requirement-extractor.js';
 import { IntentAnalysis, OptimizationMode, OptimizationPhase, PromptIntent } from './types.js';
+import { IntelligenceConfig } from '../../types/config.js';
 
 export class PatternLibrary {
   private patterns: Map<string, BasePattern> = new Map();
+  private config: IntelligenceConfig | null = null;
 
   constructor() {
     this.registerDefaultPatterns();
+  }
+
+  /**
+   * v4.4: Apply configuration settings to pattern library
+   * Allows enabling/disabling patterns and adjusting priorities via config
+   */
+  applyConfig(config: IntelligenceConfig): void {
+    this.config = config;
+
+    // Apply priority overrides
+    if (config.patterns?.priorityOverrides) {
+      for (const [patternId, newPriority] of Object.entries(config.patterns.priorityOverrides)) {
+        const pattern = this.patterns.get(patternId);
+        if (pattern && newPriority >= 1 && newPriority <= 10) {
+          pattern.priority = newPriority;
+        }
+      }
+    }
+  }
+
+  /**
+   * v4.4: Check if a pattern is disabled via config
+   */
+  private isPatternDisabled(patternId: string): boolean {
+    return this.config?.patterns?.disabled?.includes(patternId) ?? false;
+  }
+
+  /**
+   * v4.4: Get custom settings for a pattern
+   */
+  getPatternSettings(patternId: string): Record<string, unknown> | undefined {
+    return this.config?.patterns?.customSettings?.[patternId];
   }
 
   private registerDefaultPatterns(): void {
@@ -135,6 +169,11 @@ export class PatternLibrary {
     const applicablePatterns: BasePattern[] = [];
 
     for (const pattern of this.patterns.values()) {
+      // v4.4: Check if pattern is disabled via config
+      if (this.isPatternDisabled(pattern.id)) {
+        continue;
+      }
+
       // Check mode compatibility
       if (pattern.mode !== 'both' && pattern.mode !== mode) {
         continue;
@@ -166,6 +205,11 @@ export class PatternLibrary {
     const applicablePatterns: BasePattern[] = [];
 
     for (const pattern of this.patterns.values()) {
+      // v4.4: Check if pattern is disabled via config
+      if (this.isPatternDisabled(pattern.id)) {
+        continue;
+      }
+
       // Check mode compatibility (use mapped base mode)
       if (pattern.mode !== 'both' && pattern.mode !== baseMode) {
         continue;

@@ -13,30 +13,40 @@ describe('PatternLibrary', () => {
 
   describe('pattern registration', () => {
     it('should register default patterns', () => {
-      const patterns = library.getApplicablePatterns('Create login', 'code-generation', {
-        clarity: 50,
-        efficiency: 50,
-        structure: 50,
-        completeness: 50,
-        actionability: 50,
-        overall: 50
-      }, 'fast');
+      const patterns = library.getApplicablePatterns(
+        'Create login',
+        'code-generation',
+        {
+          clarity: 50,
+          efficiency: 50,
+          structure: 50,
+          completeness: 50,
+          actionability: 50,
+          overall: 50,
+        },
+        'fast'
+      );
 
       expect(patterns.length).toBeGreaterThan(0);
     });
 
     it('should return patterns sorted by priority', () => {
-      const patterns = library.getApplicablePatterns('Create login', 'code-generation', {
-        clarity: 50,
-        efficiency: 50,
-        structure: 50,
-        completeness: 50,
-        actionability: 50,
-        overall: 50
-      }, 'fast');
+      const patterns = library.getApplicablePatterns(
+        'Create login',
+        'code-generation',
+        {
+          clarity: 50,
+          efficiency: 50,
+          structure: 50,
+          completeness: 50,
+          actionability: 50,
+          overall: 50,
+        },
+        'fast'
+      );
 
       // High priority patterns should come first (10 is highest)
-      const priorities = patterns.map(p => p.priority);
+      const priorities = patterns.map((p) => p.priority);
       expect(priorities[0]).toBeGreaterThanOrEqual(7); // High priority range
     });
   });
@@ -49,10 +59,15 @@ describe('PatternLibrary', () => {
         structure: 30,
         completeness: 30,
         actionability: 30,
-        overall: 30
+        overall: 30,
       };
 
-      const patterns = library.getApplicablePatterns('fix it', 'code-generation', lowQuality, 'fast');
+      const patterns = library.getApplicablePatterns(
+        'fix it',
+        'code-generation',
+        lowQuality,
+        'fast'
+      );
 
       // Should get multiple patterns for low quality
       expect(patterns.length).toBeGreaterThan(0);
@@ -65,11 +80,21 @@ describe('PatternLibrary', () => {
         structure: 50,
         completeness: 50,
         actionability: 50,
-        overall: 50
+        overall: 50,
       };
 
-      const codePatterns = library.getApplicablePatterns('create login', 'code-generation', quality, 'fast');
-      const debugPatterns = library.getApplicablePatterns('fix error', 'debugging', quality, 'fast');
+      const codePatterns = library.getApplicablePatterns(
+        'create login',
+        'code-generation',
+        quality,
+        'fast'
+      );
+      const debugPatterns = library.getApplicablePatterns(
+        'fix error',
+        'debugging',
+        quality,
+        'fast'
+      );
 
       expect(codePatterns).toBeDefined();
       expect(debugPatterns).toBeDefined();
@@ -82,11 +107,21 @@ describe('PatternLibrary', () => {
         structure: 50,
         completeness: 50,
         actionability: 50,
-        overall: 50
+        overall: 50,
       };
 
-      const fastPatterns = library.getApplicablePatterns('create api', 'code-generation', quality, 'fast');
-      const deepPatterns = library.getApplicablePatterns('create api', 'code-generation', quality, 'deep');
+      const fastPatterns = library.getApplicablePatterns(
+        'create api',
+        'code-generation',
+        quality,
+        'fast'
+      );
+      const deepPatterns = library.getApplicablePatterns(
+        'create api',
+        'code-generation',
+        quality,
+        'deep'
+      );
 
       // Both should return patterns (deep may return more but not tested here)
       expect(fastPatterns.length).toBeGreaterThan(0);
@@ -97,14 +132,19 @@ describe('PatternLibrary', () => {
   describe('pattern application', () => {
     it('should apply patterns sequentially', async () => {
       const prompt = 'Please could you maybe help me create a login page';
-      const patterns = library.getApplicablePatterns(prompt, 'code-generation', {
-        clarity: 40,
-        efficiency: 30,
-        structure: 40,
-        completeness: 40,
-        actionability: 40,
-        overall: 38
-      }, 'fast');
+      const patterns = library.getApplicablePatterns(
+        prompt,
+        'code-generation',
+        {
+          clarity: 40,
+          efficiency: 30,
+          structure: 40,
+          completeness: 40,
+          actionability: 40,
+          overall: 38,
+        },
+        'fast'
+      );
 
       let result = prompt;
       for (const pattern of patterns) {
@@ -116,11 +156,11 @@ describe('PatternLibrary', () => {
               hasCodeContext: false,
               hasTechnicalTerms: false,
               isOpenEnded: false,
-              needsStructure: false
-            }
+              needsStructure: false,
+            },
           },
           mode: 'fast',
-          originalPrompt: prompt
+          originalPrompt: prompt,
         });
         result = patternResult.enhancedPrompt;
       }
@@ -142,11 +182,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: verbose
+        originalPrompt: verbose,
       });
 
       expect(result.enhancedPrompt.length).toBeLessThanOrEqual(verbose.length);
@@ -164,11 +204,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: withPleasantries
+        originalPrompt: withPleasantries,
       });
 
       // Pattern removes "Thank you" and fluff words like "so much"
@@ -187,11 +227,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: technical
+        originalPrompt: technical,
       });
 
       expect(result.enhancedPrompt).toContain('authentication');
@@ -212,11 +252,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: vague
+        originalPrompt: vague,
       });
 
       expect(result.enhancedPrompt).toContain('Objective');
@@ -234,11 +274,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: unclear
+        originalPrompt: unclear,
       });
 
       // Pattern adds "Objective" section
@@ -257,11 +297,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: unorganized
+        originalPrompt: unorganized,
       });
 
       // Pattern adds "Objective" section when it can infer one
@@ -282,11 +322,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: basic
+        originalPrompt: basic,
       });
 
       // Pattern may or may not add content depending on what it detects
@@ -305,11 +345,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: incomplete
+        originalPrompt: incomplete,
       });
 
       // Pattern may or may not add content depending on what it detects
@@ -328,11 +368,11 @@ describe('PatternLibrary', () => {
             hasCodeContext: false,
             hasTechnicalTerms: false,
             isOpenEnded: false,
-            needsStructure: false
-          }
+            needsStructure: false,
+          },
         },
         mode: 'fast',
-        originalPrompt: withTech
+        originalPrompt: withTech,
       });
 
       expect(result.enhancedPrompt).toContain('React');
@@ -342,14 +382,19 @@ describe('PatternLibrary', () => {
 
   describe('edge cases', () => {
     it('should handle empty prompt', async () => {
-      const patterns = library.getApplicablePatterns('', 'code-generation', {
-        clarity: 0,
-        efficiency: 0,
-        structure: 0,
-        completeness: 0,
-        actionability: 0,
-        overall: 0
-      }, 'fast');
+      const patterns = library.getApplicablePatterns(
+        '',
+        'code-generation',
+        {
+          clarity: 0,
+          efficiency: 0,
+          structure: 0,
+          completeness: 0,
+          actionability: 0,
+          overall: 0,
+        },
+        'fast'
+      );
 
       expect(patterns).toBeDefined();
       expect(Array.isArray(patterns)).toBe(true);
@@ -363,14 +408,19 @@ describe('PatternLibrary', () => {
         Success: Users can register, login, and access protected routes
       `;
 
-      const patterns = library.getApplicablePatterns(highQualityPrompt, 'code-generation', {
-        clarity: 90,
-        efficiency: 85,
-        structure: 90,
-        completeness: 95,
-        actionability: 90,
-        overall: 90
-      }, 'fast');
+      const patterns = library.getApplicablePatterns(
+        highQualityPrompt,
+        'code-generation',
+        {
+          clarity: 90,
+          efficiency: 85,
+          structure: 90,
+          completeness: 95,
+          actionability: 90,
+          overall: 90,
+        },
+        'fast'
+      );
 
       // Should still return some patterns (even high quality can be improved)
       expect(patterns).toBeDefined();
@@ -378,14 +428,19 @@ describe('PatternLibrary', () => {
 
     it('should handle pattern application failures gracefully', async () => {
       const prompt = 'test';
-      const patterns = library.getApplicablePatterns(prompt, 'code-generation', {
-        clarity: 50,
-        efficiency: 50,
-        structure: 50,
-        completeness: 50,
-        actionability: 50,
-        overall: 50
-      }, 'fast');
+      const patterns = library.getApplicablePatterns(
+        prompt,
+        'code-generation',
+        {
+          clarity: 50,
+          efficiency: 50,
+          structure: 50,
+          completeness: 50,
+          actionability: 50,
+          overall: 50,
+        },
+        'fast'
+      );
 
       // Should not throw even if patterns fail
       let result = prompt;
@@ -399,11 +454,11 @@ describe('PatternLibrary', () => {
                 hasCodeContext: false,
                 hasTechnicalTerms: false,
                 isOpenEnded: false,
-                needsStructure: false
-              }
+                needsStructure: false,
+              },
             },
             mode: 'fast',
-            originalPrompt: prompt
+            originalPrompt: prompt,
           });
           result = patternResult.enhancedPrompt;
         } catch {
@@ -412,6 +467,142 @@ describe('PatternLibrary', () => {
       }
 
       expect(result).toBeDefined();
+    });
+  });
+
+  describe('v4.4 config-based extensibility', () => {
+    it('should apply config with disabled patterns', () => {
+      library.applyConfig({
+        patterns: {
+          disabled: ['conciseness-filter'],
+        },
+      });
+
+      const patterns = library.getApplicablePatterns(
+        'Create login',
+        'code-generation',
+        {
+          clarity: 50,
+          efficiency: 50,
+          structure: 50,
+          completeness: 50,
+          actionability: 50,
+          overall: 50,
+        },
+        'fast'
+      );
+
+      // conciseness-filter should not be in the list
+      const hasConcisenessFilter = patterns.some((p) => p.id === 'conciseness-filter');
+      expect(hasConcisenessFilter).toBe(false);
+    });
+
+    it('should apply priority overrides', () => {
+      library.applyConfig({
+        patterns: {
+          priorityOverrides: {
+            'conciseness-filter': 1, // Lowest priority
+          },
+        },
+      });
+
+      const patterns = library.getApplicablePatterns(
+        'Create login',
+        'code-generation',
+        {
+          clarity: 50,
+          efficiency: 50,
+          structure: 50,
+          completeness: 50,
+          actionability: 50,
+          overall: 50,
+        },
+        'fast'
+      );
+
+      // conciseness-filter should be last (lowest priority)
+      const conciseness = patterns.find((p) => p.id === 'conciseness-filter');
+      if (conciseness) {
+        expect(conciseness.priority).toBe(1);
+      }
+    });
+
+    it('should provide pattern settings via getPatternSettings', () => {
+      library.applyConfig({
+        patterns: {
+          customSettings: {
+            'conciseness-filter': {
+              maxWords: 100,
+              aggressive: true,
+            },
+          },
+        },
+      });
+
+      const settings = library.getPatternSettings('conciseness-filter');
+      expect(settings).toEqual({
+        maxWords: 100,
+        aggressive: true,
+      });
+    });
+
+    it('should return undefined for patterns without custom settings', () => {
+      library.applyConfig({
+        patterns: {},
+      });
+
+      const settings = library.getPatternSettings('non-existent-pattern');
+      expect(settings).toBeUndefined();
+    });
+
+    it('should handle empty config gracefully', () => {
+      library.applyConfig({});
+
+      const patterns = library.getApplicablePatterns(
+        'Create login',
+        'code-generation',
+        {
+          clarity: 50,
+          efficiency: 50,
+          structure: 50,
+          completeness: 50,
+          actionability: 50,
+          overall: 50,
+        },
+        'fast'
+      );
+
+      expect(patterns.length).toBeGreaterThan(0);
+    });
+
+    it('should reject invalid priority values', () => {
+      library.applyConfig({
+        patterns: {
+          priorityOverrides: {
+            'conciseness-filter': 15, // Out of range (should be 1-10)
+          },
+        },
+      });
+
+      // Pattern should retain original priority
+      const patterns = library.getApplicablePatterns(
+        'Create login',
+        'code-generation',
+        {
+          clarity: 50,
+          efficiency: 50,
+          structure: 50,
+          completeness: 50,
+          actionability: 50,
+          overall: 50,
+        },
+        'fast'
+      );
+
+      const conciseness = patterns.find((p) => p.id === 'conciseness-filter');
+      if (conciseness) {
+        expect(conciseness.priority).not.toBe(15);
+      }
     });
   });
 });

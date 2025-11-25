@@ -104,7 +104,15 @@ Implementation: BLOCKED - I will extract requirements, not implement them
    - **Success Criteria** [confidence]: How will success be measured?
    - **Context** [confidence]: Any important background or constraints?
 
-   **CHECKPOINT:** Extracted [N] requirements, [M] constraints from conversation
+   **Calculate Extraction Confidence (v4.4):**
+   - Start with 50% base (conversational content detected)
+   - Add 20% if concrete requirements extracted
+   - Add 15% if clear goals identified
+   - Add 15% if constraints defined
+   - Display: "*Extraction confidence: X%*"
+   - If confidence < 80%, include verification prompt in output
+
+   **CHECKPOINT:** Extracted [N] requirements, [M] constraints from conversation (confidence: X%)
 
 3. **CREATE OUTPUT FILES (REQUIRED)** - You MUST create three files. This is not optional.
 
@@ -155,6 +163,12 @@ Implementation: BLOCKED - I will extract requirements, not implement them
    ## Edge Cases & Considerations
    - [Edge case 1 and how it should be handled]
    - [Open question 1 - needs clarification]
+
+   ## Implicit Requirements (v4.4)
+   *Inferred from conversation context - please verify:*
+   - [Category] [Requirement inferred from discussion]
+   - [Category] [Another requirement]
+   > **Note:** These requirements were surfaced by analyzing conversation patterns.
 
    ## Success Criteria
    How we know this is complete and working:
@@ -344,7 +358,34 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
 ---
 
-## Agent Transparency (v4.1)
+## Agent Transparency (v4.4)
+
+### Enhanced Extraction Capabilities (v4.4)
+
+Clavix Intelligence™ now includes enhanced extraction with confidence scoring:
+
+**Extraction Confidence** (auto-calculated):
+- Base confidence: 50% (conversational content detected)
+- +20% if concrete requirements extracted
+- +15% if clear goals identified
+- +15% if constraints defined
+- Display: "Extraction confidence: X%"
+- If <80%, add verification prompt to output
+
+**Implicit Requirements** (auto-surfaced):
+- Inferred from conversation context, grouped by category:
+  - **Infrastructure**: Mobile-responsive, real-time, scalability, offline, multi-tenant
+  - **Security**: Audit compliance, data privacy, encryption
+  - **Performance**: Speed optimization, low-latency
+  - **UX**: Simplicity focus, accessibility (WCAG)
+  - **Integration**: Notifications, search, analytics, APIs, data import/export
+- Up to 10 implicit requirements per extraction
+- Always marked with verification note
+
+**Topic Organization**:
+- Detects 15 topic categories with expanded keyword matching
+- Groups multi-topic extractions by area
+- Suggests separate PRDs for 3+ distinct topics
 
 ### Quality Output Format
 {{INCLUDE:agent-protocols/quality-output.md}}

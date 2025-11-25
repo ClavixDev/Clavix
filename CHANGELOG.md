@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.0] - 2025-11-25
+
+### Quality & Stability Release
+
+**Comprehensive test coverage, enhanced conversational patterns, and config-based extensibility.**
+
+#### Test Coverage (Part 1)
+- **100% pattern test coverage**: Added tests for all 21 previously untested patterns
+- **Total tests: 3841** across 135 test suites
+- Tests cover all pattern properties, isApplicable(), apply(), edge cases, and result structures
+
+#### Enhanced Conversational Patterns (Part 2)
+| Pattern | Enhancement |
+|---------|-------------|
+| ConversationSummarizer | Expanded ~30 conversational markers, confidence scoring (50-100%), enhanced goal/requirement extraction |
+| TopicCoherenceAnalyzer | Expanded to 15 topic categories with more keywords per category |
+| ImplicitRequirementExtractor | Categorized patterns (infrastructure, security, performance, UX, integration), increased limit to 10, emoji-labeled output |
+
+#### Config-Based Extensibility (Part 3)
+New `intelligence` section in `.clavix/config.json`:
+```json
+{
+  "intelligence": {
+    "defaultMode": "fast",
+    "verbosePatternLogs": false,
+    "patterns": {
+      "disabled": ["pattern-id"],
+      "priorityOverrides": { "pattern-id": 5 },
+      "customSettings": { "pattern-id": { "key": "value" } }
+    }
+  }
+}
+```
+
+#### Template Polish (Part 4)
+- Updated all canonical templates to v4.4 Agent Transparency
+- Added v4.4 extraction capabilities to start.md and summarize.md
+- Updated configuration documentation with new intelligence settings
+
+#### Files Added
+- 21 new test files in `tests/core/intelligence/patterns/`
+
+#### Files Modified
+- `src/types/config.ts` - Added IntelligenceConfig, PatternSettingsConfig
+- `src/core/intelligence/pattern-library.ts` - Added applyConfig(), isPatternDisabled(), getPatternSettings()
+- `src/core/intelligence/patterns/conversation-summarizer.ts` - v4.4 enhancements
+- `src/core/intelligence/patterns/topic-coherence-analyzer.ts` - v4.4 enhancements
+- `src/core/intelligence/patterns/implicit-requirement-extractor.ts` - v4.4 enhancements
+- `src/templates/slash-commands/_canonical/*.md` - v4.4 version updates
+- `.clavix/instructions/workflows/*.md` - v4.4 version updates
+- `docs/guides/configuration.md` - Intelligence configuration documentation
+
+---
+
 ## [4.3.2] - 2025-11-25
 
 ### PRD & Conversational Intelligence Release

@@ -158,7 +158,7 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
 
 ---
 
-## Agent Transparency (v4.1)
+## Agent Transparency (v4.4)
 
 ### Quality Output Format
 {{INCLUDE:agent-protocols/quality-output.md}}

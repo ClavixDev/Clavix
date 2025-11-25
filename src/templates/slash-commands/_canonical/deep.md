@@ -179,7 +179,7 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 
 ---
 
-## Agent Transparency (v4.1)
+## Agent Transparency (v4.4)
 
 ### Quality Output Format
 {{INCLUDE:agent-protocols/quality-output.md}}

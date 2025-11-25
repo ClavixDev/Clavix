@@ -109,7 +109,7 @@ clavix prompts clear --executed
 
 ---
 
-## Agent Transparency (v4.1)
+## Agent Transparency (v4.4)
 
 ### File Format Reference
 {{INCLUDE:agent-protocols/file-formats.md}}

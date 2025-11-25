@@ -2,10 +2,11 @@ import { BasePattern } from './base-pattern.js';
 import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.3.2 Conversational Pattern: ConversationSummarizer
+ * v4.4 Conversational Pattern: ConversationSummarizer
  *
  * Extracts structured requirements from conversational messages.
  * Organizes free-form discussion into actionable requirements.
+ * Enhanced with expanded marker detection and confidence scoring.
  */
 export class ConversationSummarizer extends BasePattern {
   id = 'conversation-summarizer';
@@ -14,6 +15,48 @@ export class ConversationSummarizer extends BasePattern {
   applicableIntents: PromptIntent[] = ['summarization', 'planning', 'prd-generation'];
   mode: OptimizationMode | 'both' = 'deep';
   priority = 8;
+
+  // Expanded conversational markers (~30 markers)
+  private readonly conversationalMarkers = [
+    // Intent expressions
+    'i want',
+    'i need',
+    'we need',
+    'we want',
+    'i would like',
+    'we would like',
+    'would like to',
+    'should be able to',
+    'needs to',
+    // Thinking/exploring
+    'thinking about',
+    'maybe we could',
+    'what if',
+    'how about',
+    'perhaps we',
+    'considering',
+    'wondering if',
+    // Conversational connectors
+    "let's",
+    'let me',
+    'also',
+    'and then',
+    'plus',
+    'another thing',
+    'oh and',
+    'by the way',
+    // Informal markers
+    'basically',
+    'so basically',
+    'essentially',
+    'kind of like',
+    'sort of',
+    'something like',
+    // Collaborative
+    'can we',
+    'could we',
+    'shall we',
+  ];
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     // Check if content is already well-structured
@@ -73,41 +116,43 @@ export class ConversationSummarizer extends BasePattern {
   }
 
   private isConversationalContent(prompt: string): boolean {
-    // Conversational markers
-    const conversationalMarkers = [
-      'i want',
-      'i need',
-      'we need',
-      'should be able to',
-      'would like',
-      'thinking about',
-      'maybe we could',
-      'what if',
-      'how about',
-      'let me',
-      "let's",
-      'also',
-      'and then',
-      'basically',
-      'so basically',
-    ];
-
     const lowerPrompt = prompt.toLowerCase();
-    const matches = conversationalMarkers.filter((marker) => lowerPrompt.includes(marker));
+    const matches = this.conversationalMarkers.filter((marker) => lowerPrompt.includes(marker));
 
     // Also check for lack of structure (sentences without bullet points)
     const sentences = this.extractSentences(prompt);
     const hasBulletPoints = prompt.includes('- ') || prompt.includes('* ');
 
+    // More lenient threshold with expanded markers
     return matches.length >= 2 || (sentences.length > 3 && !hasBulletPoints);
+  }
+
+  private calculateConfidence(
+    requirements: string[],
+    goals: string[],
+    constraints: string[]
+  ): number {
+    // Calculate extraction confidence based on what was found
+    const hasRequirements = requirements.length > 0;
+    const hasGoals = goals.length > 0;
+    const hasConstraints = constraints.length > 0;
+
+    let confidence = 50; // Base confidence for conversational detection
+    if (hasRequirements) confidence += 20;
+    if (hasGoals) confidence += 15;
+    if (hasConstraints) confidence += 15;
+
+    return Math.min(confidence, 100);
   }
 
   private extractAndStructure(prompt: string): string {
     const requirements = this.extractRequirements(prompt);
     const constraints = this.extractConstraints(prompt);
     const goals = this.extractGoals(prompt);
+    const confidence = this.calculateConfidence(requirements, goals, constraints);
 
     let structured = '### Extracted Requirements\n\n';
+    structured += `*Extraction confidence: ${confidence}%*\n\n`;
 
     if (goals.length > 0) {
       structured += '**Goals:**\n';
@@ -127,6 +172,12 @@ export class ConversationSummarizer extends BasePattern {
       structured += '\n\n';
     }
 
+    // Add verification prompt if confidence is below 80%
+    if (confidence < 80) {
+      structured +=
+        '> **Note:** Please verify these extracted requirements are complete and accurate.\n\n';
+    }
+
     structured += '---\n\n**Original Context:**\n' + prompt;
 
     return structured;
@@ -136,10 +187,16 @@ export class ConversationSummarizer extends BasePattern {
     const requirements: string[] = [];
     const sentences = this.extractSentences(prompt);
 
+    // Expanded requirement patterns
     const requirementPatterns = [
-      /(?:need|want|should|must|require)\s+(?:to\s+)?(.+)/i,
-      /(?:should be able to|needs to)\s+(.+)/i,
-      /(?:feature|functionality):\s*(.+)/i,
+      /(?:i |we )?(?:need|want|should|must|require)\s+(?:to\s+)?(.+)/i,
+      /(?:should be able to|needs to|has to|have to)\s+(.+)/i,
+      /(?:feature|functionality|capability):\s*(.+)/i,
+      /(?:it should|it must|it needs to)\s+(.+)/i,
+      /(?:users? (?:can|should|will|must))\s+(.+)/i,
+      /(?:the system (?:should|must|will))\s+(.+)/i,
+      /(?:support(?:s|ing)?)\s+(.+)/i,
+      /(?:provide(?:s)?|enable(?:s)?|allow(?:s)?)\s+(.+)/i,
     ];
 
     for (const sentence of sentences) {
@@ -197,10 +254,14 @@ export class ConversationSummarizer extends BasePattern {
   private extractGoals(prompt: string): string[] {
     const goals: string[] = [];
 
+    // Expanded goal patterns
     const goalPatterns = [
-      /(?:goal is to|aim to|objective is to)\s+(.+)/gi,
-      /(?:trying to|looking to|hoping to)\s+(.+)/gi,
-      /(?:so that|in order to)\s+(.+)/gi,
+      /(?:goal is to|aim(?:ing)? to|objective is to)\s+(.+)/gi,
+      /(?:trying to|looking to|hoping to|want(?:ing)? to)\s+(.+)/gi,
+      /(?:so that|in order to|to achieve)\s+(.+)/gi,
+      /(?:the purpose is|main purpose|key purpose)\s+(.+)/gi,
+      /(?:ultimately|end goal|final goal|main goal)\s+(.+)/gi,
+      /(?:we're building this to|this will help)\s+(.+)/gi,
     ];
 
     for (const pattern of goalPatterns) {

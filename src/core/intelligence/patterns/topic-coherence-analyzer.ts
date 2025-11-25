@@ -2,10 +2,11 @@ import { BasePattern } from './base-pattern.js';
 import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.3.2 Conversational Pattern: TopicCoherenceAnalyzer
+ * v4.4 Conversational Pattern: TopicCoherenceAnalyzer
  *
  * Detects topic shifts and multi-topic conversations.
  * Helps organize scattered discussions into coherent themes.
+ * Enhanced with expanded topic dictionary and better detection.
  */
 export class TopicCoherenceAnalyzer extends BasePattern {
   id = 'topic-coherence-analyzer';
@@ -14,6 +15,184 @@ export class TopicCoherenceAnalyzer extends BasePattern {
   applicableIntents: PromptIntent[] = ['summarization', 'planning'];
   mode: OptimizationMode | 'both' = 'deep';
   priority = 6;
+
+  // Expanded topic indicators (~15 topics with more keywords)
+  private readonly topicIndicators: Record<string, string[]> = {
+    'User Interface': [
+      'ui',
+      'interface',
+      'design',
+      'layout',
+      'button',
+      'form',
+      'page',
+      'screen',
+      'component',
+      'modal',
+      'dialog',
+      'navigation',
+      'menu',
+      'sidebar',
+      'header',
+      'footer',
+    ],
+    'Backend/API': [
+      'api',
+      'backend',
+      'server',
+      'endpoint',
+      'route',
+      'controller',
+      'service',
+      'middleware',
+      'rest',
+      'graphql',
+      'websocket',
+    ],
+    Database: [
+      'database',
+      'db',
+      'schema',
+      'table',
+      'query',
+      'migration',
+      'model',
+      'orm',
+      'sql',
+      'nosql',
+      'index',
+      'relationship',
+    ],
+    Authentication: [
+      'auth',
+      'login',
+      'password',
+      'session',
+      'token',
+      'permission',
+      'role',
+      'oauth',
+      'jwt',
+      'sso',
+      'mfa',
+      '2fa',
+    ],
+    Performance: [
+      'performance',
+      'speed',
+      'cache',
+      'optimize',
+      'latency',
+      'load time',
+      'bundle',
+      'lazy',
+      'memory',
+      'cpu',
+    ],
+    Testing: [
+      'test',
+      'spec',
+      'coverage',
+      'qa',
+      'validation',
+      'unit test',
+      'integration',
+      'e2e',
+      'mock',
+      'fixture',
+    ],
+    Deployment: [
+      'deploy',
+      'ci/cd',
+      'pipeline',
+      'release',
+      'environment',
+      'production',
+      'staging',
+      'docker',
+      'kubernetes',
+    ],
+    'User Experience': [
+      'ux',
+      'usability',
+      'accessibility',
+      'user flow',
+      'journey',
+      'experience',
+      'onboarding',
+      'feedback',
+    ],
+    'Business Logic': [
+      'business',
+      'workflow',
+      'process',
+      'rule',
+      'logic',
+      'requirement',
+      'feature',
+      'use case',
+    ],
+    Integration: [
+      'integration',
+      'third-party',
+      'external',
+      'webhook',
+      'sync',
+      'connect',
+      'import',
+      'export',
+    ],
+    Security: [
+      'security',
+      'encryption',
+      'vulnerability',
+      'xss',
+      'csrf',
+      'injection',
+      'sanitize',
+      'audit',
+    ],
+    Analytics: [
+      'analytics',
+      'tracking',
+      'metrics',
+      'dashboard',
+      'report',
+      'insight',
+      'data',
+      'statistics',
+    ],
+    'Error Handling': [
+      'error',
+      'exception',
+      'fallback',
+      'retry',
+      'timeout',
+      'failure',
+      'recovery',
+      'logging',
+    ],
+    Documentation: [
+      'documentation',
+      'docs',
+      'readme',
+      'guide',
+      'tutorial',
+      'api docs',
+      'comment',
+      'jsdoc',
+    ],
+    'State Management': [
+      'state',
+      'store',
+      'redux',
+      'context',
+      'global state',
+      'local state',
+      'persist',
+      'hydrate',
+    ],
+  };
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     // Detect topics in the content
@@ -63,21 +242,7 @@ export class TopicCoherenceAnalyzer extends BasePattern {
     const topics: string[] = [];
     const lowerPrompt = prompt.toLowerCase();
 
-    // Topic detection patterns
-    const topicIndicators: Record<string, string[]> = {
-      'User Interface': ['ui', 'interface', 'design', 'layout', 'button', 'form', 'page', 'screen'],
-      'Backend/API': ['api', 'backend', 'server', 'endpoint', 'route', 'controller'],
-      Database: ['database', 'db', 'schema', 'table', 'query', 'migration'],
-      Authentication: ['auth', 'login', 'password', 'session', 'token', 'permission'],
-      Performance: ['performance', 'speed', 'cache', 'optimize', 'latency'],
-      Testing: ['test', 'spec', 'coverage', 'qa', 'validation'],
-      Deployment: ['deploy', 'ci/cd', 'pipeline', 'release', 'environment'],
-      'User Experience': ['ux', 'usability', 'accessibility', 'user flow', 'journey'],
-      'Business Logic': ['business', 'workflow', 'process', 'rule', 'logic'],
-      Integration: ['integration', 'third-party', 'external', 'webhook', 'sync'],
-    };
-
-    for (const [topic, keywords] of Object.entries(topicIndicators)) {
+    for (const [topic, keywords] of Object.entries(this.topicIndicators)) {
       const hasKeyword = keywords.some((kw) => lowerPrompt.includes(kw));
       if (hasKeyword) {
         topics.push(topic);
@@ -117,31 +282,7 @@ export class TopicCoherenceAnalyzer extends BasePattern {
   }
 
   private extractTopicContent(prompt: string, topic: string): string {
-    // Simple extraction based on topic keywords
-    const topicKeywords: Record<string, string[]> = {
-      'User Interface': [
-        'ui',
-        'interface',
-        'design',
-        'layout',
-        'button',
-        'form',
-        'page',
-        'screen',
-        'component',
-      ],
-      'Backend/API': ['api', 'backend', 'server', 'endpoint', 'route', 'controller', 'service'],
-      Database: ['database', 'db', 'schema', 'table', 'query', 'migration', 'model'],
-      Authentication: ['auth', 'login', 'password', 'session', 'token', 'permission', 'user'],
-      Performance: ['performance', 'speed', 'cache', 'optimize', 'latency', 'fast', 'slow'],
-      Testing: ['test', 'spec', 'coverage', 'qa', 'validation', 'verify'],
-      Deployment: ['deploy', 'ci/cd', 'pipeline', 'release', 'environment', 'production'],
-      'User Experience': ['ux', 'usability', 'accessibility', 'user flow', 'journey', 'experience'],
-      'Business Logic': ['business', 'workflow', 'process', 'rule', 'logic', 'requirement'],
-      Integration: ['integration', 'third-party', 'external', 'webhook', 'sync', 'connect'],
-    };
-
-    const keywords = topicKeywords[topic] || [];
+    const keywords = this.topicIndicators[topic] || [];
     const sentences = this.extractSentences(prompt);
     const relevantSentences = sentences.filter((sentence) => {
       const lower = sentence.toLowerCase();

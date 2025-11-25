@@ -315,7 +315,7 @@ To find the task ID programmatically, read tasks.md and look for the pattern `ph
 
 ---
 
-## Agent Transparency (v4.1)
+## Agent Transparency (v4.4)
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}

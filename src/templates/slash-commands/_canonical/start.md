@@ -190,7 +190,27 @@ The goal is natural exploration of requirements, not a rigid questionnaire. Foll
 
 ---
 
-## Agent Transparency (v4.1)
+## Agent Transparency (v4.4)
+
+### Enhanced Conversational Analysis (v4.4)
+
+Clavix Intelligence™ now includes enhanced conversational pattern recognition:
+
+**Topic Detection** (~15 topic areas):
+- Automatically detects: User Interface, Backend/API, Database, Authentication, Performance, Testing, Deployment, User Experience, Business Logic, Integration, Security, Analytics, Error Handling, Documentation, State Management
+- Groups related keywords for more accurate multi-topic detection
+- Triggers focus suggestions when 3+ distinct topics detected
+
+**Conversational Markers** (~30 patterns):
+- Intent expressions: "i want", "we need", "should be able to"
+- Thinking/exploring: "thinking about", "what if", "how about"
+- Informal markers: "basically", "kind of like", "something like"
+- Collaborative: "can we", "could we", "shall we"
+
+**Implicit Requirement Detection**:
+- Surfaces unstated requirements from context
+- Categories: Infrastructure, Security, Performance, UX, Integration
+- Examples: "mobile" → responsive design, "real-time" → WebSocket infrastructure
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
