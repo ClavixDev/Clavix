@@ -32,17 +32,35 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ## Self-Correction Protocol
 
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
+**DETECT**: If you find yourself doing any of these 6 mistake types:
 
-**STOP**: Immediately halt code generation
+| Type | What It Looks Like |
+|------|--------------------|
+| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints, test files, database schemas, or configuration files for the user's feature |
+| 2. Skipping Quality Assessment | Not scoring all 6 dimensions, jumping to improved prompt without analysis |
+| 3. Wrong Mode Selection | Not suggesting `/clavix:deep` when quality <65% or escalation factors present |
+| 4. Incomplete Pattern Application | Not showing which patterns were applied, skipping patterns without explanation |
+| 5. Missing Triage | Not evaluating if deep mode is needed, ignoring secondary indicators |
+| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing pattern names |
+
+**STOP**: Immediately halt the incorrect action
 
 **CORRECT**: Output:
-"I apologize - I was implementing instead of optimizing the prompt. Let me return to prompt optimization."
+"I apologize - I was [describe mistake]. Let me return to prompt optimization."
 
-**RESUME**: Return to the prompt optimization workflow.
+**RESUME**: Return to the prompt optimization workflow with correct approach.
+
+---
+
+## State Assertion (Required)
+
+**Before starting analysis, output:**
+```
+**CLAVIX MODE: Fast Optimization**
+Mode: planning
+Purpose: Optimizing user prompt with Clavix Intelligence™
+Implementation: BLOCKED - I will analyze and improve the prompt, not implement it
+```
 
 ---
 
@@ -52,7 +70,7 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
 
 **Fast Mode Features:**
 - **Intent Detection**: Automatically identifies what you're trying to achieve
-- **Quality Assessment**: 5-dimension analysis (Clarity, Efficiency, Structure, Completeness, Actionability)
+- **Quality Assessment**: 6-dimension analysis (Clarity, Efficiency, Structure, Completeness, Actionability, Specificity)
 - **Smart Optimization**: Applies proven patterns based on your intent
 - **Intelligent Triage**: Recommends deep mode when comprehensive analysis would help
 
@@ -69,14 +87,19 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
    - **debugging**: Finding and fixing issues
    - **documentation**: Creating docs or explanations
    - **prd-generation**: Creating requirements documents
+   - **testing**: Writing tests, improving test coverage
+   - **migration**: Version upgrades, porting code between frameworks
+   - **security-review**: Security audits, vulnerability checks
+   - **learning**: Conceptual understanding, tutorials, explanations
 
-3. **Quality Assessment** - Evaluate across 5 dimensions:
+3. **Quality Assessment** - Evaluate across 6 dimensions:
 
    - **Clarity**: Is the objective clear and unambiguous?
    - **Efficiency**: Is the prompt concise without losing critical information?
    - **Structure**: Is information organized logically?
    - **Completeness**: Are all necessary details provided?
    - **Actionability**: Can AI take immediate action on this prompt?
+   - **Specificity**: How concrete and precise is the prompt? (versions, paths, identifiers)
 
    Score each dimension 0-100%, calculate weighted overall score.
 

@@ -33,17 +33,35 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ## Self-Correction Protocol
 
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
+**DETECT**: If you find yourself doing any of these 6 mistake types:
 
-**STOP**: Immediately halt code generation
+| Type | What It Looks Like |
+|------|--------------------|
+| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints, test files, database schemas, or configuration files for the user's feature |
+| 2. Not Asking Questions | Assuming requirements instead of asking clarifying questions |
+| 3. Premature Summarization | Extracting requirements before the conversation is complete |
+| 4. Ignoring Multi-Topic Detection | Not suggesting focus when 3+ distinct topics are detected |
+| 5. Missing Requirement Tracking | Not tracking problem statement, users, features, constraints, success criteria |
+| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing workflows |
+
+**STOP**: Immediately halt the incorrect action
 
 **CORRECT**: Output:
-"I apologize - I was implementing instead of gathering requirements. Let me return to our requirements discussion."
+"I apologize - I was [describe mistake]. Let me return to our requirements discussion."
 
-**RESUME**: Return to the requirements gathering workflow.
+**RESUME**: Return to the requirements gathering workflow with clarifying questions.
+
+---
+
+## State Assertion (Required)
+
+**Before starting conversation, output:**
+```
+**CLAVIX MODE: Conversational Requirements**
+Mode: planning
+Purpose: Gathering requirements through iterative discussion
+Implementation: BLOCKED - I will ask questions and explore needs, not implement
+```
 
 ---
 

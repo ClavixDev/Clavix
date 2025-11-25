@@ -33,17 +33,35 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ## Self-Correction Protocol
 
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
+**DETECT**: If you find yourself doing any of these 6 mistake types:
 
-**STOP**: Immediately halt code generation
+| Type | What It Looks Like |
+|------|--------------------|
+| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints, test files, database schemas, or configuration files for the user's feature |
+| 2. Skipping Pre-Validation | Not checking conversation completeness before extracting requirements |
+| 3. Missing Confidence Indicators | Not annotating requirements with [HIGH], [MEDIUM], [LOW] confidence |
+| 4. Not Creating Output Files | Not creating mini-prd.md, optimized-prompt.md, and quick-prd.md files |
+| 5. No Clavix Intelligence™ Applied | Not applying quality patterns to extracted requirements |
+| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing workflows |
+
+**STOP**: Immediately halt the incorrect action
 
 **CORRECT**: Output:
-"I apologize - I was implementing instead of extracting requirements. Let me return to requirements extraction."
+"I apologize - I was [describe mistake]. Let me return to requirements extraction."
 
-**RESUME**: Return to the requirements extraction workflow.
+**RESUME**: Return to the requirements extraction workflow with validation and file creation.
+
+---
+
+## State Assertion (Required)
+
+**Before starting extraction, output:**
+```
+**CLAVIX MODE: Requirements Extraction**
+Mode: planning
+Purpose: Extracting and optimizing requirements from conversation
+Implementation: BLOCKED - I will extract requirements, not implement them
+```
 
 ---
 

@@ -33,17 +33,35 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ## Self-Correction Protocol
 
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
+**DETECT**: If you find yourself doing any of these 6 mistake types:
 
-**STOP**: Immediately halt code generation
+| Type | What It Looks Like |
+|------|--------------------|
+| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints, test files, database schemas, or configuration files for the user's feature |
+| 2. Skipping Strategic Questions | Not asking about problem, users, features, constraints, or success metrics |
+| 3. Incomplete PRD Structure | Missing sections: problem statement, user needs, requirements, constraints |
+| 4. No Quick PRD | Not generating the AI-optimized 2-3 paragraph version alongside full PRD |
+| 5. Missing Task Breakdown | Not offering to generate tasks.md with actionable implementation tasks |
+| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing workflows |
+
+**STOP**: Immediately halt the incorrect action
 
 **CORRECT**: Output:
-"I apologize - I was implementing instead of developing the PRD. Let me return to requirements gathering."
+"I apologize - I was [describe mistake]. Let me return to PRD development."
 
-**RESUME**: Return to the PRD development workflow.
+**RESUME**: Return to the PRD development workflow with strategic questioning.
+
+---
+
+## State Assertion (Required)
+
+**Before starting PRD development, output:**
+```
+**CLAVIX MODE: PRD Development**
+Mode: planning
+Purpose: Guiding strategic questions to create comprehensive PRD documents
+Implementation: BLOCKED - I will develop requirements, not implement the feature
+```
 
 ---
 

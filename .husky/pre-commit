@@ -1,2 +1,3 @@
+npm run validate:consistency
 npx lint-staged
 npm run test:changed
