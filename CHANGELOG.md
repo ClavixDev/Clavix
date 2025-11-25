@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0] - 2025-11-25
+
+### Consolidation Release
+
+**Major architectural consolidation with unified pattern type system, shared confidence utilities, and pattern dependencies.**
+
+#### Pattern Type System (Parts 1-4)
+- **Unified types**: `PatternMode`, `PatternPriority` (1-10 scale), `PatternPhase`
+- **PatternConfigSchema**: Declarative pattern configuration with validation
+- **IPatternLibrary interface**: Dependency injection for patterns
+- All 27 patterns updated with readonly properties and phase declarations
+
+#### Confidence Calculator (Part 5)
+New shared `confidence-calculator.ts` module:
+| Function | Purpose |
+|----------|---------|
+| `calculateAdditiveConfidence()` | Bonus-based scoring (base + conditional bonuses) |
+| `calculateRatioConfidence()` | Ratio-based scoring (primary/total) |
+| `applyCompetitionPenalty()` | Ambiguity detection penalty |
+| `calculateWeightedConfidence()` | Weighted average calculation |
+
+- IntentDetector and ConversationSummarizer now use shared utilities
+
+#### Pattern Dependencies (Part 6)
+New `PatternDependency` interface:
+- `runAfter`: Patterns that must execute before this one
+- `excludesWith`: Mutually exclusive patterns
+- `enhancedBy`: Informational synergies
+- Topological sort with circular dependency detection
+
+#### Generator Include Resolution (Part 7)
+- InstructionsGenerator uses TemplateAssembler for `{{INCLUDE:}}` resolution
+- Canonical templates fully assembled before copying to output
+
+#### Documentation Sync (Part 8)
+- Updated intent-types.md with summarization intent (11 total)
+- Fixed pattern-visibility.md priorities (8 patterns corrected)
+- Corrected pattern counts (12 fast mode, 27 deep mode)
+- Updated validate-consistency.ts for v4.5 pattern format
+
+#### Files Added
+- `src/core/intelligence/confidence-calculator.ts`
+
+#### Files Modified
+- `src/core/intelligence/patterns/base-pattern.ts` - v4.5 unified type system
+- `src/core/intelligence/pattern-library.ts` - Dependency sorting, phase filtering
+- `src/core/intelligence/intent-detector.ts` - Shared confidence calculator
+- `src/core/intelligence/patterns/*.ts` - All 27 patterns updated
+- `src/core/adapters/instructions-generator.ts` - TemplateAssembler integration
+- `scripts/validate-consistency.ts` - v4.5 pattern format support
+- `src/templates/slash-commands/_components/sections/pattern-visibility.md`
+- `src/templates/slash-commands/_components/references/intent-types.md`
+
+---
+
 ## [4.4.0] - 2025-11-25
 
 ### Quality & Stability Release
