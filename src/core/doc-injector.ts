@@ -225,37 +225,74 @@ For more information, run \`clavix --help\` in your terminal.
   }
 
   /**
-   * Create default CLAUDE.md content for Claude Code
+   * Create the CLAUDE.md block content (without file wrapper)
+   * This is the single source of truth for Claude Code documentation
    */
-  static getDefaultClaudeContent(): string {
-    return `# Claude Code Instructions
-
-<!-- CLAVIX:START -->
-## Clavix Integration
+  static getClaudeBlockContent(): string {
+    return `## Clavix Integration
 
 This project uses Clavix for prompt improvement and PRD generation. The following slash commands are available:
 
-### /clavix:fast [prompt]
+### Prompt Optimization Commands
+
+#### /clavix:fast [prompt]
 Quick prompt improvements with smart triage. Clavix will analyze your prompt and recommend deep analysis if needed. Perfect for making "shitty prompts good" quickly.
 
-### /clavix:deep [prompt]
+#### /clavix:deep [prompt]
 Comprehensive prompt analysis with alternative phrasings, edge cases, implementation examples, and potential issues. Use for complex requirements or when you want thorough exploration.
 
-### /clavix:prd
+### PRD & Planning Commands
+
+#### /clavix:prd
 Launch the PRD generation workflow. Clavix will guide you through strategic questions and generate both a comprehensive PRD and a quick-reference version optimized for AI consumption.
 
-### /clavix:start
+#### /clavix:plan
+Generate an optimized implementation task breakdown from your PRD. Creates a phased task plan with dependencies and priorities.
+
+#### /clavix:implement
+Execute tasks from your task plan with AI assistance. Supports automatic git commits and progress tracking.
+
+### Session Management Commands
+
+#### /clavix:start
 Enter conversational mode for iterative prompt development. Discuss your requirements naturally, and later use \`/clavix:summarize\` to extract an optimized prompt.
 
-### /clavix:summarize
+#### /clavix:summarize
 Analyze the current conversation and extract key requirements into a structured prompt and mini-PRD.
+
+### Utility Commands
+
+#### /clavix:execute
+Run saved prompts with lifecycle awareness. Execute previously saved fast/deep prompts.
+
+#### /clavix:prompts
+Manage your saved fast/deep prompts. List, view, and organize your prompt library.
+
+#### /clavix:archive
+Archive completed projects. Move finished PRDs and outputs to the archive for future reference.
 
 **When to use which mode:**
 - **Fast mode** (\`/clavix:fast\`): Quick cleanup for simple prompts
 - **Deep mode** (\`/clavix:deep\`): Comprehensive analysis for complex requirements
 - **PRD mode** (\`/clavix:prd\`): Strategic planning with architecture and business impact
 
-**Pro tip**: Start complex features with \`/clavix:prd\` or \`/clavix:start\` to ensure clear requirements before implementation.
+**Recommended Workflow:**
+1. Start with \`/clavix:prd\` or \`/clavix:start\` for complex features
+2. Generate tasks with \`/clavix:plan\`
+3. Implement with \`/clavix:implement\`
+4. Archive when complete with \`/clavix:archive\`
+
+**Pro tip**: Start complex features with \`/clavix:prd\` or \`/clavix:start\` to ensure clear requirements before implementation.`;
+  }
+
+  /**
+   * Create default CLAUDE.md content for Claude Code
+   */
+  static getDefaultClaudeContent(): string {
+    return `# Claude Code Instructions
+
+<!-- CLAVIX:START -->
+${this.getClaudeBlockContent()}
 <!-- CLAVIX:END -->
 `;
   }
