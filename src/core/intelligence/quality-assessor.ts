@@ -13,6 +13,8 @@ export class QualityAssessor {
     'security-review': ['scope', 'threat-model', 'compliance-requirements', 'known-issues'],
     learning: ['current-knowledge', 'learning-goal', 'preferred-depth', 'context'],
     'prd-generation': ['product-vision', 'user-personas', 'features', 'success-metrics'],
+    // v4.3.2: Conversational mode intent
+    summarization: ['conversation-context', 'key-requirements', 'constraints', 'success-criteria'],
   };
   /**
    * Assess quality of a prompt (backward compatibility wrapper)

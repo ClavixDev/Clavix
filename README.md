@@ -116,7 +116,7 @@ clavix prd
 - Build: `npm run build`
 
 ## License
-MIT
+Apache-2.0
 
 ## Star History
 

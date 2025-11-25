@@ -75,6 +75,21 @@ Patterns: 7 applied (deep mode)
 | SuccessCriteriaEnforcer | 6 | Adds measurable success criteria |
 | DomainContextEnricher | 5 | Adds domain-specific best practices |
 
+**v4.3.2 PRD Mode Patterns (deep mode):**
+| Pattern | Priority | What It Does |
+|---------|----------|--------------|
+| RequirementPrioritizer | 7 | Separates must-have from nice-to-have requirements |
+| UserPersonaEnricher | 6 | Adds missing user context and personas |
+| SuccessMetricsEnforcer | 7 | Ensures measurable success criteria exist |
+| DependencyIdentifier | 5 | Identifies technical and external dependencies |
+
+**v4.3.2 Conversational Mode Patterns (deep mode):**
+| Pattern | Priority | What It Does |
+|---------|----------|--------------|
+| ConversationSummarizer | 8 | Extracts structured requirements from messages |
+| TopicCoherenceAnalyzer | 6 | Detects topic shifts and multi-topic conversations |
+| ImplicitRequirementExtractor | 7 | Surfaces requirements mentioned indirectly |
+
 ### Pattern Selection Logic
 
 Patterns are selected based on:
@@ -109,11 +124,20 @@ Deep mode only:
   AlternativePhrasingGenerator, EdgeCaseIdentifier, ValidationChecklistCreator,
   AssumptionExplicitizer, ScopeDefiner, PRDStructureEnforcer,
   ErrorToleranceEnhancer, PrerequisiteIdentifier
+
+v4.3.2 PRD mode (deep):
+  RequirementPrioritizer, UserPersonaEnricher, SuccessMetricsEnforcer,
+  DependencyIdentifier
+
+v4.3.2 Conversational mode (deep):
+  ConversationSummarizer, TopicCoherenceAnalyzer, ImplicitRequirementExtractor
 ```
 
 ### Pattern Count by Mode
 
 | Mode | Patterns Available | Typical Applied |
 |------|-------------------|-----------------|
-| Fast | 14 core patterns | 4-7 patterns |
-| Deep | 20 total patterns | 8-14 patterns |
+| Fast | 21 core patterns | 4-7 patterns |
+| Deep | 27 total patterns | 8-14 patterns |
+| PRD | 15 patterns | 10-15 patterns |
+| Conversational | 11 patterns | 6-11 patterns |

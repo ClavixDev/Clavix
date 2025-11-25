@@ -22,7 +22,16 @@ import { SuccessCriteriaEnforcer } from './patterns/success-criteria-enforcer.js
 import { ErrorToleranceEnhancer } from './patterns/error-tolerance-enhancer.js';
 import { PrerequisiteIdentifier } from './patterns/prerequisite-identifier.js';
 import { DomainContextEnricher } from './patterns/domain-context-enricher.js';
-import { IntentAnalysis, OptimizationMode, PromptIntent } from './types.js';
+// v4.3.2 PRD patterns
+import { RequirementPrioritizer } from './patterns/requirement-prioritizer.js';
+import { UserPersonaEnricher } from './patterns/user-persona-enricher.js';
+import { SuccessMetricsEnforcer } from './patterns/success-metrics-enforcer.js';
+import { DependencyIdentifier } from './patterns/dependency-identifier.js';
+// v4.3.2 Conversational patterns
+import { ConversationSummarizer } from './patterns/conversation-summarizer.js';
+import { TopicCoherenceAnalyzer } from './patterns/topic-coherence-analyzer.js';
+import { ImplicitRequirementExtractor } from './patterns/implicit-requirement-extractor.js';
+import { IntentAnalysis, OptimizationMode, OptimizationPhase, PromptIntent } from './types.js';
 
 export class PatternLibrary {
   private patterns: Map<string, BasePattern> = new Map();
@@ -59,6 +68,17 @@ export class PatternLibrary {
     this.register(new ErrorToleranceEnhancer()); // P5 - Add error handling (deep only)
     this.register(new PrerequisiteIdentifier()); // P6 - Identify prerequisites (deep only)
     this.register(new DomainContextEnricher()); // P5 - Add domain best practices (both modes)
+
+    // v4.3.2 PRD patterns
+    this.register(new RequirementPrioritizer()); // P7 - Separate must-have from nice-to-have
+    this.register(new UserPersonaEnricher()); // P6 - Add user context and personas
+    this.register(new SuccessMetricsEnforcer()); // P7 - Ensure measurable success criteria
+    this.register(new DependencyIdentifier()); // P5 - Identify technical/external dependencies
+
+    // v4.3.2 Conversational patterns
+    this.register(new ConversationSummarizer()); // P8 - Extract structured requirements
+    this.register(new TopicCoherenceAnalyzer()); // P6 - Detect topic shifts
+    this.register(new ImplicitRequirementExtractor()); // P7 - Surface implicit requirements
   }
 
   /**
@@ -130,6 +150,144 @@ export class PatternLibrary {
 
     // Sort by priority (highest first)
     return applicablePatterns.sort((a, b) => b.priority - a.priority);
+  }
+
+  /**
+   * v4.3.2: Select patterns for specific mode with phase-awareness
+   * Maps PRD and conversational modes to appropriate base modes and patterns
+   */
+  selectPatternsForMode(
+    mode: OptimizationMode,
+    intent: IntentAnalysis,
+    phase?: OptimizationPhase
+  ): BasePattern[] {
+    // Map PRD/conversational modes to base modes for pattern selection
+    const baseMode = this.mapToBaseMode(mode, phase);
+    const applicablePatterns: BasePattern[] = [];
+
+    for (const pattern of this.patterns.values()) {
+      // Check mode compatibility (use mapped base mode)
+      if (pattern.mode !== 'both' && pattern.mode !== baseMode) {
+        continue;
+      }
+
+      // Check intent compatibility
+      if (!pattern.applicableIntents.includes(intent.primaryIntent)) {
+        continue;
+      }
+
+      // Phase-specific filtering for PRD mode
+      if (mode === 'prd' && phase) {
+        if (!this.isPatternApplicableForPRDPhase(pattern, phase)) {
+          continue;
+        }
+      }
+
+      // Phase-specific filtering for conversational mode
+      if (mode === 'conversational' && phase) {
+        if (!this.isPatternApplicableForConversationalPhase(pattern, phase)) {
+          continue;
+        }
+      }
+
+      applicablePatterns.push(pattern);
+    }
+
+    // Sort by priority (highest first)
+    return applicablePatterns.sort((a, b) => b.priority - a.priority);
+  }
+
+  /**
+   * Map extended modes to base modes for pattern compatibility
+   */
+  private mapToBaseMode(mode: OptimizationMode, phase?: OptimizationPhase): 'fast' | 'deep' {
+    switch (mode) {
+      case 'prd':
+        // PRD uses deep mode for output generation, fast for validation
+        return phase === 'question-validation' ? 'fast' : 'deep';
+      case 'conversational':
+        // Conversational uses fast mode for tracking, deep for summarization
+        return phase === 'summarization' ? 'deep' : 'fast';
+      case 'fast':
+      case 'deep':
+      default:
+        return mode as 'fast' | 'deep';
+    }
+  }
+
+  /**
+   * Check if pattern is applicable for PRD phase
+   */
+  private isPatternApplicableForPRDPhase(pattern: BasePattern, phase: OptimizationPhase): boolean {
+    // Patterns for question validation (lightweight, clarity-focused)
+    const questionValidationPatterns = [
+      'ambiguity-detector',
+      'completeness-validator',
+      'objective-clarifier',
+    ];
+
+    // Patterns for output generation (comprehensive)
+    const outputGenerationPatterns = [
+      'prd-structure-enforcer',
+      'structure-organizer',
+      'success-criteria-enforcer',
+      'scope-definer',
+      'edge-case-identifier',
+      'assumption-explicitizer',
+      'technical-context-enricher',
+      'domain-context-enricher',
+      // v4.3.2 PRD patterns will be added here
+      'requirement-prioritizer',
+      'user-persona-enricher',
+      'success-metrics-enforcer',
+      'dependency-identifier',
+    ];
+
+    if (phase === 'question-validation') {
+      return questionValidationPatterns.includes(pattern.id);
+    }
+
+    if (phase === 'output-generation') {
+      return outputGenerationPatterns.includes(pattern.id);
+    }
+
+    return true; // Default: allow pattern
+  }
+
+  /**
+   * Check if pattern is applicable for conversational phase
+   */
+  private isPatternApplicableForConversationalPhase(
+    pattern: BasePattern,
+    phase: OptimizationPhase
+  ): boolean {
+    // Patterns for conversation tracking (minimal, non-intrusive)
+    const conversationTrackingPatterns = ['ambiguity-detector', 'completeness-validator'];
+
+    // Patterns for summarization (comprehensive extraction)
+    const summarizationPatterns = [
+      'structure-organizer',
+      'completeness-validator',
+      'success-criteria-enforcer',
+      'edge-case-identifier',
+      'actionability-enhancer',
+      'technical-context-enricher',
+      'domain-context-enricher',
+      // v4.3.2 Conversational patterns will be added here
+      'conversation-summarizer',
+      'topic-coherence-analyzer',
+      'implicit-requirement-extractor',
+    ];
+
+    if (phase === 'conversation-tracking') {
+      return conversationTrackingPatterns.includes(pattern.id);
+    }
+
+    if (phase === 'summarization') {
+      return summarizationPatterns.includes(pattern.id);
+    }
+
+    return true; // Default: allow pattern
   }
 
   /**

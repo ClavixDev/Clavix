@@ -11,7 +11,9 @@ export type PromptIntent =
   | 'testing' // "Write unit tests for UserService"
   | 'migration' // "Migrate from React 17 to 18"
   | 'security-review' // "Audit this code for XSS"
-  | 'learning'; // "Teach me about closures"
+  | 'learning' // "Teach me about closures"
+  // v4.3.2 Conversational mode intent
+  | 'summarization'; // Extracting requirements from conversation
 
 export type QualityDimension =
   | 'clarity' // Was: Explicitness (E) - Is the objective unambiguous?
@@ -23,7 +25,17 @@ export type QualityDimension =
 
 export type ImpactLevel = 'low' | 'medium' | 'high';
 
-export type OptimizationMode = 'fast' | 'deep';
+export type OptimizationMode = 'fast' | 'deep' | 'prd' | 'conversational';
+
+// v4.3.2: Phase context for pattern selection
+export type OptimizationPhase =
+  | 'question-validation' // PRD: validating individual answers
+  | 'output-generation' // PRD: generating final documents
+  | 'conversation-tracking' // Start: analyzing messages
+  | 'summarization'; // Summarize: extracting from conversation
+
+// v4.3.2: Document types for context-aware pattern application
+export type DocumentType = 'full-prd' | 'quick-prd' | 'mini-prd' | 'prompt';
 
 export interface IntentAnalysis {
   primaryIntent: PromptIntent;
@@ -90,6 +102,10 @@ export interface PatternContext {
   intent: IntentAnalysis;
   mode: OptimizationMode;
   originalPrompt: string;
+  // v4.3.2: Extended context for PRD and Conversational modes
+  phase?: OptimizationPhase;
+  documentType?: DocumentType;
+  questionId?: string; // For PRD question-specific patterns
 }
 
 export interface PatternResult {
