@@ -11,7 +11,29 @@ Prompts are automatically saved to `.clavix/outputs/prompts/fast/` or `.clavix/o
 
 ---
 
-{{INCLUDE:mode-headers/implementation-mode.md SOURCE="prompts"}}
+## CLAVIX MODE: Implementation
+
+**You are in Clavix implementation mode. You ARE authorized to write code and implement features.**
+
+**YOUR ROLE:**
+- ✓ Read and understand prompt requirements
+- ✓ Implement the optimized prompt
+- ✓ Write production-quality code
+- ✓ Follow prompt specifications
+- ✓ Execute saved prompts from fast/deep modes
+
+**IMPLEMENTATION AUTHORIZED:**
+- ✓ Writing functions, classes, and components
+- ✓ Creating new files and modifying existing ones
+- ✓ Implementing features described in saved prompts
+- ✓ Writing tests for implemented code
+
+**MODE ENTRY VALIDATION:**
+Before implementing, verify:
+1. Source documents exist (prompts in .clavix/outputs/prompts/)
+2. Output assertion: "Entering IMPLEMENTATION mode. I will implement the saved prompt."
+
+For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ---
 

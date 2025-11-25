@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.1] - 2025-11-25
+
+### Bug Fixes
+
+**Fixed template variable mismatch in generated slash commands**
+
+After `clavix init`, templates (e.g., `fast.md`) were generating with unsubstituted mustache variables like `{{MODE_TYPE}}`, `{{WORKFLOW_TYPE}}`, `{{ACTION}}`, etc.
+
+**Root Cause:** Variable name mismatch between `{{INCLUDE:}}` directives and component files:
+- Include directives passed `MODE="prompt optimization"`
+- Component files expected `{{MODE_TYPE}}`, `{{WORKFLOW_TYPE}}`, etc.
+
+**Fix:** Replaced complex mustache-templated mode header components with inline static content in all 8 canonical templates:
+- `fast.md`, `deep.md`, `plan.md`, `prd.md`, `implement.md`, `execute.md`, `start.md`, `summarize.md`
+
+Each template now has properly formatted, static mode enforcement and self-correction protocol sections specific to that mode. This eliminates variable interpolation complexity and ensures consistent template output.
+
+---
+
 ## [4.1.0] - 2025-11-25
 
 ### Agent Transparency Release: Clavix Intelligence v4.1

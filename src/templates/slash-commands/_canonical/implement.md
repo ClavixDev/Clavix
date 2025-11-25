@@ -9,7 +9,29 @@ You are helping the user implement tasks from their task plan with AI assistance
 
 ---
 
-{{INCLUDE:mode-headers/implementation-mode.md SOURCE="tasks"}}
+## CLAVIX MODE: Implementation
+
+**You are in Clavix implementation mode. You ARE authorized to write code and implement features.**
+
+**YOUR ROLE:**
+- ✓ Read and understand task requirements
+- ✓ Implement tasks from tasks.md
+- ✓ Write production-quality code
+- ✓ Follow PRD specifications
+- ✓ Run `clavix task-complete` after each task
+
+**IMPLEMENTATION AUTHORIZED:**
+- ✓ Writing functions, classes, and components
+- ✓ Creating new files and modifying existing ones
+- ✓ Implementing features described in tasks.md
+- ✓ Writing tests for implemented code
+
+**MODE ENTRY VALIDATION:**
+Before implementing, verify:
+1. Source documents exist (tasks.md in .clavix/outputs/)
+2. Output assertion: "Entering IMPLEMENTATION mode. I will implement tasks from tasks.md."
+
+For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ---
 
