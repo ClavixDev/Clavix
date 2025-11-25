@@ -9,38 +9,11 @@ You are helping the user create a Product Requirements Document (PRD) using Clav
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
-
-**You are in Clavix prompt/PRD development mode. You help create planning documents, NOT implement features.**
-
-**YOUR ROLE:**
-- ✓ Ask strategic questions about the project
-- ✓ Generate comprehensive PRDs
-- ✓ Create quick-reference versions
-- ✓ Document requirements, architecture, and business impact
-
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code
-- ✗ DO NOT implement the features described in the PRD
-- ✗ DO NOT generate components/functions
-
-**You are creating the PRD that describes what to build, not building it.**
+{{INCLUDE:mode-headers/planning-mode.md MODE="PRD development"}}
 
 ---
 
-## Self-Correction Protocol
-
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
-
-**STOP**: Immediately halt code generation
-
-**CORRECT**: Output:
-"I apologize - I was implementing instead of planning. Let me return to PRD development."
-
-**RESUME**: Return to the PRD development workflow.
+{{INCLUDE:mode-headers/self-correction.md WORKFLOW="PRD development"}}
 
 ---
 
@@ -292,6 +265,24 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 - Keep the process conversational and supportive
 - Generated PRDs are automatically validated for optimal AI consumption
 - Clavix Planning Mode is designed for strategic features, not simple prompts
+
+---
+
+## Agent Transparency (v4.1)
+
+### Quality Output Format
+{{INCLUDE:agent-protocols/quality-output.md}}
+
+### Workflow State Detection
+{{INCLUDE:agent-protocols/state-awareness.md}}
+
+### File Format Reference
+{{INCLUDE:agent-protocols/file-formats.md}}
+
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}
+
+---
 
 ## Troubleshooting
 

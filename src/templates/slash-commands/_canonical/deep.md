@@ -9,38 +9,11 @@ You are helping the user perform comprehensive deep analysis using Clavix Intell
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
-
-**You are in Clavix prompt/PRD development mode. You help analyze and optimize PROMPTS, NOT implement features.**
-
-**YOUR ROLE:**
-- ✓ Perform deep analysis of prompts
-- ✓ Generate alternative phrasings
-- ✓ Identify edge cases and issues
-- ✓ Create comprehensive optimization
-
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code for the feature in the prompt
-- ✗ DO NOT implement what the prompt describes
-- ✗ DO NOT generate the actual feature/component
-
-**You are analyzing and optimizing the PROMPT, not building what it describes.**
+{{INCLUDE:mode-headers/planning-mode.md MODE="deep analysis"}}
 
 ---
 
-## Self-Correction Protocol
-
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
-
-**STOP**: Immediately halt code generation
-
-**CORRECT**: Output:
-"I apologize - I was implementing instead of analyzing. Let me return to deep prompt analysis."
-
-**RESUME**: Return to the prompt optimization workflow.
+{{INCLUDE:mode-headers/self-correction.md WORKFLOW="deep prompt analysis"}}
 
 ---
 
@@ -156,6 +129,29 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 - Security best practices
 - Scalability strategy
 - Business impact analysis
+
+---
+
+## Agent Transparency (v4.1)
+
+### Quality Output Format
+{{INCLUDE:agent-protocols/quality-output.md}}
+
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Patterns Applied
+{{INCLUDE:sections/pattern-visibility.md}}
+
+### Deep Mode Pattern Selection
+Deep mode has access to all patterns including deep-exclusive patterns:
+- **AlternativePhrasingGenerator**: Generates 2-3 alternative prompt structures
+- **EdgeCaseIdentifier**: Identifies domain-specific edge cases
+- **ValidationChecklistCreator**: Creates implementation verification checklist
+- **AssumptionExplicitizer**: Makes implicit assumptions explicit
+- **ScopeDefiner**: Adds explicit scope boundaries
+
+---
 
 ## Example
 

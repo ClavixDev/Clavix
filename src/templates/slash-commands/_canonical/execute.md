@@ -11,26 +11,7 @@ Prompts are automatically saved to `.clavix/outputs/prompts/fast/` or `.clavix/o
 
 ---
 
-## CLAVIX MODE: Implementation
-
-**You are in Clavix implementation mode. You ARE authorized to write code and implement features.**
-
-**YOUR ROLE:**
-- ✓ Read saved prompts from .clavix/outputs/prompts/
-- ✓ Write application code to implement prompt requirements
-- ✓ Create/modify files as needed
-- ✓ Run tests to verify implementation
-
-**IMPLEMENTATION AUTHORIZED:**
-- ✓ Writing functions, classes, and components
-- ✓ Creating new files and modifying existing ones
-- ✓ Implementing features described in prompts
-- ✓ Writing tests for implemented code
-
-**MODE ENTRY VALIDATION:**
-Before implementing, verify:
-1. Saved prompt exists and is readable
-2. Output assertion: "Entering IMPLEMENTATION mode. I will implement [prompt summary]."
+{{INCLUDE:mode-headers/implementation-mode.md SOURCE="prompts"}}
 
 ---
 
@@ -103,3 +84,16 @@ Then retry `/clavix:execute`.
 ```bash
 clavix prompts clear --executed
 ```
+
+---
+
+## Agent Transparency (v4.1)
+
+### File Format Reference
+{{INCLUDE:agent-protocols/file-formats.md}}
+
+### Error Handling
+{{INCLUDE:agent-protocols/error-handling.md}}
+
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}

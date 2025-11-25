@@ -9,27 +9,7 @@ You are helping the user implement tasks from their task plan with AI assistance
 
 ---
 
-## CLAVIX MODE: Implementation
-
-**You are in Clavix implementation mode. You ARE authorized to write code and implement features.**
-
-**YOUR ROLE:**
-- ✓ Read and understand task requirements from tasks.md
-- ✓ Write application code to implement each task
-- ✓ Create/modify files as needed
-- ✓ Run tests to verify implementation
-- ✓ Mark tasks complete using `clavix task-complete`
-
-**IMPLEMENTATION AUTHORIZED:**
-- ✓ Writing functions, classes, and components
-- ✓ Creating new files and modifying existing ones
-- ✓ Implementing features described in tasks
-- ✓ Writing tests for implemented code
-
-**MODE ENTRY VALIDATION:**
-Before implementing, verify:
-1. Source documents exist (tasks.md or PRD)
-2. Output assertion: "Entering IMPLEMENTATION mode. I will implement tasks from [source]."
+{{INCLUDE:mode-headers/implementation-mode.md SOURCE="tasks"}}
 
 ---
 
@@ -310,6 +290,24 @@ To find the task ID programmatically, read tasks.md and look for the pattern `ph
 - Tasks are designed to be atomic and independently implementable
 - Use the PRD as the authoritative source for "what to build"
 - Use tasks.md as the guide for "in what order"
+
+---
+
+## Agent Transparency (v4.1)
+
+### Workflow State Detection
+{{INCLUDE:agent-protocols/state-awareness.md}}
+
+### Error Classification
+{{INCLUDE:agent-protocols/error-handling.md}}
+
+### File Format Reference
+{{INCLUDE:agent-protocols/file-formats.md}}
+
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}
+
+---
 
 ## Troubleshooting
 

@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2025-11-25
+
+### Agent Transparency Release: Clavix Intelligence v4.1
+
+**Comprehensive agent-first design improvements with transparent decision rules, reusable template components, and 6 new optimization patterns for better AI agent interaction.**
+
+#### Phase 1: Agent Transparency Components (7 components)
+
+**New Component Directory Structure:**
+Created `_components/agent-protocols/` and enhanced `_components/sections/` with reusable agent transparency components:
+
+| Component | Purpose |
+|-----------|---------|
+| `agent-protocols/decision-rules.md` | Deterministic IF-THEN rules for agent behavior |
+| `agent-protocols/quality-output.md` | Action-oriented quality output format |
+| `agent-protocols/state-awareness.md` | Workflow state detection protocol (6 states) |
+| `agent-protocols/error-handling.md` | Three-tier error classification (RECOVERABLE, BLOCKING, UNRECOVERABLE) |
+| `agent-protocols/file-formats.md` | JSON schemas for config and task files |
+| `sections/escalation-factors.md` | 8-factor smart triage system with point values |
+| `sections/pattern-visibility.md` | Pattern documentation with impact indicators |
+
+#### Phase 2: Template Refactoring (8 templates)
+
+**All canonical templates refactored to use `{{INCLUDE:}}` directives:**
+- `fast.md`, `deep.md`, `implement.md`, `plan.md`, `prd.md`, `execute.md`, `start.md`, `summarize.md`
+- Each template now includes "Agent Transparency (v4.1)" section
+- Mode headers extracted to reusable components
+- Self-correction protocols standardized across templates
+
+#### Phase 3: New Optimization Patterns (6 patterns)
+
+**v4.1 Agent Transparency Patterns (both modes):**
+| Pattern | Priority | Purpose |
+|---------|----------|---------|
+| AmbiguityDetector | 9 | Identifies ambiguous terms and vague references |
+| OutputFormatEnforcer | 7 | Adds explicit output format specifications |
+| SuccessCriteriaEnforcer | 6 | Adds measurable success criteria |
+| DomainContextEnricher | 5 | Adds domain-specific best practices |
+
+**Deep Mode Only Patterns (2):**
+| Pattern | Priority | Purpose |
+|---------|----------|---------|
+| ErrorToleranceEnhancer | 5 | Adds error handling requirements |
+| PrerequisiteIdentifier | 6 | Identifies prerequisites and dependencies |
+
+**Pattern Count Updated:**
+- Fast mode: 8 → 12 patterns
+- Deep mode: 14 → 20 patterns
+
+#### Key Improvements
+
+- **Agent-First Design**: Templates now explain CLI behavior to agents, not the other way around
+- **Transparent Decision Rules**: Agents can follow deterministic IF-THEN rules
+- **Error Classification**: Clear guidance on what's recoverable vs blocking vs unrecoverable
+- **State Awareness**: Agents can detect workflow state from file presence
+- **Domain Expertise**: Domain-specific best practices automatically added
+
+#### Tests
+
+- All 3,270 tests pass
+- Updated snapshots for new pattern outputs
+- Updated test expectations for v4.1 behavior
+
+---
+
 ## [4.0.0] - 2025-11-25
 
 ### Major Release: Clavix Intelligence v4.0

@@ -15,6 +15,13 @@ import { PRDStructureEnforcer } from './patterns/prd-structure-enforcer.js';
 // v4.0 Both mode patterns
 import { StepDecomposer } from './patterns/step-decomposer.js';
 import { ContextPrecisionBooster } from './patterns/context-precision.js';
+// v4.1 New patterns - Agent transparency & quality improvements
+import { AmbiguityDetector } from './patterns/ambiguity-detector.js';
+import { OutputFormatEnforcer } from './patterns/output-format-enforcer.js';
+import { SuccessCriteriaEnforcer } from './patterns/success-criteria-enforcer.js';
+import { ErrorToleranceEnhancer } from './patterns/error-tolerance-enhancer.js';
+import { PrerequisiteIdentifier } from './patterns/prerequisite-identifier.js';
+import { DomainContextEnricher } from './patterns/domain-context-enricher.js';
 import { IntentAnalysis, OptimizationMode, PromptIntent } from './types.js';
 
 export class PatternLibrary {
@@ -44,6 +51,14 @@ export class PatternLibrary {
     // v4.0 Both mode patterns (fast & deep)
     this.register(new StepDecomposer()); // P7 - Break complex prompts into steps
     this.register(new ContextPrecisionBooster()); // P8 - Add precise context when missing
+
+    // v4.1 New patterns - Agent transparency & quality improvements
+    this.register(new AmbiguityDetector()); // P9 - Identify ambiguous terms (both modes)
+    this.register(new OutputFormatEnforcer()); // P7 - Add output format specs (both modes)
+    this.register(new SuccessCriteriaEnforcer()); // P6 - Add success criteria (both modes)
+    this.register(new ErrorToleranceEnhancer()); // P5 - Add error handling (deep only)
+    this.register(new PrerequisiteIdentifier()); // P6 - Identify prerequisites (deep only)
+    this.register(new DomainContextEnricher()); // P5 - Add domain best practices (both modes)
   }
 
   /**

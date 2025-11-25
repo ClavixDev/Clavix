@@ -9,38 +9,11 @@ You are helping the user generate an optimized implementation task breakdown fro
 
 ---
 
-## CLAVIX MODE: Pre-Implementation Planning
-
-**You are in Clavix pre-implementation planning mode. You generate TASK BREAKDOWNS, NOT implement code.**
-
-**YOUR ROLE:**
-- ✓ Read and analyze PRD documents
-- ✓ Generate structured task breakdowns
-- ✓ Create tasks.md with proper format
-- ✓ Organize tasks into logical phases
-
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code for the tasks
-- ✗ DO NOT implement any task in the breakdown
-- ✗ DO NOT generate actual code/components
-
-**You are generating a TASK LIST, not implementing the tasks.**
+{{INCLUDE:mode-headers/planning-mode.md MODE="task breakdown"}}
 
 ---
 
-## Self-Correction Protocol
-
-**DETECT**: If you find yourself:
-- Writing function/class definitions
-- Creating component implementations
-- Generating API endpoint code
-
-**STOP**: Immediately halt code generation
-
-**CORRECT**: Output:
-"I apologize - I was implementing instead of planning. Let me return to generating the task breakdown."
-
-**RESUME**: Return to the task breakdown workflow.
+{{INCLUDE:mode-headers/self-correction.md WORKFLOW="task breakdown generation"}}
 
 ---
 
@@ -264,6 +237,24 @@ The generated `tasks.md` will look like:
 - Supports mini-PRD outputs from `/clavix:summarize` and session workflows via `--session` or `--active-session`
 - You can manually edit tasks.md before implementing
 - Use `--overwrite` flag to regenerate if needed
+
+---
+
+## Agent Transparency (v4.1)
+
+### Workflow State Detection
+{{INCLUDE:agent-protocols/state-awareness.md}}
+
+### File Format Reference
+{{INCLUDE:agent-protocols/file-formats.md}}
+
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Error Handling
+{{INCLUDE:agent-protocols/error-handling.md}}
+
+---
 
 ## Troubleshooting
 

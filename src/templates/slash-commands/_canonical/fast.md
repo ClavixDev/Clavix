@@ -9,38 +9,11 @@ You are helping the user improve their prompt using Clavix's fast mode, which ap
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
-
-**You are in Clavix prompt/PRD development mode. You help optimize PROMPTS, NOT implement features.**
-
-**YOUR ROLE:**
-- ✓ Analyze and improve prompt quality
-- ✓ Generate optimized prompts
-- ✓ Identify improvement areas
-- ✓ Apply Clavix Intelligence™ optimization
-
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code for the feature in the prompt
-- ✗ DO NOT implement what the prompt describes
-- ✗ DO NOT generate the actual feature/component
-
-**You are optimizing the PROMPT TEXT, not building what it describes.**
+{{INCLUDE:mode-headers/planning-mode.md MODE="prompt optimization"}}
 
 ---
 
-## Self-Correction Protocol
-
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
-
-**STOP**: Immediately halt code generation
-
-**CORRECT**: Output:
-"I apologize - I was implementing instead of optimizing. Let me return to prompt optimization."
-
-**RESUME**: Return to the prompt optimization workflow.
+{{INCLUDE:mode-headers/self-correction.md WORKFLOW="prompt optimization"}}
 
 ---
 
@@ -118,9 +91,10 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
 
 **Include:**
 - **Intent Analysis** (detected intent type with confidence)
-- **Quality Assessment** (5 dimensions: Clarity, Efficiency, Structure, Completeness, Actionability)
+- **Quality Assessment** (6 dimensions: Clarity, Efficiency, Structure, Completeness, Actionability, Specificity)
 - Single optimized improved prompt
 - **Improvements Applied** (labeled with quality dimensions)
+- **Patterns Applied** (which optimization patterns were used)
 - Recommendation to use deep mode for comprehensive analysis
 
 **Skip (use `/clavix:deep` instead):**
@@ -128,6 +102,24 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
 - Validation checklists and edge cases
 - Quality criteria and risk assessment
 - Strategic analysis (architecture, security - that's for `/clavix:prd`)
+
+---
+
+## Agent Transparency (v4.1)
+
+### Quality Output Format
+{{INCLUDE:agent-protocols/quality-output.md}}
+
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Escalation Factors (Smart Triage)
+{{INCLUDE:sections/escalation-factors.md}}
+
+### Patterns Applied
+{{INCLUDE:sections/pattern-visibility.md}}
+
+---
 
 ## Example
 

@@ -17,8 +17,14 @@ describe('UniversalOptimizer', () => {
       expect(result).toBeDefined();
       expect(result.intent).toBeDefined();
       expect(result.intent.primaryIntent).toBeDefined();
-      expect(['code-generation', 'planning', 'refinement', 'debugging', 'documentation', 'prd-generation'])
-        .toContain(result.intent.primaryIntent);
+      expect([
+        'code-generation',
+        'planning',
+        'refinement',
+        'debugging',
+        'documentation',
+        'prd-generation',
+      ]).toContain(result.intent.primaryIntent);
     });
 
     it('should assess quality across 5 dimensions', async () => {
@@ -150,12 +156,15 @@ describe('UniversalOptimizer', () => {
 
   describe('pattern application', () => {
     it('should remove verbosity', async () => {
-      const verbosePrompt = 'Please could you possibly maybe help me create a login page if you have time';
+      const verbosePrompt =
+        'Please could you possibly maybe help me create a login page if you have time';
       const result = await optimizer.optimize(verbosePrompt, 'fast');
 
       // Optimized prompt should be more concise
       expect(result.quality.efficiency).toBeGreaterThan(50);
-      expect(result.improvements.some((imp: Improvement) => imp.dimension === 'efficiency')).toBe(true);
+      expect(result.improvements.some((imp: Improvement) => imp.dimension === 'efficiency')).toBe(
+        true
+      );
     });
 
     it('should add clarity to vague objectives', async () => {
@@ -163,18 +172,25 @@ describe('UniversalOptimizer', () => {
       const result = await optimizer.optimize(vaguePrompt, 'fast');
 
       // Vague prompt should trigger actionability improvements
-      expect(result.improvements.some((imp: Improvement) =>
-        imp.dimension === 'actionability' || imp.dimension === 'clarity'
-      )).toBe(true);
+      expect(
+        result.improvements.some(
+          (imp: Improvement) => imp.dimension === 'actionability' || imp.dimension === 'clarity'
+        )
+      ).toBe(true);
     });
 
     it('should enrich technical context', async () => {
       const prompt = 'Create authentication';
       const result = await optimizer.optimize(prompt, 'fast');
 
-      // Should suggest or add technical details via completeness validator
-      expect(result.enhanced).toContain('Tech Stack');
-      expect(result.improvements.some((imp: Improvement) => imp.dimension === 'completeness')).toBe(true);
+      // Should suggest or add technical details via patterns (domain context, success criteria, etc.)
+      // New v4.1 patterns add domain best practices and success criteria sections
+      const hasEnrichment =
+        result.enhanced.includes('Domain Best Practices') ||
+        result.enhanced.includes('Success Criteria') ||
+        result.enhanced.includes('Technical Constraints') ||
+        result.improvements.some((imp: Improvement) => imp.dimension === 'completeness');
+      expect(hasEnrichment).toBe(true);
     });
   });
 

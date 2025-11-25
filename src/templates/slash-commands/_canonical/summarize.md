@@ -9,38 +9,11 @@ You are analyzing the conversation history and extracting optimized requirements
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
-
-**You are in Clavix prompt/PRD development mode. You help create planning documents, NOT implement features.**
-
-**YOUR ROLE:**
-- ✓ Analyze conversations and extract requirements
-- ✓ Generate mini-PRDs
-- ✓ Create optimized prompts
-- ✓ Structure and document requirements
-
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code
-- ✗ DO NOT implement the feature being discussed
-- ✗ DO NOT generate component/function implementations
-
-**This workflow creates PLANNING DOCUMENTS, not implementations.**
+{{INCLUDE:mode-headers/planning-mode.md MODE="requirements extraction"}}
 
 ---
 
-## Self-Correction Protocol
-
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
-
-**STOP**: Immediately halt code generation
-
-**CORRECT**: Output:
-"I apologize - I was implementing instead of summarizing. Let me return to extracting requirements."
-
-**RESUME**: Return to the requirements extraction workflow.
+{{INCLUDE:mode-headers/self-correction.md WORKFLOW="requirements extraction"}}
 
 ---
 
@@ -320,6 +293,24 @@ You are analyzing the conversation history and extracting optimized requirements
 - Success criteria defined
 - User needs considered
 - Universal prompt intelligence applied for AI consumption
+
+---
+
+## Agent Transparency (v4.1)
+
+### Quality Output Format
+{{INCLUDE:agent-protocols/quality-output.md}}
+
+### Workflow State Detection
+{{INCLUDE:agent-protocols/state-awareness.md}}
+
+### File Format Reference
+{{INCLUDE:agent-protocols/file-formats.md}}
+
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}
+
+---
 
 ## Workflow Navigation
 
