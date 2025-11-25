@@ -275,24 +275,21 @@ describe('Deep Command', () => {
     it('should display alternative approaches section', async () => {
       const result = await runDeepCommand(['Create a login page']);
 
+      // AlternativePhrasingGenerator pattern creates this section
       expect(result.stdout).toContain('Alternative Approaches');
-    });
-
-    it('should display alternative structures section', async () => {
-      const result = await runDeepCommand(['Create a login page']);
-
-      expect(result.stdout).toContain('Alternative Structures');
     });
 
     it('should display validation checklist section', async () => {
       const result = await runDeepCommand(['Create a login page']);
 
+      // ValidationChecklistCreator pattern creates this section
       expect(result.stdout).toContain('Validation Checklist');
     });
 
     it('should display edge cases section', async () => {
       const result = await runDeepCommand(['Create a login page']);
 
+      // EdgeCaseIdentifier pattern creates this section
       expect(result.stdout).toContain('Edge Cases to Consider');
     });
 
@@ -325,23 +322,25 @@ describe('Deep Command', () => {
       const result = await runDeepCommand(['Create a REST API endpoint']);
 
       expect(result.stdout).toContain('Edge Cases to Consider');
-      // Code generation edge cases
-      expect(result.stdout).toContain('Empty or null inputs');
+      // Code generation edge cases from EdgeCaseIdentifier pattern
+      expect(result.stdout).toContain('Boundary conditions');
     });
 
-    it('should show planning-specific edge cases for planning prompts', async () => {
+    it('should apply patterns to planning prompts', async () => {
       const result = await runDeepCommand(['Plan the architecture for a microservices system']);
 
-      expect(result.stdout).toContain('Edge Cases to Consider');
-      // Planning edge cases
-      expect(result.stdout).toContain('Scope creep');
+      // Planning prompts get alternative approaches from AlternativePhrasingGenerator
+      expect(result.stdout).toContain('Alternative Approaches');
+      // Planning alternatives from the pattern
+      expect(result.stdout).toContain('Top-Down Design');
     });
 
     it('should show code-specific validation items for code generation', async () => {
       const result = await runDeepCommand(['Create a REST API endpoint']);
 
       expect(result.stdout).toContain('Validation Checklist');
-      expect(result.stdout).toContain('Security considerations');
+      // ValidationChecklistCreator generates these for code-generation intent
+      expect(result.stdout).toContain('Edge cases are handled gracefully');
     });
   });
 

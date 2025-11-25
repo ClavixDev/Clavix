@@ -33,6 +33,15 @@ const PATHS = {
     ROOT_DIR,
     'src/templates/slash-commands/_components/sections/pattern-visibility.md'
   ),
+  escalationFactors: path.join(
+    ROOT_DIR,
+    'src/templates/slash-commands/_components/sections/escalation-factors.md'
+  ),
+  decisionRules: path.join(
+    ROOT_DIR,
+    'src/templates/slash-commands/_components/agent-protocols/decision-rules.md'
+  ),
+  universalOptimizer: path.join(ROOT_DIR, 'src/core/intelligence/universal-optimizer.ts'),
 };
 
 // Templates that should document intent types
@@ -52,7 +61,14 @@ interface ValidationResult {
 }
 
 interface ValidationError {
-  type: 'intent' | 'dimension' | 'pattern-priority' | 'pattern-mode';
+  type:
+    | 'intent'
+    | 'dimension'
+    | 'pattern-priority'
+    | 'pattern-mode'
+    | 'escalation-factor'
+    | 'escalation-threshold'
+    | 'pattern-count';
   message: string;
   file: string;
   line?: number;
@@ -462,6 +478,253 @@ async function validatePatternPriorities(): Promise<ValidationError[]> {
 }
 
 // ============================================================================
+// Escalation Factor Validation (v4.3)
+// ============================================================================
+
+/**
+ * Extract escalation factor names from the template markdown table
+ */
+function extractEscalationFactorsFromTemplate(content: string): string[] {
+  const factors: string[] = [];
+
+  // Match table rows with factor names: | `factor-name` | description | points |
+  const factorPattern = /\|\s*`([a-z-]+)`\s*\|/g;
+  let match;
+
+  while ((match = factorPattern.exec(content)) !== null) {
+    factors.push(match[1]);
+  }
+
+  return factors;
+}
+
+/**
+ * Extract escalation factor names from UniversalOptimizer.analyzeEscalation()
+ */
+function extractEscalationFactorsFromCode(content: string): string[] {
+  const factors: string[] = [];
+
+  // Match: factor: 'factor-name'
+  const factorPattern = /factor:\s*['"]([a-z-]+)['"]/g;
+  let match;
+
+  while ((match = factorPattern.exec(content)) !== null) {
+    if (!factors.includes(match[1])) {
+      factors.push(match[1]);
+    }
+  }
+
+  return factors;
+}
+
+/**
+ * Extract escalation thresholds from template
+ */
+function extractEscalationThresholdsFromTemplate(content: string): number[] {
+  const thresholds: number[] = [];
+
+  // Match: | 75+ | `[STRONGLY RECOMMEND DEEP]` | ...
+  // Match: | 60-74 | `[RECOMMEND DEEP]` | ...
+  // Match: | 45-59 | `[DEEP MODE AVAILABLE]` | ...
+  // Match: | <45 | No escalation | ...
+
+  // Look for threshold boundaries in the interpretation table
+  const stronglyMatch = content.match(/\|\s*(\d+)\+\s*\|.*STRONGLY\s*RECOMMEND/i);
+  if (stronglyMatch) thresholds.push(parseInt(stronglyMatch[1]));
+
+  const recommendMatch = content.match(/\|\s*(\d+)-\d+\s*\|.*RECOMMEND\s*DEEP/i);
+  if (recommendMatch) thresholds.push(parseInt(recommendMatch[1]));
+
+  const availableMatch = content.match(/\|\s*(\d+)-\d+\s*\|.*AVAILABLE/i);
+  if (availableMatch) thresholds.push(parseInt(availableMatch[1]));
+
+  return thresholds.sort((a, b) => a - b);
+}
+
+/**
+ * Extract escalation thresholds from UniversalOptimizer
+ */
+function extractEscalationThresholdsFromCode(content: string): number[] {
+  const thresholds: number[] = [];
+
+  // Match: shouldEscalate: totalScore >= 45
+  const shouldEscalateMatch = content.match(/shouldEscalate:\s*totalScore\s*>=\s*(\d+)/);
+  if (shouldEscalateMatch) thresholds.push(parseInt(shouldEscalateMatch[1]));
+
+  // Match: if (totalScore >= 75)
+  const highMatch = content.match(
+    /if\s*\(\s*totalScore\s*>=\s*(\d+)\s*\)\s*\{\s*\n\s*escalationConfidence\s*=\s*['"]high['"]/
+  );
+  if (highMatch) thresholds.push(parseInt(highMatch[1]));
+
+  // Match: else if (totalScore >= 60)
+  const mediumMatch = content.match(
+    /else\s+if\s*\(\s*totalScore\s*>=\s*(\d+)\s*\)\s*\{\s*\n\s*escalationConfidence\s*=\s*['"]medium['"]/
+  );
+  if (mediumMatch) thresholds.push(parseInt(mediumMatch[1]));
+
+  return thresholds.sort((a, b) => a - b);
+}
+
+async function validateEscalationFactors(): Promise<ValidationError[]> {
+  const errors: ValidationError[] = [];
+
+  // Read template
+  const templateContent = fs.readFileSync(PATHS.escalationFactors, 'utf-8');
+  const templateFactors = extractEscalationFactorsFromTemplate(templateContent);
+
+  // Read code
+  const codeContent = fs.readFileSync(PATHS.universalOptimizer, 'utf-8');
+  const codeFactors = extractEscalationFactorsFromCode(codeContent);
+
+  // Find mismatches
+  const missingInTemplate = codeFactors.filter((f) => !templateFactors.includes(f));
+  const missingInCode = templateFactors.filter((f) => !codeFactors.includes(f));
+
+  if (missingInTemplate.length > 0) {
+    errors.push({
+      type: 'escalation-factor',
+      message: `Escalation factors in code but not documented in template`,
+      file: 'src/templates/slash-commands/_components/sections/escalation-factors.md',
+      expected: codeFactors,
+      found: templateFactors,
+      missing: missingInTemplate,
+    });
+  }
+
+  if (missingInCode.length > 0) {
+    errors.push({
+      type: 'escalation-factor',
+      message: `Escalation factors documented in template but not in code`,
+      file: 'src/core/intelligence/universal-optimizer.ts',
+      expected: templateFactors,
+      found: codeFactors,
+      missing: missingInCode,
+    });
+  }
+
+  return errors;
+}
+
+async function validateEscalationThresholds(): Promise<ValidationError[]> {
+  const errors: ValidationError[] = [];
+
+  // Read template
+  const templateContent = fs.readFileSync(PATHS.escalationFactors, 'utf-8');
+  const templateThresholds = extractEscalationThresholdsFromTemplate(templateContent);
+
+  // Read code
+  const codeContent = fs.readFileSync(PATHS.universalOptimizer, 'utf-8');
+  const codeThresholds = extractEscalationThresholdsFromCode(codeContent);
+
+  // Compare
+  const templateStr = templateThresholds.join(', ');
+  const codeStr = codeThresholds.join(', ');
+
+  if (templateStr !== codeStr) {
+    errors.push({
+      type: 'escalation-threshold',
+      message: `Escalation thresholds mismatch between template and code`,
+      file: 'src/templates/slash-commands/_components/sections/escalation-factors.md',
+      expected: codeThresholds.map(String),
+      found: templateThresholds.map(String),
+      missing: [],
+    });
+  }
+
+  return errors;
+}
+
+// ============================================================================
+// Pattern Count Validation (v4.3)
+// ============================================================================
+
+/**
+ * Extract pattern counts from pattern-visibility.md template
+ */
+function extractPatternCountsFromTemplate(content: string): { fast: number; deep: number } {
+  let fast = 0;
+  let deep = 0;
+
+  // Match: | Fast | 12 core patterns | ...
+  const fastMatch = content.match(/\|\s*Fast\s*\|\s*(\d+)/i);
+  if (fastMatch) fast = parseInt(fastMatch[1]);
+
+  // Match: | Deep | 20 total patterns | ...
+  const deepMatch = content.match(/\|\s*Deep\s*\|\s*(\d+)/i);
+  if (deepMatch) deep = parseInt(deepMatch[1]);
+
+  return { fast, deep };
+}
+
+/**
+ * Count patterns by mode from pattern files
+ */
+async function countPatternsByMode(patternsDir: string): Promise<{ fast: number; deep: number }> {
+  const files = fs
+    .readdirSync(patternsDir)
+    .filter((f) => f.endsWith('.ts') && f !== 'base-pattern.ts');
+
+  let fastCount = 0;
+  let deepCount = 0;
+
+  for (const file of files) {
+    const content = fs.readFileSync(path.join(patternsDir, file), 'utf-8');
+
+    // Extract mode from pattern file: mode = 'deep' as const or mode: OptimizationMode = 'both'
+    const modeMatch = content.match(/mode\s*[:=]\s*['"]?(fast|deep|both)['"]?/);
+    const mode = modeMatch ? modeMatch[1] : 'both';
+
+    // Fast mode includes 'fast' and 'both' patterns
+    if (mode === 'fast' || mode === 'both') {
+      fastCount++;
+    }
+
+    // Deep mode includes ALL patterns
+    deepCount++;
+  }
+
+  return { fast: fastCount, deep: deepCount };
+}
+
+async function validatePatternCounts(): Promise<ValidationError[]> {
+  const errors: ValidationError[] = [];
+
+  // Read template
+  const visibilityContent = fs.readFileSync(PATHS.patternVisibility, 'utf-8');
+  const templateCounts = extractPatternCountsFromTemplate(visibilityContent);
+
+  // Count actual patterns
+  const codeCounts = await countPatternsByMode(PATHS.patternsDir);
+
+  // Compare fast mode
+  if (templateCounts.fast !== codeCounts.fast) {
+    errors.push({
+      type: 'pattern-count',
+      message: `Fast mode pattern count mismatch`,
+      file: 'src/templates/slash-commands/_components/sections/pattern-visibility.md',
+      expected: [`${codeCounts.fast} patterns for fast mode`],
+      found: [`${templateCounts.fast} patterns documented`],
+      missing: [],
+    });
+  }
+
+  // Compare deep mode
+  if (templateCounts.deep !== codeCounts.deep) {
+    errors.push({
+      type: 'pattern-count',
+      message: `Deep mode pattern count mismatch`,
+      file: 'src/templates/slash-commands/_components/sections/pattern-visibility.md',
+      expected: [`${codeCounts.deep} patterns for deep mode`],
+      found: [`${templateCounts.deep} patterns documented`],
+      missing: [],
+    });
+  }
+
+  return errors;
+}
+
+// ============================================================================
 // Main Validation Runner
 // ============================================================================
 
@@ -469,7 +732,7 @@ export async function validateConsistency(): Promise<ValidationResult> {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.2\n');
+  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.3\n');
   console.log('Checking TypeScript ↔ Template synchronization...\n');
 
   // Run all validations
@@ -501,6 +764,36 @@ export async function validateConsistency(): Promise<ValidationResult> {
     );
   } catch (e) {
     console.log(`  Pattern Priorities: ⚠️ Could not validate (${e})`);
+  }
+
+  try {
+    const escalationErrors = await validateEscalationFactors();
+    errors.push(...escalationErrors);
+    console.log(
+      `  Escalation Factors: ${escalationErrors.length === 0 ? '✅ OK' : `❌ ${escalationErrors.length} issues`}`
+    );
+  } catch (e) {
+    console.log(`  Escalation Factors: ⚠️ Could not validate (${e})`);
+  }
+
+  try {
+    const thresholdErrors = await validateEscalationThresholds();
+    errors.push(...thresholdErrors);
+    console.log(
+      `  Escalation Thresholds: ${thresholdErrors.length === 0 ? '✅ OK' : `❌ ${thresholdErrors.length} issues`}`
+    );
+  } catch (e) {
+    console.log(`  Escalation Thresholds: ⚠️ Could not validate (${e})`);
+  }
+
+  try {
+    const patternCountErrors = await validatePatternCounts();
+    errors.push(...patternCountErrors);
+    console.log(
+      `  Pattern Counts: ${patternCountErrors.length === 0 ? '✅ OK' : `❌ ${patternCountErrors.length} issues`}`
+    );
+  } catch (e) {
+    console.log(`  Pattern Counts: ⚠️ Could not validate (${e})`);
   }
 
   console.log('');
@@ -574,6 +867,54 @@ function formatErrors(errors: ValidationError[]): string {
       output += `  📄 ${error.file}${error.line ? `:${error.line}` : ''}\n`;
       output += `  TypeScript: ${error.expected[0]}\n`;
       output += `  Documentation: ${error.found[0]}\n\n`;
+    }
+  }
+
+  // Escalation factor errors
+  const escalationErrors = byType.get('escalation-factor') || [];
+  if (escalationErrors.length > 0) {
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+    output += 'Escalation Factor Mismatch\n';
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    for (const error of escalationErrors) {
+      output += `  📄 ${error.file}${error.line ? `:${error.line}` : ''}\n`;
+      output += `  ${error.message}\n`;
+      output += `  Expected: ${error.expected.join(', ')}\n`;
+      output += `  Found: ${error.found.join(', ')}\n`;
+      if (error.missing.length > 0) {
+        output += `  ❌ MISSING: ${error.missing.join(', ')}\n`;
+      }
+      output += '\n';
+    }
+  }
+
+  // Escalation threshold errors
+  const thresholdErrors = byType.get('escalation-threshold') || [];
+  if (thresholdErrors.length > 0) {
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+    output += 'Escalation Threshold Mismatch\n';
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    for (const error of thresholdErrors) {
+      output += `  📄 ${error.file}${error.line ? `:${error.line}` : ''}\n`;
+      output += `  Code thresholds: ${error.expected.join(', ')}\n`;
+      output += `  Template thresholds: ${error.found.join(', ')}\n\n`;
+    }
+  }
+
+  // Pattern count errors
+  const patternCountErrors = byType.get('pattern-count') || [];
+  if (patternCountErrors.length > 0) {
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+    output += 'Pattern Count Mismatch\n';
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    for (const error of patternCountErrors) {
+      output += `  📄 ${error.file}${error.line ? `:${error.line}` : ''}\n`;
+      output += `  ${error.message}\n`;
+      output += `  Actual: ${error.expected.join(', ')}\n`;
+      output += `  Documented: ${error.found.join(', ')}\n\n`;
     }
   }
 

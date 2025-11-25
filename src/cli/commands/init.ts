@@ -20,9 +20,7 @@ import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js
 export default class Init extends Command {
   static description = 'Initialize Clavix in the current project';
 
-  static examples = [
-    '<%= config.bin %> <%= command.id %>',
-  ];
+  static examples = ['<%= config.bin %> <%= command.id %>'];
 
   async run(): Promise<void> {
     console.log(chalk.bold.cyan('\n🚀 Clavix Initialization\n'));
@@ -54,7 +52,7 @@ export default class Init extends Command {
           const configContent = await FileSystem.readFile('.clavix/config.json');
           const config = JSON.parse(configContent);
           existingIntegrations = config.integrations || config.providers || [];
-        } catch (error) {
+        } catch {
           // Ignore parse errors, will use empty array
         }
       }
@@ -196,9 +194,10 @@ export default class Init extends Command {
           ]);
 
           if (!useNamespace) {
-            adapter = adapter.name === 'gemini'
-              ? new GeminiAdapter({ useNamespace: false })
-              : new QwenAdapter({ useNamespace: false });
+            adapter =
+              adapter.name === 'gemini'
+                ? new GeminiAdapter({ useNamespace: false })
+                : new QwenAdapter({ useNamespace: false });
             console.log(chalk.gray(`    → Using ${adapter.getCommandPath()} (no namespacing)`));
           }
         }
@@ -207,12 +206,8 @@ export default class Init extends Command {
         if (adapter.validate) {
           const validation = await adapter.validate();
           if (!validation.valid) {
-            console.log(
-              chalk.yellow(`    ⚠ Validation warnings for ${adapter.displayName}:`)
-            );
-            validation.errors?.forEach((err) =>
-              console.log(chalk.yellow(`      - ${err}`))
-            );
+            console.log(chalk.yellow(`    ⚠ Validation warnings for ${adapter.displayName}:`));
+            validation.errors?.forEach((err) => console.log(chalk.yellow(`      - ${err}`)));
 
             const { continueAnyway } = await inquirer.prompt([
               {
@@ -257,7 +252,9 @@ export default class Init extends Command {
 
           console.log(chalk.green(`    → Registered ${commandNames.join(', ')}`));
           console.log(chalk.gray(`    Commands saved to ${commandPath}`));
-          console.log(chalk.gray('    Tip: reopen the CLI or run /help to refresh the command list.'));
+          console.log(
+            chalk.gray('    Tip: reopen the CLI or run /help to refresh the command list.')
+          );
         }
 
         // Inject documentation blocks (Claude Code only)
@@ -278,14 +275,35 @@ export default class Init extends Command {
       console.log(chalk.bold.green('\n✅ Clavix initialized successfully!\n'));
       console.log(chalk.gray('Next steps:'));
       console.log(chalk.gray('  • Slash commands are now available in your AI agent'));
-      console.log(chalk.gray('  • Run'), chalk.cyan('clavix --help'), chalk.gray('to see all commands'));
-      console.log(chalk.gray('  • Try'), chalk.cyan('/clavix:fast'), chalk.gray('for quick prompt improvements'));
-      console.log(chalk.gray('  • Try'), chalk.cyan('/clavix:deep'), chalk.gray('for comprehensive prompt analysis'));
-      console.log(chalk.gray('  • Use'), chalk.cyan('/clavix:prd'), chalk.gray('to generate a PRD\n'));
+      console.log(
+        chalk.gray('  • Run'),
+        chalk.cyan('clavix --help'),
+        chalk.gray('to see all commands')
+      );
+      console.log(
+        chalk.gray('  • Try'),
+        chalk.cyan('/clavix:fast'),
+        chalk.gray('for quick prompt improvements')
+      );
+      console.log(
+        chalk.gray('  • Try'),
+        chalk.cyan('/clavix:deep'),
+        chalk.gray('for comprehensive prompt analysis')
+      );
+      console.log(
+        chalk.gray('  • Use'),
+        chalk.cyan('/clavix:prd'),
+        chalk.gray('to generate a PRD\n')
+      );
     } catch (error: unknown) {
       const { getErrorMessage, toError } = await import('../../utils/error-utils.js');
       console.error(chalk.red('\n✗ Initialization failed:'), getErrorMessage(error));
-      if (error && typeof error === 'object' && 'hint' in error && typeof (error as { hint: unknown }).hint === 'string') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'hint' in error &&
+        typeof (error as { hint: unknown }).hint === 'string'
+      ) {
         console.error(chalk.yellow('  Hint:'), (error as { hint: string }).hint);
       }
       throw toError(error);
@@ -293,12 +311,7 @@ export default class Init extends Command {
   }
 
   private async createDirectoryStructure(): Promise<void> {
-    const dirs = [
-      '.clavix',
-      '.clavix/sessions',
-      '.clavix/outputs',
-      '.clavix/templates',
-    ];
+    const dirs = ['.clavix', '.clavix/sessions', '.clavix/outputs', '.clavix/templates'];
 
     for (const dir of dirs) {
       await FileSystem.ensureDir(dir);
@@ -344,8 +357,8 @@ Welcome to Clavix! This directory contains your local Clavix configuration and d
 ## CLI Commands Reference
 
 ### Prompt Improvement
-- \`clavix fast "<prompt>"\` - Quick CLEAR (C/L/E) improvements with smart triage
-- \`clavix deep "<prompt>"\` - Comprehensive CLEAR (C/L/E/A/R) analysis with alternatives
+- \`clavix fast "<prompt>"\` - Quick Clavix Intelligence improvements with smart triage
+- \`clavix deep "<prompt>"\` - Comprehensive Clavix Intelligence analysis with alternatives
 - \`clavix execute [--latest]\` - Execute saved prompts from fast/deep optimization
 - \`clavix prompts list\` - View all saved prompts with status (NEW/EXECUTED/OLD/STALE)
 - \`clavix prompts clear\` - Cleanup prompts (\`--executed\`, \`--stale\`, \`--fast\`, \`--deep\`, \`--all\`)
@@ -539,7 +552,10 @@ clavix config set key=value
     return templates;
   }
 
-  private async handleLegacyCommands(adapter: AgentAdapter, templates: CommandTemplate[]): Promise<void> {
+  private async handleLegacyCommands(
+    adapter: AgentAdapter,
+    templates: CommandTemplate[]
+  ): Promise<void> {
     const commandNames = templates.map((template) => template.name);
     const legacyFiles = await collectLegacyCommandFiles(adapter, commandNames);
 
@@ -587,7 +603,6 @@ clavix config set key=value
       await DocInjector.injectBlock('CLAUDE.md', this.extractClavixBlock(claudeContent));
     }
   }
-
 
   private extractClavixBlock(content: string): string {
     const match = content.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/);

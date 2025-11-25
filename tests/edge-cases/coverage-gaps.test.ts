@@ -7,7 +7,6 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import { TaskManager } from '../../src/core/task-manager';
 import { PrdGenerator } from '../../src/core/prd-generator';
-import { PromptOptimizer } from '../../src/core/prompt-optimizer';
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { fileURLToPath } from 'url';
 
@@ -82,17 +81,6 @@ Basic requirements without structure`;
   });
 
   describe('Large Input Handling', () => {
-    it('should handle very long prompts (50k+ characters)', async () => {
-      const longPrompt = 'This is a very detailed requirement. '.repeat(2000); // ~70k chars
-      const optimizer = new PromptOptimizer();
-
-      const result = optimizer.improve(longPrompt, 'fast');
-
-      expect(result).toBeDefined();
-      expect(result.improved).toBeDefined();
-      expect(result.improved.length).toBeGreaterThan(0);
-    });
-
     it('should handle very long PRD content', async () => {
       const projectDir = path.join(testDir, '.clavix/outputs/large-project');
       await fs.ensureDir(projectDir);
@@ -103,7 +91,7 @@ Basic requirements without structure`;
 
 ### Must-Have Features
 
-#### 1. ${('Feature Name ').repeat(100)}
+#### 1. ${'Feature Name '.repeat(100)}
 
 **Behavior:**
 ${Array.from({ length: 100 }, (_, i) => `- Create task ${i + 1}`).join('\n')}
@@ -132,12 +120,12 @@ ${'Technical detail line. '.repeat(1000)}`;
 ### Must-Have Features
 
 ${Array.from(
-        { length: 5 },
-        (_, i) => `#### ${i + 1}. Feature ${i + 1}
+  { length: 5 },
+  (_, i) => `#### ${i + 1}. Feature ${i + 1}
 
 **Behavior:**
 - Create feature ${i + 1} component`
-      ).join('\n\n')}`;
+).join('\n\n')}`;
 
       await fs.writeFile(path.join(projectDir, 'full-prd.md'), features);
 
@@ -194,30 +182,6 @@ Some background information.`;
 
       const tasksContent = await fs.readFile(path.join(projectDir, 'tasks.md'), 'utf-8');
       expect(tasksContent).toBeDefined();
-    });
-
-    it('should handle empty prompt improvement', async () => {
-      const optimizer = new PromptOptimizer();
-      const result = optimizer.improve('', 'fast');
-
-      expect(result).toBeDefined();
-      expect(result.improved).toBeDefined();
-    });
-
-    it('should handle whitespace-only prompt', async () => {
-      const optimizer = new PromptOptimizer();
-      const result = optimizer.improve('   \n\n\t   ', 'fast');
-
-      expect(result).toBeDefined();
-      expect(result.improved).toBeDefined();
-    });
-
-    it('should handle single-character prompt', async () => {
-      const optimizer = new PromptOptimizer();
-      const result = optimizer.improve('a', 'fast');
-
-      expect(result).toBeDefined();
-      expect(result.improved).toBeDefined();
     });
   });
 
@@ -316,60 +280,6 @@ Some background information.`;
 
       const prdContent = await fs.readFile(path.join(projectDir, 'full-prd.md'), 'utf-8');
       expect(prdContent).toBeDefined();
-    });
-  });
-
-  describe('Prompt Optimizer Edge Cases', () => {
-    it('should handle prompts with code blocks', async () => {
-      const optimizer = new PromptOptimizer();
-      const prompt = `Improve this code:
-\`\`\`javascript
-function test() {
-  return true;
-}
-\`\`\``;
-
-      const result = optimizer.improve(prompt, 'fast');
-      expect(result.improved).toBeDefined();
-    });
-
-    it('should handle prompts with markdown formatting', async () => {
-      const optimizer = new PromptOptimizer();
-      const prompt = `# Title
-
-## Subtitle
-
-- Bullet 1
-- Bullet 2
-
-**Bold** and *italic* text`;
-
-      const result = optimizer.improve(prompt, 'fast');
-      expect(result.improved).toBeDefined();
-    });
-
-    it('should handle prompts with special characters', async () => {
-      const optimizer = new PromptOptimizer();
-      const prompt = 'Test with $pecial ch@rs & symbols: <>, {}, [], (), !, ?, %, #';
-
-      const result = optimizer.improve(prompt, 'fast');
-      expect(result.improved).toBeDefined();
-    });
-
-    it('should handle prompts with URLs', async () => {
-      const optimizer = new PromptOptimizer();
-      const prompt = 'Create an API that calls https://api.example.com/v1/users';
-
-      const result = optimizer.improve(prompt, 'fast');
-      expect(result.improved).toBeDefined();
-    });
-
-    it('should handle prompts with email addresses', async () => {
-      const optimizer = new PromptOptimizer();
-      const prompt = 'Send notifications to user@example.com and admin@test.org';
-
-      const result = optimizer.improve(prompt, 'fast');
-      expect(result.improved).toBeDefined();
     });
   });
 

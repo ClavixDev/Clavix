@@ -115,5 +115,5 @@ Deep mode only:
 
 | Mode | Patterns Available | Typical Applied |
 |------|-------------------|-----------------|
-| Fast | 12 core patterns | 4-7 patterns |
+| Fast | 14 core patterns | 4-7 patterns |
 | Deep | 20 total patterns | 8-14 patterns |

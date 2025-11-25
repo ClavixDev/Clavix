@@ -3,7 +3,7 @@
  *
  * This class handles:
  * - Analyzing PRD documents
- * - Generating CLEAR-optimized task breakdowns
+ * - Generating optimized task breakdowns
  * - Reading/writing tasks.md with checkbox format
  * - Tracking task completion state
  * - Managing session resume capability
@@ -11,7 +11,6 @@
 
 import fs from 'fs-extra';
 import * as path from 'path';
-import { PromptOptimizer } from './prompt-optimizer.js';
 import { FileSystem } from '../utils/file-system.js';
 
 export type PrdSourceType = 'auto' | 'full' | 'quick' | 'mini' | 'prompt';
@@ -23,11 +22,14 @@ const SOURCE_FILE_MAP: Record<Exclude<PrdSourceType, 'auto'>, string[]> = {
   prompt: ['optimized-prompt.md'],
 };
 
-const SOURCE_ORDER_AUTO: Array<Exclude<PrdSourceType, 'auto'>> = ['full', 'quick', 'mini', 'prompt'];
+const SOURCE_ORDER_AUTO: Array<Exclude<PrdSourceType, 'auto'>> = [
+  'full',
+  'quick',
+  'mini',
+  'prompt',
+];
 
-const ALL_KNOWN_PRD_FILES = Array.from(
-  new Set(Object.values(SOURCE_FILE_MAP).flat())
-);
+const ALL_KNOWN_PRD_FILES = Array.from(new Set(Object.values(SOURCE_FILE_MAP).flat()));
 
 /**
  * Represents a single task in the implementation plan
@@ -75,10 +77,8 @@ export interface TaskGenerationResult {
  * Generates and manages implementation tasks from PRD documents
  */
 export class TaskManager {
-  private readonly optimizer: PromptOptimizer;
-
   constructor() {
-    this.optimizer = new PromptOptimizer();
+    // TaskManager uses Clavix Intelligence for optimization
   }
 
   /**
@@ -135,9 +135,7 @@ export class TaskManager {
     }
 
     if (preferredSource !== 'auto') {
-      throw new Error(
-        `No PRD artifacts found for source "${preferredSource}" in ${prdPath}`
-      );
+      throw new Error(`No PRD artifacts found for source "${preferredSource}" in ${prdPath}`);
     }
 
     throw new Error(`No PRD artifacts found in ${prdPath}`);
@@ -201,10 +199,7 @@ export class TaskManager {
     return phases;
   }
 
-  private getSectionByAliases(
-    sections: Record<string, string>,
-    aliases: string[]
-  ): string | null {
+  private getSectionByAliases(sections: Record<string, string>, aliases: string[]): string | null {
     for (const alias of aliases) {
       if (sections[alias]) {
         return sections[alias];
@@ -229,7 +224,9 @@ export class TaskManager {
 
     // GRANULARITY CONTROL: Warn if too many bullets
     if (bullets.length > 50) {
-      console.warn(`Warning: PRD contains ${bullets.length} top-level features. Consider grouping related items.`);
+      console.warn(
+        `Warning: PRD contains ${bullets.length} top-level features. Consider grouping related items.`
+      );
     }
 
     // Group features by type/category instead of creating separate phases
@@ -270,7 +267,9 @@ export class TaskManager {
     // GRANULARITY CONTROL: Cap total tasks (merge if exceeding)
     const totalTasks = phases.reduce((sum, p) => sum + p.tasks.length, 0);
     if (totalTasks > 50) {
-      console.warn(`Warning: Generated ${totalTasks} tasks. Consider merging related tasks or simplifying PRD.`);
+      console.warn(
+        `Warning: Generated ${totalTasks} tasks. Consider merging related tasks or simplifying PRD.`
+      );
     }
 
     return phases;
@@ -285,14 +284,16 @@ export class TaskManager {
       'Configuration & Setup': [],
       'Core Implementation': [],
       'Testing & Validation': [],
-      'Documentation': [],
+      Documentation: [],
       'Integration & Release': [],
     };
 
     features.forEach((feature) => {
       // Config/setup phase
       if (
-        /\b(config|configuration|setup|install|package|tsconfig|dependencies|environment)\b/i.test(feature)
+        /\b(config|configuration|setup|install|package|tsconfig|dependencies|environment)\b/i.test(
+          feature
+        )
       ) {
         groups['Configuration & Setup'].push(feature);
       }
@@ -305,7 +306,9 @@ export class TaskManager {
         groups['Documentation'].push(feature);
       }
       // Integration/release phase
-      else if (/\b(integrate|integration|release|deploy|publish|build|distribution)\b/i.test(feature)) {
+      else if (
+        /\b(integrate|integration|release|deploy|publish|build|distribution)\b/i.test(feature)
+      ) {
         groups['Integration & Release'].push(feature);
       }
       // Default to core implementation
@@ -349,7 +352,11 @@ export class TaskManager {
         const value = topLevelMatch[1].trim();
 
         // Skip items that look like code examples, file paths, or implementation details
-        if (value && !this.looksLikeCodeOrPath(value) && !this.looksLikeImplementationDetail(value)) {
+        if (
+          value &&
+          !this.looksLikeCodeOrPath(value) &&
+          !this.looksLikeImplementationDetail(value)
+        ) {
           items.push(value.replace(/\s+/g, ' ').replace(/\.$/, ''));
         }
       }
@@ -418,7 +425,8 @@ export class TaskManager {
     const formattedFeature = this.formatInlineText(feature);
 
     // Detect task type
-    const isConfig = /\b(config|configuration|setup|install|update.*json|tsconfig|package\.json)\b/i.test(feature);
+    const isConfig =
+      /\b(config|configuration|setup|install|update.*json|tsconfig|package\.json)\b/i.test(feature);
     const isTest = /\b(test|testing|coverage|validation|verify)\b/i.test(feature);
     const isDocumentation = /\b(document|documentation|readme|changelog|guide)\b/i.test(feature);
     const isConversion = /\b(convert|migrate|refactor|replace|update.*code)\b/i.test(feature);
@@ -442,18 +450,12 @@ export class TaskManager {
 
     // Conversion/migration tasks - Convert + test
     if (isConversion) {
-      return [
-        this.convertBehaviorToTask(feature),
-        `Test ${formattedFeature} works correctly`,
-      ];
+      return [this.convertBehaviorToTask(feature), `Test ${formattedFeature} works correctly`];
     }
 
     // Default for complex features - Implementation + testing only
     // (No more "integrate into end-to-end" boilerplate)
-    return [
-      this.convertBehaviorToTask(feature),
-      `Add tests covering ${formattedFeature}`,
-    ];
+    return [this.convertBehaviorToTask(feature), `Add tests covering ${formattedFeature}`];
   }
 
   private formatInlineText(text: string): string {
@@ -614,9 +616,8 @@ export class TaskManager {
 
         // Extract content between this header and the next one
         const startIndex = featureHeaders[i].index!;
-        const endIndex = i < featureHeaders.length - 1
-          ? featureHeaders[i + 1].index!
-          : featuresContent.length;
+        const endIndex =
+          i < featureHeaders.length - 1 ? featureHeaders[i + 1].index! : featuresContent.length;
 
         const featureContent = featuresContent.substring(startIndex, endIndex);
 
@@ -734,7 +735,8 @@ export class TaskManager {
 
     // If starts with action verb, keep as is
     // Otherwise, prepend "Implement"
-    const actionVerbs = /^(Create|Add|Implement|Build|Generate|Read|Write|Parse|Analyze|Display|Update|Handle|Process|Execute|Mark|Track|Ensure|Validate|Configure)/i;
+    const actionVerbs =
+      /^(Create|Add|Implement|Build|Generate|Read|Write|Parse|Analyze|Display|Update|Handle|Process|Execute|Mark|Track|Ensure|Validate|Configure)/i;
 
     if (!actionVerbs.test(task)) {
       task = `Implement ${task.charAt(0).toLowerCase() + task.slice(1)}`;
@@ -790,7 +792,8 @@ export class TaskManager {
    */
   private optimizeTaskDescription(description: string): string {
     // Ensure starts with action verb first
-    const actionVerbs = /^(Create|Add|Implement|Build|Generate|Read|Write|Parse|Analyze|Display|Update|Handle|Process|Execute|Mark|Track|Ensure|Validate|Configure|Set up|Fix|Refactor|Test)/i;
+    const actionVerbs =
+      /^(Create|Add|Implement|Build|Generate|Read|Write|Parse|Analyze|Display|Update|Handle|Process|Execute|Mark|Track|Ensure|Validate|Configure|Set up|Fix|Refactor|Test)/i;
 
     if (!actionVerbs.test(description)) {
       description = `Implement ${description}`;
@@ -967,9 +970,7 @@ export class TaskManager {
 
     // Find the task line and replace [ ] with [x]
     // We need to find the exact task by description
-    const targetTask = phases
-      .flatMap((p) => p.tasks)
-      .find((t) => t.id === taskId);
+    const targetTask = phases.flatMap((p) => p.tasks).find((t) => t.id === taskId);
 
     if (!targetTask) {
       throw new Error(`Task not found: ${taskId}`);
@@ -981,10 +982,7 @@ export class TaskManager {
       ? `\\s+\\(ref:\\s+${this.escapeRegex(targetTask.prdReference)}\\)`
       : '';
 
-    const regex = new RegExp(
-      `^(-\\s+\\[)( )(\\]\\s+${taskDescPattern}${refPattern})$`,
-      'm'
-    );
+    const regex = new RegExp(`^(-\\s+\\[)( )(\\]\\s+${taskDescPattern}${refPattern})$`, 'm');
 
     const updatedContent = content.replace(regex, '$1x$3');
 
@@ -1006,7 +1004,7 @@ export class TaskManager {
    */
   validateTaskExists(phases: TaskPhase[], taskId: string): Task | null {
     for (const phase of phases) {
-      const task = phase.tasks.find(t => t.id === taskId);
+      const task = phase.tasks.find((t) => t.id === taskId);
       if (task) {
         return task;
       }
@@ -1043,7 +1041,12 @@ export class TaskManager {
     tasksPath: string,
     taskId: string,
     options: { retryOnFailure?: boolean; createBackup?: boolean } = {}
-  ): Promise<{ success: boolean; alreadyCompleted?: boolean; error?: string; warnings?: string[] }> {
+  ): Promise<{
+    success: boolean;
+    alreadyCompleted?: boolean;
+    error?: string;
+    warnings?: string[];
+  }> {
     const { retryOnFailure = true, createBackup = true } = options;
     const warnings: string[] = [];
 
@@ -1073,7 +1076,7 @@ export class TaskManager {
 
       if (!task) {
         // Task not found - provide helpful error
-        const allTaskIds = phases.flatMap(p => p.tasks.map(t => t.id));
+        const allTaskIds = phases.flatMap((p) => p.tasks.map((t) => t.id));
         return {
           success: false,
           error: `Task ID "${taskId}" not found. Available task IDs:\n${allTaskIds.join('\n')}`,
@@ -1112,7 +1115,8 @@ export class TaskManager {
             await fs.copyFile(backupPath, tasksPath);
             return {
               success: false,
-              error: 'Failed to mark task as completed even after retry. File has been restored from backup.',
+              error:
+                'Failed to mark task as completed even after retry. File has been restored from backup.',
               warnings,
             };
           }
@@ -1129,7 +1133,7 @@ export class TaskManager {
       }
 
       // Clean up backup on success
-      if (backupPath && await fs.pathExists(backupPath)) {
+      if (backupPath && (await fs.pathExists(backupPath))) {
         await fs.remove(backupPath);
       }
 
@@ -1137,10 +1141,9 @@ export class TaskManager {
         success: true,
         warnings: warnings.length > 0 ? warnings : undefined,
       };
-
     } catch (error) {
       // Restore from backup if available
-      if (backupPath && await fs.pathExists(backupPath)) {
+      if (backupPath && (await fs.pathExists(backupPath))) {
         try {
           await fs.copyFile(backupPath, tasksPath);
           warnings.push('Restored tasks.md from backup due to error');
@@ -1182,7 +1185,7 @@ export class TaskManager {
   async findPrdDirectory(projectName?: string): Promise<string> {
     const baseDir = '.clavix/outputs';
 
-    if (!await fs.pathExists(baseDir)) {
+    if (!(await fs.pathExists(baseDir))) {
       throw new Error('No .clavix/outputs directory found. Have you generated a PRD yet?');
     }
 

@@ -79,9 +79,12 @@ export default class Plan extends Command {
         generatedArtifacts.push(...sessionResult.generatedArtifacts);
       }
 
-      let selectedProject:
-        | { path: string; name: string; sources: Array<Exclude<PrdSourceType, 'auto'>>; hasTasks: boolean }
-        | null = null;
+      let selectedProject: {
+        path: string;
+        name: string;
+        sources: Array<Exclude<PrdSourceType, 'auto'>>;
+        hasTasks: boolean;
+      } | null = null;
 
       if (!prdPath) {
         selectedProject = await this.resolveProjectDirectory(manager, flags.project);
@@ -103,7 +106,7 @@ export default class Plan extends Command {
       // Check if tasks.md already exists
       const tasksPath = path.join(prdPath, 'tasks.md');
 
-      if (await fs.pathExists(tasksPath) && !flags.overwrite) {
+      if ((await fs.pathExists(tasksPath)) && !flags.overwrite) {
         console.log(chalk.yellow('Warning: tasks.md already exists.'));
         console.log(chalk.gray(`Location: ${tasksPath}`));
         console.log(chalk.gray('Use --overwrite to regenerate tasks.md.\n'));
@@ -120,8 +123,8 @@ export default class Plan extends Command {
       if (sourcePreference !== 'auto' && !availableSources.includes(sourcePreference)) {
         this.error(
           `Preferred source "${sourcePreference}" not found in ${prdPath}\n\n` +
-          `Available sources: ${availableSources.join(', ') || 'none'}\n` +
-          'Hint: Override with --source flag'
+            `Available sources: ${availableSources.join(', ') || 'none'}\n` +
+            'Hint: Override with --source flag'
         );
       }
 
@@ -197,11 +200,16 @@ export default class Plan extends Command {
       console.log(chalk.bold.green('Next Steps:\n'));
       console.log(chalk.gray('  1. Review the generated tasks in tasks.md'));
       console.log(chalk.gray('  2. Edit if needed (add/remove/modify tasks)'));
-      console.log(chalk.gray('  3. Run'), chalk.cyan('clavix implement'), chalk.gray('to start implementation'));
+      console.log(
+        chalk.gray('  3. Run'),
+        chalk.cyan('clavix implement'),
+        chalk.gray('to start implementation')
+      );
       console.log();
 
-      console.log(chalk.dim('Tip: Tasks follow CLEAR framework principles for optimal AI execution\n'));
-
+      console.log(
+        chalk.dim('Tip: Tasks are optimized with Clavix Intelligence for optimal AI execution\n')
+      );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
       this.error(errorMessage);

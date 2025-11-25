@@ -6,7 +6,6 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import { SessionManager } from '../../src/core/session-manager';
 import { ConversationAnalyzer } from '../../src/core/conversation-analyzer';
-import { PromptOptimizer } from '../../src/core/prompt-optimizer';
 import { FileSystem } from '../../src/utils/file-system';
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { fileURLToPath } from 'url';
@@ -20,7 +19,6 @@ describe('Summarize command', () => {
   const outputsDir = path.join(testDir, '.clavix/outputs');
   let manager: SessionManager;
   let analyzer: ConversationAnalyzer;
-  let optimizer: PromptOptimizer;
   let originalCwd: string;
 
   beforeEach(async () => {
@@ -35,7 +33,6 @@ describe('Summarize command', () => {
 
     manager = new SessionManager();
     analyzer = new ConversationAnalyzer();
-    optimizer = new PromptOptimizer();
   });
 
   afterEach(async () => {
@@ -69,7 +66,7 @@ describe('Summarize command', () => {
       await manager.saveSession(session1);
 
       // Wait to ensure different timestamps
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       const session2 = await manager.createSession({ projectName: 'project-2' });
       await manager.saveSession(session2);
@@ -92,7 +89,11 @@ describe('Summarize command', () => {
       const session = await manager.createSession({ projectName: 'test-project' });
       session.messages = [
         { role: 'user', content: 'Create a user authentication system', timestamp: new Date() },
-        { role: 'assistant', content: 'I will create the authentication system', timestamp: new Date() },
+        {
+          role: 'assistant',
+          content: 'I will create the authentication system',
+          timestamp: new Date(),
+        },
         { role: 'user', content: 'Add password reset functionality', timestamp: new Date() },
       ];
 
@@ -143,7 +144,11 @@ describe('Summarize command', () => {
     it('should generate optimized prompt', async () => {
       const session = await manager.createSession({ projectName: 'test-project' });
       session.messages = [
-        { role: 'user', content: 'Create a task management app with user authentication', timestamp: new Date() },
+        {
+          role: 'user',
+          content: 'Create a task management app with user authentication',
+          timestamp: new Date(),
+        },
       ];
 
       const analysis = analyzer.analyze(session);
@@ -164,9 +169,7 @@ describe('Summarize command', () => {
 
     it('should write mini-prd file', async () => {
       const session = await manager.createSession({ projectName: 'test-project' });
-      session.messages = [
-        { role: 'user', content: 'Build a todo app', timestamp: new Date() },
-      ];
+      session.messages = [{ role: 'user', content: 'Build a todo app', timestamp: new Date() }];
 
       const analysis = analyzer.analyze(session);
       const content = analyzer.generateMiniPrd(session, analysis);
@@ -183,9 +186,7 @@ describe('Summarize command', () => {
 
     it('should write optimized prompt file', async () => {
       const session = await manager.createSession({ projectName: 'test-project' });
-      session.messages = [
-        { role: 'user', content: 'Build a todo app', timestamp: new Date() },
-      ];
+      session.messages = [{ role: 'user', content: 'Build a todo app', timestamp: new Date() }];
 
       const analysis = analyzer.analyze(session);
       const content = analyzer.generateOptimizedPrompt(session, analysis);
@@ -196,85 +197,6 @@ describe('Summarize command', () => {
       await FileSystem.writeFileAtomic(filePath, content);
 
       expect(await fs.pathExists(filePath)).toBe(true);
-    });
-  });
-
-  describe('CLEAR optimization', () => {
-    it('should apply CLEAR framework to prompt', () => {
-      const prompt = 'Create a user authentication system';
-
-      const result = optimizer.applyCLEARFramework(prompt, 'fast');
-
-      expect(result).toBeDefined();
-      expect(result.improvedPrompt).toBeDefined();
-      expect(result.conciseness).toBeDefined();
-      expect(result.logic).toBeDefined();
-      expect(result.explicitness).toBeDefined();
-    });
-
-    it('should calculate CLEAR scores', () => {
-      const prompt = 'Create a user authentication system';
-      const result = optimizer.applyCLEARFramework(prompt, 'fast');
-
-      const score = optimizer.calculateCLEARScore(result);
-
-      expect(score).toBeDefined();
-      expect(score.conciseness).toBeDefined();
-      expect(score.logic).toBeDefined();
-      expect(score.explicitness).toBeDefined();
-      expect(score.overall).toBeDefined();
-      expect(score.rating).toBeDefined();
-    });
-
-    it('should include suggestions in CLEAR result', () => {
-      const prompt = 'make a thing that does stuff';
-      const result = optimizer.applyCLEARFramework(prompt, 'fast');
-
-      expect(result.conciseness.suggestions).toBeDefined();
-      expect(Array.isArray(result.conciseness.suggestions)).toBe(true);
-      expect(result.logic.suggestions).toBeDefined();
-      expect(Array.isArray(result.logic.suggestions)).toBe(true);
-      expect(result.explicitness.suggestions).toBeDefined();
-      expect(Array.isArray(result.explicitness.suggestions)).toBe(true);
-    });
-
-    it('should generate changes summary', () => {
-      const prompt = 'Create a user authentication system';
-      const result = optimizer.applyCLEARFramework(prompt, 'fast');
-
-      expect(result.changesSummary).toBeDefined();
-      expect(Array.isArray(result.changesSummary)).toBe(true);
-    });
-
-    it('should write CLEAR-optimized file', async () => {
-      const prompt = 'Create a user authentication system';
-      const result = optimizer.applyCLEARFramework(prompt, 'fast');
-      const score = optimizer.calculateCLEARScore(result);
-
-      const outputPath = path.join(outputsDir, 'clear-test');
-      await FileSystem.ensureDir(outputPath);
-
-      const content = `# CLEAR-Optimized Prompt
-
-${result.improvedPrompt}
-
----
-
-## CLEAR Framework Assessment
-
-- **[C] Concise**: ${score.conciseness.toFixed(0)}%
-- **[L] Logical**: ${score.logic.toFixed(0)}%
-- **[E] Explicit**: ${score.explicitness.toFixed(0)}%
-- **Overall**: ${score.overall.toFixed(0)}% (${score.rating})
-`;
-
-      const filePath = path.join(outputPath, 'clear-optimized-prompt.md');
-      await FileSystem.writeFileAtomic(filePath, content);
-
-      expect(await fs.pathExists(filePath)).toBe(true);
-      const savedContent = await fs.readFile(filePath, 'utf-8');
-      expect(savedContent).toContain('CLEAR-Optimized Prompt');
-      expect(savedContent).toContain('CLEAR Framework Assessment');
     });
   });
 
@@ -328,7 +250,11 @@ ${result.improvedPrompt}
     it('should include key requirements in analysis', async () => {
       const session = await manager.createSession({ projectName: 'test-project' });
       session.messages = [
-        { role: 'user', content: 'Create authentication with email and password', timestamp: new Date() },
+        {
+          role: 'user',
+          content: 'Create authentication with email and password',
+          timestamp: new Date(),
+        },
         { role: 'user', content: 'Add password reset via email', timestamp: new Date() },
       ];
 
@@ -353,7 +279,11 @@ ${result.improvedPrompt}
     it('should include success criteria in analysis', async () => {
       const session = await manager.createSession({ projectName: 'test-project' });
       session.messages = [
-        { role: 'user', content: 'Users should be able to login within 2 seconds', timestamp: new Date() },
+        {
+          role: 'user',
+          content: 'Users should be able to login within 2 seconds',
+          timestamp: new Date(),
+        },
       ];
 
       const analysis = analyzer.analyze(session);
@@ -416,9 +346,7 @@ ${result.improvedPrompt}
   describe('edge cases', () => {
     it('should handle session with single message', async () => {
       const session = await manager.createSession({ projectName: 'single-message' });
-      session.messages = [
-        { role: 'user', content: 'Build a todo app', timestamp: new Date() },
-      ];
+      session.messages = [{ role: 'user', content: 'Build a todo app', timestamp: new Date() }];
 
       const analysis = analyzer.analyze(session);
 
@@ -427,11 +355,13 @@ ${result.improvedPrompt}
 
     it('should handle very long conversations', async () => {
       const session = await manager.createSession({ projectName: 'long-conversation' });
-      session.messages = Array(100).fill(null).map((_, i) => ({
-        role: i % 2 === 0 ? 'user' as const : 'assistant' as const,
-        content: `Message ${i}`,
-        timestamp: new Date(),
-      }));
+      session.messages = Array(100)
+        .fill(null)
+        .map((_, i) => ({
+          role: i % 2 === 0 ? ('user' as const) : ('assistant' as const),
+          content: `Message ${i}`,
+          timestamp: new Date(),
+        }));
 
       const analysis = analyzer.analyze(session);
 
@@ -454,7 +384,11 @@ ${result.improvedPrompt}
     it('should handle special characters in messages', async () => {
       const session = await manager.createSession({ projectName: 'special-chars' });
       session.messages = [
-        { role: 'user', content: 'Create a system with émojis 🚀 and spëcial çhars', timestamp: new Date() },
+        {
+          role: 'user',
+          content: 'Create a system with émojis 🚀 and spëcial çhars',
+          timestamp: new Date(),
+        },
       ];
 
       const analysis = analyzer.analyze(session);
@@ -465,7 +399,11 @@ ${result.improvedPrompt}
     it('should handle markdown in messages', async () => {
       const session = await manager.createSession({ projectName: 'markdown-content' });
       session.messages = [
-        { role: 'user', content: '# Build a system\n\n- Feature 1\n- Feature 2\n\n**Important**: Use TypeScript', timestamp: new Date() },
+        {
+          role: 'user',
+          content: '# Build a system\n\n- Feature 1\n- Feature 2\n\n**Important**: Use TypeScript',
+          timestamp: new Date(),
+        },
       ];
 
       const analysis = analyzer.analyze(session);

@@ -5,7 +5,8 @@ import { PromptManager } from '../../core/prompt-manager.js';
 import { OptimizationResult } from '../../core/intelligence/types.js';
 
 export default class Deep extends Command {
-  static description = 'Perform comprehensive deep analysis with alternative approaches, edge cases, and validation checklists';
+  static description =
+    'Perform comprehensive deep analysis with alternative approaches, edge cases, and validation checklists';
 
   static examples = [
     '<%= config.bin %> <%= command.id %> "Create a login page"',
@@ -63,10 +64,24 @@ export default class Deep extends Command {
     console.log(chalk.cyan(`  Type: ${result.intent.primaryIntent}`));
     console.log(chalk.cyan(`  Confidence: ${result.intent.confidence}%`));
     console.log(chalk.cyan(`  Characteristics:`));
-    console.log(chalk.cyan(`    • Has code context: ${result.intent.characteristics.hasCodeContext ? 'Yes' : 'No'}`));
-    console.log(chalk.cyan(`    • Technical terms: ${result.intent.characteristics.hasTechnicalTerms ? 'Yes' : 'No'}`));
-    console.log(chalk.cyan(`    • Open-ended: ${result.intent.characteristics.isOpenEnded ? 'Yes' : 'No'}`));
-    console.log(chalk.cyan(`    • Needs structure: ${result.intent.characteristics.needsStructure ? 'Yes' : 'No'}`));
+    console.log(
+      chalk.cyan(
+        `    • Has code context: ${result.intent.characteristics.hasCodeContext ? 'Yes' : 'No'}`
+      )
+    );
+    console.log(
+      chalk.cyan(
+        `    • Technical terms: ${result.intent.characteristics.hasTechnicalTerms ? 'Yes' : 'No'}`
+      )
+    );
+    console.log(
+      chalk.cyan(`    • Open-ended: ${result.intent.characteristics.isOpenEnded ? 'Yes' : 'No'}`)
+    );
+    console.log(
+      chalk.cyan(
+        `    • Needs structure: ${result.intent.characteristics.needsStructure ? 'Yes' : 'No'}`
+      )
+    );
     console.log();
 
     // ===== Quality Metrics =====
@@ -77,12 +92,34 @@ export default class Deep extends Command {
       return chalk.red;
     };
 
-    console.log(getScoreColor(result.quality.clarity)(`  Clarity: ${result.quality.clarity.toFixed(0)}%`));
-    console.log(getScoreColor(result.quality.efficiency)(`  Efficiency: ${result.quality.efficiency.toFixed(0)}%`));
-    console.log(getScoreColor(result.quality.structure)(`  Structure: ${result.quality.structure.toFixed(0)}%`));
-    console.log(getScoreColor(result.quality.completeness)(`  Completeness: ${result.quality.completeness.toFixed(0)}%`));
-    console.log(getScoreColor(result.quality.actionability)(`  Actionability: ${result.quality.actionability.toFixed(0)}%`));
-    console.log(getScoreColor(result.quality.overall).bold(`\n  Overall: ${result.quality.overall.toFixed(0)}%\n`));
+    console.log(
+      getScoreColor(result.quality.clarity)(`  Clarity: ${result.quality.clarity.toFixed(0)}%`)
+    );
+    console.log(
+      getScoreColor(result.quality.efficiency)(
+        `  Efficiency: ${result.quality.efficiency.toFixed(0)}%`
+      )
+    );
+    console.log(
+      getScoreColor(result.quality.structure)(
+        `  Structure: ${result.quality.structure.toFixed(0)}%`
+      )
+    );
+    console.log(
+      getScoreColor(result.quality.completeness)(
+        `  Completeness: ${result.quality.completeness.toFixed(0)}%`
+      )
+    );
+    console.log(
+      getScoreColor(result.quality.actionability)(
+        `  Actionability: ${result.quality.actionability.toFixed(0)}%`
+      )
+    );
+    console.log(
+      getScoreColor(result.quality.overall).bold(
+        `\n  Overall: ${result.quality.overall.toFixed(0)}%\n`
+      )
+    );
 
     // ===== Strengths =====
     if (result.quality.strengths.length > 0) {
@@ -97,73 +134,22 @@ export default class Deep extends Command {
     if (result.improvements.length > 0) {
       console.log(chalk.bold.magenta('✨ Improvements Applied:\n'));
       result.improvements.forEach((improvement) => {
-        const emoji = improvement.impact === 'high' ? '🔥' : improvement.impact === 'medium' ? '⚡' : '💡';
-        console.log(chalk.magenta(`  ${emoji} ${improvement.description} [${improvement.dimension}]`));
+        const emoji =
+          improvement.impact === 'high' ? '🔥' : improvement.impact === 'medium' ? '⚡' : '💡';
+        console.log(
+          chalk.magenta(`  ${emoji} ${improvement.description} [${improvement.dimension}]`)
+        );
       });
       console.log();
     }
 
     // ===== Enhanced Prompt =====
+    // Note: Pattern-generated content (Alternative Approaches, Edge Cases, Validation Checklist)
+    // is already embedded in result.enhanced by deep mode patterns
     console.log(chalk.bold.cyan('✨ Enhanced Prompt:\n'));
     console.log(chalk.dim('─'.repeat(80)));
     console.log(result.enhanced);
     console.log(chalk.dim('─'.repeat(80)));
-    console.log();
-
-    // ===== DEEP MODE EXCLUSIVE FEATURES =====
-
-    // Alternative Approaches (TODO: when AlternativePhrasingGenerator pattern is implemented)
-    console.log(chalk.bold.cyan('🎨 Alternative Approaches:\n'));
-    console.log(chalk.cyan('  1. Functional Decomposition: Break the task into smaller, testable functions'));
-    console.log(chalk.cyan('  2. Test-Driven Approach: Write tests first, then implement to satisfy them'));
-    console.log(chalk.cyan('  3. Example-Driven: Start with concrete input/output examples'));
-    console.log(chalk.gray('  Note: Full alternative generation coming soon with deep mode patterns\n'));
-
-    // Alternative Structures (TODO: when StructureVariationGenerator pattern is implemented)
-    console.log(chalk.bold.cyan('📋 Alternative Structures:\n'));
-    console.log(chalk.cyan('  Step-by-step:'));
-    console.log(chalk.gray('    • Break complex task into sequential steps'));
-    console.log(chalk.gray('    • Each step has clear input/output'));
-    console.log(chalk.cyan('  Template-based:'));
-    console.log(chalk.gray('    • Provide code/document template to fill'));
-    console.log(chalk.gray('    • Reduces ambiguity with concrete structure'));
-    console.log(chalk.cyan('  Example-driven:'));
-    console.log(chalk.gray('    • Show concrete examples of desired output'));
-    console.log(chalk.gray('    • AI learns from patterns in examples\n'));
-
-    // Validation Checklist (TODO: when ValidationChecklistCreator pattern is implemented)
-    console.log(chalk.bold.yellow('✅ Validation Checklist:\n'));
-    console.log(chalk.yellow('  Before considering this task complete, verify:'));
-    console.log(chalk.yellow('    ☐ Requirements match the objective stated above'));
-    console.log(chalk.yellow('    ☐ All edge cases are handled (empty, null, invalid inputs)'));
-    console.log(chalk.yellow('    ☐ Error handling is appropriate for the context'));
-    console.log(chalk.yellow('    ☐ Output format matches specifications'));
-    console.log(chalk.yellow('    ☐ Performance is acceptable for expected input sizes'));
-    if (result.intent.primaryIntent === 'code-generation') {
-      console.log(chalk.yellow('    ☐ Code is testable and maintainable'));
-      console.log(chalk.yellow('    ☐ Security considerations addressed (injection, XSS, etc.)'));
-    }
-    console.log();
-
-    // Edge Cases (TODO: when EdgeCaseIdentifier pattern is implemented)
-    console.log(chalk.bold.yellow('⚠️  Edge Cases to Consider:\n'));
-    if (result.intent.primaryIntent === 'code-generation') {
-      console.log(chalk.yellow('  • Empty or null inputs'));
-      console.log(chalk.yellow('  • Very large inputs (performance implications)'));
-      console.log(chalk.yellow('  • Invalid or malformed data'));
-      console.log(chalk.yellow('  • Concurrent access (if applicable)'));
-      console.log(chalk.yellow('  • Network failures or timeouts (if I/O involved)'));
-    } else if (result.intent.primaryIntent === 'planning') {
-      console.log(chalk.yellow('  • Scope creep during implementation'));
-      console.log(chalk.yellow('  • Technical constraints not identified upfront'));
-      console.log(chalk.yellow('  • Timeline assumptions that may not hold'));
-      console.log(chalk.yellow('  • Dependencies on external systems'));
-    } else {
-      console.log(chalk.yellow('  • Unexpected user behavior'));
-      console.log(chalk.yellow('  • Error conditions and recovery'));
-      console.log(chalk.yellow('  • Resource limitations'));
-      console.log(chalk.yellow('  • Compatibility across environments'));
-    }
     console.log();
 
     // Patterns Applied
@@ -192,7 +178,11 @@ export default class Deep extends Command {
     }
 
     console.log(chalk.gray(`⚡ Processed in ${result.processingTimeMs}ms\n`));
-    console.log(chalk.gray('💡 Tip: Use the enhanced prompt with the validation checklist and edge cases in mind\n'));
+    console.log(
+      chalk.gray(
+        '💡 Tip: The enhanced prompt above includes alternative approaches, edge cases, and validation checklist\n'
+      )
+    );
   }
 
   private displayAnalysisOnly(result: OptimizationResult): void {
@@ -200,10 +190,24 @@ export default class Deep extends Command {
     console.log(chalk.cyan(`  Type: ${result.intent.primaryIntent}`));
     console.log(chalk.cyan(`  Confidence: ${result.intent.confidence}%`));
     console.log(chalk.cyan(`  Characteristics:`));
-    console.log(chalk.cyan(`    • Has code context: ${result.intent.characteristics.hasCodeContext ? 'Yes' : 'No'}`));
-    console.log(chalk.cyan(`    • Technical terms: ${result.intent.characteristics.hasTechnicalTerms ? 'Yes' : 'No'}`));
-    console.log(chalk.cyan(`    • Open-ended: ${result.intent.characteristics.isOpenEnded ? 'Yes' : 'No'}`));
-    console.log(chalk.cyan(`    • Needs structure: ${result.intent.characteristics.needsStructure ? 'Yes' : 'No'}`));
+    console.log(
+      chalk.cyan(
+        `    • Has code context: ${result.intent.characteristics.hasCodeContext ? 'Yes' : 'No'}`
+      )
+    );
+    console.log(
+      chalk.cyan(
+        `    • Technical terms: ${result.intent.characteristics.hasTechnicalTerms ? 'Yes' : 'No'}`
+      )
+    );
+    console.log(
+      chalk.cyan(`    • Open-ended: ${result.intent.characteristics.isOpenEnded ? 'Yes' : 'No'}`)
+    );
+    console.log(
+      chalk.cyan(
+        `    • Needs structure: ${result.intent.characteristics.needsStructure ? 'Yes' : 'No'}`
+      )
+    );
     console.log();
 
     console.log(chalk.bold('📊 Quality Scores:\n'));
@@ -226,9 +230,6 @@ export default class Deep extends Command {
   private async savePrompt(result: OptimizationResult): Promise<void> {
     try {
       const manager = new PromptManager();
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-      const hash = this.generateShortHash(result.original);
-      const filename = `deep-${timestamp}-${hash}`;
 
       // Format enhanced prompt as content
       const content = result.enhanced;
@@ -238,7 +239,9 @@ export default class Deep extends Command {
       console.log(chalk.gray(`💾 Saved prompt to .clavix/outputs/prompts/deep/\n`));
     } catch (error) {
       console.log(chalk.yellow('⚠️  Could not save prompt to file system'));
-      console.log(chalk.gray('Error: ' + (error instanceof Error ? error.message : 'Unknown error')));
+      console.log(
+        chalk.gray('Error: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      );
     }
   }
 
@@ -246,7 +249,7 @@ export default class Deep extends Command {
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
       const char = text.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return Math.abs(hash).toString(16).slice(0, 4);
