@@ -46,12 +46,12 @@ Patterns: 7 applied (deep mode)
 **Core Patterns (fast + deep):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
-| ConcisenessFilter | 8 | Removes pleasantries, filler words, redundant phrases |
+| ConcisenessFilter | 10 | Removes pleasantries, filler words, redundant phrases |
 | ObjectiveClarifier | 9 | Adds clear objective/goal statement if missing |
 | StructureOrganizer | 8 | Reorders into logical flow: context→requirements→constraints→output |
 | ActionabilityEnhancer | 7 | Converts vague language to specific, actionable terms |
-| TechnicalContextEnricher | 6 | Adds missing technical context (frameworks, tools, versions) |
-| CompletenessValidator | 5 | Identifies and flags missing required elements |
+| TechnicalContextEnricher | 8 | Adds missing technical context (frameworks, tools, versions) |
+| CompletenessValidator | 6 | Identifies and flags missing required elements |
 | StepDecomposer | 7 | Breaks complex prompts into sequential steps |
 | ContextPrecisionBooster | 8 | Adds precise context when missing |
 

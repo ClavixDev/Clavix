@@ -33,17 +33,35 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ## Self-Correction Protocol
 
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
+**DETECT**: If you find yourself doing any of these 6 mistake types:
 
-**STOP**: Immediately halt code generation
+| Type | What It Looks Like |
+|------|--------------------|
+| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints, test files, database schemas, or configuration files for the user's feature |
+| 2. Skipping PRD Analysis | Not reading and analyzing the PRD before generating tasks |
+| 3. Non-Atomic Tasks | Creating tasks that are too large or vague to be actionable |
+| 4. Missing Task IDs | Not assigning proper task IDs and references |
+| 5. Missing Phase Organization | Not organizing tasks into logical implementation phases |
+| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing task formats |
+
+**STOP**: Immediately halt the incorrect action
 
 **CORRECT**: Output:
-"I apologize - I was implementing instead of planning. Let me return to task breakdown generation."
+"I apologize - I was [describe mistake]. Let me return to task breakdown generation."
 
-**RESUME**: Return to the task breakdown generation workflow.
+**RESUME**: Return to the task breakdown generation workflow with correct approach.
+
+---
+
+## State Assertion (Required)
+
+**Before starting task breakdown, output:**
+```
+**CLAVIX MODE: Task Planning**
+Mode: planning
+Purpose: Generating implementation task breakdown from PRD
+Implementation: BLOCKED - I will create tasks, not implement them
+```
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "clavix",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "Clavix Intelligence™ for AI coding. Automatically optimizes prompts with intent detection, quality assessment, and adaptive patterns—no framework to learn. Works with Claude Code, Cursor, Windsurf, and 19+ other AI coding tools.",
   "type": "module",
   "main": "dist/index.js",
@@ -13,6 +13,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "validate:consistency": "node --loader ts-node/esm scripts/validate-consistency.ts",
+    "prebuild": "npm run validate:consistency",
     "build": "tsc && npm run copy-templates",
     "build:prod": "npm run build && npm run remove-sourcemaps",
     "copy-templates": "copyfiles -u 1 \"src/templates/**/*\" dist/",
@@ -27,7 +29,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "prepare": "husky",
-    "prepublishOnly": "npm run build:prod"
+    "prepublishOnly": "npm run validate:consistency && npm run build:prod"
   },
   "repository": {
     "type": "git",

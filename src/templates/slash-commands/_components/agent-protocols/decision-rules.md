@@ -107,6 +107,83 @@ AFTER writing files:
   → IF failed: Report error, suggest manual action
 ```
 
+### Rule 7: Pattern Application Decision
+
+```
+WHEN applying patterns:
+  → ALWAYS show which patterns were applied
+  → LIST each pattern with its effect
+
+IF pattern not applicable to intent:
+  → SKIP silently (no output)
+
+IF pattern applicable but skipped:
+  → EXPLAIN: "Skipped [pattern] because [reason]"
+
+DEEP MODE ONLY:
+  → MUST include alternatives (2-3)
+  → MUST include validation checklist
+  → MUST include edge cases
+```
+
+### Rule 8: Mode Transition Decision
+
+```
+IF user requests /clavix:fast but quality < 50%:
+  → ACTION: Warn and suggest deep
+  → SAY: "Quality is [X]%. Fast mode may be insufficient."
+  → ALLOW: User can override and proceed
+
+IF user in /clavix:deep but prompt is simple (quality > 85%):
+  → ACTION: Note efficiency
+  → SAY: "Prompt is already high quality. Fast mode would suffice."
+  → CONTINUE: With deep analysis anyway
+
+IF strategic keywords detected (3+ architecture/security/scalability):
+  → ACTION: Suggest PRD mode
+  → SAY: "Detected strategic scope. Consider /clavix:prd for comprehensive planning."
+```
+
+### Rule 9: Output Validation Decision
+
+```
+BEFORE presenting optimized prompt:
+  → VERIFY: All 6 quality dimensions scored
+  → VERIFY: Intent detected with confidence shown
+  → VERIFY: Patterns applied are listed
+
+IF any verification fails:
+  → HALT: Do not present incomplete output
+  → ACTION: Complete missing analysis first
+
+AFTER optimization complete:
+  → MUST save prompt to .clavix/outputs/prompts/
+  → MUST update index file
+  → SHOW: "✓ Prompt saved: [filename]"
+```
+
+### Rule 10: Error Recovery Decision
+
+```
+IF pattern application fails:
+  → LOG: Which pattern failed
+  → CONTINUE: With remaining patterns
+  → REPORT: "Pattern [X] skipped due to error"
+
+IF file write fails:
+  → RETRY: Once with alternative path
+  → IF still fails: Report error with manual steps
+
+IF CLI command fails:
+  → SHOW: Command output and error
+  → SUGGEST: Alternative action
+  → NEVER: Silently ignore failures
+
+IF user prompt is empty/invalid:
+  → ASK: For valid input
+  → NEVER: Proceed with assumption
+```
+
 ### Rule Summary Table
 
 | Condition | Action | User Communication |
@@ -121,3 +198,7 @@ AFTER writing files:
 | escalation >= 75 | Strong recommend | Show top 3 factors |
 | escalation 45-74 | Suggest | Show primary factor |
 | escalation < 45 | No action | Silent |
+| fast requested + quality < 50% | Warn | "Quality low, consider deep" |
+| 3+ strategic keywords | Suggest PRD | "Strategic scope detected" |
+| pattern fails | Skip + report | "Pattern [X] skipped" |
+| file write fails | Retry then report | "Error: [details]" |

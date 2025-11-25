@@ -33,17 +33,35 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ## Self-Correction Protocol
 
-**DETECT**: If you find yourself:
-- Writing function/class definitions for the user's feature
-- Creating component implementations
-- Generating API endpoint code
+**DETECT**: If you find yourself doing any of these 6 mistake types:
 
-**STOP**: Immediately halt code generation
+| Type | What It Looks Like |
+|------|--------------------|
+| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints, test files, database schemas, or configuration files for the user's feature |
+| 2. Skipping Quality Assessment | Not scoring all 6 dimensions, providing analysis without showing dimension breakdown |
+| 3. Missing Alternatives | Not generating 2-3 alternative approaches in deep mode |
+| 4. Missing Validation Checklist | Not creating verification checklist for implementation |
+| 5. Missing Edge Cases | Not identifying potential edge cases and failure modes |
+| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing pattern names |
+
+**STOP**: Immediately halt the incorrect action
 
 **CORRECT**: Output:
-"I apologize - I was implementing instead of analyzing. Let me return to deep prompt analysis."
+"I apologize - I was [describe mistake]. Let me return to deep prompt analysis."
 
-**RESUME**: Return to the deep prompt analysis workflow.
+**RESUME**: Return to the deep prompt analysis workflow with all required outputs.
+
+---
+
+## State Assertion (Required)
+
+**Before starting analysis, output:**
+```
+**CLAVIX MODE: Deep Analysis**
+Mode: planning
+Purpose: Comprehensive prompt analysis with alternatives, edge cases, and validation
+Implementation: BLOCKED - I will analyze the prompt thoroughly, not implement it
+```
 
 ---
 
@@ -53,7 +71,7 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 
 **Deep Mode Features:**
 - **Intent Detection**: Identifies what you're trying to achieve
-- **Quality Assessment**: 5-dimension deep analysis (Clarity, Efficiency, Structure, Completeness, Actionability)
+- **Quality Assessment**: 6-dimension deep analysis (Clarity, Efficiency, Structure, Completeness, Actionability, Specificity)
 - **Advanced Optimization**: Applies all available patterns
 - **Alternative Approaches**: Multiple ways to phrase and structure your prompt
 - **Edge Case Analysis**: Identifies potential issues and failure modes
@@ -71,6 +89,10 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
    - **debugging**: Finding and fixing issues
    - **documentation**: Creating docs or explanations
    - **prd-generation**: Creating requirements documents
+   - **testing**: Writing tests, improving test coverage
+   - **migration**: Version upgrades, porting code between frameworks
+   - **security-review**: Security audits, vulnerability checks
+   - **learning**: Conceptual understanding, tutorials, explanations
 
 3. **Strategic Scope Detection** (before detailed analysis):
 
@@ -88,13 +110,14 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 
    **If user chooses to continue**, proceed with deep analysis but remind them at the end that `/clavix:prd` is available for strategic planning.
 
-4. **Comprehensive Quality Assessment** - Evaluate across 5 dimensions:
+4. **Comprehensive Quality Assessment** - Evaluate across 6 dimensions:
 
    - **Clarity**: Is the objective clear and unambiguous?
    - **Efficiency**: Is the prompt concise without losing critical information?
    - **Structure**: Is information organized logically?
    - **Completeness**: Are all necessary details provided?
    - **Actionability**: Can AI take immediate action on this prompt?
+   - **Specificity**: How concrete and precise is the prompt? (versions, paths, identifiers)
 
    Score each dimension 0-100%, calculate weighted overall score.
 
@@ -102,7 +125,7 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 
    a. **Intent Analysis** (type, confidence, characteristics)
 
-   b. **Quality Assessment** (5 dimensions with detailed feedback)
+   b. **Quality Assessment** (6 dimensions with detailed feedback)
 
    c. **Optimized Prompt** (applying all patterns)
 
@@ -146,7 +169,7 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 
 **Include:**
 - **Intent Detection**: Automatic classification with confidence
-- **Quality Assessment**: All 5 dimensions with detailed analysis
+- **Quality Assessment**: All 6 dimensions with detailed analysis
 - **Advanced Optimization**: All applicable patterns
 - **Alternative Approaches**: Multiple phrasings and perspectives
 - **Alternative Structures**: Different organization approaches
@@ -180,6 +203,9 @@ Deep mode has access to all patterns including deep-exclusive patterns:
 - **ValidationChecklistCreator**: Creates implementation verification checklist
 - **AssumptionExplicitizer**: Makes implicit assumptions explicit
 - **ScopeDefiner**: Adds explicit scope boundaries
+- **PRDStructureEnforcer**: Ensures PRD completeness (PRD mode only)
+- **ErrorToleranceEnhancer**: Adds error handling requirements
+- **PrerequisiteIdentifier**: Identifies prerequisites and dependencies
 
 ---
 
