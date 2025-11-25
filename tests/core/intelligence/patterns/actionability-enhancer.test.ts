@@ -41,8 +41,8 @@ describe('ActionabilityEnhancer', () => {
       expect(enhancer.mode).toBe('both');
     });
 
-    it('should have priority 7', () => {
-      expect(enhancer.priority).toBe(7);
+    it('should have priority 4 (LOW - polish phase)', () => {
+      expect(enhancer.priority).toBe(4);
     });
 
     it('should be applicable for code-generation, planning, refinement, debugging', () => {

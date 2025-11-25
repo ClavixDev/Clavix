@@ -1,27 +1,62 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Both Mode Pattern: Context Precision Booster
+ * v4.5 Pattern: Context Precision Booster
  *
  * Adds precise context when missing to ensure
  * the AI has sufficient information for accurate responses.
  */
 export class ContextPrecisionBooster extends BasePattern {
-  id = 'context-precision';
-  name = 'Context Precision Booster';
-  description = 'Add precise context when missing';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'context-precision';
+  readonly name = 'Context Precision Booster';
+  readonly description = 'Add precise context when missing';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'debugging',
-    'refinement', // Includes code review and refactoring
-    'documentation', // Includes explanations
+    'refinement',
+    'documentation',
     'testing',
     'migration',
     'security-review',
   ];
-  mode = 'both' as const;
-  priority = 8;
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxContextGaps: {
+      type: 'number',
+      default: 6,
+      description: 'Maximum number of context gaps to surface',
+      validation: { min: 1, max: 10 },
+    },
+    checkVersionInfo: {
+      type: 'boolean',
+      default: true,
+      description: 'Check for missing version information',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     const missingContext = this.identifyMissingContext(prompt, context.intent.primaryIntent);

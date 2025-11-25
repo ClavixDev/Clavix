@@ -1,6 +1,6 @@
 ## Intent Types Reference
 
-Clavix Intelligence™ detects 10 primary intent types. This reference is synchronized with `src/core/intelligence/types.ts`.
+Clavix Intelligence™ detects 11 primary intent types. This reference is synchronized with `src/core/intelligence/types.ts`.
 
 ### Intent Categories
 
@@ -16,6 +16,7 @@ Clavix Intelligence™ detects 10 primary intent types. This reference is synchr
 | **migration** | Version upgrades, porting code | "migrate", "upgrade", "port", "convert", "transition" |
 | **security-review** | Security audits, vulnerability checks | "security", "audit", "vulnerability", "OWASP", "CVE" |
 | **learning** | Conceptual understanding, tutorials | "explain", "how does", "tutorial", "understand" |
+| **summarization** | Extracting requirements from conversations | "summarize", "extract", "requirements from" |
 
 ### Intent Detection Confidence Levels
 
@@ -35,3 +36,4 @@ Different intents enable different optimization patterns:
 - **debugging**: ErrorToleranceEnhancer, EdgeCaseIdentifier
 - **testing**: ValidationChecklistCreator, EdgeCaseIdentifier
 - **prd-generation**: PRDStructureEnforcer, CompletenessValidator
+- **summarization**: ConversationSummarizer, TopicCoherenceAnalyzer, ImplicitRequirementExtractor

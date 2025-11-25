@@ -1,13 +1,60 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+  PatternDependency,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
+/**
+ * v4.5 Pattern: Technical Context Enricher
+ *
+ * Adds missing technical context (language, framework, versions).
+ * Detects technologies and suggests version specifications.
+ */
 export class TechnicalContextEnricher extends BasePattern {
-  id = 'technical-context-enricher';
-  name = 'Technical Context Enricher';
-  description = 'Adds missing technical context (language, framework, versions)';
-  applicableIntents: PromptIntent[] = ['code-generation', 'refinement', 'debugging'];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 8;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'technical-context-enricher';
+  readonly name = 'Technical Context Enricher';
+  readonly description = 'Adds missing technical context (language, framework, versions)';
+
+  readonly applicableIntents: PromptIntent[] = ['code-generation', 'refinement', 'debugging'];
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary context
+  readonly phases: PatternPhase[] = ['all'];
+
+  // v4.5: Dependencies
+  readonly dependencies: PatternDependency = {
+    runAfter: ['objective-clarifier'], // Clarify objective first, then add technical context
+    enhancedBy: ['domain-context-enricher'],
+  };
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    detectFrameworks: {
+      type: 'boolean',
+      default: true,
+      description: 'Detect and add framework information',
+    },
+    suggestVersions: {
+      type: 'boolean',
+      default: true,
+      description: 'Suggest adding version information when missing',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     const lowerPrompt = prompt.toLowerCase();
@@ -20,9 +67,9 @@ export class TechnicalContextEnricher extends BasePattern {
         improvement: {
           dimension: 'completeness',
           description: 'Technical context already specified',
-          impact: 'low'
+          impact: 'low',
         },
-        applied: false
+        applied: false,
       };
     }
 
@@ -47,14 +94,14 @@ export class TechnicalContextEnricher extends BasePattern {
         improvement: {
           dimension: 'completeness',
           description: 'No additional technical context needed',
-          impact: 'low'
+          impact: 'low',
         },
-        applied: false
+        applied: false,
       };
     }
 
     // Add technical context section
-    const contextSection = `\n\n# Technical Constraints\n${enhancements.map(e => `- ${e}`).join('\n')}`;
+    const contextSection = `\n\n# Technical Constraints\n${enhancements.map((e) => `- ${e}`).join('\n')}`;
     const enhanced = prompt + contextSection;
 
     return {
@@ -62,9 +109,9 @@ export class TechnicalContextEnricher extends BasePattern {
       improvement: {
         dimension: 'completeness',
         description: `Added ${enhancements.length} technical context specifications`,
-        impact: 'medium'
+        impact: 'medium',
       },
-      applied: true
+      applied: true,
     };
   }
 
@@ -73,27 +120,27 @@ export class TechnicalContextEnricher extends BasePattern {
       /version|v\d+\.\d+/i,
       /technical (context|constraints|requirements)/i,
       /language:.*framework:/i,
-      /using (python|javascript|typescript|java|rust|go) \d/i
+      /using (python|javascript|typescript|java|rust|go) \d/i,
     ];
 
-    return contextMarkers.some(marker => marker.test(prompt));
+    return contextMarkers.some((marker) => marker.test(prompt));
   }
 
   private detectLanguage(prompt: string): string | null {
     const languages: { [key: string]: string } = {
-      'python': 'Python',
-      'javascript': 'JavaScript',
-      'typescript': 'TypeScript',
-      'java': 'Java',
-      'rust': 'Rust',
-      'go': 'Go',
-      'php': 'PHP',
-      'ruby': 'Ruby',
-      'swift': 'Swift',
-      'kotlin': 'Kotlin',
+      python: 'Python',
+      javascript: 'JavaScript',
+      typescript: 'TypeScript',
+      java: 'Java',
+      rust: 'Rust',
+      go: 'Go',
+      php: 'PHP',
+      ruby: 'Ruby',
+      swift: 'Swift',
+      kotlin: 'Kotlin',
       'c++': 'C++',
-      'csharp': 'C#',
-      'c#': 'C#'
+      csharp: 'C#',
+      'c#': 'C#',
     };
 
     for (const [key, name] of Object.entries(languages)) {
@@ -118,21 +165,21 @@ export class TechnicalContextEnricher extends BasePattern {
 
   private detectFramework(prompt: string): string | null {
     const frameworks: { [key: string]: string } = {
-      'react': 'React',
-      'vue': 'Vue.js',
-      'angular': 'Angular',
-      'svelte': 'Svelte',
-      'next': 'Next.js',
-      'nextjs': 'Next.js',
-      'nuxt': 'Nuxt.js',
-      'django': 'Django',
-      'flask': 'Flask',
-      'fastapi': 'FastAPI',
-      'express': 'Express.js',
-      'nestjs': 'NestJS',
-      'spring': 'Spring Boot',
-      'rails': 'Ruby on Rails',
-      'laravel': 'Laravel'
+      react: 'React',
+      vue: 'Vue.js',
+      angular: 'Angular',
+      svelte: 'Svelte',
+      next: 'Next.js',
+      nextjs: 'Next.js',
+      nuxt: 'Nuxt.js',
+      django: 'Django',
+      flask: 'Flask',
+      fastapi: 'FastAPI',
+      express: 'Express.js',
+      nestjs: 'NestJS',
+      spring: 'Spring Boot',
+      rails: 'Ruby on Rails',
+      laravel: 'Laravel',
     };
 
     for (const [key, name] of Object.entries(frameworks)) {

@@ -1,21 +1,54 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * Completeness Validator Pattern
+ * v4.5 Pattern: Completeness Validator
  *
  * Ensures all necessary requirements are present.
  * Adds placeholder sections for missing critical elements.
- *
- * Priority: MEDIUM (6)
  */
 export class CompletenessValidator extends BasePattern {
-  id = 'completeness-validator';
-  name = 'Completeness Validator';
-  description = 'Ensures all necessary requirements are present';
-  applicableIntents: PromptIntent[] = ['code-generation', 'planning', 'refinement'];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 6; // Medium priority
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'completeness-validator';
+  readonly name = 'Completeness Validator';
+  readonly description = 'Ensures all necessary requirements are present';
+
+  readonly applicableIntents: PromptIntent[] = ['code-generation', 'planning', 'refinement'];
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    showCompletenessScore: {
+      type: 'boolean',
+      default: true,
+      description: 'Display completeness percentage in output',
+    },
+    minCompletenessThreshold: {
+      type: 'number',
+      default: 60,
+      description: 'Minimum completeness percentage to consider prompt adequate',
+      validation: { min: 0, max: 100 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     const missing = this.findMissingElements(prompt);

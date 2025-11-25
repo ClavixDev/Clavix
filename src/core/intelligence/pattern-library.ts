@@ -1,4 +1,4 @@
-import { BasePattern } from './patterns/base-pattern.js';
+import { BasePattern, IPatternLibrary, PatternPhase } from './patterns/base-pattern.js';
 import { ConcisenessFilter } from './patterns/conciseness-filter.js';
 import { ObjectiveClarifier } from './patterns/objective-clarifier.js';
 import { TechnicalContextEnricher } from './patterns/technical-context-enricher.js';
@@ -34,30 +34,38 @@ import { ImplicitRequirementExtractor } from './patterns/implicit-requirement-ex
 import { IntentAnalysis, OptimizationMode, OptimizationPhase, PromptIntent } from './types.js';
 import { IntelligenceConfig } from '../../types/config.js';
 
-export class PatternLibrary {
+export class PatternLibrary implements IPatternLibrary {
   private patterns: Map<string, BasePattern> = new Map();
   private config: IntelligenceConfig | null = null;
+  private priorityOverrides: Map<string, number> = new Map();
 
   constructor() {
     this.registerDefaultPatterns();
   }
 
   /**
-   * v4.4: Apply configuration settings to pattern library
-   * Allows enabling/disabling patterns and adjusting priorities via config
+   * v4.5: Apply configuration settings to pattern library
+   * Allows enabling/disabling patterns and adjusting priorities via config.
+   * Priority overrides are stored separately (pattern.priority is readonly).
    */
   applyConfig(config: IntelligenceConfig): void {
     this.config = config;
 
-    // Apply priority overrides
+    // Store priority overrides (patterns have readonly priority)
     if (config.patterns?.priorityOverrides) {
       for (const [patternId, newPriority] of Object.entries(config.patterns.priorityOverrides)) {
-        const pattern = this.patterns.get(patternId);
-        if (pattern && newPriority >= 1 && newPriority <= 10) {
-          pattern.priority = newPriority;
+        if (this.patterns.has(patternId) && newPriority >= 1 && newPriority <= 10) {
+          this.priorityOverrides.set(patternId, newPriority);
         }
       }
     }
+  }
+
+  /**
+   * v4.5: Get effective priority for a pattern (considers overrides)
+   */
+  private getEffectivePriority(pattern: BasePattern): number {
+    return this.priorityOverrides.get(pattern.id) ?? pattern.priority;
   }
 
   /**
@@ -116,9 +124,12 @@ export class PatternLibrary {
   }
 
   /**
-   * Register a new pattern
+   * Register a new pattern.
+   * v4.5: Injects library reference for config access.
    */
   register(pattern: BasePattern): void {
+    // Inject library reference for config access
+    pattern.setPatternLibrary(this);
     this.patterns.set(pattern.id, pattern);
   }
 
@@ -187,12 +198,102 @@ export class PatternLibrary {
       applicablePatterns.push(pattern);
     }
 
-    // Sort by priority (highest first)
-    return applicablePatterns.sort((a, b) => b.priority - a.priority);
+    // v4.5: Sort by priority and respect dependencies
+    return this.sortPatternsWithDependencies(applicablePatterns);
   }
 
   /**
-   * v4.3.2: Select patterns for specific mode with phase-awareness
+   * v4.5: Sort patterns by priority while respecting dependency constraints.
+   * Handles runAfter (must run after specified patterns) and excludesWith (mutually exclusive).
+   */
+  private sortPatternsWithDependencies(patterns: BasePattern[]): BasePattern[] {
+    // First, handle exclusions - remove patterns that conflict with higher priority ones
+    const filteredPatterns = this.filterExcludedPatterns(patterns);
+
+    // Sort by priority first
+    const sortedByPriority = [...filteredPatterns].sort(
+      (a, b) => this.getEffectivePriority(b) - this.getEffectivePriority(a)
+    );
+
+    // Then adjust for runAfter dependencies
+    return this.adjustForDependencies(sortedByPriority);
+  }
+
+  /**
+   * v4.5: Filter out patterns that are mutually exclusive with higher priority patterns.
+   */
+  private filterExcludedPatterns(patterns: BasePattern[]): BasePattern[] {
+    // Sort by priority (highest first) to determine which exclusion wins
+    const sortedByPriority = [...patterns].sort(
+      (a, b) => this.getEffectivePriority(b) - this.getEffectivePriority(a)
+    );
+
+    const excludedIds = new Set<string>();
+
+    for (const pattern of sortedByPriority) {
+      // Skip if this pattern was already excluded
+      if (excludedIds.has(pattern.id)) {
+        continue;
+      }
+
+      // Check if this pattern excludes others
+      const excludes = pattern.dependencies?.excludesWith || [];
+      for (const excludedId of excludes) {
+        excludedIds.add(excludedId);
+      }
+    }
+
+    // Return patterns that weren't excluded
+    return sortedByPriority.filter((p) => !excludedIds.has(p.id));
+  }
+
+  /**
+   * v4.5: Adjust pattern order to respect runAfter dependencies.
+   * If pattern A declares runAfter: ['B'], ensure B runs before A.
+   */
+  private adjustForDependencies(patterns: BasePattern[]): BasePattern[] {
+    const patternMap = new Map(patterns.map((p) => [p.id, p]));
+    const result: BasePattern[] = [];
+    const processed = new Set<string>();
+    const processing = new Set<string>();
+
+    // Depth-first processing to handle dependencies
+    const processPattern = (pattern: BasePattern): void => {
+      if (processed.has(pattern.id)) {
+        return; // Already processed
+      }
+
+      if (processing.has(pattern.id)) {
+        // Circular dependency detected - skip to avoid infinite loop
+        return;
+      }
+
+      processing.add(pattern.id);
+
+      // Process dependencies first (patterns that must run before this one)
+      const runAfter = pattern.dependencies?.runAfter || [];
+      for (const depId of runAfter) {
+        const depPattern = patternMap.get(depId);
+        if (depPattern && !processed.has(depId)) {
+          processPattern(depPattern);
+        }
+      }
+
+      processing.delete(pattern.id);
+      processed.add(pattern.id);
+      result.push(pattern);
+    };
+
+    // Process all patterns in priority order
+    for (const pattern of patterns) {
+      processPattern(pattern);
+    }
+
+    return result;
+  }
+
+  /**
+   * v4.5: Select patterns for specific mode with phase-awareness
    * Maps PRD and conversational modes to appropriate base modes and patterns
    */
   selectPatternsForMode(
@@ -220,25 +321,44 @@ export class PatternLibrary {
         continue;
       }
 
-      // Phase-specific filtering for PRD mode
-      if (mode === 'prd' && phase) {
-        if (!this.isPatternApplicableForPRDPhase(pattern, phase)) {
-          continue;
-        }
-      }
-
-      // Phase-specific filtering for conversational mode
-      if (mode === 'conversational' && phase) {
-        if (!this.isPatternApplicableForConversationalPhase(pattern, phase)) {
-          continue;
-        }
+      // v4.5: Phase-specific filtering using pattern's phases property
+      if (phase && !this.isPatternApplicableForPhase(pattern, phase)) {
+        continue;
       }
 
       applicablePatterns.push(pattern);
     }
 
-    // Sort by priority (highest first)
-    return applicablePatterns.sort((a, b) => b.priority - a.priority);
+    // v4.5: Sort by priority and respect dependencies
+    return this.sortPatternsWithDependencies(applicablePatterns);
+  }
+
+  /**
+   * v4.5: Check if pattern is applicable for a given phase.
+   * Uses pattern's declared phases property instead of hardcoded mappings.
+   */
+  private isPatternApplicableForPhase(pattern: BasePattern, phase: OptimizationPhase): boolean {
+    // Map OptimizationPhase to PatternPhase
+    const patternPhase = this.mapOptimizationPhaseToPatternPhase(phase);
+    if (!patternPhase) {
+      return true; // Unknown phase, allow pattern
+    }
+
+    // Check if pattern applies to this phase or to 'all' phases
+    return pattern.phases.includes('all') || pattern.phases.includes(patternPhase);
+  }
+
+  /**
+   * v4.5: Map OptimizationPhase string to PatternPhase type
+   */
+  private mapOptimizationPhaseToPatternPhase(phase: OptimizationPhase): PatternPhase | null {
+    const mapping: Record<string, PatternPhase> = {
+      'question-validation': 'question-validation',
+      'output-generation': 'output-generation',
+      'conversation-tracking': 'conversation-tracking',
+      summarization: 'summarization',
+    };
+    return mapping[phase] || null;
   }
 
   /**
@@ -257,81 +377,6 @@ export class PatternLibrary {
       default:
         return mode as 'fast' | 'deep';
     }
-  }
-
-  /**
-   * Check if pattern is applicable for PRD phase
-   */
-  private isPatternApplicableForPRDPhase(pattern: BasePattern, phase: OptimizationPhase): boolean {
-    // Patterns for question validation (lightweight, clarity-focused)
-    const questionValidationPatterns = [
-      'ambiguity-detector',
-      'completeness-validator',
-      'objective-clarifier',
-    ];
-
-    // Patterns for output generation (comprehensive)
-    const outputGenerationPatterns = [
-      'prd-structure-enforcer',
-      'structure-organizer',
-      'success-criteria-enforcer',
-      'scope-definer',
-      'edge-case-identifier',
-      'assumption-explicitizer',
-      'technical-context-enricher',
-      'domain-context-enricher',
-      // v4.3.2 PRD patterns will be added here
-      'requirement-prioritizer',
-      'user-persona-enricher',
-      'success-metrics-enforcer',
-      'dependency-identifier',
-    ];
-
-    if (phase === 'question-validation') {
-      return questionValidationPatterns.includes(pattern.id);
-    }
-
-    if (phase === 'output-generation') {
-      return outputGenerationPatterns.includes(pattern.id);
-    }
-
-    return true; // Default: allow pattern
-  }
-
-  /**
-   * Check if pattern is applicable for conversational phase
-   */
-  private isPatternApplicableForConversationalPhase(
-    pattern: BasePattern,
-    phase: OptimizationPhase
-  ): boolean {
-    // Patterns for conversation tracking (minimal, non-intrusive)
-    const conversationTrackingPatterns = ['ambiguity-detector', 'completeness-validator'];
-
-    // Patterns for summarization (comprehensive extraction)
-    const summarizationPatterns = [
-      'structure-organizer',
-      'completeness-validator',
-      'success-criteria-enforcer',
-      'edge-case-identifier',
-      'actionability-enhancer',
-      'technical-context-enricher',
-      'domain-context-enricher',
-      // v4.3.2 Conversational patterns will be added here
-      'conversation-summarizer',
-      'topic-coherence-analyzer',
-      'implicit-requirement-extractor',
-    ];
-
-    if (phase === 'conversation-tracking') {
-      return conversationTrackingPatterns.includes(pattern.id);
-    }
-
-    if (phase === 'summarization') {
-      return summarizationPatterns.includes(pattern.id);
-    }
-
-    return true; // Default: allow pattern
   }
 
   /**

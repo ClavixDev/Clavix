@@ -1,19 +1,48 @@
-import { BasePattern } from './base-pattern.js';
-import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
+import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.3.2 PRD Pattern: RequirementPrioritizer
+ * v4.5 Pattern: Requirement Prioritizer
  *
  * Separates must-have from nice-to-have requirements in PRD content.
  * Helps clarify priorities and MVP scope.
  */
 export class RequirementPrioritizer extends BasePattern {
-  id = 'requirement-prioritizer';
-  name = 'RequirementPrioritizer';
-  description = 'Separates must-have from nice-to-have requirements';
-  applicableIntents: PromptIntent[] = ['prd-generation', 'planning'];
-  mode: OptimizationMode | 'both' = 'deep';
-  priority = 7;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'requirement-prioritizer';
+  readonly name = 'Requirement Prioritizer';
+  readonly description = 'Separates must-have from nice-to-have requirements';
+
+  readonly applicableIntents: PromptIntent[] = ['prd-generation', 'planning'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 7; // MEDIUM-HIGH - important enrichment
+  readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    usePriorityLabels: {
+      type: 'boolean',
+      default: true,
+      description: 'Use P0/P1/P2 priority labels',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     // Only apply to PRD-related content with features

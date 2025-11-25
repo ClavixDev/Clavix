@@ -1,25 +1,54 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * OutputFormatEnforcer Pattern (v4.1)
+ * v4.5 Pattern: Output Format Enforcer
  *
  * Ensures prompts specify the expected output format, which is critical
  * for agent-first design - agents need to know exactly what to produce.
  */
 export class OutputFormatEnforcer extends BasePattern {
-  id = 'output-format-enforcer';
-  name = 'Output Format Enforcer';
-  description = 'Adds explicit output format specifications for agent clarity';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'output-format-enforcer';
+  readonly name = 'Output Format Enforcer';
+  readonly description = 'Adds explicit output format specifications for agent clarity';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'documentation',
     'prd-generation',
     'testing',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 7; // Medium-high priority
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 7; // MEDIUM-HIGH - important enrichment
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    showFormatSuggestions: {
+      type: 'boolean',
+      default: true,
+      description: 'Show format suggestions based on intent',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Format indicators that suggest format is already specified
   private formatIndicators = [

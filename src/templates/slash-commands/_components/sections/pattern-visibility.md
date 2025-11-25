@@ -46,19 +46,19 @@ Patterns: 7 applied (deep mode)
 **Core Patterns (fast + deep):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
-| ConcisenessFilter | 10 | Removes pleasantries, filler words, redundant phrases |
+| ConcisenessFilter | 4 | Removes pleasantries, filler words, redundant phrases |
 | ObjectiveClarifier | 9 | Adds clear objective/goal statement if missing |
 | StructureOrganizer | 8 | Reorders into logical flow: context→requirements→constraints→output |
-| ActionabilityEnhancer | 7 | Converts vague language to specific, actionable terms |
-| TechnicalContextEnricher | 8 | Adds missing technical context (frameworks, tools, versions) |
+| ActionabilityEnhancer | 4 | Converts vague language to specific, actionable terms |
+| TechnicalContextEnricher | 5 | Adds missing technical context (frameworks, tools, versions) |
 | CompletenessValidator | 6 | Identifies and flags missing required elements |
-| StepDecomposer | 7 | Breaks complex prompts into sequential steps |
-| ContextPrecisionBooster | 8 | Adds precise context when missing |
+| StepDecomposer | 5 | Breaks complex prompts into sequential steps |
+| ContextPrecisionBooster | 6 | Adds precise context when missing |
 
 **Deep Mode Exclusive Patterns:**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
-| AlternativePhrasingGenerator | 5 | Generates 2-3 alternative prompt structures |
+| AlternativePhrasingGenerator | 3 | Generates 2-3 alternative prompt structures |
 | EdgeCaseIdentifier | 4 | Identifies domain-specific edge cases |
 | ValidationChecklistCreator | 3 | Creates implementation verification checklist |
 | AssumptionExplicitizer | 6 | Makes implicit assumptions explicit |
@@ -72,7 +72,7 @@ Patterns: 7 applied (deep mode)
 |---------|----------|--------------|
 | AmbiguityDetector | 9 | Identifies and flags ambiguous terms |
 | OutputFormatEnforcer | 7 | Adds explicit output format specifications |
-| SuccessCriteriaEnforcer | 6 | Adds measurable success criteria |
+| SuccessCriteriaEnforcer | 7 | Adds measurable success criteria |
 | DomainContextEnricher | 5 | Adds domain-specific best practices |
 
 **v4.3.2 PRD Mode Patterns (deep mode):**
@@ -88,7 +88,7 @@ Patterns: 7 applied (deep mode)
 |---------|----------|--------------|
 | ConversationSummarizer | 8 | Extracts structured requirements from messages |
 | TopicCoherenceAnalyzer | 6 | Detects topic shifts and multi-topic conversations |
-| ImplicitRequirementExtractor | 7 | Surfaces requirements mentioned indirectly |
+| ImplicitRequirementExtractor | 5 | Surfaces requirements mentioned indirectly |
 
 ### Pattern Selection Logic
 
@@ -137,7 +137,7 @@ v4.3.2 Conversational mode (deep):
 
 | Mode | Patterns Available | Typical Applied |
 |------|-------------------|-----------------|
-| Fast | 21 core patterns | 4-7 patterns |
+| Fast | 12 core patterns | 4-7 patterns |
 | Deep | 27 total patterns | 8-14 patterns |
 | PRD | 15 patterns | 10-15 patterns |
 | Conversational | 11 patterns | 6-11 patterns |

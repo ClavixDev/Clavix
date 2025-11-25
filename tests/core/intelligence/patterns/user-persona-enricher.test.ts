@@ -30,7 +30,7 @@ describe('UserPersonaEnricher', () => {
     });
 
     it('should have correct name', () => {
-      expect(pattern.name).toBe('UserPersonaEnricher');
+      expect(pattern.name).toBe('User Persona Enricher');
     });
 
     it('should have correct description', () => {

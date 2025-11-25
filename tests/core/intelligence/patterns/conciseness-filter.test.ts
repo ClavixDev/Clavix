@@ -43,8 +43,8 @@ describe('ConcisenessFilter', () => {
       expect(filter.mode).toBe('both');
     });
 
-    it('should have priority 10 (runs early)', () => {
-      expect(filter.priority).toBe(10);
+    it('should have priority 4 (LOW - polish phase)', () => {
+      expect(filter.priority).toBe(4);
     });
 
     it('should be applicable for all main intents', () => {

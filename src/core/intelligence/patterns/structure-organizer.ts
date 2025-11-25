@@ -1,27 +1,59 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * Structure Organizer Pattern
+ * v4.5 Pattern: Structure Organizer
  *
  * Reorders information logically following the flow:
  * Objective → Requirements → Technical Constraints → Expected Output → Success Criteria
- *
- * Priority: HIGH (8)
  */
 export class StructureOrganizer extends BasePattern {
-  id = 'structure-organizer';
-  name = 'Structure Organizer';
-  description = 'Reorders information into logical sections';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'structure-organizer';
+  readonly name = 'Structure Organizer';
+  readonly description = 'Reorders information into logical sections';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'refinement',
     'debugging',
     'documentation',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 8; // High priority
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 8; // HIGH - core enhancement
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    addHeadersIfMissing: {
+      type: 'boolean',
+      default: true,
+      description: 'Add markdown headers if not present',
+    },
+    reorderSections: {
+      type: 'boolean',
+      default: true,
+      description: 'Reorder sections to follow logical flow',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     // Detect existing sections

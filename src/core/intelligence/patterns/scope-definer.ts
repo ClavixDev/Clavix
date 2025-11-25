@@ -1,25 +1,61 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Deep Mode Pattern: Scope Definer
+ * v4.5 Pattern: Scope Definer
  *
  * Adds explicit scope boundaries to prevent scope creep
  * and clarify what is/isn't included.
  */
 export class ScopeDefiner extends BasePattern {
-  id = 'scope-definer';
-  name = 'Scope Definer';
-  description = 'Add explicit scope boundaries to prevent scope creep';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'scope-definer';
+  readonly name = 'Scope Definer';
+  readonly description = 'Add explicit scope boundaries to prevent scope creep';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'prd-generation',
     'migration',
     'documentation',
   ];
-  mode = 'deep' as const;
-  priority = 5;
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxInScopeItems: {
+      type: 'number',
+      default: 5,
+      description: 'Maximum number of in-scope items to list',
+      validation: { min: 1, max: 10 },
+    },
+    maxOutOfScopeItems: {
+      type: 'number',
+      default: 5,
+      description: 'Maximum number of out-of-scope items to list',
+      validation: { min: 1, max: 10 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     // Check if prompt already has scope definition

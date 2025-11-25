@@ -1,19 +1,48 @@
-import { BasePattern } from './base-pattern.js';
-import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
+import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.3.2 PRD Pattern: UserPersonaEnricher
+ * v4.5 Pattern: User Persona Enricher
  *
  * Adds missing user context and personas to PRD content.
  * Ensures the "who" is clearly defined alongside the "what".
  */
 export class UserPersonaEnricher extends BasePattern {
-  id = 'user-persona-enricher';
-  name = 'UserPersonaEnricher';
-  description = 'Adds missing user context and personas';
-  applicableIntents: PromptIntent[] = ['prd-generation', 'planning'];
-  mode: OptimizationMode | 'both' = 'deep';
-  priority = 6;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'user-persona-enricher';
+  readonly name = 'User Persona Enricher';
+  readonly description = 'Adds missing user context and personas';
+
+  readonly applicableIntents: PromptIntent[] = ['prd-generation', 'planning'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
+  readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    inferUserType: {
+      type: 'boolean',
+      default: true,
+      description: 'Attempt to infer user type from content',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     // Check if user/persona context already exists

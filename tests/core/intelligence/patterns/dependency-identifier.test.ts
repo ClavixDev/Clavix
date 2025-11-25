@@ -30,7 +30,7 @@ describe('DependencyIdentifier', () => {
     });
 
     it('should have correct name', () => {
-      expect(pattern.name).toBe('DependencyIdentifier');
+      expect(pattern.name).toBe('Dependency Identifier');
     });
 
     it('should be deep mode only', () => {

@@ -1,21 +1,65 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
+/**
+ * v4.5 Pattern: Conciseness Filter
+ *
+ * Removes unnecessary pleasantries, fluff words, and redundancy
+ * to make prompts more direct and efficient.
+ */
 export class ConcisenessFilter extends BasePattern {
-  id = 'conciseness-filter';
-  name = 'Conciseness Filter';
-  description = 'Removes unnecessary pleasantries, fluff words, and redundancy';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'conciseness-filter';
+  readonly name = 'Conciseness Filter';
+  readonly description = 'Removes unnecessary pleasantries, fluff words, and redundancy';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'refinement',
     'debugging',
     'documentation',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 10; // High priority - run early
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 4; // LOW - Polish phase
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    fluffThreshold: {
+      type: 'number',
+      default: 3,
+      description: 'Number of fluff words to tolerate before applying filter',
+      validation: { min: 1, max: 10 },
+    },
+    preserveTechnicalTerms: {
+      type: 'boolean',
+      default: true,
+      description: 'Keep technical terms even if they appear verbose',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, _context: PatternContext): PatternResult {
+    const settings = this.getSettings();
+    const fluffThreshold = (settings.fluffThreshold as number) ?? 3;
+
     let cleaned = prompt;
     let changesCount = 0;
 
@@ -52,10 +96,11 @@ export class ConcisenessFilter extends BasePattern {
     // Clean up extra whitespace
     cleaned = this.cleanWhitespace(cleaned);
 
-    const applied = changesCount > 0 || cleaned !== prompt;
+    // Only apply if changes exceed threshold
+    const applied = changesCount >= fluffThreshold || cleaned !== prompt;
 
     return {
-      enhancedPrompt: cleaned,
+      enhancedPrompt: applied ? cleaned : prompt,
       improvement: {
         dimension: 'efficiency',
         description: `Removed ${changesCount} unnecessary phrases for conciseness`,

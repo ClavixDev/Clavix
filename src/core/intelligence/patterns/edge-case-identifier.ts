@@ -1,25 +1,55 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Deep Mode Pattern: Edge Case Identifier
+ * v4.5 Pattern: Edge Case Identifier
  *
  * Identifies potential edge cases by domain/intent to ensure
  * comprehensive requirement coverage.
  */
 export class EdgeCaseIdentifier extends BasePattern {
-  id = 'edge-case-identifier';
-  name = 'Edge Case Identifier';
-  description = 'Identify potential edge cases and failure modes by domain';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'edge-case-identifier';
+  readonly name = 'Edge Case Identifier';
+  readonly description = 'Identify potential edge cases and failure modes by domain';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'debugging',
     'testing',
     'migration',
     'security-review',
   ];
-  mode = 'deep' as const;
-  priority = 4;
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 4; // LOW - polish phase
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxEdgeCases: {
+      type: 'number',
+      default: 8,
+      description: 'Maximum number of edge cases to identify',
+      validation: { min: 1, max: 15 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     const edgeCases = this.identifyEdgeCases(prompt, context.intent.primaryIntent);

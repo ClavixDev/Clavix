@@ -30,7 +30,7 @@ describe('SuccessMetricsEnforcer', () => {
     });
 
     it('should have correct name', () => {
-      expect(pattern.name).toBe('SuccessMetricsEnforcer');
+      expect(pattern.name).toBe('Success Metrics Enforcer');
     });
 
     it('should have correct description', () => {

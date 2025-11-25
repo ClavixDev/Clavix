@@ -41,8 +41,8 @@ describe('StepDecomposer', () => {
       expect(pattern.mode).toBe('both');
     });
 
-    it('should have priority 7', () => {
-      expect(pattern.priority).toBe(7);
+    it('should have priority 5 (MEDIUM-LOW - supplementary)', () => {
+      expect(pattern.priority).toBe(5);
     });
 
     it('should be applicable for multiple intents', () => {

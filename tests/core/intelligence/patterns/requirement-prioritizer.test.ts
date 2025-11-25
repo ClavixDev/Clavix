@@ -30,7 +30,7 @@ describe('RequirementPrioritizer', () => {
     });
 
     it('should have correct name', () => {
-      expect(pattern.name).toBe('RequirementPrioritizer');
+      expect(pattern.name).toBe('Requirement Prioritizer');
     });
 
     it('should have correct description', () => {

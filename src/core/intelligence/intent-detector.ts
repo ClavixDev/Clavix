@@ -6,6 +6,7 @@ import {
   SecondaryIntent,
   IntentAmbiguity,
 } from './types.js';
+import { calculateRatioConfidence, applyCompetitionPenalty } from './confidence-calculator.js';
 
 /**
  * Enhanced Intent Detector with weighted scoring and phrase-based detection
@@ -658,12 +659,11 @@ export class IntentDetector {
     const primaryScore = scores[primaryIntent];
     const totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0);
 
-    if (totalScore === 0) {
-      return 50; // Low confidence if no keywords matched
-    }
-
+    // v4.5: Use shared confidence calculator
     // Calculate confidence as percentage of primary vs total
-    let confidence = Math.min(100, Math.round((primaryScore / totalScore) * 100));
+    let confidence = calculateRatioConfidence(primaryScore, totalScore, {
+      fallbackConfidence: 50, // Low confidence if no keywords matched
+    });
 
     // Check if secondary intent is close
     const sortedScores = Object.entries(scores)
@@ -672,12 +672,13 @@ export class IntentDetector {
 
     if (sortedScores.length > 0) {
       const secondaryScore = sortedScores[0][1];
-      const difference = primaryScore - secondaryScore;
 
       // If top 2 are within 15%, reduce confidence
-      if (difference < primaryScore * 0.15) {
-        confidence = Math.max(60, confidence - 15);
-      }
+      confidence = applyCompetitionPenalty(confidence, primaryScore, secondaryScore, {
+        threshold: 0.15,
+        penalty: 15,
+        minConfidence: 60,
+      });
     }
 
     return confidence;

@@ -43,8 +43,8 @@ describe('TechnicalContextEnricher', () => {
       expect(enricher.mode).toBe('both');
     });
 
-    it('should have priority 8', () => {
-      expect(enricher.priority).toBe(8);
+    it('should have priority 5 (MEDIUM-LOW - supplementary)', () => {
+      expect(enricher.priority).toBe(5);
     });
 
     it('should be applicable for code-generation, refinement, debugging', () => {

@@ -1,25 +1,55 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * ErrorToleranceEnhancer Pattern (v4.1)
+ * v4.5 Pattern: Error Tolerance Enhancer
  *
  * Adds error handling requirements and considerations to prompts.
  * Ensures implementations are robust and handle failure gracefully.
  */
 export class ErrorToleranceEnhancer extends BasePattern {
-  id = 'error-tolerance-enhancer';
-  name = 'Error Tolerance Enhancer';
-  description = 'Adds error handling requirements and failure mode considerations';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'error-tolerance-enhancer';
+  readonly name = 'Error Tolerance Enhancer';
+  readonly description = 'Adds error handling requirements and failure mode considerations';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'refinement',
     'debugging',
     'migration',
     'testing',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'deep'; // Only in deep mode for comprehensive analysis
-  priority = 5; // Medium priority
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxErrorScenarios: {
+      type: 'number',
+      default: 6,
+      description: 'Maximum number of error scenarios to surface',
+      validation: { min: 1, max: 10 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Indicators that error handling is already addressed
   private errorIndicators = [

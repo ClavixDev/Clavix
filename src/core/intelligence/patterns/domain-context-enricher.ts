@@ -1,17 +1,28 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * DomainContextEnricher Pattern (v4.1)
+ * v4.5 Pattern: Domain Context Enricher
  *
  * Adds domain-specific context and best practices based on detected
  * technical domain. Helps agents apply domain expertise.
  */
 export class DomainContextEnricher extends BasePattern {
-  id = 'domain-context-enricher';
-  name = 'Domain Context Enricher';
-  description = 'Adds domain-specific best practices and context';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'domain-context-enricher';
+  readonly name = 'Domain Context Enricher';
+  readonly description = 'Adds domain-specific best practices and context';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'refinement',
@@ -20,8 +31,33 @@ export class DomainContextEnricher extends BasePattern {
     'security-review',
     'migration',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 5; // Medium priority
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxDomains: {
+      type: 'number',
+      default: 2,
+      description: 'Maximum number of domains to detect',
+      validation: { min: 1, max: 4 },
+    },
+    practicesPerDomain: {
+      type: 'number',
+      default: 3,
+      description: 'Number of best practices per domain',
+      validation: { min: 1, max: 6 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Domain detection patterns
   private domainPatterns: Record<string, { regex: RegExp; bestPractices: string[] }> = {

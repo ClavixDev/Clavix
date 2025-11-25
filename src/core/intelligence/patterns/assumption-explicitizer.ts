@@ -1,17 +1,28 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Deep Mode Pattern: Assumption Explicitizer
+ * v4.5 Pattern: Assumption Explicitizer
  *
  * Makes implicit assumptions explicit to prevent misunderstandings
  * and ensure comprehensive requirement coverage.
  */
 export class AssumptionExplicitizer extends BasePattern {
-  id = 'assumption-explicitizer';
-  name = 'Assumption Explicitizer';
-  description = 'Make implicit assumptions explicit to prevent misunderstandings';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'assumption-explicitizer';
+  readonly name = 'Assumption Explicitizer';
+  readonly description = 'Make implicit assumptions explicit to prevent misunderstandings';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'migration',
@@ -19,8 +30,32 @@ export class AssumptionExplicitizer extends BasePattern {
     'debugging',
     'prd-generation',
   ];
-  mode = 'deep' as const;
-  priority = 6;
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxAssumptions: {
+      type: 'number',
+      default: 8,
+      description: 'Maximum number of assumptions to surface',
+      validation: { min: 1, max: 15 },
+    },
+    checkDomainAssumptions: {
+      type: 'boolean',
+      default: true,
+      description: 'Check for domain-specific assumptions (auth, API style, etc.)',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     const assumptions = this.identifyAssumptions(prompt, context.intent.primaryIntent);

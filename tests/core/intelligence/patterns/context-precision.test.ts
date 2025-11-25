@@ -37,8 +37,8 @@ describe('ContextPrecisionBooster', () => {
       expect(pattern.mode).toBe('both');
     });
 
-    it('should have priority 8', () => {
-      expect(pattern.priority).toBe(8);
+    it('should have priority 6 (MEDIUM - standard enhancement)', () => {
+      expect(pattern.priority).toBe(6);
     });
 
     it('should be applicable for many intents', () => {

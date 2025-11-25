@@ -1,20 +1,62 @@
-import { BasePattern } from './base-pattern.js';
-import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
+import { PromptIntent, PatternContext, PatternResult } from '../types.js';
+import { calculateAdditiveConfidence } from '../confidence-calculator.js';
 
 /**
- * v4.4 Conversational Pattern: ConversationSummarizer
+ * v4.5 Pattern: Conversation Summarizer
  *
  * Extracts structured requirements from conversational messages.
  * Organizes free-form discussion into actionable requirements.
  * Enhanced with expanded marker detection and confidence scoring.
  */
 export class ConversationSummarizer extends BasePattern {
-  id = 'conversation-summarizer';
-  name = 'ConversationSummarizer';
-  description = 'Extracts structured requirements from messages';
-  applicableIntents: PromptIntent[] = ['summarization', 'planning', 'prd-generation'];
-  mode: OptimizationMode | 'both' = 'deep';
-  priority = 8;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'conversation-summarizer';
+  readonly name = 'Conversation Summarizer';
+  readonly description = 'Extracts structured requirements from messages';
+
+  readonly applicableIntents: PromptIntent[] = ['summarization', 'planning', 'prd-generation'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 8; // HIGH - core enhancement
+  readonly phases: PatternPhase[] = ['summarization'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxRequirements: {
+      type: 'number',
+      default: 10,
+      description: 'Maximum number of requirements to extract',
+      validation: { min: 1, max: 20 },
+    },
+    maxGoals: {
+      type: 'number',
+      default: 3,
+      description: 'Maximum number of goals to extract',
+      validation: { min: 1, max: 5 },
+    },
+    showConfidence: {
+      type: 'boolean',
+      default: true,
+      description: 'Show extraction confidence percentage',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Expanded conversational markers (~30 markers)
   private readonly conversationalMarkers = [
@@ -132,17 +174,12 @@ export class ConversationSummarizer extends BasePattern {
     goals: string[],
     constraints: string[]
   ): number {
-    // Calculate extraction confidence based on what was found
-    const hasRequirements = requirements.length > 0;
-    const hasGoals = goals.length > 0;
-    const hasConstraints = constraints.length > 0;
-
-    let confidence = 50; // Base confidence for conversational detection
-    if (hasRequirements) confidence += 20;
-    if (hasGoals) confidence += 15;
-    if (hasConstraints) confidence += 15;
-
-    return Math.min(confidence, 100);
+    // v4.5: Use shared confidence calculator
+    return calculateAdditiveConfidence(50, [
+      [requirements.length > 0, 20],
+      [goals.length > 0, 15],
+      [constraints.length > 0, 15],
+    ]);
   }
 
   private extractAndStructure(prompt: string): string {

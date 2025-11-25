@@ -1,25 +1,67 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+  PatternDependency,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Deep Mode Pattern: Validation Checklist Creator
+ * v4.5 Pattern: Validation Checklist Creator
  *
  * Creates implementation validation checklists to ensure
  * comprehensive verification of completed work.
  */
 export class ValidationChecklistCreator extends BasePattern {
-  id = 'validation-checklist-creator';
-  name = 'Validation Checklist Creator';
-  description = 'Create implementation validation checklist for verification';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'validation-checklist-creator';
+  readonly name = 'Validation Checklist Creator';
+  readonly description = 'Create implementation validation checklist for verification';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'testing',
     'migration',
     'security-review',
     'debugging',
   ];
-  mode = 'deep' as const;
-  priority = 3;
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 3; // VERY LOW - final touches
+  readonly phases: PatternPhase[] = ['all'];
+
+  // v4.5: Dependencies
+  readonly dependencies: PatternDependency = {
+    runAfter: ['success-criteria-enforcer'], // Checklist should include success criteria
+    enhancedBy: ['edge-case-identifier'],
+  };
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxChecklistItems: {
+      type: 'number',
+      default: 12,
+      description: 'Maximum number of checklist items',
+      validation: { min: 5, max: 20 },
+    },
+    groupByCategory: {
+      type: 'boolean',
+      default: true,
+      description: 'Group checklist items by category',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     const checklist = this.createChecklist(prompt, context.intent.primaryIntent);

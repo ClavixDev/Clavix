@@ -7,6 +7,9 @@ export { QualityAssessor } from './quality-assessor.js';
 // Type exports
 export * from './types.js';
 
+// v4.5: Confidence calculation utilities
+export * from './confidence-calculator.js';
+
 // Pattern exports
 export { BasePattern } from './patterns/base-pattern.js';
 export { ConcisenessFilter } from './patterns/conciseness-filter.js';

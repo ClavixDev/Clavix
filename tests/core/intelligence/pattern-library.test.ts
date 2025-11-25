@@ -501,7 +501,7 @@ describe('PatternLibrary', () => {
       library.applyConfig({
         patterns: {
           priorityOverrides: {
-            'conciseness-filter': 1, // Lowest priority
+            'conciseness-filter': 1, // Lowest priority (overridden)
           },
         },
       });
@@ -520,10 +520,12 @@ describe('PatternLibrary', () => {
         'fast'
       );
 
-      // conciseness-filter should be last (lowest priority)
-      const conciseness = patterns.find((p) => p.id === 'conciseness-filter');
-      if (conciseness) {
-        expect(conciseness.priority).toBe(1);
+      // conciseness-filter should be last in sorted list (lowest priority)
+      // Note: pattern.priority is readonly, but sorting uses effective priority
+      const concisenessIndex = patterns.findIndex((p) => p.id === 'conciseness-filter');
+      if (concisenessIndex !== -1) {
+        // Should be at or near the end of the sorted patterns
+        expect(concisenessIndex).toBe(patterns.length - 1);
       }
     });
 

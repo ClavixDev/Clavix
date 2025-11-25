@@ -1,13 +1,59 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
+/**
+ * v4.5 Pattern: Objective Clarifier
+ *
+ * Extracts or infers clear goal statement from prompts.
+ * Ensures every prompt has an explicit objective section.
+ */
 export class ObjectiveClarifier extends BasePattern {
-  id = 'objective-clarifier';
-  name = 'Objective Clarifier';
-  description = 'Extracts or infers clear goal statement';
-  applicableIntents: PromptIntent[] = ['code-generation', 'planning', 'refinement', 'debugging', 'documentation'];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 9;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'objective-clarifier';
+  readonly name = 'Objective Clarifier';
+  readonly description = 'Extracts or infers clear goal statement';
+
+  readonly applicableIntents: PromptIntent[] = [
+    'code-generation',
+    'planning',
+    'refinement',
+    'debugging',
+    'documentation',
+  ];
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 9; // VERY HIGH - structural integrity
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    inferFromContext: {
+      type: 'boolean',
+      default: true,
+      description: 'Attempt to infer objective when not explicitly stated',
+    },
+    addHeaderPrefix: {
+      type: 'boolean',
+      default: true,
+      description: 'Add "# Objective" header prefix when adding objective',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     // Check if prompt already has clear objective section
@@ -17,9 +63,9 @@ export class ObjectiveClarifier extends BasePattern {
         improvement: {
           dimension: 'clarity',
           description: 'Objective already clearly stated',
-          impact: 'low'
+          impact: 'low',
         },
-        applied: false
+        applied: false,
       };
     }
 
@@ -33,9 +79,9 @@ export class ObjectiveClarifier extends BasePattern {
         improvement: {
           dimension: 'clarity',
           description: 'Could not infer clear objective',
-          impact: 'low'
+          impact: 'low',
         },
-        applied: false
+        applied: false,
       };
     }
 
@@ -47,21 +93,16 @@ export class ObjectiveClarifier extends BasePattern {
       improvement: {
         dimension: 'clarity',
         description: 'Added clear objective statement',
-        impact: 'high'
+        impact: 'high',
       },
-      applied: true
+      applied: true,
     };
   }
 
   private hasExplicitObjective(prompt: string): boolean {
-    const objectiveMarkers = [
-      /^#+ objective/im,
-      /^objective:/im,
-      /^goal:/im,
-      /^purpose:/im
-    ];
+    const objectiveMarkers = [/^#+ objective/im, /^objective:/im, /^goal:/im, /^purpose:/im];
 
-    return objectiveMarkers.some(marker => marker.test(prompt));
+    return objectiveMarkers.some((marker) => marker.test(prompt));
   }
 
   private extractObjective(prompt: string, intent: PromptIntent): string | null {
@@ -70,7 +111,7 @@ export class ObjectiveClarifier extends BasePattern {
     // Look for explicit goal statements
     const goalPatterns = [
       /(?:i need to|i want to|i'm trying to|goal is to|objective is to|purpose is to)\s+(.+?)(?:\.|$)/i,
-      /(?:create|build|make|implement|develop|write)\s+(.+?)(?:\.|$)/i
+      /(?:create|build|make|implement|develop|write)\s+(.+?)(?:\.|$)/i,
     ];
 
     for (const pattern of goalPatterns) {

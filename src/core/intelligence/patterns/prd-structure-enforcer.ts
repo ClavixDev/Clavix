@@ -1,19 +1,53 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Deep Mode Pattern: PRD Structure Enforcer
+ * v4.5 Pattern: PRD Structure Enforcer
  *
  * Ensures PRD prompts include all necessary sections
  * for comprehensive product requirement documentation.
  */
 export class PRDStructureEnforcer extends BasePattern {
-  id = 'prd-structure-enforcer';
-  name = 'PRD Structure Enforcer';
-  description = 'Ensure PRD prompts include all necessary sections';
-  applicableIntents: PromptIntent[] = ['prd-generation'];
-  mode = 'deep' as const;
-  priority = 9;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'prd-structure-enforcer';
+  readonly name = 'PRD Structure Enforcer';
+  readonly description = 'Ensure PRD prompts include all necessary sections';
+
+  readonly applicableIntents: PromptIntent[] = ['prd-generation'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 9; // VERY HIGH - structural integrity
+  readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    showCompletenessScore: {
+      type: 'boolean',
+      default: true,
+      description: 'Show PRD completeness percentage',
+    },
+    includeBestPractices: {
+      type: 'boolean',
+      default: true,
+      description: 'Include PRD best practices reminder',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Required PRD sections with their purposes
   private readonly PRD_SECTIONS: PRDSection[] = [

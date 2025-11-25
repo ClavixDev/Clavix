@@ -30,7 +30,7 @@ describe('TopicCoherenceAnalyzer', () => {
     });
 
     it('should have correct name', () => {
-      expect(pattern.name).toBe('TopicCoherenceAnalyzer');
+      expect(pattern.name).toBe('Topic Coherence Analyzer');
     });
 
     it('should be deep mode only', () => {

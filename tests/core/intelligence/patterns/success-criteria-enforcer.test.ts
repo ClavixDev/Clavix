@@ -43,8 +43,8 @@ describe('SuccessCriteriaEnforcer', () => {
       expect(pattern.mode).toBe('both');
     });
 
-    it('should have priority 6', () => {
-      expect(pattern.priority).toBe(6);
+    it('should have priority 7 (MEDIUM-HIGH - important enrichment)', () => {
+      expect(pattern.priority).toBe(7);
     });
 
     it('should be applicable for multiple intents', () => {

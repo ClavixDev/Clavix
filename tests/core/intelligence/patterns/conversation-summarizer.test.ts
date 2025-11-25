@@ -30,7 +30,7 @@ describe('ConversationSummarizer', () => {
     });
 
     it('should have correct name', () => {
-      expect(pattern.name).toBe('ConversationSummarizer');
+      expect(pattern.name).toBe('Conversation Summarizer');
     });
 
     it('should be deep mode only', () => {

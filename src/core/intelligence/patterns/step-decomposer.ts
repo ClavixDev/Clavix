@@ -1,17 +1,28 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Both Mode Pattern: Step-by-Step Decomposer
+ * v4.5 Pattern: Step-by-Step Decomposer
  *
  * Breaks complex prompts into clear sequential steps.
  * Applicable in both fast and deep modes.
  */
 export class StepDecomposer extends BasePattern {
-  id = 'step-decomposer';
-  name = 'Step-by-Step Decomposer';
-  description = 'Break complex prompts into clear sequential steps';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'step-decomposer';
+  readonly name = 'Step-by-Step Decomposer';
+  readonly description = 'Break complex prompts into clear sequential steps';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'migration',
@@ -19,8 +30,27 @@ export class StepDecomposer extends BasePattern {
     'debugging',
     'documentation',
   ];
-  mode = 'both' as const;
-  priority = 7;
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    minWordsForDecomposition: {
+      type: 'number',
+      default: 100,
+      description: 'Minimum word count before decomposition is applied',
+      validation: { min: 50, max: 500 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     // Check if prompt is complex enough to benefit from decomposition

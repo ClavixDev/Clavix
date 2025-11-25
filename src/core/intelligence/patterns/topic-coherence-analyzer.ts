@@ -1,20 +1,50 @@
-import { BasePattern } from './base-pattern.js';
-import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
+import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.4 Conversational Pattern: TopicCoherenceAnalyzer
+ * v4.5 Pattern: Topic Coherence Analyzer
  *
  * Detects topic shifts and multi-topic conversations.
  * Helps organize scattered discussions into coherent themes.
  * Enhanced with expanded topic dictionary and better detection.
  */
 export class TopicCoherenceAnalyzer extends BasePattern {
-  id = 'topic-coherence-analyzer';
-  name = 'TopicCoherenceAnalyzer';
-  description = 'Detects topic shifts and multi-topic conversations';
-  applicableIntents: PromptIntent[] = ['summarization', 'planning'];
-  mode: OptimizationMode | 'both' = 'deep';
-  priority = 6;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'topic-coherence-analyzer';
+  readonly name = 'Topic Coherence Analyzer';
+  readonly description = 'Detects topic shifts and multi-topic conversations';
+
+  readonly applicableIntents: PromptIntent[] = ['summarization', 'planning'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
+  readonly phases: PatternPhase[] = ['conversation-tracking', 'summarization'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    minTopicsForOrganization: {
+      type: 'number',
+      default: 2,
+      description: 'Minimum number of topics before organizing',
+      validation: { min: 2, max: 5 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Expanded topic indicators (~15 topics with more keywords)
   private readonly topicIndicators: Record<string, string[]> = {

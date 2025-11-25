@@ -1,17 +1,28 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * SuccessCriteriaEnforcer Pattern (v4.1)
+ * v4.5 Pattern: Success Criteria Enforcer
  *
  * Ensures prompts include measurable success criteria. Agents need to know
  * when they've successfully completed a task - this pattern adds that clarity.
  */
 export class SuccessCriteriaEnforcer extends BasePattern {
-  id = 'success-criteria-enforcer';
-  name = 'Success Criteria Enforcer';
-  description = 'Adds measurable success criteria for task completion validation';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'success-criteria-enforcer';
+  readonly name = 'Success Criteria Enforcer';
+  readonly description = 'Adds measurable success criteria for task completion validation';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'refinement',
@@ -20,8 +31,26 @@ export class SuccessCriteriaEnforcer extends BasePattern {
     'migration',
     'prd-generation',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 6; // Medium priority
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 7; // MEDIUM-HIGH - important enrichment
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    showCheckboxes: {
+      type: 'boolean',
+      default: true,
+      description: 'Show criteria as checkboxes for progress tracking',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Indicators that success criteria already exist
   private successIndicators = [

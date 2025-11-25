@@ -1,21 +1,58 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * Actionability Enhancer Pattern
+ * v4.5 Pattern: Actionability Enhancer
  *
  * Converts vague goals into specific, actionable tasks.
  * Replaces abstract language with concrete requirements.
- *
- * Priority: HIGH (7)
  */
 export class ActionabilityEnhancer extends BasePattern {
-  id = 'actionability-enhancer';
-  name = 'Actionability Enhancer';
-  description = 'Converts vague goals into specific, actionable tasks';
-  applicableIntents: PromptIntent[] = ['code-generation', 'planning', 'refinement', 'debugging'];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 7; // High priority
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'actionability-enhancer';
+  readonly name = 'Actionability Enhancer';
+  readonly description = 'Converts vague goals into specific, actionable tasks';
+
+  readonly applicableIntents: PromptIntent[] = [
+    'code-generation',
+    'planning',
+    'refinement',
+    'debugging',
+  ];
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 4; // LOW - polish phase
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    replaceVagueWords: {
+      type: 'boolean',
+      default: true,
+      description: 'Replace vague words with specific alternatives',
+    },
+    addMeasurableCriteria: {
+      type: 'boolean',
+      default: true,
+      description: 'Add suggestions for measurable criteria',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   private readonly VAGUE_WORDS: Record<string, string[]> = {
     better: ['faster', 'more efficient', 'more reliable', 'more maintainable'],

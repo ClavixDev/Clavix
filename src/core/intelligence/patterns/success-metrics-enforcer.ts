@@ -1,19 +1,54 @@
-import { BasePattern } from './base-pattern.js';
-import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
+import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.3.2 PRD Pattern: SuccessMetricsEnforcer
+ * v4.5 Pattern: Success Metrics Enforcer
  *
  * Ensures measurable success criteria exist in PRD content.
  * Adds KPIs and metrics when missing.
  */
 export class SuccessMetricsEnforcer extends BasePattern {
-  id = 'success-metrics-enforcer';
-  name = 'SuccessMetricsEnforcer';
-  description = 'Ensures measurable success criteria exist';
-  applicableIntents: PromptIntent[] = ['prd-generation', 'planning'];
-  mode: OptimizationMode | 'both' = 'deep';
-  priority = 7;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'success-metrics-enforcer';
+  readonly name = 'Success Metrics Enforcer';
+  readonly description = 'Ensures measurable success criteria exist';
+
+  readonly applicableIntents: PromptIntent[] = ['prd-generation', 'planning'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 7; // MEDIUM-HIGH - important enrichment
+  readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxKPIs: {
+      type: 'number',
+      default: 4,
+      description: 'Maximum number of KPIs to suggest',
+      validation: { min: 1, max: 8 },
+    },
+    includeMeasurementGuidance: {
+      type: 'boolean',
+      default: true,
+      description: 'Include guidance on how to measure success',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     // Check if success metrics already exist

@@ -1,17 +1,28 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.0 Deep Mode Pattern: Alternative Phrasing Generator
+ * v4.5 Pattern: Alternative Phrasing Generator
  *
  * Generates 2-3 alternative prompt structures to give users options
  * for different approaches to the same request.
  */
 export class AlternativePhrasingGenerator extends BasePattern {
-  id = 'alternative-phrasing-generator';
-  name = 'Alternative Phrasing Generator';
-  description = 'Generate alternative prompt structures for different approaches';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'alternative-phrasing-generator';
+  readonly name = 'Alternative Phrasing Generator';
+  readonly description = 'Generate alternative prompt structures for different approaches';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'debugging',
@@ -20,8 +31,27 @@ export class AlternativePhrasingGenerator extends BasePattern {
     'security-review',
     'documentation',
   ];
-  mode = 'deep' as const;
-  priority = 5;
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 3; // VERY LOW - final touches
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxAlternatives: {
+      type: 'number',
+      default: 3,
+      description: 'Maximum number of alternative approaches to generate',
+      validation: { min: 1, max: 5 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, context: PatternContext): PatternResult {
     const alternatives = this.generateAlternatives(prompt, context.intent.primaryIntent);

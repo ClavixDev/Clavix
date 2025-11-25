@@ -30,15 +30,15 @@ describe('ImplicitRequirementExtractor', () => {
     });
 
     it('should have correct name', () => {
-      expect(pattern.name).toBe('ImplicitRequirementExtractor');
+      expect(pattern.name).toBe('Implicit Requirement Extractor');
     });
 
     it('should be deep mode only', () => {
       expect(pattern.mode).toBe('deep');
     });
 
-    it('should have priority 7', () => {
-      expect(pattern.priority).toBe(7);
+    it('should have priority 5 (MEDIUM-LOW - supplementary)', () => {
+      expect(pattern.priority).toBe(5);
     });
 
     it('should be applicable for expected intents', () => {

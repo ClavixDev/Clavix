@@ -1,17 +1,28 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * AmbiguityDetector Pattern (v4.1)
+ * v4.5 Pattern: Ambiguity Detector
  *
  * Identifies and clarifies ambiguous terms, vague references, and unclear
  * specifications in prompts. Helps agents understand exactly what's needed.
  */
 export class AmbiguityDetector extends BasePattern {
-  id = 'ambiguity-detector';
-  name = 'Ambiguity Detector';
-  description = 'Identifies and clarifies ambiguous terms and vague references';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'ambiguity-detector';
+  readonly name = 'Ambiguity Detector';
+  readonly description = 'Identifies and clarifies ambiguous terms and vague references';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'refinement',
@@ -21,8 +32,37 @@ export class AmbiguityDetector extends BasePattern {
     'testing',
     'migration',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'both';
-  priority = 9; // High priority - detect ambiguity early
+
+  readonly mode: PatternMode = 'both';
+  readonly priority: PatternPriority = 9; // VERY HIGH - structural integrity
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    checkVaguePatterns: {
+      type: 'boolean',
+      default: true,
+      description: 'Check for vague phrases like "should work", "properly", etc.',
+    },
+    checkUndefinedPronouns: {
+      type: 'boolean',
+      default: true,
+      description: 'Check for unclear pronoun references',
+    },
+    maxClarifications: {
+      type: 'number',
+      default: 10,
+      description: 'Maximum number of clarifications to add',
+      validation: { min: 1, max: 20 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Common ambiguous terms that need clarification
   private ambiguousTerms: Record<string, string[]> = {

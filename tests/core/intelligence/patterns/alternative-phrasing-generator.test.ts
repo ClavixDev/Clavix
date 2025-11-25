@@ -37,8 +37,8 @@ describe('AlternativePhrasingGenerator', () => {
       expect(pattern.mode).toBe('deep');
     });
 
-    it('should have priority 5', () => {
-      expect(pattern.priority).toBe(5);
+    it('should have priority 3 (VERY LOW - final touches)', () => {
+      expect(pattern.priority).toBe(3);
     });
 
     it('should be applicable for many intents', () => {

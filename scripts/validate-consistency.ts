@@ -169,12 +169,16 @@ async function extractPatternDetails(
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
 
-      // Extract priority
-      const priorityMatch = content.match(/priority\s*=\s*(\d+)/);
+      // Extract priority (v4.5 format: readonly priority: PatternPriority = 4)
+      // Also handles older format: priority = 4
+      const priorityMatch = content.match(/priority(?::\s*PatternPriority)?\s*=\s*(\d+)/);
       const priority = priorityMatch ? parseInt(priorityMatch[1]) : 0;
 
-      // Extract mode
-      const modeMatch = content.match(/mode:\s*OptimizationMode\s*=\s*['"](\w+)['"]/);
+      // Extract mode (v4.5 format: readonly mode: PatternMode = 'both')
+      // Also handles older format: mode: OptimizationMode = 'both'
+      const modeMatch = content.match(
+        /mode(?::\s*(?:PatternMode|OptimizationMode))?\s*=\s*['"](\w+)['"]/
+      );
       const mode = (modeMatch ? modeMatch[1] : 'both') as 'fast' | 'deep' | 'both';
 
       patterns.push({ name, priority, mode });
@@ -190,9 +194,11 @@ async function extractPatternDetails(
 
         if (matchingFile) {
           const content = fs.readFileSync(path.join(patternsDir, matchingFile), 'utf-8');
-          const priorityMatch = content.match(/priority\s*=\s*(\d+)/);
+          const priorityMatch = content.match(/priority(?::\s*PatternPriority)?\s*=\s*(\d+)/);
           const priority = priorityMatch ? parseInt(priorityMatch[1]) : 0;
-          const modeMatch = content.match(/mode:\s*OptimizationMode\s*=\s*['"](\w+)['"]/);
+          const modeMatch = content.match(
+            /mode(?::\s*(?:PatternMode|OptimizationMode))?\s*=\s*['"](\w+)['"]/
+          );
           const mode = (modeMatch ? modeMatch[1] : 'both') as 'fast' | 'deep' | 'both';
           patterns.push({ name, priority, mode });
         } else {
@@ -671,8 +677,11 @@ async function countPatternsByMode(patternsDir: string): Promise<{ fast: number;
   for (const file of files) {
     const content = fs.readFileSync(path.join(patternsDir, file), 'utf-8');
 
-    // Extract mode from pattern file: mode = 'deep' as const or mode: OptimizationMode = 'both'
-    const modeMatch = content.match(/mode\s*[:=]\s*['"]?(fast|deep|both)['"]?/);
+    // Extract mode from pattern file (v4.5 format: readonly mode: PatternMode = 'both')
+    // Also handles older format: mode: OptimizationMode = 'both' or mode = 'deep' as const
+    const modeMatch = content.match(
+      /mode(?::\s*(?:PatternMode|OptimizationMode))?\s*=\s*['"]?(fast|deep|both)['"]?/
+    );
     const mode = modeMatch ? modeMatch[1] : 'both';
 
     // Fast mode includes 'fast' and 'both' patterns

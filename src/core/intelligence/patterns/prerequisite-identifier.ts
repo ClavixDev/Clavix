@@ -1,25 +1,62 @@
-import { BasePattern } from './base-pattern.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
 import { PatternContext, PatternResult, PromptIntent } from '../types.js';
 
 /**
- * PrerequisiteIdentifier Pattern (v4.1)
+ * v4.5 Pattern: Prerequisite Identifier
  *
  * Identifies and explicitly states prerequisites and dependencies
  * that must be in place before the task can be executed.
  */
 export class PrerequisiteIdentifier extends BasePattern {
-  id = 'prerequisite-identifier';
-  name = 'Prerequisite Identifier';
-  description = 'Identifies and documents prerequisites and dependencies for task execution';
-  applicableIntents: PromptIntent[] = [
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'prerequisite-identifier';
+  readonly name = 'Prerequisite Identifier';
+  readonly description =
+    'Identifies and documents prerequisites and dependencies for task execution';
+
+  readonly applicableIntents: PromptIntent[] = [
     'code-generation',
     'planning',
     'migration',
     'testing',
     'debugging',
   ];
-  mode: 'fast' | 'deep' | 'both' = 'deep'; // Only in deep mode
-  priority = 6; // Medium priority
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
+  readonly phases: PatternPhase[] = ['all'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxPrerequisites: {
+      type: 'number',
+      default: 8,
+      description: 'Maximum number of prerequisites to list',
+      validation: { min: 1, max: 15 },
+    },
+    maxTechnologies: {
+      type: 'number',
+      default: 3,
+      description: 'Maximum number of technologies to detect',
+      validation: { min: 1, max: 5 },
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Keywords that suggest prerequisites are already addressed
   private prerequisiteIndicators = [

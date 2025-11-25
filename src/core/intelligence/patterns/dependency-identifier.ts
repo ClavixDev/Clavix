@@ -1,19 +1,48 @@
-import { BasePattern } from './base-pattern.js';
-import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
+import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.3.2 PRD Pattern: DependencyIdentifier
+ * v4.5 Pattern: Dependency Identifier
  *
  * Identifies technical and external dependencies in PRD content.
  * Helps surface hidden requirements and blockers.
  */
 export class DependencyIdentifier extends BasePattern {
-  id = 'dependency-identifier';
-  name = 'DependencyIdentifier';
-  description = 'Identifies technical and external dependencies';
-  applicableIntents: PromptIntent[] = ['prd-generation', 'planning', 'migration'];
-  mode: OptimizationMode | 'both' = 'deep';
-  priority = 5;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'dependency-identifier';
+  readonly name = 'Dependency Identifier';
+  readonly description = 'Identifies technical and external dependencies';
+
+  readonly applicableIntents: PromptIntent[] = ['prd-generation', 'planning', 'migration'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
+  readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    categorizeDependencies: {
+      type: 'boolean',
+      default: true,
+      description: 'Separate technical from external dependencies',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Application
+  // -------------------------------------------------------------------------
 
   apply(prompt: string, _context: PatternContext): PatternResult {
     // Check if dependencies are already documented

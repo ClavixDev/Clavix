@@ -1,4 +1,5 @@
 import { FileSystem } from '../../utils/file-system.js';
+import { TemplateAssembler } from '../template-assembler.js';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -20,23 +21,18 @@ export class InstructionsGenerator {
     'octo-md',
     'warp-md',
     'agents-md',
-    'copilot-instructions'
+    'copilot-instructions',
   ];
 
   /**
    * Generate .clavix/instructions/ folder with all reference files
    */
   static async generate(): Promise<void> {
-    const staticInstructionsPath = path.join(
-      __dirname,
-      '../../templates/instructions'
-    );
+    const staticInstructionsPath = path.join(__dirname, '../../templates/instructions');
 
     // Check if static template exists
     if (!(await FileSystem.exists(staticInstructionsPath))) {
-      throw new Error(
-        `.clavix/instructions static files not found at ${staticInstructionsPath}`
-      );
+      throw new Error(`.clavix/instructions static files not found at ${staticInstructionsPath}`);
     }
 
     // Create target directory
@@ -78,34 +74,42 @@ export class InstructionsGenerator {
 
   /**
    * Copy ALL canonical templates to .clavix/instructions/workflows/
-   * This ensures generic integrations have access to complete workflow set
+   * This ensures generic integrations have access to complete workflow set.
+   * v4.5: Uses TemplateAssembler to resolve {{INCLUDE:}} markers.
    */
   private static async copyCanonicalWorkflows(): Promise<void> {
-    const canonicalPath = path.join(
-      __dirname,
-      '../../templates/slash-commands/_canonical'
-    );
+    const canonicalPath = path.join(__dirname, '../../templates/slash-commands/_canonical');
 
     const workflowsTarget = path.join(this.TARGET_DIR, 'workflows');
 
     if (!(await FileSystem.exists(canonicalPath))) {
-      throw new Error(
-        `Canonical templates not found at ${canonicalPath}`
-      );
+      throw new Error(`Canonical templates not found at ${canonicalPath}`);
     }
 
     // Create workflows directory
     await FileSystem.ensureDir(workflowsTarget);
 
-    // Copy all .md files from canonical
+    // Create TemplateAssembler for include resolution
+    const templatesBasePath = path.join(__dirname, '../../templates');
+    const assembler = new TemplateAssembler(templatesBasePath);
+
+    // Copy all .md files from canonical, resolving includes
     const entries = await FileSystem.readdir(canonicalPath, { withFileTypes: true });
-    const mdFiles = entries.filter(f => f.isFile() && f.name.endsWith('.md'));
+    const mdFiles = entries.filter((f) => f.isFile() && f.name.endsWith('.md'));
 
     for (const file of mdFiles) {
-      const srcPath = path.join(canonicalPath, file.name);
       const destPath = path.join(workflowsTarget, file.name);
-      const content = await FileSystem.readFile(srcPath);
-      await FileSystem.writeFileAtomic(destPath, content);
+
+      try {
+        // v4.5: Use TemplateAssembler to resolve {{INCLUDE:}} markers
+        const result = await assembler.assembleTemplate(file.name);
+        await FileSystem.writeFileAtomic(destPath, result.content);
+      } catch {
+        // Fallback: copy without include resolution if assembly fails
+        const srcPath = path.join(canonicalPath, file.name);
+        const content = await FileSystem.readFile(srcPath);
+        await FileSystem.writeFileAtomic(destPath, content);
+      }
     }
   }
 
@@ -140,7 +144,7 @@ export class InstructionsGenerator {
    * Check if any generic integration is selected
    */
   static needsGeneration(selectedIntegrations: string[]): boolean {
-    return selectedIntegrations.some(integration =>
+    return selectedIntegrations.some((integration) =>
       this.GENERIC_INTEGRATIONS.includes(integration)
     );
   }

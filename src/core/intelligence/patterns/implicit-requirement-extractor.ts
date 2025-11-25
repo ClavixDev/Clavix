@@ -1,20 +1,55 @@
-import { BasePattern } from './base-pattern.js';
-import { PromptIntent, OptimizationMode, PatternContext, PatternResult } from '../types.js';
+import {
+  BasePattern,
+  PatternMode,
+  PatternPriority,
+  PatternPhase,
+  PatternConfigSchema,
+} from './base-pattern.js';
+import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 
 /**
- * v4.4 Conversational Pattern: ImplicitRequirementExtractor
+ * v4.5 Pattern: Implicit Requirement Extractor
  *
  * Surfaces requirements mentioned indirectly in conversations.
  * Identifies hidden assumptions and unstated needs.
  * Enhanced with more detection patterns and categorization.
  */
 export class ImplicitRequirementExtractor extends BasePattern {
-  id = 'implicit-requirement-extractor';
-  name = 'ImplicitRequirementExtractor';
-  description = 'Surfaces requirements mentioned indirectly';
-  applicableIntents: PromptIntent[] = ['summarization', 'planning', 'prd-generation'];
-  mode: OptimizationMode | 'both' = 'deep';
-  priority = 7;
+  // -------------------------------------------------------------------------
+  // Pattern Metadata (v4.5 unified types)
+  // -------------------------------------------------------------------------
+
+  readonly id = 'implicit-requirement-extractor';
+  readonly name = 'Implicit Requirement Extractor';
+  readonly description = 'Surfaces requirements mentioned indirectly';
+
+  readonly applicableIntents: PromptIntent[] = ['summarization', 'planning', 'prd-generation'];
+
+  readonly mode: PatternMode = 'deep';
+  readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
+  readonly phases: PatternPhase[] = ['conversation-tracking', 'summarization'];
+
+  // -------------------------------------------------------------------------
+  // Configuration Schema (v4.5)
+  // -------------------------------------------------------------------------
+
+  static override readonly configSchema: PatternConfigSchema = {
+    maxImplicitRequirements: {
+      type: 'number',
+      default: 10,
+      description: 'Maximum number of implicit requirements to surface',
+      validation: { min: 1, max: 15 },
+    },
+    groupByCategory: {
+      type: 'boolean',
+      default: true,
+      description: 'Group requirements by category',
+    },
+  };
+
+  // -------------------------------------------------------------------------
+  // Pattern Data
+  // -------------------------------------------------------------------------
 
   // Categories for implicit requirements
   private readonly implicitPatterns: Array<{
