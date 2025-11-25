@@ -179,13 +179,16 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 
 ---
 
-## Agent Transparency (v4.4)
+## Agent Transparency (v4.6)
 
 ### Quality Output Format
 {{INCLUDE:agent-protocols/quality-output.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Assertion Checkpoints
+{{INCLUDE:agent-protocols/assertion-checkpoints.md}}
 
 ### Patterns Applied
 {{INCLUDE:sections/pattern-visibility.md}}
@@ -345,7 +348,7 @@ Consider using `/clavix:prd` if this login page is part of a larger authenticati
 - **Deep mode** (`/clavix:deep`): Comprehensive analysis - best for complex prompts needing exploration
 - **PRD mode** (`/clavix:prd`): Strategic planning - best for features requiring architecture/business decisions
 
-## Next Steps (v2.7+)
+## Next Steps
 
 ### Saving the Prompt (REQUIRED)
 

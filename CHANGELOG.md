@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.0] - 2025-11-25
+
+### Agent Validation & Consistency Release
+
+**Enhanced agent self-verification, template-code consistency validation, and documentation cleanup.**
+
+#### Template-Code Consistency Tests (Part 1)
+New `tests/consistency/` test suite:
+| Test File | Purpose |
+|-----------|---------|
+| `template-code-mapping.test.ts` | Validates templates describe correct file paths, 6 quality dimensions, 11 intent types, decision rules |
+| `pattern-counts.test.ts` | Validates pattern counts in documentation match PatternLibrary reality |
+
+#### Agent Assertion Checkpoints (Part 2)
+New `assertion-checkpoints.md` component for agent self-verification:
+- **Fast/Deep Mode**: Verify quality assessment shown, all 6 dimensions scored, patterns applied listed
+- **PRD Mode**: Verify all 5 questions asked, both documents generated, quality validation shown
+- **Implementation Mode**: Verify task breakdown created, progress tracking active, git commits offered
+
+Added **Rule 11: Execution Verification** to decision-rules.md:
+```
+BEFORE completing response:
+  → INCLUDE verification block at end
+  → VERIFY all checkpoints met for current mode
+```
+
+#### Documentation Cleanup (Part 3)
+- Removed all outdated v2.x/v3.x version references from canonical templates
+- Updated fast.md example to include all 6 quality dimensions (added Specificity)
+- Updated pattern-visibility.md with correct counts (Deep: 27 patterns)
+- Updated Agent Transparency sections to v4.6 in fast.md, deep.md, prd.md
+
+#### Validate-Consistency Script (Part 4)
+Enhanced `scripts/validate-consistency.ts`:
+- Updated version to v4.6
+- Added new validation: **Outdated Version References** (detects v2.x, v3.x in canonical templates)
+- All 7 validation checks now automated
+
+#### Files Added
+- `tests/consistency/template-code-mapping.test.ts`
+- `tests/consistency/pattern-counts.test.ts`
+- `src/templates/slash-commands/_components/agent-protocols/assertion-checkpoints.md`
+
+#### Files Modified
+- `src/templates/slash-commands/_canonical/fast.md` - v4.6 Agent Transparency, fixed example
+- `src/templates/slash-commands/_canonical/deep.md` - v4.6 Agent Transparency, removed v2.7
+- `src/templates/slash-commands/_canonical/prd.md` - v4.6 Agent Transparency
+- `src/templates/slash-commands/_canonical/archive.md` - Removed v2.7 reference
+- `src/templates/slash-commands/_components/agent-protocols/decision-rules.md` - Added Rule 11
+- `src/templates/slash-commands/_components/sections/pattern-visibility.md` - Fixed Deep count to 27
+- `scripts/validate-consistency.ts` - v4.6 with version reference validation
+- `tests/integration/template-coverage.test.ts` - Updated for v4.6 (removed v2.7 expectations)
+
+#### Test Results
+- **137 test suites passed**
+- **3872 tests passed**
+- **Consistency validation: 7/7 checks pass**
+
+---
+
 ## [4.5.0] - 2025-11-25
 
 ### Consolidation Release

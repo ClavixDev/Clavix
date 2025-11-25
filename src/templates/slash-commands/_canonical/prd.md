@@ -316,7 +316,7 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ---
 
-## Agent Transparency (v4.4)
+## Agent Transparency (v4.6)
 
 ### Quality Output Format
 {{INCLUDE:agent-protocols/quality-output.md}}
@@ -329,6 +329,9 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Assertion Checkpoints
+{{INCLUDE:agent-protocols/assertion-checkpoints.md}}
 
 ---
 

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-describe('Template Coverage - v2.7.0 Integration', () => {
+describe('Template Coverage - Integration', () => {
   const templatesDir = path.join(__dirname, '../../src/templates');
 
   describe('Canonical Templates', () => {
@@ -41,11 +41,11 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('stale');
     });
 
-    it('fast.md should reference v2.7 features', () => {
+    it('fast.md should reference prompt lifecycle features', () => {
       const fastPath = path.join(canonicalDir, 'fast.md');
       const content = fs.readFileSync(fastPath, 'utf-8');
 
-      expect(content).toContain('v2.7');
+      // v4.6: Removed outdated v2.7 version references
       expect(content).toContain('/clavix:execute');
       expect(content).toContain('/clavix:prompts');
       expect(content).toContain('.clavix/outputs/prompts/fast');
@@ -91,11 +91,11 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       expect(content).toContain('Error: Duplicate prompt ID');
     });
 
-    it('deep.md should reference v2.7 features', () => {
+    it('deep.md should reference prompt lifecycle features', () => {
       const deepPath = path.join(canonicalDir, 'deep.md');
       const content = fs.readFileSync(deepPath, 'utf-8');
 
-      expect(content).toContain('v2.7');
+      // v4.6: Removed outdated v2.7 version references
       expect(content).toContain('/clavix:execute');
       expect(content).toContain('/clavix:prompts');
       expect(content).toContain('.clavix/outputs/prompts/deep');
@@ -149,7 +149,7 @@ describe('Template Coverage - v2.7.0 Integration', () => {
       const archivePath = path.join(canonicalDir, 'archive.md');
       const content = fs.readFileSync(archivePath, 'utf-8');
 
-      expect(content).toContain('v2.7');
+      // v4.6: Removed outdated v2.7 version references
       expect(content).toContain('Prompts Are Separate');
       expect(content).toContain('clavix prompts');
     });
@@ -318,10 +318,10 @@ describe('Template Coverage - v2.7.0 Integration', () => {
         'agents/agents.md',
         'agents/octo.md',
         'agents/warp.md',
-        'agents/copilot-instructions.md'
+        'agents/copilot-instructions.md',
       ];
 
-      providers.forEach(provider => {
+      providers.forEach((provider) => {
         const content = fs.readFileSync(path.join(templatesDir, provider), 'utf-8');
         expect(content).toContain('clavix execute');
       });
@@ -332,10 +332,10 @@ describe('Template Coverage - v2.7.0 Integration', () => {
         'agents/agents.md',
         'agents/octo.md',
         'agents/warp.md',
-        'agents/copilot-instructions.md'
+        'agents/copilot-instructions.md',
       ];
 
-      providers.forEach(provider => {
+      providers.forEach((provider) => {
         const content = fs.readFileSync(path.join(templatesDir, provider), 'utf-8');
         expect(content).toContain('clavix prompts list');
       });
@@ -346,10 +346,10 @@ describe('Template Coverage - v2.7.0 Integration', () => {
         'agents/agents.md',
         'agents/octo.md',
         'agents/warp.md',
-        'agents/copilot-instructions.md'
+        'agents/copilot-instructions.md',
       ];
 
-      providers.forEach(provider => {
+      providers.forEach((provider) => {
         const content = fs.readFileSync(path.join(templatesDir, provider), 'utf-8');
         expect(content).toContain('clavix prompts clear');
       });
@@ -360,10 +360,10 @@ describe('Template Coverage - v2.7.0 Integration', () => {
         'slash-commands/_canonical/fast.md',
         'slash-commands/_canonical/deep.md',
         'slash-commands/_canonical/execute.md',
-        'slash-commands/_canonical/prompts.md'
+        'slash-commands/_canonical/prompts.md',
       ];
 
-      canonicalTemplates.forEach(template => {
+      canonicalTemplates.forEach((template) => {
         const content = fs.readFileSync(path.join(templatesDir, template), 'utf-8');
 
         // Canonical templates must specify exact storage paths

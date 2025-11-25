@@ -2,7 +2,7 @@
 /**
  * validate-consistency.ts
  *
- * Clavix Intelligence v4.2 - TypeScript ↔ Template Consistency Validator
+ * Clavix Intelligence v4.6 - TypeScript ↔ Template Consistency Validator
  *
  * This script validates that canonical templates are in sync with TypeScript types.
  * It blocks git commits, npm build, and npm publish if inconsistencies are found.
@@ -68,7 +68,8 @@ interface ValidationError {
     | 'pattern-mode'
     | 'escalation-factor'
     | 'escalation-threshold'
-    | 'pattern-count';
+    | 'pattern-count'
+    | 'outdated-version';
   message: string;
   file: string;
   line?: number;
@@ -734,6 +735,62 @@ async function validatePatternCounts(): Promise<ValidationError[]> {
 }
 
 // ============================================================================
+// Outdated Version Reference Validation (v4.6)
+// ============================================================================
+
+/**
+ * Check canonical templates for outdated version references (v2.x, v3.x)
+ */
+async function validateNoOutdatedVersionReferences(): Promise<ValidationError[]> {
+  const errors: ValidationError[] = [];
+
+  // Patterns to detect outdated version references
+  const outdatedPatterns = [
+    /\bv2\.\d+/gi, // v2.0, v2.1, v2.7, etc.
+    /\bv3\.\d+/gi, // v3.0, v3.1, etc.
+    /\(v2\./gi, // (v2.x in parentheses
+    /\(v3\./gi, // (v3.x in parentheses
+  ];
+
+  // Get all canonical templates
+  const templateFiles = fs.readdirSync(PATHS.canonicalTemplates).filter((f) => f.endsWith('.md'));
+
+  for (const templateFile of templateFiles) {
+    const templatePath = path.join(PATHS.canonicalTemplates, templateFile);
+    const content = fs.readFileSync(templatePath, 'utf-8');
+    const lines = content.split('\n');
+
+    const foundReferences: { match: string; line: number }[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      for (const pattern of outdatedPatterns) {
+        const matches = line.match(pattern);
+        if (matches) {
+          for (const match of matches) {
+            foundReferences.push({ match, line: i + 1 });
+          }
+        }
+      }
+    }
+
+    if (foundReferences.length > 0) {
+      errors.push({
+        type: 'outdated-version',
+        message: `Outdated version references found in ${templateFile}`,
+        file: `src/templates/slash-commands/_canonical/${templateFile}`,
+        line: foundReferences[0].line,
+        expected: ['v4.x references only'],
+        found: foundReferences.map((r) => `${r.match} (line ${r.line})`),
+        missing: [],
+      });
+    }
+  }
+
+  return errors;
+}
+
+// ============================================================================
 // Main Validation Runner
 // ============================================================================
 
@@ -741,7 +798,7 @@ export async function validateConsistency(): Promise<ValidationResult> {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.3\n');
+  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.6\n');
   console.log('Checking TypeScript ↔ Template synchronization...\n');
 
   // Run all validations
@@ -803,6 +860,16 @@ export async function validateConsistency(): Promise<ValidationResult> {
     );
   } catch (e) {
     console.log(`  Pattern Counts: ⚠️ Could not validate (${e})`);
+  }
+
+  try {
+    const versionErrors = await validateNoOutdatedVersionReferences();
+    errors.push(...versionErrors);
+    console.log(
+      `  Version References: ${versionErrors.length === 0 ? '✅ OK' : `❌ ${versionErrors.length} issues`}`
+    );
+  } catch (e) {
+    console.log(`  Version References: ⚠️ Could not validate (${e})`);
   }
 
   console.log('');
@@ -924,6 +991,21 @@ function formatErrors(errors: ValidationError[]): string {
       output += `  ${error.message}\n`;
       output += `  Actual: ${error.expected.join(', ')}\n`;
       output += `  Documented: ${error.found.join(', ')}\n\n`;
+    }
+  }
+
+  // Outdated version reference errors
+  const versionErrors = byType.get('outdated-version') || [];
+  if (versionErrors.length > 0) {
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+    output += 'Outdated Version References\n';
+    output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    for (const error of versionErrors) {
+      output += `  📄 ${error.file}${error.line ? `:${error.line}` : ''}\n`;
+      output += `  ${error.message}\n`;
+      output += `  Found: ${error.found.join(', ')}\n`;
+      output += `  Expected: ${error.expected.join(', ')}\n\n`;
     }
   }
 

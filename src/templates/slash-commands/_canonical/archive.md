@@ -152,7 +152,7 @@ You are helping the user archive completed PRD projects to keep their workspace 
 - They're still accessible in archive directory
 - Can be restored at any time
 
-## Prompts Are Separate (v2.7+)
+## Prompts Are Separate
 
 Fast/deep prompts from `/clavix:fast` and `/clavix:deep` are stored separately in `.clavix/outputs/prompts/`.
 

@@ -137,7 +137,9 @@ v4.3.2 Conversational mode (deep):
 
 | Mode | Patterns Available | Typical Applied |
 |------|-------------------|-----------------|
-| Fast | 12 core patterns | 4-7 patterns |
-| Deep | 27 total patterns | 8-14 patterns |
-| PRD | 15 patterns | 10-15 patterns |
-| Conversational | 11 patterns | 6-11 patterns |
+| Fast | 12 patterns | 4-7 patterns |
+| Deep | 27 patterns | 8-14 patterns |
+| PRD | 12 patterns | 8-12 patterns |
+| Conversational | 3 patterns | 1-3 patterns |
+
+**Note:** Deep mode has access to all 27 patterns. Pattern selection varies by intent - some patterns only apply to specific intents (e.g., PRDStructureEnforcer only for prd-generation), so typical applied count is 8-14.

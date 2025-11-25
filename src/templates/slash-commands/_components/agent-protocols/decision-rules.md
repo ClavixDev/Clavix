@@ -184,6 +184,34 @@ IF user prompt is empty/invalid:
   → NEVER: Proceed with assumption
 ```
 
+### Rule 11: Execution Verification (v4.6)
+
+```
+BEFORE completing response:
+  → INCLUDE verification block at end
+  → VERIFY all checkpoints met for current mode
+
+  IF any checkpoint failed:
+    → REPORT which checkpoint failed
+    → EXPLAIN why it failed
+    → SUGGEST recovery action
+
+  IF all checkpoints passed:
+    → SHOW verification block with all items checked
+```
+
+**Verification Block Template:**
+```
+## Clavix Execution Verification
+- [x] Intent detected: {type} ({confidence}%)
+- [x] Quality assessed: {overall}%
+- [x] {N} patterns applied
+- [x] Prompt saved: {filename}
+- [x] Mode: {fast|deep|prd|plan}
+```
+
+---
+
 ### Rule Summary Table
 
 | Condition | Action | User Communication |
@@ -202,3 +230,4 @@ IF user prompt is empty/invalid:
 | 3+ strategic keywords | Suggest PRD | "Strategic scope detected" |
 | pattern fails | Skip + report | "Pattern [X] skipped" |
 | file write fails | Retry then report | "Error: [details]" |
+| response complete | Include verification | Show checkpoint status |

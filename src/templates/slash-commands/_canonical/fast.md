@@ -158,13 +158,16 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
 
 ---
 
-## Agent Transparency (v4.4)
+## Agent Transparency (v4.6)
 
 ### Quality Output Format
 {{INCLUDE:agent-protocols/quality-output.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Assertion Checkpoints
+{{INCLUDE:agent-protocols/assertion-checkpoints.md}}
 
 ### Escalation Factors (Smart Triage)
 {{INCLUDE:sections/escalation-factors.md}}
@@ -208,6 +211,11 @@ Actionability: 30%
     • Too vague to start implementation
     • Missing technical specifications
 
+Specificity: 25%
+    • No file paths or identifiers
+    • Missing version numbers
+    • Uses vague term "login page" without scope
+
 Overall Quality: 42% (needs-improvement)
 
 Recommendation:
@@ -248,7 +256,7 @@ Success Criteria:
 [Actionability] Converted vague "create" into specific implementation requirements with measurable success criteria
 ```
 
-## Next Steps (v2.7+)
+## Next Steps
 
 ### Saving the Prompt (REQUIRED)
 
