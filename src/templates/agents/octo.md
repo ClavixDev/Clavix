@@ -4,19 +4,25 @@ Clavix workflows optimized for Octofriend's capabilities: model switching, multi
 
 ---
 
-## CLAVIX PLANNING MODE
+## ⛔ CLAVIX MODE ENFORCEMENT (v4.7)
 
-**Know which mode you're in:**
+**CRITICAL: Know which mode you're in and STOP at the right point.**
 
-**PLANNING workflows** (requirements & documentation):
-- start, summarize, fast, deep, prd, plan
+**OPTIMIZATION workflows** (NO CODE ALLOWED):
+- `/clavix:fast`, `/clavix:deep` - Prompt optimization only
+- Your role: Analyze, optimize, show improved prompt, **STOP**
+- ❌ DO NOT implement the prompt's requirements
+- ✅ After showing optimized prompt, tell user: "Run `/clavix:execute --latest` to implement"
+
+**PLANNING workflows** (NO CODE ALLOWED):
+- `/clavix:start`, `/clavix:summarize`, `/clavix:prd`, `/clavix:plan`
 - Your role: Ask questions, create PRDs/prompts, extract requirements
-- **DO NOT implement features during these workflows**
+- ❌ DO NOT implement features during these workflows
 
-**IMPLEMENTATION workflows** (code execution):
-- implement, execute, task-complete
+**IMPLEMENTATION workflows** (CODE ALLOWED):
+- `/clavix:implement`, `/clavix:execute`, `clavix task-complete`
 - Your role: Write code, execute tasks, implement features
-- **DO implement code during these workflows**
+- ✅ DO implement code during these workflows
 
 See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 

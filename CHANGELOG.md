@@ -5,6 +5,77 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.0] - 2025-11-26
+
+### Mode Enforcement & Command Taxonomy Release
+
+**Strengthened mode boundaries to prevent agents from implementing during optimization workflows, removed confusing `/clavix:prompts` slash command, and improved CLI command documentation.**
+
+#### Removed `/clavix:prompts` Slash Command
+- **Deleted** `src/templates/slash-commands/_canonical/prompts.md`
+- CLI commands (`clavix prompts list`, `clavix prompts clear`) remain unchanged
+- Prompt management documentation moved to `execute.md`
+- Removes command taxonomy confusion (action commands vs reference-only commands)
+
+#### Strengthened Mode Enforcement (Critical Fix)
+Problem: Agents using `/clavix:fast` or `/clavix:deep` sometimes jumped straight to implementation instead of stopping after optimization.
+
+Solution:
+- Added **⛔ STOP: OPTIMIZATION MODE** header at top of `fast.md` and `deep.md`
+- Explicit "YOU MUST NOT" section listing prohibited actions
+- "STOP HERE" instruction after optimization workflow
+- Required response ending: "Run `/clavix:execute --latest` to implement"
+- CLI verification block: Run `clavix prompts list` to verify save
+
+#### CLI Verification Blocks
+New pattern in templates where agents must verify their CLI commands ran:
+```markdown
+## Agent Verification (Run This Command)
+```bash
+clavix prompts list
+```
+Verify your prompt appears in the list.
+```
+
+#### Updated Agent Connector Templates
+All agent connectors (octo.md, agents.md, copilot-instructions.md, warp.md) updated with:
+- v4.7 mode enforcement section with emoji indicators
+- Clear separation of OPTIMIZATION (no code), PLANNING (no code), IMPLEMENTATION (code allowed)
+- Explicit STOP instruction for optimization workflows
+
+#### New Consistency Tests
+- `tests/consistency/mode-enforcement.test.ts` - Validates:
+  - `prompts.md` no longer exists
+  - `fast.md` and `deep.md` have mode enforcement headers
+  - No templates reference `/clavix:prompts`
+  - Agent connectors have consistent mode enforcement
+
+#### Updated Validation Script
+- `scripts/validate-consistency.ts` updated to v4.7
+- New validation: `validateModeEnforcement()` checks:
+  - `prompts.md` does not exist
+  - Mode enforcement headers in fast/deep templates
+  - No `/clavix:prompts` references in any template
+
+#### Files Deleted
+- `src/templates/slash-commands/_canonical/prompts.md`
+
+#### Files Modified
+- `src/templates/slash-commands/_canonical/fast.md` - Mode enforcement header + CLI verification
+- `src/templates/slash-commands/_canonical/deep.md` - Mode enforcement header + CLI verification
+- `src/templates/slash-commands/_canonical/execute.md` - Comprehensive prompt management section
+- `src/templates/slash-commands/_canonical/archive.md` - Removed `/clavix:prompts` references
+- `src/templates/agents/octo.md` - v4.7 mode enforcement
+- `src/templates/agents/agents.md` - v4.7 mode enforcement
+- `src/templates/agents/copilot-instructions.md` - v4.7 mode enforcement
+- `src/templates/agents/warp.md` - v4.7 mode enforcement
+- `scripts/validate-consistency.ts` - v4.7 with mode enforcement validation
+
+#### Files Added
+- `tests/consistency/mode-enforcement.test.ts`
+
+---
+
 ## [4.6.0] - 2025-11-25
 
 ### Agent Validation & Consistency Release

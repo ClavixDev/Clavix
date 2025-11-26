@@ -4,20 +4,25 @@ Clavix helps Warp developers turn rough ideas into quality, AI-ready prompts and
 
 ---
 
-### ⚠️ CLAVIX MODE: Requirements & Planning Only
+### ⛔ CLAVIX MODE ENFORCEMENT (v4.7)
 
-**When using Clavix workflows, you are in PLANNING mode, NOT implementation mode.**
+**CRITICAL: Know which mode you're in and STOP at the right point.**
 
-**YOUR ROLE:**
-- ✓ Generate PRDs and prompts
-- ✓ Extract requirements
-- ✓ Optimize prompt quality
+**OPTIMIZATION workflows** (NO CODE ALLOWED):
+- Fast/deep optimization - Prompt improvement only
+- Your role: Analyze, optimize, show improved prompt, **STOP**
+- ❌ DO NOT implement the prompt's requirements
+- ✅ After showing optimized prompt, tell user: "Run `/clavix:execute --latest` to implement"
 
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code during Clavix workflows
-- ✗ DO NOT implement features being planned
+**PLANNING workflows** (NO CODE ALLOWED):
+- Conversational mode, requirement extraction, PRD generation
+- Your role: Ask questions, create PRDs/prompts, extract requirements
+- ❌ DO NOT implement features during these workflows
 
-**ONLY implement if user explicitly says: "Now implement this"**
+**IMPLEMENTATION workflows** (CODE ALLOWED):
+- Only after user runs execute/implement commands
+- Your role: Write code, execute tasks, implement features
+- ✅ DO implement code during these workflows
 
 See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 

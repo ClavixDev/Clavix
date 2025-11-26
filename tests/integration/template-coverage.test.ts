@@ -17,9 +17,10 @@ describe('Template Coverage - Integration', () => {
       expect(fs.existsSync(executePath)).toBe(true);
     });
 
-    it('should have prompts.md template', () => {
+    // v4.7: prompts.md removed - CLI-only commands (clavix prompts list/clear)
+    it('should NOT have prompts.md template (removed in v4.7)', () => {
       const promptsPath = path.join(canonicalDir, 'prompts.md');
-      expect(fs.existsSync(promptsPath)).toBe(true);
+      expect(fs.existsSync(promptsPath)).toBe(false);
     });
 
     it('execute.md should reference PromptManager and execute command', () => {
@@ -31,9 +32,10 @@ describe('Template Coverage - Integration', () => {
       expect(content).toContain('.clavix/outputs/prompts');
     });
 
-    it('prompts.md should reference prompt lifecycle commands', () => {
-      const promptsPath = path.join(canonicalDir, 'prompts.md');
-      const content = fs.readFileSync(promptsPath, 'utf-8');
+    // v4.7: prompts.md removed - CLI commands now documented in execute.md
+    it('execute.md should reference prompt CLI commands (v4.7)', () => {
+      const executePath = path.join(canonicalDir, 'execute.md');
+      const content = fs.readFileSync(executePath, 'utf-8');
 
       expect(content).toContain('clavix prompts list');
       expect(content).toContain('clavix prompts clear');
@@ -45,9 +47,9 @@ describe('Template Coverage - Integration', () => {
       const fastPath = path.join(canonicalDir, 'fast.md');
       const content = fs.readFileSync(fastPath, 'utf-8');
 
-      // v4.6: Removed outdated v2.7 version references
+      // v4.7: /clavix:prompts removed, now CLI-only (clavix prompts list/clear)
       expect(content).toContain('/clavix:execute');
-      expect(content).toContain('/clavix:prompts');
+      expect(content).toContain('clavix prompts list'); // CLI command, not slash command
       expect(content).toContain('.clavix/outputs/prompts/fast');
     });
 
@@ -95,9 +97,9 @@ describe('Template Coverage - Integration', () => {
       const deepPath = path.join(canonicalDir, 'deep.md');
       const content = fs.readFileSync(deepPath, 'utf-8');
 
-      // v4.6: Removed outdated v2.7 version references
+      // v4.7: /clavix:prompts removed, now CLI-only (clavix prompts list/clear)
       expect(content).toContain('/clavix:execute');
-      expect(content).toContain('/clavix:prompts');
+      expect(content).toContain('clavix prompts list'); // CLI command, not slash command
       expect(content).toContain('.clavix/outputs/prompts/deep');
     });
 
@@ -356,11 +358,11 @@ describe('Template Coverage - Integration', () => {
     });
 
     it('canonical templates should use consistent storage paths', () => {
+      // v4.7: prompts.md removed - 9 canonical templates now
       const canonicalTemplates = [
         'slash-commands/_canonical/fast.md',
         'slash-commands/_canonical/deep.md',
         'slash-commands/_canonical/execute.md',
-        'slash-commands/_canonical/prompts.md',
       ];
 
       canonicalTemplates.forEach((template) => {
@@ -383,7 +385,8 @@ describe('Template Coverage - Integration', () => {
       const canonicalDist = path.join(distDir, 'slash-commands/_canonical');
 
       expect(fs.existsSync(path.join(canonicalDist, 'execute.md'))).toBe(true);
-      expect(fs.existsSync(path.join(canonicalDist, 'prompts.md'))).toBe(true);
+      // v4.7: prompts.md removed - CLI-only commands now
+      expect(fs.existsSync(path.join(canonicalDist, 'prompts.md'))).toBe(false);
       expect(fs.existsSync(path.join(canonicalDist, 'fast.md'))).toBe(true);
       expect(fs.existsSync(path.join(canonicalDist, 'deep.md'))).toBe(true);
     });

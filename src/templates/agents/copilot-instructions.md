@@ -4,18 +4,25 @@ These instructions enhance GitHub Copilot's understanding of Clavix Intelligence
 
 ---
 
-## CLAVIX PLANNING MODE
+## ⛔ CLAVIX MODE ENFORCEMENT (v4.7)
 
-**You are in Clavix prompt/PRD development mode. You help create planning documents, NOT implement features.**
+**CRITICAL: Know which mode you're in and STOP at the right point.**
 
-**PLANNING workflows** (requirements & documentation):
-- Conversational mode, requirement extraction, fast/deep optimization, PRD generation
+**OPTIMIZATION workflows** (NO CODE ALLOWED):
+- Fast/deep optimization - Prompt improvement only
+- Your role: Analyze, optimize, show improved prompt, **STOP**
+- ❌ DO NOT implement the prompt's requirements
+- ✅ After showing optimized prompt, tell user: "Run `/clavix:execute --latest` to implement"
+
+**PLANNING workflows** (NO CODE ALLOWED):
+- Conversational mode, requirement extraction, PRD generation
 - Your role: Ask questions, create PRDs/prompts, extract requirements
-- DO NOT implement features during these workflows
+- ❌ DO NOT implement features during these workflows
 
-**IMPLEMENTATION workflows** (code execution):
-- Only when user explicitly says: "Now implement this" or "Build the feature"
+**IMPLEMENTATION workflows** (CODE ALLOWED):
+- Only after user runs execute/implement commands
 - Your role: Write code, execute tasks, implement features
+- ✅ DO implement code during these workflows
 
 **If unsure, ASK:** "Should I implement this now, or continue with planning?"
 

@@ -2,7 +2,7 @@
 /**
  * validate-consistency.ts
  *
- * Clavix Intelligence v4.6 - TypeScript ↔ Template Consistency Validator
+ * Clavix Intelligence v4.7 - TypeScript ↔ Template Consistency Validator
  *
  * This script validates that canonical templates are in sync with TypeScript types.
  * It blocks git commits, npm build, and npm publish if inconsistencies are found.
@@ -735,6 +735,74 @@ async function validatePatternCounts(): Promise<ValidationError[]> {
 }
 
 // ============================================================================
+// Mode Enforcement Validation (v4.7)
+// ============================================================================
+
+/**
+ * Check that:
+ * 1. prompts.md no longer exists (removed in v4.7)
+ * 2. fast.md and deep.md have mode enforcement headers
+ * 3. No templates reference /clavix:prompts
+ */
+async function validateModeEnforcement(): Promise<ValidationError[]> {
+  const errors: ValidationError[] = [];
+
+  // Check prompts.md doesn't exist
+  const promptsPath = path.join(PATHS.canonicalTemplates, 'prompts.md');
+  if (fs.existsSync(promptsPath)) {
+    errors.push({
+      type: 'outdated-version',
+      message: 'prompts.md should be removed in v4.7 (CLI commands documented elsewhere)',
+      file: 'src/templates/slash-commands/_canonical/prompts.md',
+      expected: ['File should not exist'],
+      found: ['File exists'],
+      missing: [],
+    });
+  }
+
+  // Check fast.md and deep.md have mode enforcement
+  const optimizationTemplates = ['fast.md', 'deep.md'];
+  for (const templateFile of optimizationTemplates) {
+    const templatePath = path.join(PATHS.canonicalTemplates, templateFile);
+    if (fs.existsSync(templatePath)) {
+      const content = fs.readFileSync(templatePath, 'utf-8');
+      const topSection = content.slice(0, 2000);
+
+      if (!topSection.includes('STOP') || !topSection.includes('OPTIMIZATION MODE')) {
+        errors.push({
+          type: 'outdated-version',
+          message: `${templateFile} missing mode enforcement header at top`,
+          file: `src/templates/slash-commands/_canonical/${templateFile}`,
+          expected: ['STOP: OPTIMIZATION MODE header in first 2000 chars'],
+          found: ['Mode enforcement header not found at top'],
+          missing: [],
+        });
+      }
+    }
+  }
+
+  // Check no templates reference /clavix:prompts
+  const templateFiles = fs.readdirSync(PATHS.canonicalTemplates).filter((f) => f.endsWith('.md'));
+  for (const templateFile of templateFiles) {
+    const templatePath = path.join(PATHS.canonicalTemplates, templateFile);
+    const content = fs.readFileSync(templatePath, 'utf-8');
+
+    if (content.includes('/clavix:prompts')) {
+      errors.push({
+        type: 'outdated-version',
+        message: `${templateFile} references removed /clavix:prompts command`,
+        file: `src/templates/slash-commands/_canonical/${templateFile}`,
+        expected: ['No /clavix:prompts references'],
+        found: ['/clavix:prompts reference found'],
+        missing: [],
+      });
+    }
+  }
+
+  return errors;
+}
+
+// ============================================================================
 // Outdated Version Reference Validation (v4.6)
 // ============================================================================
 
@@ -798,7 +866,7 @@ export async function validateConsistency(): Promise<ValidationResult> {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.6\n');
+  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.7\n');
   console.log('Checking TypeScript ↔ Template synchronization...\n');
 
   // Run all validations
@@ -870,6 +938,16 @@ export async function validateConsistency(): Promise<ValidationResult> {
     );
   } catch (e) {
     console.log(`  Version References: ⚠️ Could not validate (${e})`);
+  }
+
+  try {
+    const modeEnforcementErrors = await validateModeEnforcement();
+    errors.push(...modeEnforcementErrors);
+    console.log(
+      `  Mode Enforcement: ${modeEnforcementErrors.length === 0 ? '✅ OK' : `❌ ${modeEnforcementErrors.length} issues`}`
+    );
+  } catch (e) {
+    console.log(`  Mode Enforcement: ⚠️ Could not validate (${e})`);
   }
 
   console.log('');

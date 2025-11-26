@@ -74,25 +74,76 @@ clavix execute --id <prompt-id>
 1. Run `clavix execute --latest`
 2. Read displayed prompt content
 3. Implement requirements
-4. Cleanup: `/clavix:prompts clear`
+4. After completion, cleanup: `clavix prompts clear --executed`
 
-## Prompt Management
+---
 
-**List all saved prompts:**
+## Prompt Management (CLI Commands)
+
+Prompts saved from `/clavix:fast` and `/clavix:deep` are stored in:
+- Fast prompts: `.clavix/outputs/prompts/fast/`
+- Deep prompts: `.clavix/outputs/prompts/deep/`
+
+### List All Saved Prompts
 ```bash
 clavix prompts list
 ```
 
-**Clear executed prompts:**
+Shows:
+- All saved prompts with age
+- Execution status (✓ executed / ○ pending)
+- Age warnings (OLD >7d, STALE >30d)
+- Storage statistics
+
+### Cleanup Workflows
+
+**After executing prompts (recommended):**
 ```bash
 clavix prompts clear --executed
 ```
 
-**Clear all fast/deep prompts:**
+**Remove stale prompts (>30 days):**
+```bash
+clavix prompts clear --stale
+```
+
+**Remove specific type:**
 ```bash
 clavix prompts clear --fast
 clavix prompts clear --deep
 ```
+
+**Interactive cleanup:**
+```bash
+clavix prompts clear
+```
+
+**Remove all (with safety checks):**
+```bash
+clavix prompts clear --all
+```
+
+### Prompt Lifecycle
+
+```
+CREATE   → /clavix:fast or /clavix:deep
+EXECUTE  → /clavix:execute (you are here)
+CLEANUP  → clavix prompts clear --executed
+```
+
+### Best Practices
+
+**Regular cleanup schedule:**
+1. After executing prompts: Clear executed
+2. Weekly: Review and clear stale
+3. Before archiving PRD: Clear related prompts
+
+**Storage hygiene:**
+- Keep <20 active prompts for performance
+- Clear executed prompts regularly
+- Review prompts >7 days old
+
+---
 
 ## Error Recovery
 
@@ -109,7 +160,7 @@ clavix prompts clear --executed
 
 ---
 
-## Agent Transparency (v4.4)
+## Agent Transparency (v4.7)
 
 ### File Format Reference
 {{INCLUDE:agent-protocols/file-formats.md}}

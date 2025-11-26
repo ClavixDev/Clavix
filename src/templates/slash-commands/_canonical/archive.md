@@ -158,21 +158,22 @@ Fast/deep prompts from `/clavix:fast` and `/clavix:deep` are stored separately i
 
 **Prompts are NOT archived with PRD projects.**
 
-**Manage prompts separately:**
+**Manage prompts separately (CLI commands):**
 ```bash
 clavix prompts list           # View all prompts
-clavix prompts clear          # Cleanup prompts
-/clavix:prompts               # Full management workflow
+clavix prompts clear          # Interactive cleanup
+clavix prompts clear --executed  # Remove executed only
+clavix prompts clear --stale     # Remove >30 day old
 ```
 
 **Before archiving, consider cleanup:**
 ```bash
-/clavix:prompts clear --executed
+clavix prompts clear --executed
 ```
 
 **Prompts lifecycle:**
 - Independent from PRD lifecycle
-- Managed via `/clavix:prompts`
+- Managed via CLI commands
 - Clear manually when project complete
 
 ## Example Workflows

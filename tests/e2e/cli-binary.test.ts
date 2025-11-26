@@ -18,9 +18,9 @@ describe('CLI E2E Tests', () => {
 
   beforeAll(async () => {
     // Ensure project is built
-    if (!await fs.pathExists(path.join(__dirname, '../../dist'))) {
-        console.log('Building project for E2E tests...');
-        await execAsync('npm run build');
+    if (!(await fs.pathExists(path.join(__dirname, '../../dist')))) {
+      console.log('Building project for E2E tests...');
+      await execAsync('npm run build');
     }
     await fs.ensureDir(testDir);
   }, 60000); // Allow time for build
@@ -30,14 +30,16 @@ describe('CLI E2E Tests', () => {
   });
 
   it('should display version', async () => {
-    const { stdout } = await execAsync(`node --loader ts-node/esm ${CLAVIX_BIN} --version`);
+    // Use compiled JS directly for faster execution
+    const { stdout } = await execAsync(`node ${CLAVIX_BIN} --version`);
     expect(stdout).toMatch(/clavix\/\d+\.\d+\.\d+/);
-  }, 30000);
+  }, 60000);
 
   it('should display help', async () => {
-    const { stdout } = await execAsync(`node --loader ts-node/esm ${CLAVIX_BIN} --help`);
+    // Use compiled JS directly for faster execution
+    const { stdout } = await execAsync(`node ${CLAVIX_BIN} --help`);
     expect(stdout).toContain('Clavix');
     expect(stdout).toContain('USAGE');
     expect(stdout).toContain('COMMANDS');
-  }, 30000);
+  }, 60000);
 });

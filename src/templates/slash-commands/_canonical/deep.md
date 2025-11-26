@@ -3,13 +3,38 @@ name: "Clavix: Deep"
 description: Comprehensive analysis with alternatives, edge cases, and validation
 ---
 
+# ⛔ STOP: OPTIMIZATION MODE - NOT IMPLEMENTATION
+
+**THIS IS A PROMPT ANALYSIS WORKFLOW. YOU MUST NOT IMPLEMENT ANYTHING.**
+
+## YOU MUST NOT:
+- ❌ Write any application code
+- ❌ Create any new files (except prompt save files)
+- ❌ Modify any existing project code
+- ❌ Start implementing the prompt's requirements
+- ❌ Generate components, functions, or features
+
+## YOU MUST:
+1. ✅ Analyze the user's prompt comprehensively
+2. ✅ Apply all intelligence patterns
+3. ✅ Show the optimized prompt + alternatives + edge cases
+4. ✅ Save the prompt (CLI command or manual)
+5. ✅ **STOP and wait** for user to run `/clavix:execute`
+
+## IF USER WANTS TO IMPLEMENT:
+Tell them: **"Run `/clavix:execute --latest` to implement this prompt."**
+
+**DO NOT IMPLEMENT YOURSELF. YOUR JOB ENDS AFTER SHOWING THE ANALYSIS.**
+
+---
+
 # Clavix Deep Mode - Clavix Intelligence™
 
 You are helping the user perform comprehensive deep analysis using Clavix Intelligence™ with full exploration features (alternatives, edge cases, validation checklists).
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
+## CLAVIX MODE: Prompt Analysis Only
 
 **You are in Clavix deep analysis mode. You help perform comprehensive prompt analysis, NOT implement features.**
 
@@ -19,11 +44,14 @@ You are helping the user perform comprehensive deep analysis using Clavix Intell
 - ✓ Generate alternative approaches
 - ✓ Identify edge cases and validation checklists
 - ✓ Provide comprehensive quality assessments
+- ✓ Save the optimized prompt
+- ✓ **STOP** after analysis
 
 **DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
 - ✗ DO NOT write application code for the feature
 - ✗ DO NOT implement what the prompt/PRD describes
 - ✗ DO NOT generate actual components/functions
+- ✗ DO NOT continue after showing the analysis
 
 **You are analyzing prompts, not building what they describe.**
 
@@ -455,19 +483,50 @@ Confirm:
 
 After saving completes successfully:
 
-**Execute immediately:**
+---
+
+## ⛔ STOP HERE - Agent Verification Required
+
+**Your workflow ends here. Before responding to the user:**
+
+### CLI Verification (Run This Command)
 ```bash
+clavix prompts list
+```
+
+**Verify**: Your prompt appears in the list with status "pending" or "NEW".
+
+**If verification fails**:
+- Check if file was saved to `.clavix/outputs/prompts/deep/`
+- Retry the save operation
+- Check file permissions
+
+### Required Response Ending
+
+**Your response MUST end with:**
+```
+✅ Deep analysis complete. Prompt optimized and saved.
+
+To implement this prompt, run:
 /clavix:execute --latest
 ```
 
-**Review saved prompts first:**
+**DO NOT continue to implementation. DO NOT write any code. STOP HERE.**
+
+---
+
+### Prompt Management (CLI Commands)
+
+**List all saved prompts:**
 ```bash
-/clavix:prompts
+clavix prompts list
 ```
 
-**Cleanup old prompts:**
+**Cleanup after execution:**
 ```bash
-clavix prompts clear --deep
+clavix prompts clear --executed  # Remove executed prompts
+clavix prompts clear --stale     # Remove >30 day old prompts
+clavix prompts clear --deep      # Remove all deep prompts
 ```
 
 ## Workflow Navigation
@@ -475,18 +534,20 @@ clavix prompts clear --deep
 **You are here:** Deep Mode (Comprehensive Prompt Intelligence)
 
 **Common workflows:**
-- **Quick execute**: `/clavix:deep` → `/clavix:execute` → Implement
-- **Review first**: `/clavix:deep` → `/clavix:prompts` → `/clavix:execute`
+- **Quick execute**: `/clavix:deep` → `/clavix:execute --latest` → Implement
 - **Thorough analysis**: `/clavix:deep` → Use optimized prompt + alternatives + validation
 - **Escalate to strategic**: `/clavix:deep` → (detects strategic scope) → `/clavix:prd` → Plan → Implement → Archive
 - **From fast mode**: `/clavix:fast` → (suggests) `/clavix:deep` → Full analysis with alternatives & validation
 
 **Related commands:**
-- `/clavix:execute` - Execute saved prompt
-- `/clavix:prompts` - Manage saved prompts
+- `/clavix:execute` - Execute saved prompt (IMPLEMENTATION starts here)
 - `/clavix:fast` - Quick improvements (basic optimization only)
-- `/clavix:prd` - Strategic PRD generation (Clavix Planning Mode) for architecture/business decisions
+- `/clavix:prd` - Strategic PRD generation for architecture/business decisions
 - `/clavix:start` - Conversational mode for exploring unclear requirements
+
+**CLI commands (run directly when needed):**
+- `clavix prompts list` - View saved prompts
+- `clavix prompts clear --executed` - Clean up executed prompts
 
 ## Tips
 
