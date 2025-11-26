@@ -207,30 +207,35 @@ Deep mode provides **Clavix Intelligence™** with comprehensive analysis that g
 
 ---
 
-## Agent Transparency (v4.6)
+## Agent Transparency (v4.9)
 
-### Quality Output Format
-{{INCLUDE:agent-protocols/quality-output.md}}
+### How to Explain Improvements
+{{INCLUDE:sections/improvement-explanations.md}}
+
+### Quality Dimensions (Plain English)
+{{INCLUDE:references/quality-dimensions.md}}
+
+### When to Recommend PRD Mode
+{{INCLUDE:sections/escalation-factors.md}}
+
+### What Made the Biggest Difference
+{{INCLUDE:sections/pattern-impact.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
 
-### Assertion Checkpoints
-{{INCLUDE:agent-protocols/assertion-checkpoints.md}}
-
-### Patterns Applied
-{{INCLUDE:sections/pattern-visibility.md}}
+### Error Handling
+{{INCLUDE:agent-protocols/error-handling.md}}
 
 ### Deep Mode Pattern Selection
-Deep mode has access to all patterns including deep-exclusive patterns:
-- **AlternativePhrasingGenerator**: Generates 2-3 alternative prompt structures
-- **EdgeCaseIdentifier**: Identifies domain-specific edge cases
-- **ValidationChecklistCreator**: Creates implementation verification checklist
-- **AssumptionExplicitizer**: Makes implicit assumptions explicit
-- **ScopeDefiner**: Adds explicit scope boundaries
-- **PRDStructureEnforcer**: Ensures PRD completeness (PRD mode only)
-- **ErrorToleranceEnhancer**: Adds error handling requirements
-- **PrerequisiteIdentifier**: Identifies prerequisites and dependencies
+Deep mode has access to all patterns including comprehensive analysis:
+- **Alternative Approaches**: 2-3 different ways to structure the request
+- **Edge Cases**: Things that might go wrong or need special handling
+- **Validation Checklist**: Steps to verify the implementation is complete
+- **Hidden Assumptions**: Things you might be assuming but didn't say
+- **Scope Boundaries**: What's in and out of scope
+- **Error Handling**: How to deal with failures gracefully
+- **Prerequisites**: What needs to exist before starting
 
 ---
 
@@ -479,27 +484,26 @@ Confirm:
 - Index file updated with new entry
 - Display success message: `✓ Prompt saved: <prompt-id>.md`
 
-### Executing the Saved Prompt
-
-After saving completes successfully:
+### After Saving
 
 ---
 
 ## ⛔ STOP HERE - Agent Verification Required
 
-**Your workflow ends here. Before responding to the user:**
+**Your workflow ends here. After saving the prompt, verify it worked.**
 
 ### CLI Verification (Run This Command)
+I run this command to confirm the save worked:
 ```bash
 clavix prompts list
 ```
 
-**Verify**: Your prompt appears in the list with status "pending" or "NEW".
+**If it worked**: Your prompt appears in the list.
 
-**If verification fails**:
-- Check if file was saved to `.clavix/outputs/prompts/deep/`
-- Retry the save operation
-- Check file permissions
+**If it failed**:
+- I create the directory: `mkdir -p .clavix/outputs/prompts/deep`
+- I try saving again
+- If still failing, I tell you: "I had trouble saving, but here's your improved prompt..."
 
 ### Required Response Ending
 
@@ -507,26 +511,28 @@ clavix prompts list
 ```
 ✅ Deep analysis complete. Prompt optimized and saved.
 
-To implement this prompt, run:
+Ready to build this? Just say "let's implement" or run:
 /clavix:execute --latest
 ```
 
-**DO NOT continue to implementation. DO NOT write any code. STOP HERE.**
+**IMPORTANT: I don't start implementing. I don't write code. My job is done.**
+I wait for you to decide what to do next.
 
 ---
 
-### Prompt Management (CLI Commands)
+### Prompt Management (Commands I Run)
 
-**List all saved prompts:**
+These are commands I execute when needed - you don't need to run them.
+
+**Check saved prompts:**
 ```bash
 clavix prompts list
 ```
 
-**Cleanup after execution:**
+**Cleanup (I run when you ask or during maintenance):**
 ```bash
-clavix prompts clear --executed  # Remove executed prompts
-clavix prompts clear --stale     # Remove >30 day old prompts
-clavix prompts clear --deep      # Remove all deep prompts
+clavix prompts clear --executed  # Remove implemented prompts
+clavix prompts clear --stale     # Remove old prompts (>30 days)
 ```
 
 ## Workflow Navigation

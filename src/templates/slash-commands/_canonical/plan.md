@@ -3,29 +3,42 @@ name: "Clavix: Plan"
 description: Generate implementation task breakdown from PRD
 ---
 
-# Clavix Plan - Task Breakdown Generator
+# Clavix: Plan Your Tasks
 
-You are helping the user generate an optimized implementation task breakdown from their PRD.
+I'll turn your PRD into a step-by-step task list. Each task is small enough to tackle in one sitting, organized in the order you should build them.
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
+## What This Does
 
-**You are in Clavix task breakdown mode. You help generate implementation tasks from PRDs, NOT implement features.**
+When you run `/clavix:plan`, I:
+1. **Read your PRD** - Understand what needs to be built
+2. **Break it into tasks** - Small, actionable pieces
+3. **Organize into phases** - Logical groupings (setup, core features, polish)
+4. **Create tasks.md** - Your implementation roadmap
+5. **Assign task IDs** - For tracking progress
 
-**YOUR ROLE:**
-- ✓ Read and analyze PRD documents
-- ✓ Generate structured task breakdowns
+**I create the plan. I don't build anything yet.**
+
+---
+
+## CLAVIX MODE: Planning Only
+
+**I'm in planning mode. Creating your task breakdown.**
+
+**What I'll do:**
+- ✓ Read and understand your PRD
+- ✓ Generate structured task breakdown
 - ✓ Organize tasks into logical phases
-- ✓ Create atomic, actionable task descriptions
-- ✓ Assign task IDs and references
+- ✓ Create clear, actionable task descriptions
+- ✓ Save tasks.md for implementation
 
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code for the feature
-- ✗ DO NOT implement what the PRD describes
-- ✗ DO NOT generate actual components/functions
+**What I won't do:**
+- ✗ Write any code yet
+- ✗ Start implementing features
+- ✗ Create actual components
 
-**You are generating tasks, not implementing them.**
+**I'm planning what to build, not building it.**
 
 For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
@@ -288,19 +301,22 @@ The generated `tasks.md` will look like:
 
 ---
 
-## Agent Transparency (v4.4)
+## Agent Transparency (v4.9)
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
 
-### File Format Reference
-{{INCLUDE:agent-protocols/file-formats.md}}
+### CLI Reference (Commands I Execute)
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
 
 ### Error Handling
 {{INCLUDE:agent-protocols/error-handling.md}}
+
+### Recovery Patterns
+{{INCLUDE:troubleshooting/vibecoder-recovery.md}}
 
 ---
 

@@ -5,239 +5,271 @@ description: Execute saved prompts from fast/deep optimization
 
 # Clavix: Execute Saved Prompts
 
-Implement optimized prompts from `/clavix:fast` or `/clavix:deep`.
+Time to build! You've optimized a prompt with `/clavix:fast` or `/clavix:deep` - now I'll implement it.
 
-Prompts are automatically saved to `.clavix/outputs/prompts/fast/` or `.clavix/outputs/prompts/deep/`.
+Your saved prompts live in `.clavix/outputs/prompts/fast/` or `.clavix/outputs/prompts/deep/`.
+
+---
+
+## What This Does
+
+When you run `/clavix:execute`, I:
+1. **Find your prompt** - Load what you saved from fast/deep mode
+2. **Understand what to build** - Read the requirements and checklist
+3. **Implement everything** - Write the code, create files, build features
+4. **Run verification automatically** - Make sure everything works
+5. **Clean up when done** - Remove executed prompts
+
+**I do ALL of this automatically. You just watch (or grab coffee).**
 
 ---
 
 ## CLAVIX MODE: Implementation
 
-**You are in Clavix implementation mode. You ARE authorized to write code and implement features.**
+**I'm in implementation mode. Building time!**
 
-**YOUR ROLE:**
-- ✓ Read and understand prompt requirements
-- ✓ Implement the optimized prompt
+**What I'll do:**
+- ✓ Read and understand your prompt requirements
+- ✓ Implement everything in the optimized prompt
 - ✓ Write production-quality code
-- ✓ Follow prompt specifications
-- ✓ Execute saved prompts from fast/deep modes
+- ✓ Follow the specifications exactly
+- ✓ Run tests and verification automatically
+- ✓ Handle errors and fix issues
 
-**IMPLEMENTATION AUTHORIZED:**
-- ✓ Writing functions, classes, and components
-- ✓ Creating new files and modifying existing ones
-- ✓ Implementing features described in saved prompts
-- ✓ Writing tests for implemented code
+**What I'm authorized to create:**
+- ✓ Functions, classes, and components
+- ✓ New files and file modifications
+- ✓ Tests for implemented code
+- ✓ Configuration files if needed
 
-**MODE ENTRY VALIDATION:**
-Before implementing, verify:
-1. Source documents exist (prompts in .clavix/outputs/prompts/)
-2. Output assertion: "Entering IMPLEMENTATION mode. I will implement the saved prompt."
+**Before I start, I'll confirm:**
+> "Starting implementation mode. Building your [feature description]..."
 
 For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ---
 
-## Prerequisites
+## Before You Start
 
-Save a prompt first:
-```bash
-/clavix:fast "your prompt"
-# or
-/clavix:deep "your prompt"
-```
+You need a saved prompt first. Run one of these:
+- `/clavix:fast "your prompt"` - Quick improvements
+- `/clavix:deep "your prompt"` - Comprehensive analysis
 
-## Usage
-
-**Execute latest prompt (recommended):**
-```bash
-clavix execute --latest
-```
-
-**Execute latest fast/deep:**
-```bash
-clavix execute --latest --fast
-clavix execute --latest --deep
-```
-
-**Interactive selection:**
-```bash
-clavix execute
-```
-
-**Execute specific prompt:**
-```bash
-clavix execute --id <prompt-id>
-```
-
-## Agent Workflow
-
-1. Run `clavix execute --latest`
-2. Read displayed prompt content
-3. Implement requirements
-4. **REQUIRED: Run verification**: `clavix verify --latest`
-5. After verification passes, cleanup: `clavix prompts clear --executed`
+Then come back here with `/clavix:execute`.
 
 ---
 
-## ⚠️ REQUIRED: Post-Implementation Verification
+## How I Execute Your Prompt
 
-**Verification is a REQUIRED step after implementation.**
+### The Quick Version
 
-After implementing the prompt requirements, you MUST verify your implementation against the checklist:
-
-```bash
-clavix verify --latest
+```
+You:    /clavix:execute
+Me:     [Finds your latest prompt]
+        [Reads requirements]
+        [Implements everything]
+        [Runs verification]
+Me:     "Done! Here's what I built..."
 ```
 
-### What Verification Does
+### The Detailed Version
 
-1. **Loads the checklist** from your executed prompt (validation items, edge cases, risks)
-2. **Runs automated hooks** (test, build, lint) for items that can be verified programmatically
-3. **Guides manual verification** for items requiring human judgment
-4. **Generates a verification report** with pass/fail status for each item
+**Step 1: I find your prompt**
 
-### Verification Report
+I automatically run these commands (you don't need to):
+- `clavix execute --latest` - Get most recent prompt
+- Or `clavix execute --latest --fast` - Get latest fast mode prompt
+- Or `clavix execute --id <id>` - Get specific prompt
 
-The verification report shows:
-- ✅ **Passed items** - Implementation covers the requirement
-- ❌ **Failed items** - Implementation does NOT cover (with reason why)
-- ⏭️ **Skipped items** - To be verified later
-- ➖ **N/A items** - Does not apply to this implementation
+**Step 2: I read and understand**
 
-### Fast Mode Prompts
+I'll parse the prompt file, extract:
+- The objective (what to build)
+- Requirements (specifics to implement)
+- Technical constraints (how to build it)
+- Success criteria (how to know it's done)
 
-Fast mode prompts don't have comprehensive checklists. When verifying a fast mode prompt:
-- A **basic checklist is generated** based on detected intent
-- Covers essential items (compiles, requirements met, no errors)
-- For comprehensive checklists, use `/clavix:deep` instead
+**Step 3: I implement everything**
 
-### Verification Commands
+This is where I actually write code:
+- Create new files as needed
+- Modify existing files
+- Write functions, components, classes
+- Add tests if specified
 
-```bash
-# Verify latest executed prompt
-clavix verify --latest
+**Step 4: I verify automatically**
 
-# Verify specific prompt
-clavix verify --id <prompt-id>
+After building, I run verification myself:
+- `clavix verify --latest` - Check the implementation
+- Run any automated tests
+- Build/compile to ensure no errors
 
-# Show verification status
-clavix verify --status
+**Step 5: I report results**
 
-# Re-run failed items only
-clavix verify --retry-failed
-
-# Export verification report
-clavix verify --export markdown
-clavix verify --export json
-```
-
-### After Verification
-
-**If all items pass:**
-```bash
-# Cleanup executed prompts
-clavix prompts clear --executed
-
-# Or archive the project
-/clavix:archive
-```
-
-**If items fail:**
-1. Review failed items and reasons
-2. Fix implementation issues
-3. Re-run verification: `clavix verify --retry-failed --id <prompt-id>`
+You'll see a summary of:
+- What I built
+- What passed verification
+- Any issues (if they exist)
 
 ---
 
-## Prompt Management (CLI Commands)
+## Automatic Verification (I Handle This)
 
-Prompts saved from `/clavix:fast` and `/clavix:deep` are stored in:
+**I always verify after implementing. You don't need to ask.**
+
+### What Happens Automatically
+
+After I finish building, I run verification myself:
+
+1. **Load the checklist** - From your executed prompt (what to check)
+2. **Run automated tests** - Test suite, build, linting, type checking
+3. **Check each requirement** - Make sure everything was implemented
+4. **Generate a report** - Show you what passed and failed
+
+### What You'll See
+
+```
+✓ Implementation complete for [prompt-id]
+
+Verification Results:
+✅ 8 items passed
+❌ 1 item needs attention: [specific issue]
+
+Would you like me to fix the failing item?
+```
+
+### Understanding the Symbols
+
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | Passed - This works |
+| ❌ | Failed - Needs fixing |
+| ⏭️ | Skipped - Check later |
+| ➖ | N/A - Doesn't apply |
+
+### When Things Fail
+
+**I try to fix issues automatically:**
+
+If verification finds problems, I'll:
+1. Tell you what failed and why
+2. Offer to fix it
+3. Re-verify after fixing
+
+**If I can't fix it myself:**
+
+I'll explain what's wrong and what you might need to do:
+> "The database connection is failing - this might be a configuration issue.
+> Can you check that your `.env` file has the correct `DATABASE_URL`?"
+
+### Fast Mode vs Deep Mode Verification
+
+**Fast mode prompts:**
+- I generate a basic checklist based on what you asked for
+- Covers essentials: compiles, no errors, requirements met
+
+**Deep mode prompts:**
+- Use the comprehensive checklist from deep analysis
+- More thorough verification with edge cases
+
+**For more thorough verification next time, use `/clavix:deep`**
+
+---
+
+## Prompt Management (Commands I Run)
+
+These are commands I execute automatically - you don't need to run them.
+
+**Where prompts live:**
 - Fast prompts: `.clavix/outputs/prompts/fast/`
 - Deep prompts: `.clavix/outputs/prompts/deep/`
 
-### List All Saved Prompts
-```bash
-clavix prompts list
-```
+### Commands I Use (Reference)
 
-Shows:
-- All saved prompts with age
-- Execution status (✓ executed / ○ pending)
-- Age warnings (OLD >7d, STALE >30d)
-- Storage statistics
+| What I Do | Command I Run |
+|-----------|---------------|
+| List saved prompts | `clavix prompts list` |
+| Get latest prompt | `clavix execute --latest` |
+| Get specific prompt | `clavix execute --id <id>` |
+| Run verification | `clavix verify --latest` |
+| Clean up executed | `clavix prompts clear --executed` |
+| Clean up stale (>30d) | `clavix prompts clear --stale` |
 
-### Cleanup Workflows
+### Automatic Cleanup
 
-**After executing prompts (recommended):**
-```bash
-clavix prompts clear --executed
-```
+After I finish implementing and verification passes:
+- I clean up executed prompts automatically
+- Old prompts (>30 days) get flagged as stale for removal
+- I keep your storage tidy
 
-**Remove stale prompts (>30 days):**
-```bash
-clavix prompts clear --stale
-```
-
-**Remove specific type:**
-```bash
-clavix prompts clear --fast
-clavix prompts clear --deep
-```
-
-**Interactive cleanup:**
-```bash
-clavix prompts clear
-```
-
-**Remove all (with safety checks):**
-```bash
-clavix prompts clear --all
-```
-
-### Prompt Lifecycle
+### The Prompt Lifecycle
 
 ```
-CREATE   → /clavix:fast or /clavix:deep
-EXECUTE  → /clavix:execute (you are here)
-CLEANUP  → clavix prompts clear --executed
-```
-
-### Best Practices
-
-**Regular cleanup schedule:**
-1. After executing prompts: Clear executed
-2. Weekly: Review and clear stale
-3. Before archiving PRD: Clear related prompts
-
-**Storage hygiene:**
-- Keep <20 active prompts for performance
-- Clear executed prompts regularly
-- Review prompts >7 days old
-
----
-
-## Error Recovery
-
-**No prompts found:**
-```bash
-/clavix:fast "your requirement"
-```
-Then retry `/clavix:execute`.
-
-**Too many old prompts:**
-```bash
-clavix prompts clear --executed
+1. YOU CREATE   →  /clavix:fast or /clavix:deep
+2. I EXECUTE    →  /clavix:execute (you are here)
+3. I VERIFY     →  Automatic verification
+4. I CLEANUP    →  Remove executed prompts
 ```
 
 ---
 
-## Agent Transparency (v4.7)
+## When Things Go Wrong
 
-### File Format Reference
-{{INCLUDE:agent-protocols/file-formats.md}}
+### No Prompts Found
+
+If I can't find a saved prompt, I'll tell you:
+> "I don't see any saved prompts. Let's create one first!"
+
+Then you can run `/clavix:fast "your requirement"` and come back.
+
+### Prompt Is Old or Stale
+
+If your prompt is more than 7 days old:
+> "This prompt is a bit old. Want me to proceed anyway, or should we create a fresh one?"
+
+### Verification Keeps Failing
+
+If I can't get verification to pass after trying:
+> "I've tried a few fixes but this item keeps failing. Here's what's happening: [details]
+>
+> Would you like me to:
+> 1. Keep trying with a different approach
+> 2. Skip this check for now
+> 3. Show you what needs manual attention"
+
+---
+
+## Workflow Navigation
+
+**Where you are:** Execute (building your prompt)
+
+**How you got here:**
+1. `/clavix:fast` or `/clavix:deep` → Optimized your prompt
+2. **`/clavix:execute`** → Now building it (you are here)
+
+**What happens after:**
+- I verify automatically → Results shown
+- If all passes → Done! I clean up
+- If issues → `/clavix:verify` for detailed check
+
+**Related commands:**
+- `/clavix:fast` - Quick prompt optimization (previous step)
+- `/clavix:deep` - Comprehensive analysis (alternative previous step)
+- `/clavix:verify` - Detailed verification (if needed)
+- `/clavix:archive` - Archive when fully done
+
+---
+
+## Agent Transparency (v4.9)
+
+### CLI Reference (Commands I Execute)
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### Error Handling
 {{INCLUDE:agent-protocols/error-handling.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Recovery Patterns
+{{INCLUDE:troubleshooting/vibecoder-recovery.md}}

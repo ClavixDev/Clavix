@@ -3,47 +3,69 @@ name: "Clavix: Archive"
 description: Archive completed PRD projects
 ---
 
-# Clavix Archive - PRD Project Archival
+# Clavix: Archive Your Completed Work
 
-> **⚠️ Agent Execution Note**: This command requires CLI execution. AI agents should run `clavix archive` via Bash tool to perform archival operations. Direct file manipulation is not recommended due to state tracking complexity.
+Done with a project? I'll move it to the archive to keep your workspace tidy. You can always restore it later if needed.
 
-You are helping the user archive completed PRD projects to keep their workspace organized.
+---
 
-## Instructions
+## What This Does
 
-### Part A: Agent Execution Protocol
+When you run `/clavix:archive`, I:
+1. **Find your completed projects** - Look for 100% done PRDs
+2. **Ask which to archive** - You pick, or I archive all completed ones
+3. **Move to archive folder** - Out of the way but not deleted
+4. **Track everything** - So you can restore later if needed
 
-**As an AI agent, you should:**
+**Your work is never deleted, just organized.**
 
-1. **Run the CLI command** to handle archival operations:
-   ```bash
-   clavix archive
-   ```
+---
 
-   The CLI will:
-   - Prompt user for project selection
-   - Validate task completion status
-   - Handle file operations safely
-   - Update state tracking
+## CLAVIX MODE: Archival
 
-2. **Choose the appropriate mode** based on user intent:
+**I'm in archival mode. Organizing your completed work.**
 
-   - **Interactive mode** (no arguments): User selects from list
-   - **Specific project**: `clavix archive [project-name]`
-   - **Force archive incomplete**: `clavix archive [project-name] --force`
-   - **Permanent delete**: `clavix archive [project-name] --delete`
-   - **List archived**: `clavix archive --list`
-   - **Restore**: `clavix archive --restore [project-name]`
+**What I'll do:**
+- ✓ Find projects ready for archive
+- ✓ Show you what's complete (100% tasks done)
+- ✓ Move projects to archive when you confirm
+- ✓ Track everything so you can restore later
 
-3. **Before running the command**, validate:
-   - Check if `.clavix/outputs/` directory exists
-   - Verify user intent (archive vs delete vs restore)
-   - Confirm project name if specified
+**What I won't do:**
+- ✗ Delete anything without explicit confirmation
+- ✗ Archive projects you're still working on (unless you use --force)
+- ✗ Make decisions for you - you pick what to archive
 
-4. **After CLI completes**, communicate results:
-   - Confirm where project was moved
-   - Mention restoration is possible (unless deleted)
-   - Update user on next steps
+---
+
+## How I Archive Projects
+
+**I handle all the commands - you just tell me what to do.**
+
+### What I Run (You Don't Need To)
+
+| What You Want | Command I Execute |
+|---------------|-------------------|
+| Archive completed project | `clavix archive` |
+| Archive specific project | `clavix archive [name]` |
+| Archive incomplete work | `clavix archive [name] --force` |
+| Delete permanently | `clavix archive [name] --delete` |
+| See what's archived | `clavix archive --list` |
+| Restore from archive | `clavix archive --restore [name]` |
+
+### Before I Archive
+
+I check:
+- ✓ Projects exist in `.clavix/outputs/`
+- ✓ What you want to do (archive, delete, restore)
+- ✓ Project name is correct
+
+### After Archiving
+
+I tell you:
+- Where the project went
+- How to restore it (unless you deleted it)
+- What to do next
 
 ### Part B: Understanding Archive Operations
 
@@ -238,57 +260,21 @@ User types: api-experiment-1
 Result: Project permanently deleted from .clavix/outputs/api-experiment-1/
 ```
 
-## AI Agent Guidelines
+---
 
-When user mentions archiving or cleaning up projects:
+## Agent Transparency (v4.9)
 
-1. **Validate prerequisites before running CLI**:
-   - Check if `.clavix/outputs/` directory exists
-   - If not, inform user no projects exist to archive
-   - Verify user intent (list, archive, restore, delete)
+### CLI Reference (Commands I Execute)
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
-2. **Check completion status first**:
-   - Run `clavix archive` (interactive mode) to see archivable projects
-   - CLI will display projects with completion percentages
-   - Review output and communicate options to user
+### Error Handling
+{{INCLUDE:agent-protocols/error-handling.md}}
 
-3. **Execute the appropriate command**:
-   - **Interactive selection**: `clavix archive` (let user pick from list)
-   - **Specific project**: `clavix archive [project-name]`
-   - **Force incomplete**: `clavix archive [project-name] --force`
-   - **List archived**: `clavix archive --list`
-   - **Restore**: `clavix archive --restore [project-name]`
-   - **Delete**: `clavix archive [project-name] --delete` (with extra caution)
+### Recovery Patterns
+{{INCLUDE:troubleshooting/vibecoder-recovery.md}}
 
-4. **Confirm before archiving**:
-   - If using specific project mode, confirm project name with user
-   - Mention the archive location (`.clavix/outputs/archive/`)
-   - Explain that restoration is possible
-
-5. **Use --force cautiously**:
-   - Only when user explicitly wants to archive incomplete work
-   - Run command and let CLI show incomplete task count
-   - CLI will ask for user confirmation
-   - Explain they won't lose data (just moving location)
-
-6. **Suggest restoration when appropriate**:
-   - If user mentions old/past work, check archive first
-   - Run `clavix archive --list` to show what's archived
-   - Offer to restore if needed via `clavix archive --restore [project]`
-
-7. **Handle delete requests with extreme caution**:
-   - Always ask: "Do you want to DELETE (permanent) or ARCHIVE (safe)?"
-   - Explain that delete is permanent and irreversible
-   - Suggest archive as the safer default
-   - Use decision tree to help user decide
-   - Only run `--delete` after clear confirmation from user
-   - Double-check it's truly no-value content (failed experiments, duplicates, test data)
-   - CLI will require typing project name to confirm - this is expected
-
-8. **After CLI execution**:
-   - Communicate success/failure clearly
-   - Mention next steps (e.g., "Project archived, you can restore with `/clavix:archive --restore`")
-   - If error occurs, explain and suggest recovery options
+### Agent Decision Rules
+{{INCLUDE:agent-protocols/decision-rules.md}}
 
 ## Workflow Navigation
 

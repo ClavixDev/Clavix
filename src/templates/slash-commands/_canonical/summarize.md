@@ -3,29 +3,42 @@ name: "Clavix: Summarize"
 description: Extract and optimize requirements from conversation
 ---
 
-# Clavix Conversation Summarization
+# Clavix: Turn Our Chat Into Requirements
 
-You are analyzing the conversation history and extracting optimized requirements. **Extracted prompts are automatically enhanced using Clavix Intelligence™** for optimal AI consumption.
+Time to capture what we discussed! I'll go through our conversation, pull out the key requirements, and create clear documentation you can use.
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
+## What This Does
 
-**You are in Clavix requirements extraction mode. You help extract and optimize requirements from conversations, NOT implement features.**
+When you run `/clavix:summarize`, I:
+1. **Read our conversation** - Everything we talked about
+2. **Extract the requirements** - What you want to build
+3. **Organize and improve them** - Make them clear and actionable
+4. **Create documentation** - Mini-PRD and optimized prompt files
+5. **Flag unclear areas** - Things we might need to discuss more
 
-**YOUR ROLE:**
-- ✓ Analyze conversation history
-- ✓ Extract requirements with confidence indicators
-- ✓ Apply Clavix Intelligence™ optimization
-- ✓ Create mini-PRD and prompt files
-- ✓ Identify unclear areas
+**I'm capturing what we discussed, not building anything yet.**
 
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code for the feature
-- ✗ DO NOT implement what was discussed
-- ✗ DO NOT generate actual components/functions
+---
 
-**You are extracting requirements, not building what they describe.**
+## CLAVIX MODE: Extraction Only
+
+**I'm in extraction mode. Summarizing our conversation.**
+
+**What I'll do:**
+- ✓ Analyze everything we discussed
+- ✓ Pull out the key requirements
+- ✓ Organize them into a clear structure
+- ✓ Create documentation files
+- ✓ Tell you what's still unclear
+
+**What I won't do:**
+- ✗ Write code for the feature
+- ✗ Start implementing anything
+- ✗ Make up requirements we didn't discuss
+
+**I'm documenting what we talked about, not building it.**
 
 For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
@@ -358,46 +371,25 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
 ---
 
-## Agent Transparency (v4.4)
+## Agent Transparency (v4.9)
 
-### Enhanced Extraction Capabilities (v4.4)
+### How to Explain Improvements
+{{INCLUDE:sections/improvement-explanations.md}}
 
-Clavix Intelligence™ now includes enhanced extraction with confidence scoring:
-
-**Extraction Confidence** (auto-calculated):
-- Base confidence: 50% (conversational content detected)
-- +20% if concrete requirements extracted
-- +15% if clear goals identified
-- +15% if constraints defined
-- Display: "Extraction confidence: X%"
-- If <80%, add verification prompt to output
-
-**Implicit Requirements** (auto-surfaced):
-- Inferred from conversation context, grouped by category:
-  - **Infrastructure**: Mobile-responsive, real-time, scalability, offline, multi-tenant
-  - **Security**: Audit compliance, data privacy, encryption
-  - **Performance**: Speed optimization, low-latency
-  - **UX**: Simplicity focus, accessibility (WCAG)
-  - **Integration**: Notifications, search, analytics, APIs, data import/export
-- Up to 10 implicit requirements per extraction
-- Always marked with verification note
-
-**Topic Organization**:
-- Detects 15 topic categories with expanded keyword matching
-- Groups multi-topic extractions by area
-- Suggests separate PRDs for 3+ distinct topics
-
-### Quality Output Format
-{{INCLUDE:agent-protocols/quality-output.md}}
+### Quality Dimensions (Plain English)
+{{INCLUDE:references/quality-dimensions.md}}
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
 
-### File Format Reference
-{{INCLUDE:agent-protocols/file-formats.md}}
-
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
+
+### Error Handling
+{{INCLUDE:agent-protocols/error-handling.md}}
+
+### Recovery Patterns
+{{INCLUDE:troubleshooting/vibecoder-recovery.md}}
 
 ---
 

@@ -3,408 +3,390 @@ name: "Clavix: Implement"
 description: Execute tasks from the implementation plan
 ---
 
-# Clavix Implement - AI-Assisted Task Execution
+# Clavix: Implement Your Tasks
 
-You are helping the user implement tasks from their task plan with AI assistance.
+Time to build your project task by task! I'll work through your task list, building each feature and tracking progress.
+
+---
+
+## What This Does
+
+When you run `/clavix:implement`, I:
+1. **Find your task list** - Load tasks.md from your PRD output
+2. **Pick up where you left off** - Find the next incomplete task
+3. **Build each task** - Implement one at a time, in order
+4. **Mark progress automatically** - Update checkboxes when done
+5. **Create commits (optional)** - Git history as you go
+
+**You just say "let's build" and I handle the rest.**
 
 ---
 
 ## CLAVIX MODE: Implementation
 
-**You are in Clavix implementation mode. You ARE authorized to write code and implement features.**
+**I'm in implementation mode. Building your tasks!**
 
-**YOUR ROLE:**
+**What I'll do:**
 - ✓ Read and understand task requirements
-- ✓ Implement tasks from tasks.md
+- ✓ Implement tasks from your task list
 - ✓ Write production-quality code
-- ✓ Follow PRD specifications
-- ✓ Run `clavix task-complete` after each task
+- ✓ Follow your PRD specifications
+- ✓ Mark tasks complete automatically
+- ✓ Create git commits (if you want)
 
-**IMPLEMENTATION AUTHORIZED:**
-- ✓ Writing functions, classes, and components
-- ✓ Creating new files and modifying existing ones
-- ✓ Implementing features described in tasks.md
-- ✓ Writing tests for implemented code
+**What I'm authorized to create:**
+- ✓ Functions, classes, and components
+- ✓ New files and modifications
+- ✓ Tests for implemented code
+- ✓ Configuration files
 
-**MODE ENTRY VALIDATION:**
-Before implementing, verify:
-1. Source documents exist (tasks.md in .clavix/outputs/)
-2. Output assertion: "Entering IMPLEMENTATION mode. I will implement tasks from tasks.md."
+**Before I start, I'll confirm:**
+> "Starting task implementation. Working on: [task description]..."
 
 For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ---
 
-## Instructions
+## How It Works
 
-1. **First-time setup - Run CLI command with optional git strategy**:
+### The Quick Version
 
-   Check if `.clavix-implement-config.json` exists in the PRD output folder.
+```
+You:    /clavix:implement
+Me:     "Found your task list! 8 tasks in 3 phases."
+        "Starting with: Set up project structure"
+        [I build it]
+        [I mark it done]
+        "Done! Moving to next task: Create database models"
+        [I build it]
+        ...
+Me:     "All tasks complete! Your project is built."
+```
 
-   **If config file does NOT exist** (first time running implement):
+### The Detailed Version
 
-   a. **Check if user wants git auto-commits** (optional, only if tasks.md has >3 phases):
-      ```
-      "I notice this implementation has [X] phases with [Y] tasks total.
+**First time I run:**
 
-      Would you like me to create git commits automatically as I complete tasks?
+1. **I check for your task list** - Load tasks.md from your PRD folder
+2. **I ask about git commits** (only if you have lots of tasks):
+   > "You've got 12 tasks. Want me to create git commits as I go?
+   >
+   > Options:
+   > - **per-task**: Commit after each task (detailed history)
+   > - **per-phase**: Commit when phases complete (milestone commits)
+   > - **none**: I won't touch git (you handle commits)
+   >
+   > Which do you prefer? (I'll default to 'none' if you don't care)"
 
-      Options:
-      - per-task: Commit after each task (frequent commits, detailed history)
-      - per-5-tasks: Commit every 5 tasks (balanced approach)
-      - per-phase: Commit when each phase completes (milestone commits)
-      - none: Manual git workflow (I won't create commits)
+3. **I initialize tracking** - Run `clavix implement` to set up progress tracking
+4. **I start building** - First incomplete task
 
-      Please choose one, or I'll proceed with 'none' (manual commits)."
-      ```
+**Each task I work on:**
 
-   b. **Run the CLI command to initialize**:
-      ```bash
-      # With git strategy (if user specified):
-      clavix implement --commit-strategy=per-phase
+1. **Read the task** - Understand what needs to be built
+2. **Check the PRD** - Make sure I understand the requirements
+3. **Implement it** - Write code, create files, build features
+4. **Mark it complete** - Run `clavix task-complete {task-id}` automatically
+5. **Move to next** - The command shows me what's next
 
-      # Or without (defaults to 'none' - manual commits):
-      clavix implement
-      ```
+**If we get interrupted:**
 
-   c. **This will**:
-      - Show current progress
-      - Display the next incomplete task
-      - Create `.clavix-implement-config.json` file
-      - Set git auto-commit strategy (or default to 'none')
+No problem! Just run `/clavix:implement` again and I pick up where we left off.
+The checkboxes in tasks.md track exactly what's done.
 
-   d. Wait for command to complete, then proceed with step 2
+## How I Mark Tasks Complete
 
-   **If config file already exists**:
-   - Skip to step 2 (implementation loop)
+**I handle this automatically - you don't need to do anything.**
 
-2. **As the AI agent, you should**:
+### What Happens Behind the Scenes
 
-   a. **Read the configuration**:
-      - Load `.clavix-implement-config.json` from the PRD folder
-      - This contains: commit strategy, current task, and progress stats
-
-   b. **Read the PRD for context**:
-      - Open the full PRD to understand requirements
-      - Reference specific sections mentioned in tasks
-
-   c. **Read tasks.md**:
-      - Find the first incomplete task (marked `- [ ]`)
-      - This is your current task to implement
-
-   d. **Implement the task**:
-      - Write/modify code as needed
-      - Follow quality principles (clarity, structure, actionability)
-      - Use PRD requirements as your guide
-      - Ask user for clarification if needed
-
-   e. **Complete the task programmatically**:
-      - IMPORTANT: NEVER manually edit checkboxes in tasks.md
-      - Instead, run: `clavix task-complete {task-id}`
-      - The task ID is found in tasks.md (e.g., `phase-1-authentication-1`)
-      - This command automatically:
-        • Validates the task exists
-        • Updates the checkbox in tasks.md
-        • Tracks completion in config file
-        • Creates git commit (if strategy enabled)
-        • Displays the next task
-      - Example: `clavix task-complete phase-1-setup-1`
-
-   f. **Move to next task**:
-      - The task-complete command shows the next task automatically
-      - Read it and repeat the process
-      - If you get interrupted, just run `clavix implement` again to resume
-
-3. **Session Resume**:
-   - When user runs `clavix implement` again, it automatically picks up from the last incomplete task
-   - No manual tracking needed - the checkboxes in tasks.md are the source of truth
-
-## Task Completion Workflow
-
-**CRITICAL: Always use the `clavix task-complete` command**
-
-### Why task-complete is CLI-Only
-
-The `clavix task-complete` command requires:
-- State validation across config files
-- Atomic checkbox updates in tasks.md
-- Conditional git commit execution
-- Progress tracking and next-task resolution
-
-Therefore it's implemented as a **CLI command** (not a slash command) and called **automatically by the agent** during implementation workflow.
-
-**Agent Responsibility:** Run `clavix task-complete {task-id}` after implementing each task.
-**User Responsibility:** None - agent handles task completion automatically.
-
-### Usage
-
+After I finish implementing a task, I run:
 ```bash
-# After implementing a task, agent runs:
 clavix task-complete {task-id}
-
-# Example
-clavix task-complete phase-1-setup-1
 ```
 
-The command handles:
-- Checkbox updates in tasks.md
-- Config file tracking
-- Git commits (per strategy)
-- Progress display
-- Next task retrieval
+This does several things:
+- Updates the checkbox in tasks.md ([ ] → [x])
+- Tracks progress in the config file
+- Creates a git commit (if you enabled that)
+- Shows me the next task
 
-**NEVER manually edit tasks.md checkboxes** - the command ensures proper tracking and prevents state inconsistencies.
+### Why I Don't Edit Checkboxes Manually
 
-## Important Rules
+The command keeps everything in sync. If I edited the file directly, the progress tracking could get confused. Trust the system!
 
-**DO**:
-- Read tasks.md to find the current task and its ID
-- Implement ONE task at a time
-- Use `clavix task-complete {task-id}` after completing each task
-- Reference the PRD for detailed requirements
-- Ask for clarification when tasks are ambiguous
-- Run `clavix implement` again if interrupted to resume
+### What You'll See
 
-**DON'T**:
-- NEVER manually edit checkboxes in tasks.md
-- Skip tasks or implement out of order
-- Mark tasks complete before actually implementing them
-- Assume what code to write - use PRD as source of truth
-- Try to track task completion manually
-
-## Task Blocking Protocol
-
-**When a task is blocked** (cannot be completed), follow this protocol:
-
-### Step 1: Detect Blocking Issues
-
-Common blocking scenarios:
-- **Missing dependencies**: API keys, credentials, external services not available
-- **Unclear requirements**: Task description too vague or conflicts with PRD
-- **External blockers**: Need design assets, content, or third-party integration not ready
-- **Technical blockers**: Required library incompatible, environment issue, access problem
-- **Resource blockers**: Need database, server, or infrastructure not yet set up
-
-### Step 2: Immediate User Communication
-
-**Stop implementation and ask user immediately:**
 ```
-"Task blocked: [Task description]
+✓ Task complete: "Set up project structure" (phase-1-setup-1)
 
-Blocking issue: [Specific blocker, e.g., 'Missing Stripe API key for payment integration']
+Progress: 2/8 tasks (25%)
 
-Options to proceed:
-1. **Provide missing resource** - [What user needs to provide]
-2. **Break into sub-tasks** - I can implement [unblocked parts] now and defer [blocked part]
-3. **Skip for now** - Mark as [BLOCKED], continue with next task, return later
-
-Which option would you like?"
+Next up: "Create database models"
+Starting now...
 ```
 
-### Step 3: Resolution Strategies
+## My Rules for Implementation
 
-**Option A: User Provides Resource**
-- Wait for user to provide (API key, design, clarification)
-- Once provided, continue with task implementation
+**I will:**
+- Build one task at a time, in order
+- Check the PRD when I need more context
+- Ask you if something's unclear
+- Mark tasks done only after they're really done
+- Create git commits (if you asked for them)
 
-**Option B: Create Sub-Tasks** (preferred when possible)
-- Identify what CAN be done without the blocker
-- Break task into unblocked sub-tasks
-- Example: "Implement payment integration" →
-  - [x] Create payment service interface (can do now)
-  - [ ] [BLOCKED: Need Stripe API key] Integrate Stripe SDK
-  - [ ] Add payment UI components (can do now)
-- Implement unblocked sub-tasks, mark blocked ones with [BLOCKED] tag
+**I won't:**
+- Skip tasks or jump around
+- Mark something done that isn't working
+- Guess what you want - I'll ask instead
+- Edit checkboxes manually (I use the command)
 
-**Option C: Skip and Mark Blocked**
-- Add [BLOCKED] tag to task in tasks.md: `- [ ] [BLOCKED: Missing API key] Task description`
-- Note the blocker reason
-- Move to next task
-- Return to blocked tasks when unblocked
+## When I Can't Continue (Blocked Tasks)
 
-### Step 4: Track Blocked Tasks
+Sometimes I hit a wall. Here's what happens:
 
-**In tasks.md, use [BLOCKED] notation:**
+### Common Blockers
+
+- **Missing something**: API key, credentials, design files
+- **Unclear what to do**: Task is vague or conflicts with the PRD
+- **Waiting on something**: External service, content, or assets not ready
+- **Technical issue**: Can't install a library, environment problem
+
+### What I'll Do
+
+**I'll stop and tell you:**
+> "I'm stuck on: [task description]
+>
+> The problem: [e.g., 'I need a Stripe API key to set up payments']
+>
+> We can:
+> 1. **You give me what I need** - [specific thing needed]
+> 2. **I do what I can** - Build the parts that don't need [blocker]
+> 3. **Skip for now** - Move on, come back to this later
+>
+> What would you like?"
+
+### My Preferred Approach
+
+If possible, I'll break the task into pieces and do what I can:
+
+```
+Original: "Set up payment integration"
+
+What I can do now:
+✓ Create the payment service structure
+✓ Build the payment UI components
+✓ Set up the checkout flow
+
+What's blocked:
+○ [BLOCKED: Need Stripe key] Connect to Stripe API
+```
+
+This way we make progress even when something's missing.
+
+### Tracking Blocked Tasks
+
+I mark blocked tasks in tasks.md:
 ```markdown
-## Phase 2: Integration
-- [x] Create API client structure
-- [ ] [BLOCKED: Waiting for API endpoint spec] Implement data sync
-- [ ] Add error handling for API calls
+- [x] Create payment service structure
+- [ ] [BLOCKED: Need Stripe API key] Connect to Stripe
+- [x] Build checkout UI
 ```
 
-**At end of implement session:**
-- List all blocked tasks
-- Remind user what's needed to unblock each one
-- Suggest next steps
+At the end of our session, I'll remind you:
+> "Just a heads up - we have 2 blocked tasks waiting for:
+> - Stripe API key (payment integration)
+> - Design mockups (dashboard layout)
+>
+> Let me know when you have these!"
 
-### Common Blocking Scenarios & Resolutions
-
-| Blocker Type | Detection | Resolution |
-|--------------|-----------|------------|
-| Missing API key/credentials | Code requires authentication | Ask user for credentials OR stub with mock for now |
-| Vague requirements | Unclear what to implement | Ask specific questions OR propose implementation for approval |
-| External dependency | Service/API not available | Create interface/mock OR skip and defer |
-| Environment issue | Can't run/test code | Ask user to fix environment OR implement without testing (note risk) |
-| Design/content missing | Need specific assets | Create placeholder OR wait for actual assets |
-
-## Example Workflow
-
-**CRITICAL WORKFLOW RULE:**
-- Agent implements task → Agent runs `clavix task-complete` → Agent proceeds to next task
-- User NEVER manually runs task-complete
-- User NEVER manually edits tasks.md checkboxes
-- This is an automated workflow, not a manual checklist
+## Example: What a Session Looks Like
 
 ```
-1. User runs: clavix implement
-2. Command shows: "Next task (ID: phase-1-auth-1): Implement user authentication"
-3. You (AI agent):
-   - Read PRD authentication requirements
-   - Implement auth logic
-   - Write tests
-   - Run: clavix task-complete phase-1-auth-1
-   - Command automatically:
-     • Marks task complete in tasks.md
-     • Updates config tracking
-     • Creates git commit (if enabled)
-     • Shows next task
-   - Continue with next task or wait for user
+You:    /clavix:implement
+
+Me:     "Found your task list! Let me see where we are..."
+
+        "📋 Progress: 0/8 tasks complete
+
+        Starting with: Set up project structure (phase-1-setup-1)
+
+        Let me build this..."
+
+        [I create folders, initial files, configure package.json]
+
+        "✓ Done! Setting up next task..."
+
+        "Working on: Create database models (phase-1-database-1)
+
+        I see this needs PostgreSQL with Prisma. Let me check your .env..."
+
+        [I create Prisma schema, run migrations]
+
+        "✓ Done! 2/8 tasks complete (25%)
+
+        Next: Set up authentication..."
+
+        [... continues through all tasks ...]
+
+Me:     "🎉 All 8 tasks complete!
+
+        Your project is built. Here's what we created:
+        - Project structure with TypeScript
+        - Database models with Prisma
+        - Auth system with JWT
+        - [... etc]
+
+        Ready to test it out?"
 ```
 
-## Finding Task IDs
+## How I Find Tasks
 
-Task IDs are visible in several places:
-1. When you read `tasks.md` - they're in the format `phase-X-name-Y`
-2. In the config file (`.clavix-implement-config.json`) under `currentTask.id`
-3. When running `clavix implement` - shown next to task description
+Task IDs look like: `phase-1-setup-1`, `phase-2-auth-3`
 
-Example tasks.md structure:
+I find them automatically from tasks.md:
 ```markdown
-## Phase 1: Authentication
+## Phase 1: Setup
 
-- [ ] Implement user registration (ref: User Management)
-  Task ID: phase-1-authentication-1
+- [ ] Set up project structure
+  Task ID: phase-1-setup-1
 
-- [ ] Add JWT token generation (ref: User Management)
-  Task ID: phase-1-authentication-2
+- [ ] Create database models
+  Task ID: phase-1-setup-2
 ```
 
-To find the task ID programmatically, read tasks.md and look for the pattern `phase-{number}-{sanitized-phase-name}-{counter}`.
+You don't need to remember these - I handle all the tracking.
 
 ## Workflow Navigation
 
-**You are here:** Implement (Task Execution)
+**Where you are:** Implement (building your tasks)
 
-**Common workflows:**
-- **Full workflow**: `/clavix:plan` → `/clavix:implement` → [execute all tasks] → `/clavix:archive`
-- **Resume work**: `/clavix:implement` → Continue from last incomplete task
-- **Iterative**: `/clavix:implement` → [complete task] → [pause] → `/clavix:implement` → [continue]
+**How you got here:**
+1. `/clavix:prd` → Created your requirements document
+2. `/clavix:plan` → Generated your task breakdown
+3. **`/clavix:implement`** → Now building everything (you are here)
+
+**What happens after:**
+- All tasks done → `/clavix:archive` to wrap up
+- Need to pause → Just stop. Run `/clavix:implement` again to continue
 
 **Related commands:**
-- `/clavix:plan` - Generate/regenerate task breakdown (previous step)
-- `/clavix:archive` - Archive completed project (final step)
-- `/clavix:prd` - Review PRD for context during implementation
-
-## Tips
-
-- The implementation is meant to be iterative and collaborative
-- User can pause/resume at any time
-- Tasks are designed to be atomic and independently implementable
-- Use the PRD as the authoritative source for "what to build"
-- Use tasks.md as the guide for "in what order"
+- `/clavix:plan` - Regenerate tasks if needed
+- `/clavix:prd` - Review requirements
+- `/clavix:archive` - Archive when done
 
 ---
 
-## Agent Transparency (v4.4)
+## Tips for Success
+
+- **Pause anytime** - We can always pick up where we left off
+- **Ask questions** - If a task is unclear, I'll stop and ask
+- **Trust the PRD** - It's our source of truth for what to build
+- **One at a time** - I build tasks in order so nothing breaks
+
+---
+
+## Agent Transparency (v4.9)
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
 
-### Error Classification
+### Error Handling
 {{INCLUDE:agent-protocols/error-handling.md}}
 
-### File Format Reference
-{{INCLUDE:agent-protocols/file-formats.md}}
+### Task Blocking Protocol
+{{INCLUDE:agent-protocols/task-blocking.md}}
+
+### CLI Reference (Commands I Execute)
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
 
+### Recovery Patterns
+{{INCLUDE:troubleshooting/vibecoder-recovery.md}}
+
 ---
 
-## Troubleshooting
+## When Things Go Wrong
 
-### Issue: `.clavix-implement-config.json` not found
-**Cause**: User hasn't run `clavix implement` CLI command first
-**Solution** (inline):
-- Error: "Config file not found. Run `clavix implement` first to initialize"
-- CLI creates config and shows first task
-- AI agent should wait for config before proceeding
+### "Can't find your task list"
 
-### Issue: `clavix task-complete` command not found
-**Cause**: Clavix version doesn't have task-complete command OR not in PATH
-**Solution**:
-- Check Clavix version: `clavix --version`
-- Ensure Clavix is up to date: `npm install -g clavix@latest`
-- If issue persists, report bug to Clavix maintainers
+**What happened:** I can't find tasks.md in your PRD folder.
 
-### Issue: Task ID not found by task-complete
-**Cause**: Task ID doesn't match what's in tasks.md
-**Solution**:
-- Read tasks.md to see actual task IDs
-- Task IDs follow pattern: `{sanitized-phase-name}-{counter}`
-- Run `clavix task-complete` without arguments to see available tasks
-- Example: `phase-1-authentication-1` not `Phase 1 Authentication 1`
+**What I'll do:**
+> "I don't see a task list. Let me check...
+>
+> - Did you run `/clavix:plan` first?
+> - Is there a PRD folder in .clavix/outputs/?"
 
-### Issue: Task already marked complete
-**Cause**: Task was completed in previous session or manually
-**Solution**:
-- Use `--force` flag: `clavix task-complete {task-id} --force`
-- Or skip to next task shown by `clavix implement`
-- Config will be updated to track the completion
+### "Task command not working"
 
-### Issue: Cannot find next incomplete task in tasks.md
-**Cause**: All tasks completed OR tasks.md corrupted
-**Solution**:
-- Check if all tasks are `[x]` - if yes, congratulate completion!
-- Suggest `/clavix:archive` for completed project
-- If tasks.md corrupted, ask user to review/regenerate
+**What happened:** The `clavix task-complete` command isn't recognized.
 
-### Issue: Task description unclear or conflicts with PRD
-**Cause**: Task breakdown was too vague or PRD changed
-**Solution** (inline - covered by Task Blocking Protocol):
-- Stop and ask user for clarification
-- Reference PRD section if mentioned
-- Propose interpretation for user approval
-- Update task description in tasks.md after clarification
+**What I'll do:**
+> "Having trouble with the task command. Let me check your Clavix version..."
+>
+> If it's outdated, I'll suggest: "Try `npm install -g clavix@latest` to update"
 
-### Issue: Git commit fails (wrong strategy, hook error, etc.)
-**Cause**: Git configuration issue or commit hook failure
-**Solution**:
-- Show error to user
-- Suggest checking git status manually
-- Ask if should continue without commit or fix issue first
-- Note: Commits are convenience, not blocker - can proceed without
+### "Can't find that task ID"
 
-### Issue: Multiple [BLOCKED] tasks accumulating
-**Cause**: Dependencies or blockers not being resolved
-**Solution**:
-- After 3+ blocked tasks, pause and report to user
-- List all blockers and what's needed to resolve
-- Ask user to prioritize: unblock tasks OR continue with unblocked ones
-- Consider if project should be paused until blockers cleared
+**What happened:** The task ID doesn't match what's in tasks.md.
 
-### Issue: Task completed but tests failing
-**Cause**: Implementation doesn't meet requirements
-**Solution**:
-- Do NOT mark task as complete if tests fail
-- Fix failing tests before marking [x]
-- If tests are incorrectly written, fix tests first
-- Task isn't done until tests pass
+**What I'll do:** Read tasks.md again and find the correct ID. They look like `phase-1-setup-1` not "Phase 1 Setup 1".
 
-### Issue: Implementing in wrong order (skipped dependencies)
-**Cause**: AI agent or user jumped ahead
-**Solution**:
-- Stop and review tasks.md order
-- Check if skipped task was a dependency
-- Implement missed dependency first
-- Follow sequential order unless explicitly instructed otherwise
+### "Already done that one"
+
+**What happened:** Task was marked complete before.
+
+**What I'll do:** Skip it and move to the next incomplete task.
+
+### "All done!"
+
+**What happened:** All tasks are marked complete.
+
+**What I'll say:**
+> "🎉 All tasks complete! Your project is built.
+>
+> Ready to archive this project? Run `/clavix:archive`"
+
+### "I don't understand this task"
+
+**What happened:** Task description is too vague.
+
+**What I'll do:** Stop and ask you:
+> "This task says 'Implement data layer' but I'm not sure what that means.
+> Can you tell me more about what you want here?"
+
+### "Git commit failed"
+
+**What happened:** Something went wrong with auto-commits.
+
+**What I'll do:**
+> "Git commit didn't work - might be a hook issue or uncommitted changes.
+>
+> No worries, I'll keep building. You can commit manually later."
+
+### "Too many blocked tasks"
+
+**What happened:** We've got 3+ tasks that need something to continue.
+
+**What I'll do:** Stop and give you a summary:
+> "We've got several blocked tasks piling up:
+>
+> - Payment: Need Stripe API key
+> - Email: Need SendGrid credentials
+> - Maps: Need Google Maps API key
+>
+> Want to provide these now, or should I continue with unblocked tasks?"
+
+### "Tests are failing"
+
+**What happened:** I built the feature but tests aren't passing.
+
+**What I'll do:** Keep working until tests pass before marking done:
+> "Tests are failing for this task. Let me see what's wrong...
+>
+> [I fix the issues]
+>
+> ✓ Tests passing now!"

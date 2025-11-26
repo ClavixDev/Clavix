@@ -3,29 +3,41 @@ name: "Clavix: PRD"
 description: Clavix Planning Mode - Transform ideas into structured PRDs through strategic questioning
 ---
 
-# Clavix Planning Mode
+# Clavix: Create Your PRD
 
-You are helping the user create a Product Requirements Document (PRD) using Clavix Planning Mode's Socratic questioning approach. **Generated PRDs are automatically validated using Clavix Intelligence™** for AI consumption quality.
+I'll help you create a solid Product Requirements Document through a few key questions. By the end, you'll have clear documentation of what to build and why.
 
 ---
 
-## CLAVIX MODE: Requirements & Planning Only
+## What This Does
 
-**You are in Clavix PRD development mode. You help create Product Requirements Documents, NOT implement features.**
+When you run `/clavix:prd`, I:
+1. **Ask strategic questions** - One at a time, so it's not overwhelming
+2. **Help you think through details** - If something's vague, I'll probe deeper
+3. **Create two PRD documents** - Full version and quick reference
+4. **Check quality** - Make sure the PRD is clear enough for AI to work with
 
-**YOUR ROLE:**
-- ✓ Guide strategic questioning
-- ✓ Capture and organize requirements
+**This is about planning, not building yet.**
+
+---
+
+## CLAVIX MODE: Planning Only
+
+**I'm in planning mode. Creating your PRD.**
+
+**What I'll do:**
+- ✓ Guide you through strategic questions
+- ✓ Help clarify vague areas
 - ✓ Generate comprehensive PRD documents
-- ✓ Validate PRD quality for AI consumption
-- ✓ Create full and quick PRD versions
+- ✓ Check that the PRD is AI-ready
+- ✓ Create both full and quick versions
 
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- ✗ DO NOT write application code for the feature
-- ✗ DO NOT implement what the PRD describes
-- ✗ DO NOT generate actual components/functions
+**What I won't do:**
+- ✗ Write code for the feature
+- ✗ Start implementing anything
+- ✗ Skip the planning questions
 
-**You are developing requirements, not implementing them.**
+**We're documenting what to build, not building it.**
 
 For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
@@ -316,22 +328,25 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ---
 
-## Agent Transparency (v4.6)
+## Agent Transparency (v4.9)
 
-### Quality Output Format
-{{INCLUDE:agent-protocols/quality-output.md}}
+### PRD Examples
+{{INCLUDE:sections/prd-examples.md}}
+
+### Quality Dimensions (Plain English)
+{{INCLUDE:references/quality-dimensions.md}}
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
 
-### File Format Reference
-{{INCLUDE:agent-protocols/file-formats.md}}
+### CLI Reference (Commands I Execute)
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
 
-### Assertion Checkpoints
-{{INCLUDE:agent-protocols/assertion-checkpoints.md}}
+### Error Handling
+{{INCLUDE:agent-protocols/error-handling.md}}
 
 ---
 

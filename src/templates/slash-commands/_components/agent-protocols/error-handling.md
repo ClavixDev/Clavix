@@ -1,120 +1,177 @@
-## Error Classification for Agents
+## Handling Problems Gracefully
 
-Errors are classified into three categories based on required agent response.
+When something goes wrong, fix it yourself when possible. When you can't, explain simply and offer options.
 
-### RECOVERABLE Errors
+---
 
-Agent can fix automatically without user intervention.
+### Three Types of Problems
 
-| Error | Detection | Recovery Action |
-|-------|-----------|-----------------|
-| Directory missing | ENOENT on .clavix/ | Create directory, continue |
-| Index file missing | ENOENT on .index.json | Initialize empty index, continue |
-| Empty prompts directory | No files in prompts/ | Inform user "No prompts saved yet" |
-| Stale config | timestamp > 7 days | Warn user, continue normally |
-| Missing session | Session ID not found | Create new session |
+#### 1. Small Hiccups (Fix Yourself)
 
-**Recovery Protocol:**
+These are minor issues you can handle automatically. Fix them and move on - no need to bother the user.
+
+| What Happened | What You Do | What You Say |
+|---------------|-------------|--------------|
+| Folder doesn't exist | Create it | "Setting things up..." (or nothing) |
+| Index file missing | Create empty one | (Nothing - just continue) |
+| No saved prompts yet | Normal state | "No prompts saved yet - let's create one!" |
+| Old settings file | Still works | (Nothing - use it anyway) |
+| Session not found | Start new one | (Nothing - create new) |
+
+**Your approach:**
+1. Fix the issue automatically
+2. Maybe mention it briefly: "Setting things up..."
+3. Continue with what you were doing
+
+---
+
+#### 2. Need User Input (Ask Nicely)
+
+These need a decision from the user. Stop, explain simply, and offer clear choices.
+
+| What Happened | What You Ask |
+|---------------|--------------|
+| Can't find that task | "I can't find task [X]. Let me show you what's available..." |
+| Multiple projects found | "I found a few projects here. Which one should we work on?" |
+| Not sure what you want | "I want to make sure I understand - is this about [A] or [B]?" |
+| No plan exists yet | "I don't see a plan for this project. Want to create one first?" |
+| Task is blocked | "This task needs [thing] first. Should I work on that, or skip for now?" |
+| File already exists | "This file already exists. Should I replace it, rename the new one, or cancel?" |
+
+**Your approach:**
+1. Stop what you're doing
+2. Explain the situation simply
+3. Give 2-3 clear options
+4. Wait for their answer
+
+**Example:**
+> "I found a few projects in this folder:
+>
+> 1. **todo-app** - 3 tasks done, 2 to go
+> 2. **auth-feature** - Not started yet
+>
+> Which one should we work on?"
+
+---
+
+#### 3. Real Problems (Need Their Help)
+
+These are issues you can't fix. Stop completely and explain what they need to do.
+
+| What Happened | What You Say |
+|---------------|--------------|
+| Permission denied | "I can't write to that folder - it looks like a permissions issue. You might need to check the folder settings." |
+| Config file broken | "One of the settings files got corrupted. You might need to delete it and start fresh, or try to fix it manually." |
+| Git conflict | "There's a git conflict that needs your attention. Once you resolve it, we can continue." |
+| Disk full | "Looks like the disk is full - I can't save anything. Once you free up some space, we can try again." |
+| Connection timeout | "I'm having trouble connecting. Could be a network issue - want to try again?" |
+| Invalid format | "That doesn't look quite right - [specific issue]. Could you check and try again?" |
+
+**Your approach:**
+1. Stop immediately
+2. Explain what went wrong (simply!)
+3. Tell them what needs to happen to fix it
+4. Don't try to fix it yourself
+
+**Example:**
+> "I can't continue - there's a git conflict in some files.
+>
+> Files with conflicts:
+> - src/components/Header.tsx
+> - src/utils/auth.ts
+>
+> Once you resolve these (pick which changes to keep), let me know and we'll continue."
+
+---
+
+### How to Explain Problems
+
+**Don't say this:**
+> "ENOENT: no such file or directory, open '.clavix/outputs/prompts/fast/.index.json'"
+
+**Say this:**
+> "Setting up your prompt storage..." (then just create the file)
+
+**Don't say this:**
+> "Error: EACCES: permission denied, mkdir '/usr/local/clavix'"
+
+**Say this:**
+> "I can't create files in that location - it needs admin permissions.
+> Try running from your project folder instead?"
+
+**Don't say this:**
+> "SyntaxError: Unexpected token } in JSON at position 1523"
+
+**Say this:**
+> "The settings file got corrupted somehow. I can start fresh if you want,
+> or you can try to fix it manually."
+
+---
+
+### Recovery Templates
+
+**For small hiccups (you fixed it):**
 ```
-IF error is RECOVERABLE:
-  → FIX: Apply recovery action automatically
-  → LOG: Note what was fixed
-  → CONTINUE: Resume workflow
+[If worth mentioning]
+"Small hiccup - I've handled it. Moving on..."
+
+[Usually just]
+(Say nothing, continue working)
 ```
 
-### BLOCKING Errors
-
-Agent must stop and ask user before proceeding.
-
-| Error | Detection | Agent Action |
-|-------|-----------|--------------|
-| Task not found | task-complete returns "not found" | ASK: "Task [id] not found in tasks.md. Verify the task ID?" |
-| Multiple PRDs | >1 project detected | ASK: "Multiple projects found: [list]. Which one?" |
-| Ambiguous intent | confidence <50% | ASK: "Unclear intent. Is this: [A] / [B] / [C]?" |
-| Missing PRD for plan | No PRD files exist | ASK: "No PRD found. Create one with /clavix:prd first?" |
-| Task blocked | External dependency | ASK: "Task blocked by [reason]. Skip or resolve?" |
-| Overwrite conflict | File already exists | ASK: "File exists. Overwrite / Rename / Cancel?" |
-
-**Blocking Protocol:**
+**For needing user input:**
 ```
-IF error is BLOCKING:
-  → STOP: Halt current operation
-  → EXPLAIN: Clear description of the issue
-  → OPTIONS: Present available choices
-  → WAIT: For user response before continuing
+"Quick question: [simple explanation of situation]
+
+Would you like me to:
+1. [Option A]
+2. [Option B]
+3. [Option C - usually 'skip for now']"
 ```
 
-### UNRECOVERABLE Errors
-
-Agent must stop completely and report to user for manual resolution.
-
-| Error | Detection | Agent Action |
-|-------|-----------|--------------|
-| Permission denied | EACCES error code | STOP. Report: "Permission denied on [path]. Check file permissions." |
-| Corrupt JSON | JSON.parse throws | STOP. Report: "Config file corrupted at [path]. Manual fix required." |
-| Git conflict | git command fails with conflict | STOP. Report: "Git conflict detected. Resolve manually before continuing." |
-| Disk full | ENOSPC error | STOP. Report: "Disk full. Free up space before continuing." |
-| Network timeout | ETIMEDOUT on external | STOP. Report: "Network timeout. Check connection and retry." |
-| Invalid task ID format | Regex mismatch | STOP. Report: "Invalid task ID format: [id]. Expected: phase-N-name-M" |
-
-**Unrecoverable Protocol:**
+**For real problems:**
 ```
-IF error is UNRECOVERABLE:
-  → STOP: Halt all operations immediately
-  → REPORT: Exact error with context
-  → GUIDE: Manual steps to resolve
-  → NO RETRY: Do not attempt automatic recovery
+"I ran into something I can't fix myself.
+
+What happened: [simple explanation]
+
+To fix this, you'll need to:
+1. [Step 1]
+2. [Step 2]
+
+Once that's done, let me know and we'll pick up where we left off."
 ```
 
-### Error Response Templates
+---
 
-**Recoverable:**
-```
-[Fixed] Created missing .clavix/ directory. Continuing...
-```
+### Common Patterns (Internal Reference)
 
-**Blocking:**
-```
-[Blocked] Multiple projects found. Please select:
-  1. auth-feature (75% complete)
-  2. api-refactor (0% complete)
+**File/Folder Issues:**
+- File not found → Usually create it automatically
+- Already exists → Ask: replace, rename, or cancel?
+- Permission denied → Stop, explain, user needs to fix
+- Disk full → Stop, explain, user needs to free space
 
-Which project should I work with?
-```
+**Git Issues:**
+- CONFLICT detected → Stop, list files, user must resolve
+- Not a git repo → Ask if they want to initialize one
+- Nothing to commit → Fine, just continue
 
-**Unrecoverable:**
-```
-[Error] Cannot continue - manual intervention required.
+**Settings Issues:**
+- Can't read/parse file → Stop, explain, might need to delete and restart
+- Empty file → Usually just initialize with defaults
 
-Issue: Permission denied writing to /path/to/file
-Cause: Insufficient file system permissions
+**Task Issues:**
+- Task not found → Show available tasks, ask which one
+- Already completed → Tell them, show what's left
+- Wrong order → Explain the dependency, offer to fix order
 
-To resolve:
-  1. Check ownership: ls -la /path/to/
-  2. Fix permissions: chmod 755 /path/to/
-  3. Retry the operation
+---
 
-Once resolved, run the command again.
-```
+### The Golden Rules
 
-### Error Detection Patterns
-
-**File System Errors:**
-- `ENOENT` - File/directory not found → Usually RECOVERABLE
-- `EACCES` - Permission denied → UNRECOVERABLE
-- `EEXIST` - Already exists → BLOCKING (ask overwrite)
-- `ENOSPC` - No space left → UNRECOVERABLE
-
-**Git Errors:**
-- "CONFLICT" in output → UNRECOVERABLE
-- "not a git repository" → BLOCKING (ask to init)
-- "nothing to commit" → RECOVERABLE (skip commit)
-
-**JSON Errors:**
-- `SyntaxError: Unexpected token` → UNRECOVERABLE
-- Empty file → RECOVERABLE (initialize default)
-
-**Task Errors:**
-- Task ID not in tasks.md → BLOCKING
-- Checkbox already checked → RECOVERABLE (skip)
-- Invalid phase number → UNRECOVERABLE
+1. **Fix it yourself if you can** - Don't bother users with small stuff
+2. **Explain simply when you can't** - No error codes, no jargon
+3. **Always offer a path forward** - Never leave them stuck
+4. **Preserve their work** - Never lose what they've done
+5. **Stay calm and friendly** - Problems happen, no big deal

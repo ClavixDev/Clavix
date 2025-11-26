@@ -186,22 +186,28 @@ Clavix provides **Clavix Intelligence™** that automatically detects intent and
 
 ---
 
-## Agent Transparency (v4.6)
+## Agent Transparency (v4.9)
 
-### Quality Output Format
-{{INCLUDE:agent-protocols/quality-output.md}}
+### CLI Reference (Commands I Execute)
+{{INCLUDE:agent-protocols/cli-reference.md}}
+
+### How to Explain Improvements
+{{INCLUDE:sections/improvement-explanations.md}}
+
+### Quality Dimensions (Plain English)
+{{INCLUDE:references/quality-dimensions.md}}
+
+### When to Recommend Deep Mode
+{{INCLUDE:sections/escalation-factors.md}}
+
+### What Made the Biggest Difference
+{{INCLUDE:sections/pattern-impact.md}}
 
 ### Agent Decision Rules
 {{INCLUDE:agent-protocols/decision-rules.md}}
 
-### Assertion Checkpoints
-{{INCLUDE:agent-protocols/assertion-checkpoints.md}}
-
-### Escalation Factors (Smart Triage)
-{{INCLUDE:sections/escalation-factors.md}}
-
-### Patterns Applied
-{{INCLUDE:sections/pattern-visibility.md}}
+### Error Handling
+{{INCLUDE:agent-protocols/error-handling.md}}
 
 ---
 
@@ -379,19 +385,20 @@ Confirm:
 
 ## ⛔ STOP HERE - Agent Verification Required
 
-**Your workflow ends here. Before responding to the user:**
+**Your workflow ends here. After saving the prompt, verify it worked.**
 
 ### CLI Verification (Run This Command)
+Run this command yourself to confirm the save worked:
 ```bash
 clavix prompts list
 ```
 
-**Verify**: Your prompt appears in the list with status "pending" or "NEW".
+**If it worked**: Your prompt appears in the list. Great!
 
-**If verification fails**:
-- Check if file was saved to `.clavix/outputs/prompts/fast/`
-- Retry the save operation
-- Check file permissions
+**If it failed**:
+- Create the directory: `mkdir -p .clavix/outputs/prompts/fast`
+- Try saving again
+- If still failing, tell the user: "I had trouble saving, but here's your improved prompt..."
 
 ### Required Response Ending
 
@@ -399,26 +406,28 @@ clavix prompts list
 ```
 ✅ Prompt optimized and saved.
 
-To implement this prompt, run:
+Ready to build this? Just say "let's implement" or run:
 /clavix:execute --latest
 ```
 
-**DO NOT continue to implementation. DO NOT write any code. STOP HERE.**
+**IMPORTANT: Don't start implementing. Don't write code. Your job is done.**
+Wait for the user to decide what to do next.
 
 ---
 
-### Prompt Management (CLI Commands)
+### Prompt Management (Commands You Run)
 
-**List all saved prompts:**
+These are commands you execute when needed - don't ask the user to run them.
+
+**Check saved prompts:**
 ```bash
 clavix prompts list
 ```
 
-**Cleanup after execution:**
+**Cleanup (run when user asks or during maintenance):**
 ```bash
-clavix prompts clear --executed  # Remove executed prompts
-clavix prompts clear --stale     # Remove >30 day old prompts
-clavix prompts clear --fast      # Remove all fast prompts
+clavix prompts clear --executed  # Remove implemented prompts
+clavix prompts clear --stale     # Remove old prompts (>30 days)
 ```
 
 ## Workflow Navigation

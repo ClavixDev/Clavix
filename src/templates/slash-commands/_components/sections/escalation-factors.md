@@ -1,8 +1,94 @@
-## Escalation Analysis (Smart Triage)
+## When Your Prompt Needs More Attention
 
-Smart triage evaluates whether fast mode is sufficient or deep mode is recommended.
+Sometimes a quick cleanup isn't enough. Here's how to know when to recommend deep analysis, and how to explain it to users.
 
-### The 8 Escalation Factors
+---
+
+### Quick Check: Is Fast Mode Enough?
+
+**Fast mode works great when:**
+- User knows what they want
+- Request is straightforward
+- Prompt just needs cleanup/polish
+
+**Suggest deep mode when:**
+- Prompt is vague or confusing
+- Missing lots of important details
+- Complex request (architecture, migration, security)
+- User seems unsure what they need
+
+---
+
+### How to Decide (No Numbers to Users)
+
+**Instead of showing:**
+> "Escalation: 78/100 [STRONGLY RECOMMEND DEEP]"
+
+**Say this:**
+> "This prompt needs more work than a quick cleanup. I'd recommend
+> a thorough analysis where I can explore alternatives, fill in gaps,
+> and give you a much more complete improvement. Want me to do that?"
+
+---
+
+### What Triggers Deep Mode Recommendation
+
+| What You Notice | What to Say |
+|-----------------|-------------|
+| Very vague prompt | "This is pretty open-ended - let me do a thorough analysis to make sure I understand what you need" |
+| Missing lots of details | "There's quite a bit missing here - I should do a deeper dive to fill in the gaps properly" |
+| Planning/architecture request | "For planning something this important, let me give it the full treatment" |
+| Security-related | "Security stuff needs careful thought - let me analyze this thoroughly" |
+| Migration/upgrade | "Migrations can be tricky - I want to make sure we cover all the edge cases" |
+| User seems unsure | "Sounds like you're still figuring this out - let me help explore the options" |
+
+---
+
+### Deep Mode Value (What to Tell Users)
+
+When recommending deep mode, explain what they'll get:
+
+**For vague prompts:**
+> "With deep analysis, I'll explore different ways to interpret this and
+> give you options to choose from."
+
+**For incomplete prompts:**
+> "I'll fill in the gaps with specific requirements, add concrete examples,
+> and create a checklist to verify everything works."
+
+**For complex requests:**
+> "I'll break this down into phases, identify potential issues early,
+> and give you a solid implementation plan."
+
+**For architecture/planning:**
+> "I'll think through the tradeoffs, suggest alternatives, and help you
+> make informed decisions."
+
+---
+
+### How to Transition to Deep Mode
+
+**If user accepts:**
+> "Great, let me take a closer look at this..."
+> [Switch to deep mode analysis]
+
+**If user declines:**
+> "No problem! I'll do what I can with a quick cleanup. You can always
+> run deep mode later if you want more detail."
+> [Continue with fast mode]
+
+**If user is unsure:**
+> "Here's the difference:
+> - **Quick mode:** Clean up and improve what's there (2 minutes)
+> - **Deep mode:** Full analysis with alternatives and checklist (5 minutes)
+>
+> Which sounds better for this?"
+
+---
+
+### Internal Reference: Escalation Factors
+
+The 8 escalation factors for calculating when to recommend deep mode:
 
 | Factor | Trigger Condition | Points |
 |--------|-------------------|--------|
@@ -15,103 +101,49 @@ Smart triage evaluates whether fast mode is sufficient or deep mode is recommend
 | `length-mismatch` | Prompt <50 chars AND completeness <70% | +15 |
 | `complex-intent` | Intent is migration or security-review | +20 |
 
-### Escalation Score Interpretation
+**Recommendation thresholds:**
+| Score | Recommendation |
+|-------|----------------|
+| 75+ | `[STRONGLY RECOMMEND DEEP]` |
+| 60-74 | `[RECOMMEND DEEP]` |
+| 45-59 | `[DEEP MODE AVAILABLE]` |
+| <45 | No escalation - Fast mode sufficient |
 
-| Score | Recommendation | Action |
-|-------|----------------|--------|
-| 75+ | `[STRONGLY RECOMMEND DEEP]` | Show top 3 factors, deep mode value |
-| 60-74 | `[RECOMMEND DEEP]` | Show primary factor |
-| 45-59 | `[DEEP MODE AVAILABLE]` | Mention as option |
-| <45 | No escalation | Fast mode sufficient |
+---
 
-### Output Format
+### Example Conversations
 
-**Show only when score >= 45:**
-
+**Prompt clearly needs deep mode:**
 ```
-Escalation: [SCORE]/100 [[RECOMMENDATION]]
-  Contributing: [Factor1] (+[X]), [Factor2] (+[Y]), [Factor3] (+[Z])
+User: "help with auth"
 
-Deep mode value: [what deep mode would add]
-```
+Agent: "Authentication is important to get right! This prompt is pretty
+       brief - I'd recommend doing a thorough analysis so I can:
+       - Figure out exactly what kind of auth you need
+       - Suggest the right approach for your situation
+       - Create a detailed implementation guide
 
-**Example - High escalation:**
-```
-Escalation: 78/100 [STRONGLY RECOMMEND DEEP]
-  Contributing: low-quality (+25), missing-completeness (+15), low-specificity (+15), intent-type (+23)
-
-Deep mode value: comprehensive requirements extraction, concrete examples, validation checklist, edge case analysis
+       Want me to do that, or just give it a quick cleanup?"
 ```
 
-**Example - Medium escalation:**
+**Prompt is borderline:**
 ```
-Escalation: 55/100 [DEEP MODE AVAILABLE]
-  Contributing: low-confidence (+18), high-ambiguity (+20)
+User: "build a REST API for user management"
 
-Deep mode value: alternative phrasings, clearer intent identification
-```
+Agent: "I can definitely improve this! I notice it's missing some details
+       like tech stack and specific features. I could either:
+       - Quick cleanup: Add the obvious improvements
+       - Deep analysis: Fill in all the gaps and give you a complete spec
 
-### Deep Mode Value Propositions
-
-Based on detected factors, show relevant deep mode benefits:
-
-| Primary Factor | Deep Mode Value |
-|----------------|-----------------|
-| low-quality | Comprehensive requirements extraction, structured output |
-| missing-completeness | Fills gaps with specific requirements, concrete examples |
-| low-specificity | Adds versions, paths, identifiers, measurable criteria |
-| high-ambiguity | Alternative approaches, clearer scope definition |
-| low-confidence | Intent clarification, multiple interpretation handling |
-| intent-type (planning) | Full planning framework, phased approach |
-| complex-intent | Domain-specific considerations, risk assessment |
-
-### Escalation Calculation Details
-
-**Point scaling for continuous factors:**
-
-- `low-confidence`: `(60 - confidence) / 3` points (max 20)
-- `low-quality`: `(65 - quality) / 2.6` points (max 25)
-
-**Example calculation:**
-```
-Prompt: "help me with auth"
-  - Intent: code-generation (52% confidence)
-  - Quality: 38%
-  - Completeness: 25%
-  - Specificity: 40%
-  - Length: 18 chars
-
-Calculation:
-  + 0   intent-type (not planning/prd)
-  + 3   low-confidence: (60-52)/3 = 2.67 → 3
-  + 10  low-quality: (65-38)/2.6 = 10.4 → 10
-  + 15  missing-completeness: 25% < 60%
-  + 15  low-specificity: 40% < 60%
-  + 20  high-ambiguity: open-ended + needs structure
-  + 15  length-mismatch: 18 < 50 chars + incomplete
-  + 0   complex-intent (not migration/security)
-  ────
-  = 78  [STRONGLY RECOMMEND DEEP]
+       Which works better for you?"
 ```
 
-### Agent Decision Based on Escalation
-
+**Prompt is good enough for fast:**
 ```
-IF escalation >= 75:
-  → Present deep mode as strong recommendation
-  → Show: "I strongly recommend using /clavix:deep for this prompt"
-  → List top 3 factors and values
+User: "Create a React component that shows a list of products
+       with name, price, and add-to-cart button. Use TypeScript
+       and styled-components."
 
-IF escalation 60-74:
-  → Present deep mode as recommendation
-  → Show: "Deep mode recommended. Primary issue: [factor]"
-
-IF escalation 45-59:
-  → Mention as option
-  → Show: "Deep mode available for more thorough analysis"
-  → Continue with fast optimization
-
-IF escalation < 45:
-  → No escalation mention
-  → Proceed with fast mode optimization
+Agent: [No escalation needed - proceed with fast mode]
+       "Nice clear prompt! Let me just polish it up a bit..."
 ```
