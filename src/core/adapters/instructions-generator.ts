@@ -1,5 +1,6 @@
 import { FileSystem } from '../../utils/file-system.js';
 import { TemplateAssembler } from '../template-assembler.js';
+import { CommandTransformer } from '../command-transformer.js';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -97,17 +98,24 @@ export class InstructionsGenerator {
     const entries = await FileSystem.readdir(canonicalPath, { withFileTypes: true });
     const mdFiles = entries.filter((f) => f.isFile() && f.name.endsWith('.md'));
 
+    // v4.8.1: Generic integrations use hyphen format for slash commands
+    const genericFeatures = { commandFormat: { separator: '-' as const } };
+
     for (const file of mdFiles) {
       const destPath = path.join(workflowsTarget, file.name);
 
       try {
         // v4.5: Use TemplateAssembler to resolve {{INCLUDE:}} markers
         const result = await assembler.assembleTemplate(file.name);
-        await FileSystem.writeFileAtomic(destPath, result.content);
+        // v4.8.1: Transform command references to hyphen format for generic integrations
+        const transformedContent = CommandTransformer.transform(result.content, genericFeatures);
+        await FileSystem.writeFileAtomic(destPath, transformedContent);
       } catch {
         // Fallback: copy without include resolution if assembly fails
         const srcPath = path.join(canonicalPath, file.name);
-        const content = await FileSystem.readFile(srcPath);
+        let content = await FileSystem.readFile(srcPath);
+        // v4.8.1: Still transform command references in fallback path
+        content = CommandTransformer.transform(content, genericFeatures);
         await FileSystem.writeFileAtomic(destPath, content);
       }
     }

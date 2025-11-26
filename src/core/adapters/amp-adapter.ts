@@ -15,6 +15,7 @@ export class AmpAdapter extends BaseAdapter {
     supportsSubdirectories: false,
     supportsFrontmatter: false,
     supportsExecutableCommands: true,
+    commandFormat: { separator: '-' as const },
   };
 
   /**

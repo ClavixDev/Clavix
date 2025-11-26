@@ -13,6 +13,7 @@ export class CursorAdapter extends BaseAdapter {
   readonly features = {
     supportsSubdirectories: false,
     supportsFrontmatter: false,
+    commandFormat: { separator: '-' as const },
   };
 
   /**

@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.8.1] - 2025-11-26
+
+### Command Format Normalization Release
+
+**Automatic slash command format transformation based on integration type. Fixes cross-command reference confusion in flat-file integrations.**
+
+> Thanks to **Pickmeister** from Discord for pointing out problems with recent releases!
+
+#### New Feature: CommandTransformer Service
+Automatically transforms slash command references based on integration format:
+- **Colon format** `/clavix:execute` for subdirectory-based integrations (Claude Code, Gemini, Qwen)
+- **Hyphen format** `/clavix-execute` for flat-file integrations (Cursor, Droid, Windsurf, etc.)
+
+#### New Files
+- `src/core/command-transformer.ts` - Core transformation service
+- `tests/core/command-transformer.test.ts` - 35 comprehensive tests
+
+#### Updated Components
+- `IntegrationFeatures` interface - Added `commandFormat` property
+- `template-loader.ts` - Integrated CommandTransformer in loading pipeline
+- `instructions-generator.ts` - Generic integrations use hyphen format
+
+#### Adapters with Hyphen Separator (10)
+| Adapter | Directory |
+|---------|-----------|
+| Cursor | `.cursor/commands/` |
+| Droid | `.factory/commands/` |
+| Windsurf | `.windsurf/workflows/` |
+| Cline | `.cline/commands/` |
+| KiloCode | `.kilocode/commands/` |
+| RooCode | `.roo/commands/` |
+| Amp | `.agents/commands/` |
+| CodeBuddy | `.codebuddy/commands/` |
+| Codex | `.codex/commands/` |
+| OpenCode | `.opencode/command/` |
+
+#### Adapters Using Default Colon (6)
+Claude Code, Gemini, Qwen, LLxpert, Crush, Augment
+
+---
+
 ## [4.8.0] - 2025-11-26
 
 ### Checklist Verification System Release

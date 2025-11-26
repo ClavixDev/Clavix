@@ -4,6 +4,7 @@ import { dirname } from 'path';
 import { AgentAdapter, CommandTemplate } from '../types/agent.js';
 import { FileSystem } from './file-system.js';
 import { TemplateAssembler } from '../core/template-assembler.js';
+import { CommandTransformer } from '../core/command-transformer.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,7 +20,7 @@ function getAssembler(): TemplateAssembler {
   return assemblerInstance;
 }
 
-export async function loadCommandTemplates(_adapter: AgentAdapter): Promise<CommandTemplate[]> {
+export async function loadCommandTemplates(adapter: AgentAdapter): Promise<CommandTemplate[]> {
   // Load from canonical template source (always .md files)
   const templatesDir = getCanonicalTemplatesDirectory();
   const files = await FileSystem.listFiles(templatesDir);
@@ -50,6 +51,10 @@ export async function loadCommandTemplates(_adapter: AgentAdapter): Promise<Comm
         console.warn(`Template assembly warning for ${file}:`, error);
       }
     }
+
+    // v4.8.1: Transform command references based on adapter format
+    // Converts /clavix:command to /clavix-command for flat-file integrations
+    content = CommandTransformer.transform(content, adapter.features);
 
     // Clean content from markdown
     const cleanContent = stripFrontmatter(content);

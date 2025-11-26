@@ -17,6 +17,7 @@ export class OpenCodeAdapter extends BaseAdapter {
     supportsFrontmatter: true,
     frontmatterFields: ['description', 'agent', 'model'],
     argumentPlaceholder: '$ARGUMENTS',
+    commandFormat: { separator: '-' as const },
   };
 
   /**

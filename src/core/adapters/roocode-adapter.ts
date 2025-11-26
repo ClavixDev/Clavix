@@ -22,6 +22,7 @@ export class RoocodeAdapter extends BaseAdapter {
   readonly features = {
     supportsSubdirectories: false,
     supportsFrontmatter: true,
+    commandFormat: { separator: '-' as const },
   };
 
   /**

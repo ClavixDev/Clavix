@@ -18,6 +18,7 @@ export class CodeBuddyAdapter extends BaseAdapter {
     supportsFrontmatter: true,
     argumentPlaceholder: '$1',
     frontmatterFields: ['description', 'argument-hint'],
+    commandFormat: { separator: '-' as const },
   };
 
   async detectProject(): Promise<boolean> {

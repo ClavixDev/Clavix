@@ -24,6 +24,8 @@ export interface IntegrationFeatures {
   supportsSubdirectories?: boolean;
   argumentPlaceholder?: string;
   frontmatterFields?: string[];
+  /** Command format for slash command references in templates. Default: colon (:) */
+  commandFormat?: { separator: ':' | '-' };
 }
 
 /**

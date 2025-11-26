@@ -45,6 +45,7 @@ describe('CursorAdapter', () => {
       expect(adapter.features).toEqual({
         supportsSubdirectories: false,
         supportsFrontmatter: false,
+        commandFormat: { separator: '-' },
       });
     });
 
@@ -108,14 +109,8 @@ describe('CursorAdapter', () => {
       await adapter.generateCommands(templates);
 
       const commandPath = adapter.getCommandPath();
-      const file1 = await fs.readFile(
-        path.join(commandPath, 'clavix-fast.md'),
-        'utf-8'
-      );
-      const file2 = await fs.readFile(
-        path.join(commandPath, 'clavix-deep.md'),
-        'utf-8'
-      );
+      const file1 = await fs.readFile(path.join(commandPath, 'clavix-fast.md'), 'utf-8');
+      const file2 = await fs.readFile(path.join(commandPath, 'clavix-deep.md'), 'utf-8');
 
       expect(file1).toBe('# Fast Mode\n\nQuick analysis');
       expect(file2).toBe('# Deep Mode\n\nComprehensive');
@@ -160,10 +155,7 @@ describe('CursorAdapter', () => {
 
     it('should overwrite existing commands', async () => {
       await fs.ensureDir('.cursor/commands');
-      await fs.writeFile(
-        '.cursor/commands/clavix-test.md',
-        'Old content'
-      );
+      await fs.writeFile('.cursor/commands/clavix-test.md', 'Old content');
 
       const templates: CommandTemplate[] = [
         { name: 'test', description: 'Test', content: 'New content' },
@@ -171,10 +163,7 @@ describe('CursorAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.cursor/commands/clavix-test.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.cursor/commands/clavix-test.md', 'utf-8');
       expect(content).toBe('New content');
       expect(content).not.toContain('Old content');
     });
@@ -196,16 +185,11 @@ describe('CursorAdapter', () => {
 
     it('should preserve content format without frontmatter', async () => {
       const content = '# Title\n\nContent without frontmatter';
-      const templates: CommandTemplate[] = [
-        { name: 'test', description: 'Test', content },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'test', description: 'Test', content }];
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(
-        '.cursor/commands/clavix-test.md',
-        'utf-8'
-      );
+      const fileContent = await fs.readFile('.cursor/commands/clavix-test.md', 'utf-8');
       expect(fileContent).toBe(content);
       expect(fileContent).not.toContain('---');
     });
@@ -224,7 +208,7 @@ describe('CursorAdapter', () => {
       const items = await fs.readdir(commandPath, { withFileTypes: true });
 
       // All items should be files, not directories
-      const directories = items.filter(item => item.isDirectory());
+      const directories = items.filter((item) => item.isDirectory());
       expect(directories.length).toBe(0);
     });
 
@@ -271,10 +255,7 @@ describe('CursorAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.cursor/commands/clavix-long.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.cursor/commands/clavix-long.md', 'utf-8');
       expect(content.length).toBe(10000);
     });
 
@@ -283,46 +264,33 @@ describe('CursorAdapter', () => {
         {
           name: 'unicode',
           description: 'Unicode test',
-          content: 'Test with émojis 🚀 and spëcial çhars'
+          content: 'Test with émojis 🚀 and spëcial çhars',
         },
       ];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.cursor/commands/clavix-unicode.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.cursor/commands/clavix-unicode.md', 'utf-8');
       expect(content).toContain('émojis');
       expect(content).toContain('🚀');
     });
 
     it('should handle empty content', async () => {
-      const templates: CommandTemplate[] = [
-        { name: 'empty', description: 'Empty', content: '' },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'empty', description: 'Empty', content: '' }];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.cursor/commands/clavix-empty.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.cursor/commands/clavix-empty.md', 'utf-8');
       expect(content).toBe('');
     });
 
     it('should handle commands with newlines', async () => {
       const content = 'Line 1\n\nLine 2\n\n\nLine 3';
-      const templates: CommandTemplate[] = [
-        { name: 'newlines', description: 'Newlines', content },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'newlines', description: 'Newlines', content }];
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(
-        '.cursor/commands/clavix-newlines.md',
-        'utf-8'
-      );
+      const fileContent = await fs.readFile('.cursor/commands/clavix-newlines.md', 'utf-8');
       expect(fileContent).toBe(content);
     });
   });

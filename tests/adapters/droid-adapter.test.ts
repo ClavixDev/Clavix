@@ -47,6 +47,7 @@ describe('DroidAdapter', () => {
         supportsFrontmatter: true,
         frontmatterFields: ['description', 'argument-hint'],
         argumentPlaceholder: '$ARGUMENTS',
+        commandFormat: { separator: '-' },
       });
     });
 
@@ -210,10 +211,7 @@ describe('DroidAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.factory/commands/clavix-fast.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.factory/commands/clavix-fast.md', 'utf-8');
 
       expect(content).toContain('---');
       expect(content).toContain('description: Fast improvements');
@@ -256,10 +254,7 @@ describe('DroidAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.factory/commands/clavix-process.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.factory/commands/clavix-process.md', 'utf-8');
 
       expect(content).toContain('$ARGUMENTS');
       expect(content).not.toContain('{{ARGS}}');
@@ -269,17 +264,14 @@ describe('DroidAdapter', () => {
       const templates: CommandTemplate[] = [
         {
           name: 'test',
-          description: "Test: with 'quotes' and \"double quotes\"",
+          description: 'Test: with \'quotes\' and "double quotes"',
           content: 'Content',
         },
       ];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.factory/commands/clavix-test.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.factory/commands/clavix-test.md', 'utf-8');
 
       expect(content).toContain("Test: with 'quotes'");
     });
@@ -328,10 +320,7 @@ describe('DroidAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.factory/commands/clavix-unicode.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.factory/commands/clavix-unicode.md', 'utf-8');
 
       expect(content).toContain('🚀 émojis');
     });

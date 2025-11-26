@@ -21,6 +21,7 @@ export class ClineAdapter extends BaseAdapter {
   readonly features = {
     supportsSubdirectories: false,
     supportsFrontmatter: false,
+    commandFormat: { separator: '-' as const },
   };
 
   /**

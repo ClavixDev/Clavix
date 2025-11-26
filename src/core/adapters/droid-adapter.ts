@@ -17,6 +17,7 @@ export class DroidAdapter extends BaseAdapter {
     supportsFrontmatter: true,
     frontmatterFields: ['description', 'argument-hint'],
     argumentPlaceholder: '$ARGUMENTS',
+    commandFormat: { separator: '-' as const },
   };
 
   /**

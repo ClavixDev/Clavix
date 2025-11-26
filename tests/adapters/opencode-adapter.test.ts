@@ -6,7 +6,16 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import { OpenCodeAdapter } from '../../src/core/adapters/opencode-adapter';
 import { CommandTemplate } from '../../src/types/agent';
-import { describe, it, expect, beforeEach, afterEach, jest, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+  beforeAll,
+  afterAll,
+} from '@jest/globals';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -58,6 +67,7 @@ describe('OpenCodeAdapter', () => {
         supportsFrontmatter: true,
         frontmatterFields: ['description', 'agent', 'model'],
         argumentPlaceholder: '$ARGUMENTS',
+        commandFormat: { separator: '-' },
       });
     });
 
@@ -215,10 +225,7 @@ describe('OpenCodeAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.opencode/command/clavix-fast.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.opencode/command/clavix-fast.md', 'utf-8');
 
       expect(content).toContain('---');
       expect(content).toContain('description: Fast improvements');
@@ -260,10 +267,7 @@ describe('OpenCodeAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.opencode/command/clavix-process.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.opencode/command/clavix-process.md', 'utf-8');
 
       expect(content).toContain('$ARGUMENTS');
       expect(content).not.toContain('{{ARGS}}');
@@ -273,17 +277,14 @@ describe('OpenCodeAdapter', () => {
       const templates: CommandTemplate[] = [
         {
           name: 'test',
-          description: "Test: with 'quotes' and \"double quotes\"",
+          description: 'Test: with \'quotes\' and "double quotes"',
           content: 'Content',
         },
       ];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.opencode/command/clavix-test.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.opencode/command/clavix-test.md', 'utf-8');
 
       expect(content).toContain("Test: with 'quotes'");
     });
@@ -298,10 +299,7 @@ describe('OpenCodeAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.opencode/command/clavix-test.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.opencode/command/clavix-test.md', 'utf-8');
       expect(content).toContain('New content');
       expect(content).not.toContain('Old content');
     });
@@ -368,10 +366,7 @@ describe('OpenCodeAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.opencode/command/clavix-unicode.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.opencode/command/clavix-unicode.md', 'utf-8');
 
       expect(content).toContain('🚀 émojis');
     });

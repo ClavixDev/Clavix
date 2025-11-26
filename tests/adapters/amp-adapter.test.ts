@@ -46,6 +46,7 @@ describe('AmpAdapter', () => {
         supportsSubdirectories: false,
         supportsFrontmatter: false,
         supportsExecutableCommands: true,
+        commandFormat: { separator: '-' },
       });
     });
 
@@ -113,14 +114,8 @@ describe('AmpAdapter', () => {
       await adapter.generateCommands(templates);
 
       const commandPath = adapter.getCommandPath();
-      const file1 = await fs.readFile(
-        path.join(commandPath, 'clavix-fast.md'),
-        'utf-8'
-      );
-      const file2 = await fs.readFile(
-        path.join(commandPath, 'clavix-deep.md'),
-        'utf-8'
-      );
+      const file1 = await fs.readFile(path.join(commandPath, 'clavix-fast.md'), 'utf-8');
+      const file2 = await fs.readFile(path.join(commandPath, 'clavix-deep.md'), 'utf-8');
 
       expect(file1).toBe('# Fast Mode\n\nQuick analysis');
       expect(file2).toBe('# Deep Mode\n\nComprehensive');
@@ -165,10 +160,7 @@ describe('AmpAdapter', () => {
 
     it('should overwrite existing commands', async () => {
       await fs.ensureDir('.agents/commands');
-      await fs.writeFile(
-        '.agents/commands/clavix-test.md',
-        'Old content'
-      );
+      await fs.writeFile('.agents/commands/clavix-test.md', 'Old content');
 
       const templates: CommandTemplate[] = [
         { name: 'test', description: 'Test', content: 'New content' },
@@ -176,10 +168,7 @@ describe('AmpAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.agents/commands/clavix-test.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.agents/commands/clavix-test.md', 'utf-8');
       expect(content).toBe('New content');
       expect(content).not.toContain('Old content');
     });
@@ -201,16 +190,11 @@ describe('AmpAdapter', () => {
 
     it('should preserve content format without frontmatter', async () => {
       const content = '# Title\n\nContent without frontmatter';
-      const templates: CommandTemplate[] = [
-        { name: 'test', description: 'Test', content },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'test', description: 'Test', content }];
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(
-        '.agents/commands/clavix-test.md',
-        'utf-8'
-      );
+      const fileContent = await fs.readFile('.agents/commands/clavix-test.md', 'utf-8');
       expect(fileContent).toBe(content);
       expect(fileContent).not.toContain('---');
     });
@@ -226,10 +210,7 @@ describe('AmpAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.agents/commands/clavix-simple.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.agents/commands/clavix-simple.md', 'utf-8');
 
       // Should not add any special formatting
       expect(content).toBe('Simple markdown content');
@@ -249,7 +230,7 @@ describe('AmpAdapter', () => {
       const items = await fs.readdir(commandPath, { withFileTypes: true });
 
       // All items should be files, not directories
-      const directories = items.filter(item => item.isDirectory());
+      const directories = items.filter((item) => item.isDirectory());
       expect(directories.length).toBe(0);
     });
 
@@ -295,10 +276,7 @@ describe('AmpAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.agents/commands/clavix-long.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.agents/commands/clavix-long.md', 'utf-8');
       expect(content.length).toBe(10000);
     });
 
@@ -307,61 +285,43 @@ describe('AmpAdapter', () => {
         {
           name: 'unicode',
           description: 'Unicode test',
-          content: 'Test with émojis 🚀 and spëcial çhars'
+          content: 'Test with émojis 🚀 and spëcial çhars',
         },
       ];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.agents/commands/clavix-unicode.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.agents/commands/clavix-unicode.md', 'utf-8');
       expect(content).toContain('émojis');
       expect(content).toContain('🚀');
     });
 
     it('should handle empty content', async () => {
-      const templates: CommandTemplate[] = [
-        { name: 'empty', description: 'Empty', content: '' },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'empty', description: 'Empty', content: '' }];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.agents/commands/clavix-empty.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.agents/commands/clavix-empty.md', 'utf-8');
       expect(content).toBe('');
     });
 
     it('should handle commands with newlines', async () => {
       const content = 'Line 1\n\nLine 2\n\n\nLine 3';
-      const templates: CommandTemplate[] = [
-        { name: 'newlines', description: 'Newlines', content },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'newlines', description: 'Newlines', content }];
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(
-        '.agents/commands/clavix-newlines.md',
-        'utf-8'
-      );
+      const fileContent = await fs.readFile('.agents/commands/clavix-newlines.md', 'utf-8');
       expect(fileContent).toBe(content);
     });
 
     it('should handle markdown code blocks', async () => {
       const content = '```bash\necho "hello"\n```';
-      const templates: CommandTemplate[] = [
-        { name: 'code', description: 'Code', content },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'code', description: 'Code', content }];
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(
-        '.agents/commands/clavix-code.md',
-        'utf-8'
-      );
+      const fileContent = await fs.readFile('.agents/commands/clavix-code.md', 'utf-8');
       expect(fileContent).toBe(content);
     });
   });
@@ -428,10 +388,7 @@ describe('AmpAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.agents/commands/clavix-build.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.agents/commands/clavix-build.md', 'utf-8');
 
       expect(content).toBe('```bash\nnpm run build\n```');
     });

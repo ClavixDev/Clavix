@@ -21,6 +21,7 @@ export class WindsurfAdapter extends BaseAdapter {
   readonly features = {
     supportsSubdirectories: true,
     supportsFrontmatter: false,
+    commandFormat: { separator: '-' as const },
   };
 
   /**

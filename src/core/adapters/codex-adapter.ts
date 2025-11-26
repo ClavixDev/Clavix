@@ -18,6 +18,7 @@ export class CodexAdapter extends BaseAdapter {
     supportsFrontmatter: true,
     argumentPlaceholder: '$ARGUMENTS',
     frontmatterFields: ['description', 'argument-hint'],
+    commandFormat: { separator: '-' as const },
   };
 
   async detectProject(): Promise<boolean> {
