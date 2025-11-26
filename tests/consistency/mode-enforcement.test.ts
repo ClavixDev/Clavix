@@ -45,16 +45,16 @@ describe('Mode Enforcement Consistency', () => {
       expect(topSection).toContain('NOT IMPLEMENTATION');
     });
 
-    it('fast.md has explicit "YOU MUST NOT" section', () => {
-      expect(fastTemplate).toContain('YOU MUST NOT');
-      expect(fastTemplate).toContain('Write any application code');
-      expect(fastTemplate).toContain('Start implementing');
+    it('fast.md has explicit forbidden actions section', () => {
+      expect(fastTemplate).toContain('ALL FORBIDDEN');
+      expect(fastTemplate).toContain('Writing any code files');
+      expect(fastTemplate).toContain('Exploring the codebase');
     });
 
-    it('deep.md has explicit "YOU MUST NOT" section', () => {
-      expect(deepTemplate).toContain('YOU MUST NOT');
-      expect(deepTemplate).toContain('Write any application code');
-      expect(deepTemplate).toContain('Start implementing');
+    it('deep.md has explicit forbidden actions section', () => {
+      expect(deepTemplate).toContain('ALL FORBIDDEN');
+      expect(deepTemplate).toContain('Writing any code files');
+      expect(deepTemplate).toContain('Exploring the codebase');
     });
 
     it('fast.md tells agent to run /clavix:execute for implementation', () => {

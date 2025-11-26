@@ -5,6 +5,111 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.10.0] - 2025-11-26
+
+### Agent Discipline & Knowledge Completion Release
+
+**Strengthened mode enforcement to prevent agents from jumping to implementation. Added programmatic analysis endpoint and improved command visibility for agentic workflows.**
+
+> This release addresses a critical issue where agents would ignore "DO NOT IMPLEMENT" headers and immediately start exploring the codebase instead of analyzing prompts.
+
+#### P0: Strengthened Agent Discipline
+
+**Problem:** Agents read "DO NOT IMPLEMENT" headers and implement anyway.
+
+**Solution:** Multi-layer discipline system with checkpoints + stronger headers:
+
+| Component | Change |
+|-----------|--------|
+| Opening headers (fast.md, deep.md) | Explicit list of forbidden actions including "exploring codebase before analysis" |
+| Checkpoint gates | Required output verification before proceeding to save |
+| Anti-implementation tripwires | Self-check questions before any tool call |
+| Self-correction component | Added tripwire table with specific responses |
+
+**New Header Sections:**
+- "What Implementation Looks Like (ALL FORBIDDEN)" - Explicit examples of wrong behavior
+- "The ONLY Actions Allowed" - Whitelist of permitted actions
+- "Critical Understanding" - Explains why agents jump to implementation
+
+**New Checkpoint Section:**
+```markdown
+## ⛔ CHECKPOINT: Analysis Complete?
+Before proceeding to save, verify you have output ALL of the following:
+- [ ] Intent Analysis section with type and confidence %
+- [ ] Quality Assessment with all 6 dimensions scored
+- [ ] Optimized Prompt in a code block
+...
+```
+
+#### P1: Test Fix
+
+Fixed path resolution in `agent-first-execution.test.ts` - glob pattern now correctly finds canonical templates.
+
+#### P2: Agent Knowledge Completion
+
+**Added prominent command visibility for:**
+- `task-complete` - Critical command with explicit callout in implement.md
+- `list`, `show` - Navigation commands in "Finding Your Way Around" section
+
+**Updated Templates:**
+| Template | New Section |
+|----------|-------------|
+| implement.md | "⚠️ Critical Command: task-complete" |
+| implement.md | "Finding Your Way Around" |
+| execute.md | "Finding Your Way Around" |
+
+#### P3: New `clavix analyze` Command
+
+Programmatic analysis endpoint for agent decision-making:
+
+```bash
+$ clavix analyze "build a login page"
+{
+  "intent": "code-generation",
+  "confidence": 85,
+  "quality": {
+    "overall": 42,
+    "clarity": 35,
+    "efficiency": 60,
+    ...
+  },
+  "escalation": {
+    "score": 75,
+    "recommend": "deep",
+    "factors": ["low quality", "missing tech stack", "vague scope"]
+  }
+}
+```
+
+**Flags:**
+- `--pretty` - Pretty-print JSON output
+
+**Benefits:**
+- Agents can make data-driven mode decisions
+- Reduces hallucination of quality scores
+- Enables future automation
+
+#### Files Changed
+
+**Templates (P0 - Agent Discipline):**
+- `src/templates/slash-commands/_canonical/fast.md` - Strengthened header, added checkpoint
+- `src/templates/slash-commands/_canonical/deep.md` - Strengthened header, added checkpoint
+- `src/templates/slash-commands/_components/agent-protocols/self-correction.md` - Added tripwires
+
+**Templates (P2 - Knowledge Completion):**
+- `src/templates/slash-commands/_canonical/implement.md` - task-complete prominence, navigation
+- `src/templates/slash-commands/_canonical/execute.md` - Navigation commands
+- `src/templates/slash-commands/_components/agent-protocols/cli-reference.md` - analyze command
+
+**Tests:**
+- `tests/consistency/agent-first-execution.test.ts` - Fixed path resolution
+
+**New Files (P3):**
+- `src/cli/commands/analyze.ts` - New analyze command
+- `tests/cli/commands/analyze.test.ts` - Analyze command tests
+
+---
+
 ## [4.8.1] - 2025-11-26
 
 ### Command Format Normalization Release

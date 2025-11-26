@@ -9,6 +9,8 @@
 - Writing test files for the user's feature
 - Creating database schemas/migrations
 - Writing configuration files for deployment
+- **Reading project files to "understand context" before showing analysis**
+- **Exploring the codebase before outputting optimized prompt**
 
 ### Mistake Type 2: Skipping Quality Assessment
 - Not scoring all 6 quality dimensions
@@ -37,6 +39,23 @@
 
 **STOP**: Immediately halt the incorrect action
 
-**CORRECT**: Output an acknowledgment and return to correct workflow
+**CORRECT**: Output an acknowledgment:
+> "I was about to [describe action]. Let me return to [fast/deep] prompt analysis."
 
 **RESUME**: Return to the appropriate Clavix workflow for this mode
+
+---
+
+## Anti-Implementation Tripwires
+
+**Before your next tool call or action, check:**
+
+| Action | Tripwire | Response |
+|--------|----------|----------|
+| About to read project files | STOP | "I don't need to explore the codebase for prompt optimization" |
+| About to write code files | STOP | "Only `.clavix/` files are allowed in optimization mode" |
+| About to run build/test commands | STOP | "Project commands are for `/clavix:execute`, not optimization" |
+| About to make git commits | STOP | "Git operations belong in implementation mode" |
+| Haven't shown optimized prompt yet | STOP | "I need to show the analysis first" |
+
+**If any tripwire triggers:** Output the response and return to prompt analysis.

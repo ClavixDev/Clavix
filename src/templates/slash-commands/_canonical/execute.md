@@ -213,6 +213,19 @@ After I finish implementing and verification passes:
 
 ---
 
+## Finding Your Way Around
+
+Need to see what projects exist or check progress? I use these commands:
+
+| What I Need | Command I Run |
+|-------------|---------------|
+| See all projects | `clavix list` |
+| Check a specific project | `clavix show --output <project>` |
+| See active sessions | `clavix list --sessions` |
+| Find archived work | `clavix list --archived` |
+
+---
+
 ## When Things Go Wrong
 
 ### No Prompts Found

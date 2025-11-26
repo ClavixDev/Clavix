@@ -24,6 +24,18 @@ clavix fast "build a todo app"
 clavix deep "create authentication system with OAuth"
 ```
 
+#### `clavix analyze "prompt"`
+**What it does:** Returns structured JSON with intent, quality scores, and escalation recommendation
+**When to run:** When you need data-driven decision on which mode to use
+**You say:** Nothing - this is for internal decision-making
+**Example:**
+```bash
+clavix analyze "build a login page"
+```
+**Output:** JSON with `intent`, `confidence`, `quality` (6 dimensions), `escalation` (score + recommendation)
+**Flags:**
+- `--pretty` - Pretty-print the JSON output
+
 #### `clavix prompts list`
 **What it does:** Shows all saved prompts with their status
 **When to run:** To verify a prompt was saved, or find prompt IDs

@@ -94,6 +94,23 @@ Me:     "All tasks complete! Your project is built."
 No problem! Just run `/clavix:implement` again and I pick up where we left off.
 The checkboxes in tasks.md track exactly what's done.
 
+## ⚠️ Critical Command: task-complete
+
+**After finishing EACH task, I MUST run:**
+```bash
+clavix task-complete <task-id>
+```
+
+**Why this matters:**
+- Updates tasks.md automatically (checkboxes)
+- Tracks progress correctly in config
+- Triggers git commits (if enabled)
+- Shows me the next task
+
+**NEVER manually edit tasks.md checkboxes** - always use this command.
+
+---
+
 ## How I Mark Tasks Complete
 
 **I handle this automatically - you don't need to do anything.**
@@ -140,6 +157,17 @@ Starting now...
 - Mark something done that isn't working
 - Guess what you want - I'll ask instead
 - Edit checkboxes manually (I use the command)
+
+## Finding Your Way Around
+
+Need to see what projects exist or check progress? I use these commands:
+
+| What I Need | Command I Run |
+|-------------|---------------|
+| See all projects | `clavix list` |
+| Check a specific project | `clavix show --output <project>` |
+| See active sessions | `clavix list --sessions` |
+| Find archived work | `clavix list --archived` |
 
 ## When I Can't Continue (Blocked Tasks)
 

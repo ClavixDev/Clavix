@@ -74,7 +74,7 @@ const ACCEPTABLE_CONTEXTS = [
 ];
 
 // Files to test
-const CANONICAL_TEMPLATES = 'src/templates/slash-commands/_canonical/**/*.md';
+const CANONICAL_TEMPLATES_PATTERN = 'src/templates/slash-commands/_canonical/*.md';
 
 describe('Agent-First Execution Model', () => {
   let templateFiles: string[] = [];
@@ -82,7 +82,9 @@ describe('Agent-First Execution Model', () => {
 
   beforeAll(() => {
     const cwd = process.cwd();
-    templateFiles = glob.sync(CANONICAL_TEMPLATES, { cwd });
+
+    // Use glob with pattern and cwd option
+    templateFiles = glob.sync(CANONICAL_TEMPLATES_PATTERN, { cwd });
 
     for (const file of templateFiles) {
       const fullPath = path.join(cwd, file);

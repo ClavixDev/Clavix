@@ -7,19 +7,26 @@ description: Comprehensive analysis with alternatives, edge cases, and validatio
 
 **THIS IS A PROMPT ANALYSIS WORKFLOW. YOU MUST NOT IMPLEMENT ANYTHING.**
 
-## YOU MUST NOT:
-- ❌ Write any application code
-- ❌ Create any new files (except prompt save files)
-- ❌ Modify any existing project code
-- ❌ Start implementing the prompt's requirements
-- ❌ Generate components, functions, or features
+## Critical Understanding
 
-## YOU MUST:
-1. ✅ Analyze the user's prompt comprehensively
-2. ✅ Apply all intelligence patterns
-3. ✅ Show the optimized prompt + alternatives + edge cases
-4. ✅ Save the prompt (CLI command or manual)
-5. ✅ **STOP and wait** for user to run `/clavix:execute`
+This template exists because agents (including you) tend to "help" by doing work immediately.
+**That's the wrong behavior here.** Your job is to ANALYZE and IMPROVE the prompt, then STOP.
+
+## What "Implementation" Looks Like (ALL FORBIDDEN)
+- ❌ Reading project files to "understand context" before showing analysis
+- ❌ Writing any code files (functions, classes, components)
+- ❌ Creating components, features, or API endpoints
+- ❌ Running build/test commands on the user's project
+- ❌ Making git commits
+- ❌ ANY action that modifies files outside `.clavix/`
+- ❌ Exploring the codebase before outputting your analysis
+
+## The ONLY Actions Allowed
+1. ✅ Read the user's prompt text (the `{{ARGS}}` provided)
+2. ✅ Analyze it comprehensively using the workflow below
+3. ✅ Output the analysis (intent, quality, optimized prompt, alternatives, edge cases)
+4. ✅ Save to `.clavix/outputs/prompts/deep/`
+5. ✅ STOP and wait for `/clavix:execute`
 
 ## IF USER WANTS TO IMPLEMENT:
 Tell them: **"Run `/clavix:execute --latest` to implement this prompt."**
@@ -380,6 +387,34 @@ Consider using `/clavix:prd` if this login page is part of a larger authenticati
 - **Fast mode** (`/clavix:fast`): Quick optimization - best for simple, clear requests
 - **Deep mode** (`/clavix:deep`): Comprehensive analysis - best for complex prompts needing exploration
 - **PRD mode** (`/clavix:prd`): Strategic planning - best for features requiring architecture/business decisions
+
+---
+
+## ⛔ CHECKPOINT: Analysis Complete?
+
+**Before proceeding to save, verify you have output ALL of the following:**
+
+- [ ] **Intent Analysis** section with type and confidence %
+- [ ] **Quality Assessment** with all 6 dimensions scored
+- [ ] **Optimized Prompt** in a code block
+- [ ] **Improvements Applied** list with dimension labels
+- [ ] **Alternative Approaches** (2-3 alternatives)
+- [ ] **Validation Checklist** for implementation verification
+- [ ] **Edge Cases** to consider
+
+**If ANY checkbox above is unchecked, STOP. Go back and complete the analysis.**
+
+**Self-Check Before Any Action:**
+- Am I about to write/edit code files? → STOP (only `.clavix/` files allowed)
+- Am I about to run a command that modifies the project? → STOP
+- Am I exploring the codebase to "understand" before showing analysis? → STOP
+- Have I shown the user the optimized prompt yet? → If NO, do that first
+
+If any tripwire triggered: Output "I was about to [action]. Let me return to deep prompt analysis."
+
+Only after ALL items are checked should you proceed to the "Saving the Prompt" section below.
+
+---
 
 ## Next Steps
 
