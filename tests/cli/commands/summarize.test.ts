@@ -119,7 +119,7 @@ function createMockOptimizationResult(overrides: Partial<any> = {}) {
     enhanced:
       'Create a secure login page with email validation, password field, and proper error handling using React and TypeScript.',
     original: 'Build a login page',
-    mode: 'fast',
+    depthLevel: 'standard',
     intent: { primaryIntent: 'code-generation', confidence: 85 },
     quality: { overall: 78 },
     improvements: [{ description: 'Added specificity', dimension: 'clarity', impact: 'medium' }],

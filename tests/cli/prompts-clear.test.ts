@@ -53,32 +53,34 @@ describe('Prompts clear CLI command', () => {
   });
 
   it('removes only executed prompts when using --executed flag', async () => {
-    const executed = await manager.savePrompt('# done', 'fast', 'Done');
+    // v4.11: Use DepthLevel instead of PromptSource
+    const executed = await manager.savePrompt('# done', 'standard', 'Done');
     await manager.markExecuted(executed.id);
-    const pending = await manager.savePrompt('# pending', 'fast', 'Pending');
+    const pending = await manager.savePrompt('# pending', 'standard', 'Pending');
 
     await PromptsClear.run(['--executed']);
 
-    const remaining = await manager.listPrompts({ source: 'fast' });
-    expect(remaining.find(p => p.id === executed.id)).toBeUndefined();
-    expect(remaining.find(p => p.id === pending.id)).toBeDefined();
+    const remaining = await manager.listPrompts({ depthUsed: 'standard' });
+    expect(remaining.find((p) => p.id === executed.id)).toBeUndefined();
+    expect(remaining.find((p) => p.id === pending.id)).toBeDefined();
   });
 
   it('uses interactive flow when no flags provided', async () => {
-    const fast = await manager.savePrompt('# fast', 'fast', 'Fast prompt');
-    await manager.markExecuted(fast.id);
+    // v4.11: Use DepthLevel instead of PromptSource
+    const prompt = await manager.savePrompt('# standard', 'standard', 'Standard prompt');
+    await manager.markExecuted(prompt.id);
 
     const promptMock = mockInquirer([{ selection: 'executed' }, { confirm: true }]);
 
     await PromptsClear.run([]);
 
     const remaining = await manager.listPrompts();
-    expect(remaining.find(p => p.id === fast.id)).toBeUndefined();
+    expect(remaining.find((p) => p.id === prompt.id)).toBeUndefined();
     expect(promptMock).toHaveBeenCalledTimes(2);
   });
 
   it('warns about unexecuted prompts and cancels when user declines', async () => {
-    await manager.savePrompt('# pending', 'fast', 'Pending prompt');
+    await manager.savePrompt('# pending', 'standard', 'Pending prompt');
 
     mockInquirer([{ selection: 'all' }, { confirm: false }]);
 
@@ -86,12 +88,12 @@ describe('Prompts clear CLI command', () => {
 
     const remaining = await manager.listPrompts();
     expect(remaining.length).toBe(1);
-    expect(logs.some(line => line.includes('No prompts were deleted'))).toBe(true);
+    expect(logs.some((line) => line.includes('No prompts were deleted'))).toBe(true);
   });
 
   it('skips confirmations when --force is provided', async () => {
-    await manager.savePrompt('# first', 'fast', 'A');
-    await manager.savePrompt('# second', 'deep', 'B');
+    await manager.savePrompt('# first', 'standard', 'A');
+    await manager.savePrompt('# second', 'comprehensive', 'B');
 
     await PromptsClear.run(['--all', '--force']);
 

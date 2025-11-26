@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -25,7 +25,7 @@ export class TopicCoherenceAnalyzer extends BasePattern {
 
   readonly applicableIntents: PromptIntent[] = ['summarization', 'planning'];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
   readonly phases: PatternPhase[] = ['conversation-tracking', 'summarization'];
 

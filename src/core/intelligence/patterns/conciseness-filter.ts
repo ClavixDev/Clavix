@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -30,7 +30,7 @@ export class ConcisenessFilter extends BasePattern {
     'documentation',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 4; // LOW - Polish phase
   readonly phases: PatternPhase[] = ['all'];
 

@@ -9,7 +9,7 @@ describe('ConcisenessFilter', () => {
   beforeEach(() => {
     filter = new ConcisenessFilter();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -39,8 +39,8 @@ describe('ConcisenessFilter', () => {
       );
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(filter.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(filter.scope).toBe('both');
     });
 
     it('should have priority 4 (LOW - polish phase)', () => {

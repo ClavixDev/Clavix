@@ -44,11 +44,11 @@ const PATHS = {
   universalOptimizer: path.join(ROOT_DIR, 'src/core/intelligence/universal-optimizer.ts'),
 };
 
-// Templates that should document intent types
-const INTENT_TEMPLATES = ['fast.md', 'deep.md'];
+// Templates that should document intent types (v4.11: unified improve.md)
+const INTENT_TEMPLATES = ['improve.md'];
 
-// Templates that should document quality dimensions
-const DIMENSION_TEMPLATES = ['fast.md', 'deep.md'];
+// Templates that should document quality dimensions (v4.11: unified improve.md)
+const DIMENSION_TEMPLATES = ['improve.md'];
 
 // ============================================================================
 // Type Extraction from TypeScript
@@ -111,7 +111,7 @@ function extractDimensionsFromTypes(content: string): string[] {
 interface PatternInfo {
   name: string;
   priority: number;
-  mode: 'fast' | 'deep' | 'both';
+  scope: 'standard' | 'comprehensive' | 'both';
 }
 
 function extractPatternsFromLibrary(content: string): PatternInfo[] {
@@ -127,7 +127,7 @@ function extractPatternsFromLibrary(content: string): PatternInfo[] {
       patterns.push({
         name: nameMatch[1],
         priority: 0, // Will be filled from pattern files
-        mode: 'both', // Will be filled from pattern files
+        scope: 'both', // Will be filled from pattern files
       });
     }
   }
@@ -175,14 +175,12 @@ async function extractPatternDetails(
       const priorityMatch = content.match(/priority(?::\s*PatternPriority)?\s*=\s*(\d+)/);
       const priority = priorityMatch ? parseInt(priorityMatch[1]) : 0;
 
-      // Extract mode (v4.5 format: readonly mode: PatternMode = 'both')
-      // Also handles older format: mode: OptimizationMode = 'both'
-      const modeMatch = content.match(
-        /mode(?::\s*(?:PatternMode|OptimizationMode))?\s*=\s*['"](\w+)['"]/
-      );
-      const mode = (modeMatch ? modeMatch[1] : 'both') as 'fast' | 'deep' | 'both';
+      // Extract scope (v4.11 format: readonly scope: PatternScope = 'both')
+      // Also handles older format: mode: PatternMode = 'both'
+      const scopeMatch = content.match(/scope(?::\s*PatternScope)?\s*=\s*['"](\w+)['"]/);
+      const scope = (scopeMatch ? scopeMatch[1] : 'both') as 'standard' | 'comprehensive' | 'both';
 
-      patterns.push({ name, priority, mode });
+      patterns.push({ name, priority, scope });
     } catch {
       // Pattern file not found, try to find it by scanning directory
       try {
@@ -197,16 +195,17 @@ async function extractPatternDetails(
           const content = fs.readFileSync(path.join(patternsDir, matchingFile), 'utf-8');
           const priorityMatch = content.match(/priority(?::\s*PatternPriority)?\s*=\s*(\d+)/);
           const priority = priorityMatch ? parseInt(priorityMatch[1]) : 0;
-          const modeMatch = content.match(
-            /mode(?::\s*(?:PatternMode|OptimizationMode))?\s*=\s*['"](\w+)['"]/
-          );
-          const mode = (modeMatch ? modeMatch[1] : 'both') as 'fast' | 'deep' | 'both';
-          patterns.push({ name, priority, mode });
+          const scopeMatch = content.match(/scope(?::\s*PatternScope)?\s*=\s*['"](\w+)['"]/);
+          const scope = (scopeMatch ? scopeMatch[1] : 'both') as
+            | 'standard'
+            | 'comprehensive'
+            | 'both';
+          patterns.push({ name, priority, scope });
         } else {
-          patterns.push({ name, priority: 0, mode: 'both' });
+          patterns.push({ name, priority: 0, scope: 'both' });
         }
       } catch {
-        patterns.push({ name, priority: 0, mode: 'both' });
+        patterns.push({ name, priority: 0, scope: 'both' });
       }
     }
   }
@@ -525,24 +524,25 @@ function extractEscalationFactorsFromCode(content: string): string[] {
 }
 
 /**
- * Extract escalation thresholds from template
+ * v4.11: Extract escalation thresholds from template
  */
 function extractEscalationThresholdsFromTemplate(content: string): number[] {
   const thresholds: number[] = [];
 
-  // Match: | 75+ | `[STRONGLY RECOMMEND DEEP]` | ...
-  // Match: | 60-74 | `[RECOMMEND DEEP]` | ...
-  // Match: | 45-59 | `[DEEP MODE AVAILABLE]` | ...
+  // Match: | 75+ | `[STRONGLY RECOMMEND COMPREHENSIVE]` | ...
+  // Match: | 60-74 | `[RECOMMEND COMPREHENSIVE]` | ...
+  // Match: | 45-59 | `[COMPREHENSIVE AVAILABLE]` | ...
   // Match: | <45 | No escalation | ...
 
   // Look for threshold boundaries in the interpretation table
+  // v4.11: Accept both DEEP and COMPREHENSIVE terminology
   const stronglyMatch = content.match(/\|\s*(\d+)\+\s*\|.*STRONGLY\s*RECOMMEND/i);
   if (stronglyMatch) thresholds.push(parseInt(stronglyMatch[1]));
 
-  const recommendMatch = content.match(/\|\s*(\d+)-\d+\s*\|.*RECOMMEND\s*DEEP/i);
+  const recommendMatch = content.match(/\|\s*(\d+)-\d+\s*\|.*RECOMMEND\s*(?:DEEP|COMPREHENSIVE)/i);
   if (recommendMatch) thresholds.push(parseInt(recommendMatch[1]));
 
-  const availableMatch = content.match(/\|\s*(\d+)-\d+\s*\|.*AVAILABLE/i);
+  const availableMatch = content.match(/\|\s*(\d+)-\d+\s*\|.*(?:DEEP\s*MODE\s*)?AVAILABLE/i);
   if (availableMatch) thresholds.push(parseInt(availableMatch[1]));
 
   return thresholds.sort((a, b) => a - b);
@@ -647,54 +647,58 @@ async function validateEscalationThresholds(): Promise<ValidationError[]> {
 // ============================================================================
 
 /**
- * Extract pattern counts from pattern-visibility.md template
+ * v4.11: Extract pattern counts from pattern-visibility.md template
  */
-function extractPatternCountsFromTemplate(content: string): { fast: number; deep: number } {
-  let fast = 0;
-  let deep = 0;
+function extractPatternCountsFromTemplate(content: string): {
+  standard: number;
+  comprehensive: number;
+} {
+  let standard = 0;
+  let comprehensive = 0;
 
-  // Match: | Fast | 12 core patterns | ...
-  const fastMatch = content.match(/\|\s*Fast\s*\|\s*(\d+)/i);
-  if (fastMatch) fast = parseInt(fastMatch[1]);
+  // Match: | Standard | 12 patterns | ...
+  const standardMatch = content.match(/\|\s*Standard\s*\|\s*(\d+)/i);
+  if (standardMatch) standard = parseInt(standardMatch[1]);
 
-  // Match: | Deep | 20 total patterns | ...
-  const deepMatch = content.match(/\|\s*Deep\s*\|\s*(\d+)/i);
-  if (deepMatch) deep = parseInt(deepMatch[1]);
+  // Match: | Comprehensive | 27 patterns | ...
+  const comprehensiveMatch = content.match(/\|\s*Comprehensive\s*\|\s*(\d+)/i);
+  if (comprehensiveMatch) comprehensive = parseInt(comprehensiveMatch[1]);
 
-  return { fast, deep };
+  return { standard, comprehensive };
 }
 
 /**
- * Count patterns by mode from pattern files
+ * v4.11: Count patterns by scope from pattern files
  */
-async function countPatternsByMode(patternsDir: string): Promise<{ fast: number; deep: number }> {
+async function countPatternsByScope(
+  patternsDir: string
+): Promise<{ standard: number; comprehensive: number }> {
   const files = fs
     .readdirSync(patternsDir)
     .filter((f) => f.endsWith('.ts') && f !== 'base-pattern.ts');
 
-  let fastCount = 0;
-  let deepCount = 0;
+  let standardCount = 0;
+  let comprehensiveCount = 0;
 
   for (const file of files) {
     const content = fs.readFileSync(path.join(patternsDir, file), 'utf-8');
 
-    // Extract mode from pattern file (v4.5 format: readonly mode: PatternMode = 'both')
-    // Also handles older format: mode: OptimizationMode = 'both' or mode = 'deep' as const
-    const modeMatch = content.match(
-      /mode(?::\s*(?:PatternMode|OptimizationMode))?\s*=\s*['"]?(fast|deep|both)['"]?/
+    // Extract scope from pattern file (v4.11 format: readonly scope: PatternScope = 'both')
+    const scopeMatch = content.match(
+      /scope(?::\s*PatternScope)?\s*=\s*['"]?(standard|comprehensive|both)['"]?/
     );
-    const mode = modeMatch ? modeMatch[1] : 'both';
+    const scope = scopeMatch ? scopeMatch[1] : 'both';
 
-    // Fast mode includes 'fast' and 'both' patterns
-    if (mode === 'fast' || mode === 'both') {
-      fastCount++;
+    // Standard scope includes 'standard' and 'both' patterns
+    if (scope === 'standard' || scope === 'both') {
+      standardCount++;
     }
 
-    // Deep mode includes ALL patterns
-    deepCount++;
+    // Comprehensive scope includes ALL patterns
+    comprehensiveCount++;
   }
 
-  return { fast: fastCount, deep: deepCount };
+  return { standard: standardCount, comprehensive: comprehensiveCount };
 }
 
 async function validatePatternCounts(): Promise<ValidationError[]> {
@@ -705,28 +709,28 @@ async function validatePatternCounts(): Promise<ValidationError[]> {
   const templateCounts = extractPatternCountsFromTemplate(visibilityContent);
 
   // Count actual patterns
-  const codeCounts = await countPatternsByMode(PATHS.patternsDir);
+  const codeCounts = await countPatternsByScope(PATHS.patternsDir);
 
-  // Compare fast mode
-  if (templateCounts.fast !== codeCounts.fast) {
+  // Compare standard scope
+  if (templateCounts.standard !== codeCounts.standard) {
     errors.push({
       type: 'pattern-count',
-      message: `Fast mode pattern count mismatch`,
+      message: `Standard scope pattern count mismatch`,
       file: 'src/templates/slash-commands/_components/sections/pattern-visibility.md',
-      expected: [`${codeCounts.fast} patterns for fast mode`],
-      found: [`${templateCounts.fast} patterns documented`],
+      expected: [`${codeCounts.standard} patterns for standard scope`],
+      found: [`${templateCounts.standard} patterns documented`],
       missing: [],
     });
   }
 
-  // Compare deep mode
-  if (templateCounts.deep !== codeCounts.deep) {
+  // Compare comprehensive scope
+  if (templateCounts.comprehensive !== codeCounts.comprehensive) {
     errors.push({
       type: 'pattern-count',
-      message: `Deep mode pattern count mismatch`,
+      message: `Comprehensive scope pattern count mismatch`,
       file: 'src/templates/slash-commands/_components/sections/pattern-visibility.md',
-      expected: [`${codeCounts.deep} patterns for deep mode`],
-      found: [`${templateCounts.deep} patterns documented`],
+      expected: [`${codeCounts.comprehensive} patterns for comprehensive scope`],
+      found: [`${templateCounts.comprehensive} patterns documented`],
       missing: [],
     });
   }
@@ -739,10 +743,11 @@ async function validatePatternCounts(): Promise<ValidationError[]> {
 // ============================================================================
 
 /**
- * Check that:
+ * v4.11: Check that:
  * 1. prompts.md no longer exists (removed in v4.7)
- * 2. fast.md and deep.md have mode enforcement headers
- * 3. No templates reference /clavix:prompts
+ * 2. fast.md and deep.md no longer exist (replaced by improve.md in v4.11)
+ * 3. improve.md has mode enforcement header
+ * 4. No templates reference /clavix:prompts
  */
 async function validateModeEnforcement(): Promise<ValidationError[]> {
   const errors: ValidationError[] = [];
@@ -760,24 +765,37 @@ async function validateModeEnforcement(): Promise<ValidationError[]> {
     });
   }
 
-  // Check fast.md and deep.md have mode enforcement
-  const optimizationTemplates = ['fast.md', 'deep.md'];
-  for (const templateFile of optimizationTemplates) {
+  // v4.11: Check fast.md and deep.md don't exist (replaced by improve.md)
+  const removedTemplates = ['fast.md', 'deep.md'];
+  for (const templateFile of removedTemplates) {
     const templatePath = path.join(PATHS.canonicalTemplates, templateFile);
     if (fs.existsSync(templatePath)) {
-      const content = fs.readFileSync(templatePath, 'utf-8');
-      const topSection = content.slice(0, 2000);
+      errors.push({
+        type: 'outdated-version',
+        message: `${templateFile} should be removed in v4.11 (replaced by improve.md)`,
+        file: `src/templates/slash-commands/_canonical/${templateFile}`,
+        expected: ['File should not exist'],
+        found: ['File exists'],
+        missing: [],
+      });
+    }
+  }
 
-      if (!topSection.includes('STOP') || !topSection.includes('OPTIMIZATION MODE')) {
-        errors.push({
-          type: 'outdated-version',
-          message: `${templateFile} missing mode enforcement header at top`,
-          file: `src/templates/slash-commands/_canonical/${templateFile}`,
-          expected: ['STOP: OPTIMIZATION MODE header in first 2000 chars'],
-          found: ['Mode enforcement header not found at top'],
-          missing: [],
-        });
-      }
+  // Check improve.md has mode enforcement
+  const improvePath = path.join(PATHS.canonicalTemplates, 'improve.md');
+  if (fs.existsSync(improvePath)) {
+    const content = fs.readFileSync(improvePath, 'utf-8');
+    const topSection = content.slice(0, 2000);
+
+    if (!topSection.includes('STOP') || !topSection.includes('OPTIMIZATION MODE')) {
+      errors.push({
+        type: 'outdated-version',
+        message: `improve.md missing mode enforcement header at top`,
+        file: `src/templates/slash-commands/_canonical/improve.md`,
+        expected: ['STOP: OPTIMIZATION MODE header in first 2000 chars'],
+        found: ['Mode enforcement header not found at top'],
+        missing: [],
+      });
     }
   }
 
@@ -866,7 +884,7 @@ export async function validateConsistency(): Promise<ValidationResult> {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.7\n');
+  console.log('\n🔍 Clavix Intelligence - Consistency Validator v4.11\n');
   console.log('Checking TypeScript ↔ Template synchronization...\n');
 
   // Run all validations

@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -31,7 +31,7 @@ export class StepDecomposer extends BasePattern {
     'documentation',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
   readonly phases: PatternPhase[] = ['all'];
 

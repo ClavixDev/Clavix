@@ -9,7 +9,7 @@ describe('ObjectiveClarifier', () => {
   beforeEach(() => {
     clarifier = new ObjectiveClarifier();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -37,8 +37,8 @@ describe('ObjectiveClarifier', () => {
       expect(clarifier.description).toBe('Extracts or infers clear goal statement');
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(clarifier.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(clarifier.scope).toBe('both');
     });
 
     it('should have priority 9', () => {

@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -32,7 +32,7 @@ export class SuccessCriteriaEnforcer extends BasePattern {
     'prd-generation',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 7; // MEDIUM-HIGH - important enrichment
   readonly phases: PatternPhase[] = ['all'];
 

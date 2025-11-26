@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -30,7 +30,7 @@ export class StructureOrganizer extends BasePattern {
     'documentation',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 8; // HIGH - core enhancement
   readonly phases: PatternPhase[] = ['all'];
 

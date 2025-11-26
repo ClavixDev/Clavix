@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -32,7 +32,7 @@ export class ContextPrecisionBooster extends BasePattern {
     'security-review',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
   readonly phases: PatternPhase[] = ['all'];
 

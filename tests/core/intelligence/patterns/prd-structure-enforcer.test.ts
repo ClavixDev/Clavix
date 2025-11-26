@@ -9,7 +9,7 @@ describe('PRDStructureEnforcer', () => {
   beforeEach(() => {
     pattern = new PRDStructureEnforcer();
     mockContext = {
-      mode: 'deep',
+      depthLevel: 'comprehensive',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'prd-generation',
@@ -33,8 +33,8 @@ describe('PRDStructureEnforcer', () => {
       expect(pattern.name).toBe('PRD Structure Enforcer');
     });
 
-    it('should be deep mode only', () => {
-      expect(pattern.mode).toBe('deep');
+    it('should be comprehensive depth only', () => {
+      expect(pattern.scope).toBe('comprehensive');
     });
 
     it('should have priority 9', () => {
@@ -48,14 +48,14 @@ describe('PRDStructureEnforcer', () => {
   });
 
   describe('isApplicable', () => {
-    it('should return true for prd-generation in deep mode', () => {
-      mockContext.mode = 'deep';
+    it('should return true for prd-generation in comprehensive depth', () => {
+      mockContext.depthLevel = 'comprehensive';
       mockContext.intent.primaryIntent = 'prd-generation';
       expect(pattern.isApplicable(mockContext)).toBe(true);
     });
 
-    it('should return false in fast mode', () => {
-      mockContext.mode = 'fast';
+    it('should return false in standard depth', () => {
+      mockContext.depthLevel = 'standard';
       expect(pattern.isApplicable(mockContext)).toBe(false);
     });
 

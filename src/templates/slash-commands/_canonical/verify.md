@@ -1,6 +1,6 @@
 ---
 name: "Clavix: Verify"
-description: Verify implementation against validation checklist from deep/fast mode
+description: Verify implementation against validation checklist from improve mode
 ---
 
 # Clavix: Verify Implementation

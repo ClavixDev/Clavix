@@ -283,19 +283,22 @@ describe('IntentDetector', () => {
     });
 
     describe('enhanced detection - mode suggestions', () => {
-      it('should suggest deep mode for low confidence', () => {
+      it('should suggest improve mode for low confidence', () => {
         const ambiguous = detector.analyze('make better');
-        expect(ambiguous.suggestedMode).toBe('deep');
+        // v4.11: Unified improve mode
+        expect(ambiguous.suggestedMode).toBe('improve');
       });
 
-      it('should suggest deep mode for planning', () => {
+      it('should suggest improve mode for planning', () => {
         const planning = detector.analyze('how should I architect this system?');
-        expect(planning.suggestedMode).toBe('deep');
+        // v4.11: Unified improve mode
+        expect(planning.suggestedMode).toBe('improve');
       });
 
-      it('should suggest fast mode for high-confidence non-planning prompts', () => {
+      it('should suggest improve mode for high-confidence non-planning prompts', () => {
         const clear = detector.analyze('Create a login component with email and password fields');
-        expect(clear.suggestedMode).toBe('fast');
+        // v4.11: Unified improve mode
+        expect(clear.suggestedMode).toBe('improve');
       });
     });
 

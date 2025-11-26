@@ -74,8 +74,9 @@ describe('clavix verify', () => {
       expect(Verify.flags.latest).toBeDefined();
       expect(Verify.flags.id).toBeDefined();
       expect(Verify.flags.status).toBeDefined();
-      expect(Verify.flags.fast).toBeDefined();
-      expect(Verify.flags.deep).toBeDefined();
+      // v4.11: --fast/--deep replaced with --standard/--comprehensive
+      expect(Verify.flags.standard).toBeDefined();
+      expect(Verify.flags.comprehensive).toBeDefined();
     });
 
     it('should have export flag defined', () => {

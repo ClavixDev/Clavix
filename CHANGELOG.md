@@ -5,6 +5,112 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.11.1] - 2025-11-26
+
+### Prompt Saving Guardrails
+
+**Fixed issue where `/clavix:improve` would output "Prompt optimized and saved" but agents wouldn't actually save the prompt file.**
+
+#### Problem
+
+When agents executed `/clavix:improve`, they would:
+1. Analyze the prompt correctly
+2. Output the optimized prompt
+3. Say "Prompt optimized and saved"
+4. Skip the actual file save operations (Write tool calls)
+
+#### Solution: Structural + Markers + Verification Enforcement
+
+| Component | Change |
+|-----------|--------|
+| Template structure | Moved saving section BEFORE final output |
+| STOP markers | Added `⛔ SAVING CHECKPOINT (REQUIRED - DO NOT SKIP)` |
+| Verification | Required Read tool verification of both files before final message |
+| Response ending | Changed from "saved" to actual file path |
+
+**New Required Response Format:**
+```
+✅ Prompt saved to: `.clavix/outputs/prompts/<actual-prompt-id>.md`
+```
+
+**Verification Checklist (agents must complete all):**
+- Write prompt file with Write tool
+- Update .index.json with Write tool
+- Read back prompt file to verify
+- Read back index to verify prompt ID exists
+- Only then output final message with actual path
+
+---
+
+## [4.11.0] - 2025-11-26
+
+### Unified Improve Mode Release
+
+**Merged `/clavix:fast` and `/clavix:deep` into a single `/clavix:improve` command with smart depth auto-selection.**
+
+> This release simplifies the user experience by automatically choosing the appropriate analysis depth based on prompt quality, while still allowing manual depth selection when needed.
+
+#### Breaking Changes
+
+| Change | Migration |
+|--------|-----------|
+| `/clavix:fast` removed | Use `/clavix:improve` (auto-selects standard depth for quality < 60%) |
+| `/clavix:deep` removed | Use `/clavix:improve` or `/clavix:improve --comprehensive` |
+| `clavix fast` CLI removed | Use `clavix improve` |
+| `clavix deep` CLI removed | Use `clavix improve --comprehensive` |
+| Storage path changed | Single `.clavix/outputs/prompts/` (no fast/deep subdirs) |
+| Prompt metadata `source` → `depthUsed` | Values: `'standard'` or `'comprehensive'` |
+
+#### New Unified `/clavix:improve` Command
+
+**Smart Depth Auto-Selection:**
+- **Quality >= 75%**: Auto-selects comprehensive depth (prompt is good, add polish)
+- **Quality 60-74%**: Asks user to choose (borderline quality)
+- **Quality < 60%**: Auto-selects standard depth (needs basic fixes first)
+
+**Manual Override:**
+```bash
+clavix improve "prompt" --comprehensive  # Force comprehensive depth
+clavix improve "prompt" --standard       # Force standard depth
+```
+
+#### Type System Changes
+
+| Old | New |
+|-----|-----|
+| `OptimizationMode = 'fast' \| 'deep' \| 'prd' \| 'conversational'` | `OptimizationMode = 'improve' \| 'prd' \| 'conversational'` |
+| `PatternMode = 'fast' \| 'deep' \| 'both'` | `PatternScope = 'standard' \| 'comprehensive' \| 'both'` |
+| `pattern.mode` | `pattern.scope` |
+| `context.mode` | `context.depthLevel` (type: `DepthLevel`) |
+| `DepthLevel` (new) | `'standard' \| 'comprehensive'` |
+
+#### Updated CLI Commands
+
+| Command | Change |
+|---------|--------|
+| `clavix execute --fast` | Now `clavix execute --standard` |
+| `clavix execute --deep` | Now `clavix execute --comprehensive` |
+| `clavix verify --fast` | Now `clavix verify --standard` |
+| `clavix verify --deep` | Now `clavix verify --comprehensive` |
+| `clavix prompts list` | Shows `depthUsed` instead of `source` |
+| `clavix prompts clear --fast` | Now `clavix prompts clear --standard` |
+
+#### Template Updates
+
+- Created unified `improve.md` template with smart depth selection logic
+- Removed `fast.md` and `deep.md` templates
+- Updated all template cross-references
+- Updated escalation-factors.md terminology
+- Updated pattern-visibility.md for standard/comprehensive terminology
+
+#### Pattern System Updates
+
+All 27 patterns updated:
+- `readonly mode: PatternMode` → `readonly scope: PatternScope`
+- Pattern scope values: `'standard'`, `'comprehensive'`, or `'both'`
+
+---
+
 ## [4.10.0] - 2025-11-26
 
 ### Agent Discipline & Knowledge Completion Release

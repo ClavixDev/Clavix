@@ -173,35 +173,7 @@ exports[`CLI Command Metadata Snapshots PRD commands task-complete command metad
 }"
 `;
 
-exports[`CLI Command Metadata Snapshots prompt improvement commands deep command metadata should match snapshot: deep-command-metadata 1`] = `
-"{
-  "aliases": [],
-  "args": [
-    {
-      "description": "The prompt to analyze deeply",
-      "name": "prompt",
-      "required": true
-    }
-  ],
-  "description": "Perform comprehensive deep analysis with alternative approaches, edge cases, and validation checklists",
-  "examples": [
-    "<%= config.bin %> <%= command.id %> /"Create a login page/"",
-    "<%= config.bin %> <%= command.id %> /"Build an API for user management/"",
-    "<%= config.bin %> <%= command.id %> /"Design a notification system/""
-  ],
-  "flags": [
-    {
-      "description": "Show only quality analysis without improved prompt",
-      "name": "analysis-only",
-      "required": false,
-      "type": "boolean"
-    }
-  ],
-  "hidden": false
-}"
-`;
-
-exports[`CLI Command Metadata Snapshots prompt improvement commands fast command metadata should match snapshot: fast-command-metadata 1`] = `
+exports[`CLI Command Metadata Snapshots prompt improvement commands improve command metadata should match snapshot: improve-command-metadata 1`] = `
 "{
   "aliases": [],
   "args": [
@@ -211,12 +183,26 @@ exports[`CLI Command Metadata Snapshots prompt improvement commands fast command
       "required": true
     }
   ],
-  "description": "Quickly improve a prompt with smart quality assessment and triage",
+  "description": "Improve a prompt with smart quality-based depth selection (replaces fast/deep)",
   "examples": [
     "<%= config.bin %> <%= command.id %> /"Create a login page/"",
-    "<%= config.bin %> <%= command.id %> /"Build an API for user management/""
+    "<%= config.bin %> <%= command.id %> /"Build an API for user management/" --comprehensive",
+    "<%= config.bin %> <%= command.id %> /"Fix the button styling/" --standard",
+    "<%= config.bin %> <%= command.id %> /"Design a notification system/" --analysis-only"
   ],
   "flags": [
+    {
+      "description": "Force comprehensive depth (alternative approaches, edge cases, validation)",
+      "name": "comprehensive",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "description": "Force standard depth (quick improvements)",
+      "name": "standard",
+      "required": false,
+      "type": "boolean"
+    },
     {
       "description": "Show only quality analysis without improved prompt",
       "name": "analysis-only",

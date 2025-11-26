@@ -2,7 +2,8 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import PromptsList from '../../src/cli/commands/prompts/list';
-import { PromptManager, PromptSource } from '../../src/core/prompt-manager';
+import { PromptManager } from '../../src/core/prompt-manager';
+import { DepthLevel } from '../../src/core/intelligence/types';
 
 const originalCwd = process.cwd();
 const originalLog = console.log;
@@ -20,9 +21,14 @@ const restoreConsole = (): void => {
   console.log = originalLog;
 };
 
-const setPromptTimestamp = async (id: string, source: PromptSource, timestamp: Date): Promise<void> => {
+// v4.11: Unified prompts directory with single .index.json
+const setPromptTimestamp = async (
+  id: string,
+  _depthUsed: DepthLevel,
+  timestamp: Date
+): Promise<void> => {
   const promptsDir = path.join(process.cwd(), '.clavix', 'outputs', 'prompts');
-  const indexPath = path.join(promptsDir, source, '.index.json');
+  const indexPath = path.join(promptsDir, '.index.json');
   const index = await fs.readJSON(indexPath);
   const entry = index.prompts.find((p: { id: string }) => p.id === id);
   entry.timestamp = timestamp.toISOString();
@@ -53,47 +59,54 @@ describe('Prompts list CLI command', () => {
 
   it('shows helpful guidance when no prompts are saved', async () => {
     await PromptsList.run([]);
-    expect(logs.some(line => line.includes('No prompts saved yet'))).toBe(true);
-    expect(logs.some(line => line.includes('/clavix:fast'))).toBe(true);
+    expect(logs.some((line) => line.includes('No prompts saved yet'))).toBe(true);
+    // v4.11: Uses /clavix:improve instead of /clavix:fast
+    expect(logs.some((line) => line.includes('/clavix:improve'))).toBe(true);
   });
 
-  it('groups prompts by source and reports storage stats', async () => {
-    const fast = await manager.savePrompt('# fast', 'fast', 'Fast Prompt');
-    await manager.savePrompt('# deep', 'deep', 'Deep Prompt');
-    await manager.markExecuted(fast.id);
+  it('groups prompts by depthUsed and reports storage stats', async () => {
+    // v4.11: Use 'standard'/'comprehensive' instead of 'fast'/'deep'
+    const standard = await manager.savePrompt('# standard', 'standard', 'Standard Prompt');
+    await manager.savePrompt('# comprehensive', 'comprehensive', 'Comprehensive Prompt');
+    await manager.markExecuted(standard.id);
 
     await PromptsList.run([]);
 
-    expect(logs.some(line => line.includes('Fast Prompts'))).toBe(true);
-    expect(logs.some(line => line.includes('Deep Prompts'))).toBe(true);
-    expect(logs.some(line => line.includes('Total Prompts: 2'))).toBe(true);
-    expect(logs.some(line => line.includes('Executed: 1'))).toBe(true);
-    expect(logs.some(line => line.includes('Pending: 1'))).toBe(true);
+    // v4.11: Uses 'Standard Depth Prompts' and 'Comprehensive Depth Prompts'
+    expect(logs.some((line) => line.includes('Standard Depth Prompts'))).toBe(true);
+    expect(logs.some((line) => line.includes('Comprehensive Depth Prompts'))).toBe(true);
+    expect(logs.some((line) => line.includes('Total Prompts: 2'))).toBe(true);
+    expect(logs.some((line) => line.includes('Executed: 1'))).toBe(true);
+    expect(logs.some((line) => line.includes('Pending: 1'))).toBe(true);
   });
 
   it('flags prompts older than 7 or 30 days with warnings', async () => {
-    const old = await manager.savePrompt('# old', 'fast', 'Old prompt');
-    const stale = await manager.savePrompt('# stale', 'deep', 'Stale prompt');
-    await setPromptTimestamp(old.id, 'fast', new Date(Date.now() - 10 * 86400000));
-    await setPromptTimestamp(stale.id, 'deep', new Date(Date.now() - 40 * 86400000));
+    // v4.11: Use 'standard'/'comprehensive' instead of 'fast'/'deep'
+    const old = await manager.savePrompt('# old', 'standard', 'Old prompt');
+    const stale = await manager.savePrompt('# stale', 'comprehensive', 'Stale prompt');
+    await setPromptTimestamp(old.id, 'standard', new Date(Date.now() - 10 * 86400000));
+    await setPromptTimestamp(stale.id, 'comprehensive', new Date(Date.now() - 40 * 86400000));
 
     await PromptsList.run([]);
 
-    expect(logs.some(line => line.includes('[OLD]'))).toBe(true);
-    expect(logs.some(line => line.includes('[STALE]'))).toBe(true);
-    expect(logs.some(line => line.includes('Recommend: clavix prompts clear --stale'))).toBe(true);
+    expect(logs.some((line) => line.includes('[OLD]'))).toBe(true);
+    expect(logs.some((line) => line.includes('[STALE]'))).toBe(true);
+    expect(logs.some((line) => line.includes('Recommend: clavix prompts clear --stale'))).toBe(
+      true
+    );
   });
 
   it('suggests cleaning executed prompts when threshold exceeded', async () => {
     const ids = [];
     for (let idx = 0; idx < 10; idx += 1) {
-      const meta = await manager.savePrompt(`# ${idx}`, 'fast', `Prompt ${idx}`);
+      // v4.11: Use 'standard' instead of 'fast'
+      const meta = await manager.savePrompt(`# ${idx}`, 'standard', `Prompt ${idx}`);
       ids.push(meta);
       await manager.markExecuted(meta.id);
     }
 
     await PromptsList.run([]);
 
-    expect(logs.some(line => line.includes('clavix prompts clear --executed'))).toBe(true);
+    expect(logs.some((line) => line.includes('clavix prompts clear --executed'))).toBe(true);
   });
 });

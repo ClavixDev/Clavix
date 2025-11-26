@@ -1,8 +1,9 @@
 /**
- * Clavix v4.8: Verification Manager
+ * Clavix v4.11: Verification Manager
  *
  * Manages verification state, execution flow, and persistence.
  * Coordinates between checklist parsing, hook execution, and result storage.
+ * v4.11: Updated for unified storage (no fast/deep subdirs)
  */
 
 import fs from 'fs-extra';
@@ -56,11 +57,11 @@ export class VerificationManager {
     // Detect available hooks
     const detectedHooks = await this.verificationHooks.detectHooks();
 
-    // Create initial report
+    // v4.11: Create initial report with depthUsed
     const report: VerificationReport = {
-      version: '1.0',
+      version: '2.0',
       promptId,
-      source: promptData.metadata.source,
+      depthUsed: promptData.metadata.depthUsed,
       startedAt: new Date().toISOString(),
       status: items.length > 0 ? 'pending' : 'completed',
       items,
@@ -82,25 +83,22 @@ export class VerificationManager {
   }
 
   /**
-   * Get verification report path for a prompt
+   * v4.11: Get verification report path (unified storage)
    */
-  getReportPath(promptId: string, source: 'fast' | 'deep'): string {
-    return path.join(this.outputDir, source, `${promptId}.verification.json`);
+  getReportPath(promptId: string): string {
+    return path.join(this.outputDir, `${promptId}.verification.json`);
   }
 
   /**
-   * Load verification report
+   * v4.11: Load verification report
    */
   async loadReport(promptId: string): Promise<VerificationReport | null> {
-    // Try both sources
-    for (const source of ['deep', 'fast'] as const) {
-      const reportPath = this.getReportPath(promptId, source);
-      if (await fs.pathExists(reportPath)) {
-        try {
-          return await fs.readJson(reportPath);
-        } catch {
-          // Corrupt file, ignore
-        }
+    const reportPath = this.getReportPath(promptId);
+    if (await fs.pathExists(reportPath)) {
+      try {
+        return await fs.readJson(reportPath);
+      } catch {
+        // Corrupt file, ignore
       }
     }
 
@@ -108,10 +106,10 @@ export class VerificationManager {
   }
 
   /**
-   * Save verification report
+   * v4.11: Save verification report
    */
   async saveReport(report: VerificationReport): Promise<void> {
-    const reportPath = this.getReportPath(report.promptId, report.source);
+    const reportPath = this.getReportPath(report.promptId);
     await fs.ensureDir(path.dirname(reportPath));
     await fs.writeJson(reportPath, report, { spaces: 2 });
   }
@@ -355,37 +353,32 @@ export class VerificationManager {
   }
 
   /**
-   * Delete verification report
+   * v4.11: Delete verification report
    */
   async deleteReport(promptId: string): Promise<boolean> {
-    for (const source of ['deep', 'fast'] as const) {
-      const reportPath = this.getReportPath(promptId, source);
-      if (await fs.pathExists(reportPath)) {
-        await fs.remove(reportPath);
-        return true;
-      }
+    const reportPath = this.getReportPath(promptId);
+    if (await fs.pathExists(reportPath)) {
+      await fs.remove(reportPath);
+      return true;
     }
     return false;
   }
 
   /**
-   * Get all verification reports
+   * v4.11: Get all verification reports
    */
   async listReports(): Promise<VerificationReport[]> {
     const reports: VerificationReport[] = [];
 
-    for (const source of ['deep', 'fast'] as const) {
-      const sourceDir = path.join(this.outputDir, source);
-      if (await fs.pathExists(sourceDir)) {
-        const files = await fs.readdir(sourceDir);
-        for (const file of files) {
-          if (file.endsWith('.verification.json')) {
-            try {
-              const report = await fs.readJson(path.join(sourceDir, file));
-              reports.push(report);
-            } catch {
-              // Ignore corrupt files
-            }
+    if (await fs.pathExists(this.outputDir)) {
+      const files = await fs.readdir(this.outputDir);
+      for (const file of files) {
+        if (file.endsWith('.verification.json')) {
+          try {
+            const report = await fs.readJson(path.join(this.outputDir, file));
+            reports.push(report);
+          } catch {
+            // Ignore corrupt files
           }
         }
       }

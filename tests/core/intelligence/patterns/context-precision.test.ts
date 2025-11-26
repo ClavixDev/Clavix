@@ -9,7 +9,7 @@ describe('ContextPrecisionBooster', () => {
   beforeEach(() => {
     pattern = new ContextPrecisionBooster();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -34,7 +34,7 @@ describe('ContextPrecisionBooster', () => {
     });
 
     it('should support both modes', () => {
-      expect(pattern.mode).toBe('both');
+      expect(pattern.scope).toBe('both');
     });
 
     it('should have priority 6 (MEDIUM - standard enhancement)', () => {

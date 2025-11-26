@@ -9,7 +9,7 @@ describe('ActionabilityEnhancer', () => {
   beforeEach(() => {
     enhancer = new ActionabilityEnhancer();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -37,8 +37,8 @@ describe('ActionabilityEnhancer', () => {
       expect(enhancer.description).toBe('Converts vague goals into specific, actionable tasks');
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(enhancer.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(enhancer.scope).toBe('both');
     });
 
     it('should have priority 4 (LOW - polish phase)', () => {

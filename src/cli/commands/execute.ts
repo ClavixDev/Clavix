@@ -5,13 +5,13 @@ import { PromptManager, PromptMetadata } from '../../core/prompt-manager.js';
 import { ChecklistParser } from '../../core/checklist-parser.js';
 
 export default class Execute extends Command {
-  static description = 'Execute a saved prompt from fast/deep optimization';
+  static description = 'Execute a saved prompt from improve optimization';
 
   static examples = [
     '<%= config.bin %> <%= command.id %> --latest',
-    '<%= config.bin %> <%= command.id %> --latest --fast',
-    '<%= config.bin %> <%= command.id %> --latest --deep',
-    '<%= config.bin %> <%= command.id %> --id fast-20250117-143022-a3f2',
+    '<%= config.bin %> <%= command.id %> --latest --standard',
+    '<%= config.bin %> <%= command.id %> --latest --comprehensive',
+    '<%= config.bin %> <%= command.id %> --id std-20250117-143022-a3f2',
     '<%= config.bin %> <%= command.id %>',
   ];
 
@@ -20,12 +20,14 @@ export default class Execute extends Command {
       description: 'Auto-select latest prompt (any type)',
       default: false,
     }),
-    fast: Flags.boolean({
-      description: 'Filter to fast prompts only (use with --latest)',
+    standard: Flags.boolean({
+      char: 's',
+      description: 'Filter to standard depth prompts only (use with --latest)',
       default: false,
     }),
-    deep: Flags.boolean({
-      description: 'Filter to deep prompts only (use with --latest)',
+    comprehensive: Flags.boolean({
+      char: 'c',
+      description: 'Filter to comprehensive depth prompts only (use with --latest)',
       default: false,
     }),
     id: Flags.string({
@@ -44,8 +46,7 @@ export default class Execute extends Command {
       if (allPrompts.length === 0) {
         console.log(chalk.yellow('\n⚠️  No prompts found\n'));
         console.log(chalk.cyan('Generate an optimized prompt first:'));
-        console.log(chalk.cyan('  /clavix:fast "your requirement"'));
-        console.log(chalk.cyan('  /clavix:deep "your requirement"'));
+        console.log(chalk.cyan('  /clavix:improve "your requirement"'));
         console.log();
         return;
       }
@@ -67,20 +68,18 @@ export default class Execute extends Command {
       else if (flags.latest) {
         let filtered = allPrompts;
 
-        // Apply source filter
-        if (flags.fast && !flags.deep) {
-          filtered = allPrompts.filter((p) => p.source === 'fast');
-        } else if (flags.deep && !flags.fast) {
-          filtered = allPrompts.filter((p) => p.source === 'deep');
+        // Apply depth filter
+        if (flags.standard && !flags.comprehensive) {
+          filtered = allPrompts.filter((p) => p.depthUsed === 'standard');
+        } else if (flags.comprehensive && !flags.standard) {
+          filtered = allPrompts.filter((p) => p.depthUsed === 'comprehensive');
         }
 
         if (filtered.length === 0) {
-          const source = flags.fast ? 'fast' : flags.deep ? 'deep' : 'any';
-          console.log(chalk.yellow(`\n⚠️  No ${source} prompts found\n`));
-          console.log(chalk.cyan(`Generate a ${source} prompt first:`));
-          console.log(
-            chalk.cyan(`  /clavix:${source === 'any' ? 'fast' : source} "your requirement"`)
-          );
+          const depth = flags.standard ? 'standard' : flags.comprehensive ? 'comprehensive' : 'any';
+          console.log(chalk.yellow(`\n⚠️  No ${depth} prompts found\n`));
+          console.log(chalk.cyan(`Generate a prompt first:`));
+          console.log(chalk.cyan(`  /clavix:improve "your requirement"`));
           console.log();
           return;
         }
@@ -111,9 +110,10 @@ export default class Execute extends Command {
       const age = p.ageInDays === 0 ? 'today' : `${p.ageInDays}d ago`;
       const ageColor =
         (p.ageInDays || 0) > 30 ? chalk.red : (p.ageInDays || 0) > 7 ? chalk.yellow : chalk.gray;
+      const depthLabel = p.depthUsed === 'comprehensive' ? 'comp' : 'std';
 
       return {
-        name: `${status} [${p.source}] ${p.originalPrompt.substring(0, 60)}... ${ageColor(`(${age})`)}`,
+        name: `${status} [${depthLabel}] ${p.originalPrompt.substring(0, 60)}... ${ageColor(`(${age})`)}`,
         value: p.id,
         short: p.id,
       };
@@ -142,7 +142,7 @@ export default class Execute extends Command {
 
     // Display prompt header
     console.log(chalk.bold.cyan(`\n🎯 Executing Prompt: ${prompt.id}\n`));
-    console.log(chalk.gray(`Source: ${prompt.source}`));
+    console.log(chalk.gray(`Depth: ${prompt.depthUsed}`));
     console.log(chalk.gray(`Created: ${new Date(prompt.timestamp).toLocaleDateString()}`));
     console.log(chalk.gray(`Age: ${prompt.ageInDays} days\n`));
 

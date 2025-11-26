@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -24,7 +24,7 @@ export class PRDStructureEnforcer extends BasePattern {
 
   readonly applicableIntents: PromptIntent[] = ['prd-generation'];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 9; // VERY HIGH - structural integrity
   readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
 

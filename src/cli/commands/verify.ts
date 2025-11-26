@@ -9,12 +9,12 @@ import { IntentDetector } from '../../core/intelligence/intent-detector.js';
 import { VerificationReport, ChecklistItem, VerificationStatus } from '../../types/verification.js';
 
 export default class Verify extends Command {
-  static description = 'Verify implementation against checklist from deep/fast mode';
+  static description = 'Verify implementation against checklist from improve mode';
 
   static examples = [
     '<%= config.bin %> <%= command.id %> --latest',
-    '<%= config.bin %> <%= command.id %> --latest --deep',
-    '<%= config.bin %> <%= command.id %> --id deep-20250117-143022-a3f2',
+    '<%= config.bin %> <%= command.id %> --latest --comprehensive',
+    '<%= config.bin %> <%= command.id %> --id comp-20250117-143022-a3f2',
     '<%= config.bin %> <%= command.id %> --status',
     '<%= config.bin %> <%= command.id %> --retry-failed',
   ];
@@ -24,12 +24,14 @@ export default class Verify extends Command {
       description: 'Verify latest executed prompt',
       default: false,
     }),
-    fast: Flags.boolean({
-      description: 'Filter to fast prompts only (use with --latest)',
+    standard: Flags.boolean({
+      char: 's',
+      description: 'Filter to standard depth prompts only (use with --latest)',
       default: false,
     }),
-    deep: Flags.boolean({
-      description: 'Filter to deep prompts only (use with --latest)',
+    comprehensive: Flags.boolean({
+      char: 'c',
+      description: 'Filter to comprehensive depth prompts only (use with --latest)',
       default: false,
     }),
     id: Flags.string({
@@ -75,8 +77,7 @@ export default class Verify extends Command {
       if (allPrompts.length === 0) {
         console.log(chalk.yellow('\n⚠️  No prompts found\n'));
         console.log(chalk.cyan('Generate an optimized prompt first:'));
-        console.log(chalk.cyan('  /clavix:fast "your requirement"'));
-        console.log(chalk.cyan('  /clavix:deep "your requirement"'));
+        console.log(chalk.cyan('  /clavix:improve "your requirement"'));
         console.log();
         return;
       }
@@ -97,11 +98,11 @@ export default class Verify extends Command {
       else if (flags.latest) {
         let filtered = allPrompts;
 
-        // Filter by source
-        if (flags.fast && !flags.deep) {
-          filtered = allPrompts.filter((p) => p.source === 'fast');
-        } else if (flags.deep && !flags.fast) {
-          filtered = allPrompts.filter((p) => p.source === 'deep');
+        // Filter by depth
+        if (flags.standard && !flags.comprehensive) {
+          filtered = allPrompts.filter((p) => p.depthUsed === 'standard');
+        } else if (flags.comprehensive && !flags.standard) {
+          filtered = allPrompts.filter((p) => p.depthUsed === 'comprehensive');
         }
 
         // Filter to executed prompts preferably
@@ -111,8 +112,8 @@ export default class Verify extends Command {
         }
 
         if (filtered.length === 0) {
-          const source = flags.fast ? 'fast' : flags.deep ? 'deep' : 'any';
-          console.log(chalk.yellow(`\n⚠️  No ${source} prompts found\n`));
+          const depth = flags.standard ? 'standard' : flags.comprehensive ? 'comprehensive' : 'any';
+          console.log(chalk.yellow(`\n⚠️  No ${depth} prompts found\n`));
           return;
         }
 
@@ -156,9 +157,10 @@ export default class Verify extends Command {
       const age = p.ageInDays === 0 ? 'today' : `${p.ageInDays}d ago`;
       const ageColor =
         (p.ageInDays || 0) > 30 ? chalk.red : (p.ageInDays || 0) > 7 ? chalk.yellow : chalk.gray;
+      const depthLabel = p.depthUsed === 'comprehensive' ? 'comp' : 'std';
 
       return {
-        name: `${executed} [${p.source}] ${p.originalPrompt.substring(0, 50)}... ${ageColor(`(${age})`)}`,
+        name: `${executed} [${depthLabel}] ${p.originalPrompt.substring(0, 50)}... ${ageColor(`(${age})`)}`,
         value: p.id,
         short: p.id,
       };
@@ -224,7 +226,7 @@ export default class Verify extends Command {
     options: { retryFailed: boolean; runHooks: boolean }
   ): Promise<void> {
     console.log(chalk.bold.cyan(`\n🔍 Verifying: ${prompt.id}\n`));
-    console.log(chalk.gray(`Source: ${prompt.source}`));
+    console.log(chalk.gray(`Depth: ${prompt.depthUsed}`));
     console.log(chalk.gray(`Created: ${new Date(prompt.timestamp).toLocaleDateString()}`));
     console.log();
 
@@ -238,9 +240,9 @@ export default class Verify extends Command {
     // Parse checklist from prompt
     let checklist = this.checklistParser.parse(promptData.content);
 
-    // Handle fast mode - generate basic checklist if none exists
-    if (!checklist.hasChecklist && prompt.source === 'fast') {
-      console.log(chalk.yellow('⚠️  No checklist found (fast mode prompt)'));
+    // Handle standard depth - generate basic checklist if none exists
+    if (!checklist.hasChecklist && prompt.depthUsed === 'standard') {
+      console.log(chalk.yellow('⚠️  No checklist found (standard depth prompt)'));
       console.log(chalk.cyan('Generating basic checklist based on intent...\n'));
 
       // Detect intent from original prompt
@@ -252,7 +254,9 @@ export default class Verify extends Command {
 
       console.log(chalk.gray(`Intent: ${intent.primaryIntent} (${intent.confidence}% confidence)`));
       console.log(chalk.gray(`Generated ${checklist.totalItems} checklist items\n`));
-      console.log(chalk.yellow('💡 For comprehensive checklists, use /clavix:deep\n'));
+      console.log(
+        chalk.yellow('💡 For comprehensive checklists, use /clavix:improve --comprehensive\n')
+      );
     }
 
     if (!checklist.hasChecklist) {
@@ -265,8 +269,8 @@ export default class Verify extends Command {
 
     if (!report) {
       report = await this.verificationManager.initializeVerification(prompt.id);
-      // Update with parsed checklist if from fast mode
-      if (prompt.source === 'fast') {
+      // Update with parsed checklist if from standard depth
+      if (prompt.depthUsed === 'standard') {
         report.items = [...checklist.validationItems, ...checklist.edgeCases, ...checklist.risks];
         report.results = report.items.map((item) => ({
           itemId: item.id,

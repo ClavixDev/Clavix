@@ -13,6 +13,11 @@ import { describe, it, expect, beforeAll } from '@jest/globals';
 import * as fs from 'fs';
 import * as path from 'path';
 import glob from 'glob';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.join(__dirname, '../..');
 
 // Patterns that indicate asking user to run commands (VIOLATION)
 const USER_DIRECTED_COMMAND_PATTERNS = [
@@ -81,13 +86,11 @@ describe('Agent-First Execution Model', () => {
   let fileContents: Map<string, string> = new Map();
 
   beforeAll(() => {
-    const cwd = process.cwd();
-
-    // Use glob with pattern and cwd option
-    templateFiles = glob.sync(CANONICAL_TEMPLATES_PATTERN, { cwd });
+    // Use project root for reliable file finding across test runs
+    templateFiles = glob.sync(CANONICAL_TEMPLATES_PATTERN, { cwd: projectRoot });
 
     for (const file of templateFiles) {
-      const fullPath = path.join(cwd, file);
+      const fullPath = path.join(projectRoot, file);
       if (fs.existsSync(fullPath)) {
         fileContents.set(file, fs.readFileSync(fullPath, 'utf-8'));
       }
@@ -204,14 +207,14 @@ describe('Agent-First Execution Model', () => {
 
   describe('CLI Reference Section', () => {
     // Templates that use CLI commands should have a reference section
+    // v4.11: fast.md and deep.md merged into improve.md
     const TEMPLATES_REQUIRING_CLI_REFERENCE = [
       'execute.md',
       'implement.md',
       'verify.md',
       'archive.md',
       'plan.md',
-      'fast.md',
-      'deep.md',
+      'improve.md',
     ];
 
     it('should have CLI reference sections in execution-focused templates', () => {
@@ -248,7 +251,8 @@ describe('Agent-First Execution Model', () => {
 
   describe('Stop Blocks Compliance', () => {
     // Templates with optimization modes should have stop blocks
-    const OPTIMIZATION_TEMPLATES = ['fast.md', 'deep.md'];
+    // v4.11: fast.md and deep.md merged into improve.md
+    const OPTIMIZATION_TEMPLATES = ['improve.md'];
 
     it('should have stop blocks in optimization templates', () => {
       const missingStopBlock: string[] = [];

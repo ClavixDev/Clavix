@@ -770,33 +770,19 @@ export class IntentDetector {
     return structureScore < 2;
   }
 
+  /**
+   * v4.11: Suggest optimization mode (always 'improve' for prompt optimization)
+   * For depth level suggestions, use suggestDepthLevel() instead
+   */
   private suggestMode(
-    intent: PromptIntent,
-    characteristics: IntentAnalysis['characteristics'],
-    promptLength: number,
-    confidence: number
+    _intent: PromptIntent,
+    _characteristics: IntentAnalysis['characteristics'],
+    _promptLength: number,
+    _confidence: number
   ): OptimizationMode {
-    // Low confidence suggests deep mode
-    if (confidence < 60) {
-      return 'deep';
-    }
-
-    // Planning always benefits from deep mode
-    if (intent === 'planning') {
-      return 'deep';
-    }
-
-    // Open-ended without code context suggests deep mode
-    if (characteristics.isOpenEnded && !characteristics.hasCodeContext) {
-      return 'deep';
-    }
-
-    // Very short prompts needing structure suggest deep mode
-    if (promptLength < 50 && characteristics.needsStructure) {
-      return 'deep';
-    }
-
-    return 'fast';
+    // v4.11: All prompt optimization uses 'improve' mode
+    // Depth level (standard/comprehensive) is determined separately
+    return 'improve';
   }
 
   /**

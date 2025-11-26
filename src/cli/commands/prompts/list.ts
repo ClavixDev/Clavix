@@ -5,9 +5,7 @@ import { PromptManager, PromptMetadata } from '../../../core/prompt-manager.js';
 export default class PromptsList extends Command {
   static description = 'List all saved prompts with age warnings and storage statistics';
 
-  static examples = [
-    '<%= config.bin %> <%= command.id %>',
-  ];
+  static examples = ['<%= config.bin %> <%= command.id %>'];
 
   async run(): Promise<void> {
     const promptManager = new PromptManager();
@@ -21,33 +19,38 @@ export default class PromptsList extends Command {
       if (prompts.length === 0) {
         console.log(chalk.gray('No prompts saved yet.\n'));
         console.log(chalk.cyan('Generate an optimized prompt:'));
-        console.log(chalk.cyan('  /clavix:fast "your requirement"'));
-        console.log(chalk.cyan('  /clavix:deep "your requirement"'));
+        console.log(chalk.cyan('  /clavix:improve "your requirement"'));
         console.log();
         return;
       }
 
-      // Display prompts grouped by source
-      const fastPrompts = prompts.filter(p => p.source === 'fast');
-      const deepPrompts = prompts.filter(p => p.source === 'deep');
+      // Display prompts grouped by depth
+      const standardPrompts = prompts.filter((p) => p.depthUsed === 'standard');
+      const comprehensivePrompts = prompts.filter((p) => p.depthUsed === 'comprehensive');
 
-      if (fastPrompts.length > 0) {
-        console.log(chalk.bold('Fast Prompts:'));
-        this.displayPrompts(fastPrompts);
+      if (standardPrompts.length > 0) {
+        console.log(chalk.bold('Standard Depth Prompts:'));
+        this.displayPrompts(standardPrompts);
         console.log();
       }
 
-      if (deepPrompts.length > 0) {
-        console.log(chalk.bold('Deep Prompts:'));
-        this.displayPrompts(deepPrompts);
+      if (comprehensivePrompts.length > 0) {
+        console.log(chalk.bold('Comprehensive Depth Prompts:'));
+        this.displayPrompts(comprehensivePrompts);
         console.log();
       }
 
       // Display storage statistics
       console.log(chalk.bold('📊 Storage Statistics:\n'));
       console.log(chalk.gray(`  Total Prompts: ${stats.totalPrompts}`));
-      console.log(chalk.gray(`  Fast: ${stats.fastPrompts} | Deep: ${stats.deepPrompts}`));
-      console.log(chalk.gray(`  Executed: ${stats.executedPrompts} | Pending: ${stats.pendingPrompts}`));
+      console.log(
+        chalk.gray(
+          `  Standard: ${stats.standardPrompts} | Comprehensive: ${stats.comprehensivePrompts}`
+        )
+      );
+      console.log(
+        chalk.gray(`  Executed: ${stats.executedPrompts} | Pending: ${stats.pendingPrompts}`)
+      );
 
       if (stats.oldestPromptAge > 0) {
         console.log(chalk.gray(`  Oldest: ${stats.oldestPromptAge} days`));
@@ -66,17 +69,18 @@ export default class PromptsList extends Command {
       }
 
       if (stats.totalPrompts >= 20) {
-        console.log(chalk.yellow(`⚠️  Storage approaching limit (${stats.totalPrompts}/recommended 20)`));
+        console.log(
+          chalk.yellow(`⚠️  Storage approaching limit (${stats.totalPrompts}/recommended 20)`)
+        );
         console.log(chalk.yellow(`   Consider cleanup: clavix prompts clear\n`));
       }
-
     } catch (error) {
       console.log(chalk.red(`\n✗ Error: ${error}\n`));
     }
   }
 
   private displayPrompts(prompts: PromptMetadata[]): void {
-    prompts.forEach(p => {
+    prompts.forEach((p) => {
       const status = p.executed ? chalk.green('✓') : chalk.gray('○');
       const ageInDays = p.ageInDays || 0;
 
@@ -96,9 +100,8 @@ export default class PromptsList extends Command {
       }
 
       // Truncate original prompt for display
-      const promptPreview = p.originalPrompt.length > 50
-        ? p.originalPrompt.substring(0, 50) + '...'
-        : p.originalPrompt;
+      const promptPreview =
+        p.originalPrompt.length > 50 ? p.originalPrompt.substring(0, 50) + '...' : p.originalPrompt;
 
       console.log(`  ${status} ${chalk.dim(p.id)} (${ageStr})${ageWarning}`);
       console.log(`     ${chalk.gray(promptPreview)}`);

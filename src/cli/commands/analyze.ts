@@ -1,6 +1,9 @@
 import { Command, Args, Flags } from '@oclif/core';
 import { UniversalOptimizer } from '../../core/intelligence/index.js';
 
+/**
+ * v4.11: Analysis result with unified improve mode recommendation
+ */
 interface AnalysisResult {
   intent: string;
   confidence: number;
@@ -15,7 +18,8 @@ interface AnalysisResult {
   };
   escalation: {
     score: number;
-    recommend: 'fast' | 'deep' | 'prd';
+    recommend: 'improve' | 'prd';
+    recommendedDepth?: 'standard' | 'comprehensive';
     factors: string[];
   };
   characteristics: {
@@ -64,7 +68,8 @@ export default class Analyze extends Command {
     }
 
     const optimizer = new UniversalOptimizer();
-    const result = await optimizer.optimize(args.prompt, 'fast');
+    // v4.11: Use 'improve' mode for analysis
+    const result = await optimizer.optimize(args.prompt, 'improve');
 
     // Calculate escalation score and recommendation
     const escalation = this.calculateEscalation(result);
@@ -95,6 +100,9 @@ export default class Analyze extends Command {
     console.log(JSON.stringify(analysisResult, null, flags.pretty ? 2 : 0));
   }
 
+  /**
+   * v4.11: Calculate escalation with unified improve mode
+   */
   private calculateEscalation(result: {
     intent: {
       primaryIntent: string;
@@ -106,7 +114,12 @@ export default class Analyze extends Command {
       };
     };
     quality: { overall: number; clarity: number; completeness: number; actionability: number };
-  }): { score: number; recommend: 'fast' | 'deep' | 'prd'; factors: string[] } {
+  }): {
+    score: number;
+    recommend: 'improve' | 'prd';
+    recommendedDepth?: 'standard' | 'comprehensive';
+    factors: string[];
+  } {
     const factors: string[] = [];
     let score = 0;
 
@@ -157,15 +170,16 @@ export default class Analyze extends Command {
       factors.push('low intent confidence');
     }
 
-    // Determine recommendation based on score and intent
-    let recommend: 'fast' | 'deep' | 'prd' = 'fast';
+    // v4.11: Determine recommendation based on score and intent
+    let recommend: 'improve' | 'prd' = 'improve';
+    let recommendedDepth: 'standard' | 'comprehensive' = 'standard';
 
     if (result.intent.primaryIntent === 'prd-generation') {
       recommend = 'prd';
     } else if (score >= 60 || result.quality.overall < 50) {
-      recommend = 'deep';
+      recommendedDepth = 'comprehensive';
     } else if (score >= 35) {
-      recommend = 'deep';
+      recommendedDepth = 'comprehensive';
     }
 
     // Check for strategic keywords that suggest PRD mode
@@ -177,6 +191,7 @@ export default class Analyze extends Command {
     return {
       score: Math.min(100, score),
       recommend,
+      recommendedDepth: recommend === 'improve' ? recommendedDepth : undefined,
       factors,
     };
   }

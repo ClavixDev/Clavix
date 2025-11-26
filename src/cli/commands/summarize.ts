@@ -7,7 +7,8 @@ import { FileSystem } from '../../utils/file-system.js';
 import { UniversalOptimizer } from '../../core/intelligence/index.js';
 
 export default class Summarize extends Command {
-  static description = 'Analyze a conversation session and extract structured requirements with automatic optimization';
+  static description =
+    'Analyze a conversation session and extract structured requirements with automatic optimization';
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
@@ -66,10 +67,10 @@ export default class Summarize extends Command {
         if (!session) {
           this.error(
             'No active session found\n\n' +
-            'Usage:\n' +
-            '  • clavix summarize <session-id> - Summarize specific session\n' +
-            '  • clavix summarize --active - Summarize most recent active session\n' +
-            '  • clavix list - View all sessions'
+              'Usage:\n' +
+              '  • clavix summarize <session-id> - Summarize specific session\n' +
+              '  • clavix summarize --active - Summarize most recent active session\n' +
+              '  • clavix list - View all sessions'
           );
         }
       }
@@ -97,8 +98,8 @@ export default class Summarize extends Command {
       // Generate outputs
       console.log(chalk.dim('\nGenerating output files...\n'));
 
-      const outputDir = flags.output ||
-        path.join('.clavix/outputs', this.sanitizeProjectName(session.projectName));
+      const outputDir =
+        flags.output || path.join('.clavix/outputs', this.sanitizeProjectName(session.projectName));
 
       await FileSystem.ensureDir(outputDir);
 
@@ -120,17 +121,39 @@ export default class Summarize extends Command {
       // Display success
       console.log(chalk.bold.green('\n✓ Analysis complete!\n'));
       console.log(chalk.bold('Generated files:'));
-      console.log(chalk.gray('  • ') + chalk.cyan('mini-prd.md') + chalk.dim(' - Structured requirements document'));
-      console.log(chalk.gray('  • ') + chalk.cyan('original-prompt.md') + chalk.dim(' - Raw extracted prompt'));
-      console.log(chalk.gray('  • ') + chalk.cyan('optimized-prompt.md') + chalk.dim(' - Enhanced AI-ready prompt'));
+      console.log(
+        chalk.gray('  • ') +
+          chalk.cyan('mini-prd.md') +
+          chalk.dim(' - Structured requirements document')
+      );
+      console.log(
+        chalk.gray('  • ') + chalk.cyan('original-prompt.md') + chalk.dim(' - Raw extracted prompt')
+      );
+      console.log(
+        chalk.gray('  • ') +
+          chalk.cyan('optimized-prompt.md') +
+          chalk.dim(' - Enhanced AI-ready prompt')
+      );
       console.log();
       console.log(chalk.bold('Output location:'));
       console.log(chalk.dim(`  ${outputDir}`));
       console.log();
       console.log(chalk.bold('💡 Next steps:'));
-      console.log(chalk.gray('  • Use ') + chalk.cyan('optimized-prompt.md') + chalk.gray(' for best AI results'));
-      console.log(chalk.gray('  • Share ') + chalk.cyan('mini-prd.md') + chalk.gray(' with your team for alignment'));
-      console.log(chalk.gray('  • Run ') + chalk.cyan('clavix implement') + chalk.gray(' to start development'));
+      console.log(
+        chalk.gray('  • Use ') +
+          chalk.cyan('optimized-prompt.md') +
+          chalk.gray(' for best AI results')
+      );
+      console.log(
+        chalk.gray('  • Share ') +
+          chalk.cyan('mini-prd.md') +
+          chalk.gray(' with your team for alignment')
+      );
+      console.log(
+        chalk.gray('  • Run ') +
+          chalk.cyan('clavix implement') +
+          chalk.gray(' to start development')
+      );
       console.log();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
@@ -154,7 +177,7 @@ export default class Summarize extends Command {
 
     if (analysis.technicalConstraints.length > 0) {
       console.log(chalk.bold('Technical Constraints:'));
-      analysis.technicalConstraints.slice(0, 3).forEach(constraint => {
+      analysis.technicalConstraints.slice(0, 3).forEach((constraint) => {
         console.log(chalk.gray(`  • ${constraint}`));
       });
       if (analysis.technicalConstraints.length > 3) {
@@ -165,7 +188,7 @@ export default class Summarize extends Command {
 
     if (analysis.successCriteria.length > 0) {
       console.log(chalk.bold('Success Criteria:'));
-      analysis.successCriteria.slice(0, 3).forEach(criterion => {
+      analysis.successCriteria.slice(0, 3).forEach((criterion) => {
         console.log(chalk.gray(`  ✓ ${criterion}`));
       });
       if (analysis.successCriteria.length > 3) {
@@ -179,8 +202,9 @@ export default class Summarize extends Command {
     try {
       console.log(chalk.dim('Optimizing extracted prompt...\n'));
 
+      // v4.11: Use improve mode
       const optimizer = new UniversalOptimizer();
-      const result = await optimizer.optimize(rawPrompt, 'fast');
+      const result = await optimizer.optimize(rawPrompt, 'improve');
 
       // Display optimization results
       console.log(chalk.bold('✨ Optimization Results:\n'));
@@ -196,23 +220,23 @@ export default class Summarize extends Command {
       // Save optimized version
       const optimizedPath = path.join(outputDir, 'optimized-prompt.md');
       await FileSystem.writeFileAtomic(optimizedPath, result.enhanced);
-
-    } catch (error) {
+    } catch {
       console.log(chalk.yellow('⚠️  Could not optimize prompt'));
       console.log(chalk.gray('Using original extracted version...\n'));
 
       // Fallback: copy original to optimized
-      const originalPath = path.join(outputDir, 'original-prompt.md');
       const optimizedPath = path.join(outputDir, 'optimized-prompt.md');
       await FileSystem.writeFileAtomic(optimizedPath, rawPrompt);
     }
   }
 
   private sanitizeProjectName(name: string): string {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '') || 'unnamed-project';
+    return (
+      name
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'unnamed-project'
+    );
   }
 }

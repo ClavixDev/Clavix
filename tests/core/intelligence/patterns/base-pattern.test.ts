@@ -4,7 +4,7 @@ import {
   PatternContext,
   PatternResult,
   PromptIntent,
-  OptimizationMode,
+  PatternScope,
 } from '../../../../src/core/intelligence/types.js';
 
 // Concrete implementation for testing abstract class
@@ -13,7 +13,7 @@ class TestPattern extends BasePattern {
   name = 'Test Pattern';
   description = 'A test pattern for testing';
   applicableIntents: PromptIntent[] = ['code-generation', 'planning'];
-  mode: OptimizationMode | 'both' = 'both';
+  scope: PatternScope = 'both';
   priority = 5;
 
   apply(prompt: string, context: PatternContext): PatternResult {
@@ -53,7 +53,7 @@ describe('BasePattern', () => {
   beforeEach(() => {
     pattern = new TestPattern();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -69,20 +69,20 @@ describe('BasePattern', () => {
   });
 
   describe('isApplicable', () => {
-    it('should return true when mode is "both" and intent matches', () => {
-      pattern.mode = 'both';
+    it('should return true when scope is "both" and intent matches', () => {
+      pattern.scope = 'both';
       expect(pattern.isApplicable(mockContext)).toBe(true);
     });
 
-    it('should return true when mode matches context mode', () => {
-      pattern.mode = 'fast';
-      mockContext.mode = 'fast';
+    it('should return true when scope matches context depthLevel', () => {
+      pattern.scope = 'standard';
+      mockContext.depthLevel = 'standard';
       expect(pattern.isApplicable(mockContext)).toBe(true);
     });
 
-    it('should return false when mode does not match context mode', () => {
-      pattern.mode = 'deep';
-      mockContext.mode = 'fast';
+    it('should return false when scope does not match context depthLevel', () => {
+      pattern.scope = 'comprehensive';
+      mockContext.depthLevel = 'standard';
       expect(pattern.isApplicable(mockContext)).toBe(false);
     });
 

@@ -15,7 +15,7 @@ const ROOT_DIR = path.resolve(__dirname, '../..');
  * Template-Code Consistency Tests (v4.6)
  *
  * These tests verify that canonical templates accurately describe CLI behavior.
- * If a template says "saves to .clavix/outputs/prompts/fast/", the CLI should do exactly that.
+ * If a template says "saves to .clavix/outputs/prompts/", the CLI should do exactly that.
  * This prevents documentation drift and ensures agents can trust template instructions.
  */
 
@@ -24,19 +24,19 @@ describe('Template-Code Consistency', () => {
   const componentsDir = path.join(ROOT_DIR, 'src/templates/slash-commands/_components');
 
   describe('Fast Mode Template', () => {
-    let fastTemplate: string;
+    let improveTemplate: string;
 
     beforeAll(async () => {
-      fastTemplate = await fs.readFile(path.join(templatesDir, 'fast.md'), 'utf-8');
+      improveTemplate = await fs.readFile(path.join(templatesDir, 'improve.md'), 'utf-8');
     });
 
     it('template describes correct file save path', () => {
-      // Template says: .clavix/outputs/prompts/fast/
+      // Template says: .clavix/outputs/prompts/
       const manager = new PromptManager();
       const promptsDir = (manager as unknown as { promptsDir: string }).promptsDir;
 
       expect(promptsDir).toContain('.clavix/outputs/prompts');
-      expect(fastTemplate).toContain('.clavix/outputs/prompts/fast');
+      expect(improveTemplate).toContain('.clavix/outputs/prompts');
     });
 
     it('template lists all 6 quality dimensions', () => {
@@ -50,7 +50,7 @@ describe('Template-Code Consistency', () => {
       ];
 
       dimensions.forEach((dim) => {
-        expect(fastTemplate).toContain(dim);
+        expect(improveTemplate).toContain(dim);
       });
     });
 
@@ -70,15 +70,15 @@ describe('Template-Code Consistency', () => {
       ];
 
       intents.forEach((intent) => {
-        expect(fastTemplate).toContain(intent);
+        expect(improveTemplate).toContain(intent);
       });
     });
 
     it('template example shows all 6 quality dimensions', () => {
       // The example output should include Specificity
-      const exampleSection = fastTemplate.slice(
-        fastTemplate.indexOf('### Quality Assessment:'),
-        fastTemplate.indexOf('### Optimized Prompt:')
+      const exampleSection = improveTemplate.slice(
+        improveTemplate.indexOf('### Quality Assessment:'),
+        improveTemplate.indexOf('### Optimized Prompt:')
       );
 
       expect(exampleSection).toContain('Clarity:');
@@ -90,9 +90,11 @@ describe('Template-Code Consistency', () => {
     });
 
     it('template quality thresholds match code logic', () => {
-      // Template mentions 65% as threshold for deep mode recommendation
-      expect(fastTemplate).toContain('< 65%');
-      expect(fastTemplate).toContain('< 50%');
+      // Template mentions depth selection thresholds
+      // >= 75%: auto-comprehensive, 60-74%: ask user, < 60%: auto-standard
+      expect(improveTemplate).toContain('>= 75%');
+      expect(improveTemplate).toContain('60-74%');
+      expect(improveTemplate).toContain('< 60%');
     });
 
     it('intent detector supports all template-listed intents', () => {
@@ -143,7 +145,7 @@ describe('Template-Code Consistency', () => {
     let deepTemplate: string;
 
     beforeAll(async () => {
-      deepTemplate = await fs.readFile(path.join(templatesDir, 'deep.md'), 'utf-8');
+      deepTemplate = await fs.readFile(path.join(templatesDir, 'improve.md'), 'utf-8');
     });
 
     it('template lists all 6 quality dimensions', () => {
@@ -181,8 +183,8 @@ describe('Template-Code Consistency', () => {
       });
     });
 
-    it('template mentions deep mode exclusive features', () => {
-      // Deep mode should mention alternatives, edge cases, validation
+    it('template mentions comprehensive depth exclusive features', () => {
+      // Comprehensive depth should mention alternatives, edge cases, validation
       expect(deepTemplate).toContain('alternative');
       expect(deepTemplate).toContain('edge case');
     });
@@ -262,14 +264,14 @@ describe('Template-Code Consistency', () => {
   });
 
   describe('No Outdated Version References', () => {
-    it('fast.md has no v2.x or v3.x references', async () => {
-      const content = await fs.readFile(path.join(templatesDir, 'fast.md'), 'utf-8');
+    it('improve.md has no v2.x or v3.x references', async () => {
+      const content = await fs.readFile(path.join(templatesDir, 'improve.md'), 'utf-8');
       expect(content).not.toMatch(/\bv2\.\d/);
       expect(content).not.toMatch(/\bv3\.\d/);
     });
 
     it('deep.md has no v2.x or v3.x references', async () => {
-      const content = await fs.readFile(path.join(templatesDir, 'deep.md'), 'utf-8');
+      const content = await fs.readFile(path.join(templatesDir, 'improve.md'), 'utf-8');
       expect(content).not.toMatch(/\bv2\.\d/);
       expect(content).not.toMatch(/\bv3\.\d/);
     });

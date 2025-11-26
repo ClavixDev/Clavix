@@ -50,7 +50,7 @@ describe('loadCommandTemplates', () => {
       const templates = await loadCommandTemplates(mockAdapter);
 
       // All template names should be derived from .md files
-      expect(templates.every(t => !t.name.includes('.'))).toBe(true);
+      expect(templates.every((t) => !t.name.includes('.'))).toBe(true);
     });
 
     it('should extract template names without extension', async () => {
@@ -68,8 +68,8 @@ describe('loadCommandTemplates', () => {
       const templates = await loadCommandTemplates(mockAdapter);
 
       // Find a template with frontmatter
-      const templateWithFrontmatter = templates.find(t =>
-        t.name === 'fast' || t.name === 'deep' || t.name === 'prd'
+      const templateWithFrontmatter = templates.find(
+        (t) => t.name === 'improve' || t.name === 'prd'
       );
 
       if (templateWithFrontmatter) {
@@ -96,7 +96,7 @@ describe('loadCommandTemplates', () => {
       const templates = await loadCommandTemplates(mockAdapter);
 
       // At least one template should have a description
-      const templatesWithDescriptions = templates.filter(t => t.description.length > 0);
+      const templatesWithDescriptions = templates.filter((t) => t.description.length > 0);
       expect(templatesWithDescriptions.length).toBeGreaterThan(0);
     });
 
@@ -123,8 +123,8 @@ describe('loadCommandTemplates', () => {
       const templates = await loadCommandTemplates(mockAdapter);
 
       // Some templates have multi-word descriptions with spaces
-      const multiWordDescriptions = templates.filter(t =>
-        t.description.includes(' ') && t.description.length > 0
+      const multiWordDescriptions = templates.filter(
+        (t) => t.description.includes(' ') && t.description.length > 0
       );
 
       // Should preserve spaces in descriptions
@@ -135,25 +135,17 @@ describe('loadCommandTemplates', () => {
   });
 
   describe('specific template verification', () => {
-    it('should load fast command template', async () => {
+    it('should load improve command template', async () => {
       const templates = await loadCommandTemplates(mockAdapter);
-      const fastTemplate = templates.find(t => t.name === 'fast');
+      const improveTemplate = templates.find((t) => t.name === 'improve');
 
-      expect(fastTemplate).toBeDefined();
-      expect(fastTemplate!.content.length).toBeGreaterThan(0);
-    });
-
-    it('should load deep command template', async () => {
-      const templates = await loadCommandTemplates(mockAdapter);
-      const deepTemplate = templates.find(t => t.name === 'deep');
-
-      expect(deepTemplate).toBeDefined();
-      expect(deepTemplate!.content.length).toBeGreaterThan(0);
+      expect(improveTemplate).toBeDefined();
+      expect(improveTemplate!.content.length).toBeGreaterThan(0);
     });
 
     it('should load prd command template', async () => {
       const templates = await loadCommandTemplates(mockAdapter);
-      const prdTemplate = templates.find(t => t.name === 'prd');
+      const prdTemplate = templates.find((t) => t.name === 'prd');
 
       expect(prdTemplate).toBeDefined();
       expect(prdTemplate!.content.length).toBeGreaterThan(0);
@@ -212,7 +204,7 @@ describe('loadCommandTemplates', () => {
 
     it('should only include .md files', async () => {
       const files = await fs.readdir(testTemplatesDir);
-      const mdFiles = files.filter(f => f.endsWith('.md'));
+      const mdFiles = files.filter((f) => f.endsWith('.md'));
 
       const templates = await loadCommandTemplates(mockAdapter);
 
@@ -238,7 +230,7 @@ describe('loadCommandTemplates', () => {
       const templates = await loadCommandTemplates(mockAdapter);
 
       // Some templates contain code blocks with triple backticks
-      const templatesWithCode = templates.filter(t => t.content.includes('```'));
+      const templatesWithCode = templates.filter((t) => t.content.includes('```'));
 
       // Should preserve code blocks
       for (const template of templatesWithCode) {

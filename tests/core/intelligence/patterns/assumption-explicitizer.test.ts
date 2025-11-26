@@ -9,7 +9,7 @@ describe('AssumptionExplicitizer', () => {
   beforeEach(() => {
     pattern = new AssumptionExplicitizer();
     mockContext = {
-      mode: 'deep',
+      depthLevel: 'comprehensive',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -33,8 +33,8 @@ describe('AssumptionExplicitizer', () => {
       expect(pattern.name).toBe('Assumption Explicitizer');
     });
 
-    it('should be deep mode only', () => {
-      expect(pattern.mode).toBe('deep');
+    it('should be comprehensive depth only', () => {
+      expect(pattern.scope).toBe('comprehensive');
     });
 
     it('should have priority 6', () => {
@@ -52,14 +52,14 @@ describe('AssumptionExplicitizer', () => {
   });
 
   describe('isApplicable', () => {
-    it('should return true for code-generation in deep mode', () => {
-      mockContext.mode = 'deep';
+    it('should return true for code-generation in comprehensive depth', () => {
+      mockContext.depthLevel = 'comprehensive';
       mockContext.intent.primaryIntent = 'code-generation';
       expect(pattern.isApplicable(mockContext)).toBe(true);
     });
 
-    it('should return false in fast mode', () => {
-      mockContext.mode = 'fast';
+    it('should return false in standard depth', () => {
+      mockContext.depthLevel = 'standard';
       expect(pattern.isApplicable(mockContext)).toBe(false);
     });
   });

@@ -1,17 +1,17 @@
 ## When Your Prompt Needs More Attention
 
-Sometimes a quick cleanup isn't enough. Here's how to know when to recommend deep analysis, and how to explain it to users.
+Sometimes a quick cleanup isn't enough. Here's how to know when to recommend comprehensive analysis, and how to explain it to users.
 
 ---
 
-### Quick Check: Is Fast Mode Enough?
+### Quick Check: Is Standard Depth Enough?
 
-**Fast mode works great when:**
+**Standard depth works great when:**
 - User knows what they want
 - Request is straightforward
 - Prompt just needs cleanup/polish
 
-**Suggest deep mode when:**
+**Suggest comprehensive depth when:**
 - Prompt is vague or confusing
 - Missing lots of important details
 - Complex request (architecture, migration, security)
@@ -22,7 +22,7 @@ Sometimes a quick cleanup isn't enough. Here's how to know when to recommend dee
 ### How to Decide (No Numbers to Users)
 
 **Instead of showing:**
-> "Escalation: 78/100 [STRONGLY RECOMMEND DEEP]"
+> "Escalation: 78/100 [STRONGLY RECOMMEND COMPREHENSIVE]"
 
 **Say this:**
 > "This prompt needs more work than a quick cleanup. I'd recommend
@@ -31,7 +31,7 @@ Sometimes a quick cleanup isn't enough. Here's how to know when to recommend dee
 
 ---
 
-### What Triggers Deep Mode Recommendation
+### What Triggers Comprehensive Depth Recommendation
 
 | What You Notice | What to Say |
 |-----------------|-------------|
@@ -44,12 +44,12 @@ Sometimes a quick cleanup isn't enough. Here's how to know when to recommend dee
 
 ---
 
-### Deep Mode Value (What to Tell Users)
+### Comprehensive Depth Value (What to Tell Users)
 
-When recommending deep mode, explain what they'll get:
+When recommending comprehensive depth, explain what they'll get:
 
 **For vague prompts:**
-> "With deep analysis, I'll explore different ways to interpret this and
+> "With comprehensive analysis, I'll explore different ways to interpret this and
 > give you options to choose from."
 
 **For incomplete prompts:**
@@ -66,21 +66,21 @@ When recommending deep mode, explain what they'll get:
 
 ---
 
-### How to Transition to Deep Mode
+### How to Transition Depth Levels
 
-**If user accepts:**
+**If user accepts comprehensive:**
 > "Great, let me take a closer look at this..."
-> [Switch to deep mode analysis]
+> [Switch to comprehensive depth analysis]
 
 **If user declines:**
 > "No problem! I'll do what I can with a quick cleanup. You can always
-> run deep mode later if you want more detail."
-> [Continue with fast mode]
+> run with --comprehensive later if you want more detail."
+> [Continue with standard depth]
 
 **If user is unsure:**
 > "Here's the difference:
-> - **Quick mode:** Clean up and improve what's there (2 minutes)
-> - **Deep mode:** Full analysis with alternatives and checklist (5 minutes)
+> - **Standard:** Clean up and improve what's there (2 minutes)
+> - **Comprehensive:** Full analysis with alternatives and checklist (5 minutes)
 >
 > Which sounds better for this?"
 
@@ -88,7 +88,7 @@ When recommending deep mode, explain what they'll get:
 
 ### Internal Reference: Escalation Factors
 
-The 8 escalation factors for calculating when to recommend deep mode:
+The 8 escalation factors for calculating when to recommend comprehensive depth:
 
 | Factor | Trigger Condition | Points |
 |--------|-------------------|--------|
@@ -104,16 +104,16 @@ The 8 escalation factors for calculating when to recommend deep mode:
 **Recommendation thresholds:**
 | Score | Recommendation |
 |-------|----------------|
-| 75+ | `[STRONGLY RECOMMEND DEEP]` |
-| 60-74 | `[RECOMMEND DEEP]` |
-| 45-59 | `[DEEP MODE AVAILABLE]` |
-| <45 | No escalation - Fast mode sufficient |
+| 75+ | `[STRONGLY RECOMMEND COMPREHENSIVE]` (high confidence) |
+| 60-74 | `[RECOMMEND COMPREHENSIVE]` (medium confidence) |
+| 45-59 | `[COMPREHENSIVE AVAILABLE]` (low confidence) |
+| <45 | No escalation - Standard depth sufficient |
 
 ---
 
 ### Example Conversations
 
-**Prompt clearly needs deep mode:**
+**Prompt clearly needs comprehensive depth:**
 ```
 User: "help with auth"
 
@@ -133,17 +133,17 @@ User: "build a REST API for user management"
 Agent: "I can definitely improve this! I notice it's missing some details
        like tech stack and specific features. I could either:
        - Quick cleanup: Add the obvious improvements
-       - Deep analysis: Fill in all the gaps and give you a complete spec
+       - Comprehensive analysis: Fill in all the gaps and give you a complete spec
 
        Which works better for you?"
 ```
 
-**Prompt is good enough for fast:**
+**Prompt is good enough for standard:**
 ```
 User: "Create a React component that shows a list of products
        with name, price, and add-to-cart button. Use TypeScript
        and styled-components."
 
-Agent: [No escalation needed - proceed with fast mode]
+Agent: [No escalation needed - proceed with standard depth]
        "Nice clear prompt! Let me just polish it up a bit..."
 ```

@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -32,7 +32,7 @@ export class DomainContextEnricher extends BasePattern {
     'migration',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
   readonly phases: PatternPhase[] = ['all'];
 

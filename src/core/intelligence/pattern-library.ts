@@ -5,14 +5,14 @@ import { TechnicalContextEnricher } from './patterns/technical-context-enricher.
 import { StructureOrganizer } from './patterns/structure-organizer.js';
 import { CompletenessValidator } from './patterns/completeness-validator.js';
 import { ActionabilityEnhancer } from './patterns/actionability-enhancer.js';
-// v4.0 Deep mode patterns
+// v4.0 Comprehensive scope patterns
 import { AlternativePhrasingGenerator } from './patterns/alternative-phrasing-generator.js';
 import { EdgeCaseIdentifier } from './patterns/edge-case-identifier.js';
 import { ValidationChecklistCreator } from './patterns/validation-checklist-creator.js';
 import { AssumptionExplicitizer } from './patterns/assumption-explicitizer.js';
 import { ScopeDefiner } from './patterns/scope-definer.js';
 import { PRDStructureEnforcer } from './patterns/prd-structure-enforcer.js';
-// v4.0 Both mode patterns
+// v4.0 Both scope patterns (standard & comprehensive)
 import { StepDecomposer } from './patterns/step-decomposer.js';
 import { ContextPrecisionBooster } from './patterns/context-precision.js';
 // v4.1 New patterns - Agent transparency & quality improvements
@@ -31,7 +31,13 @@ import { DependencyIdentifier } from './patterns/dependency-identifier.js';
 import { ConversationSummarizer } from './patterns/conversation-summarizer.js';
 import { TopicCoherenceAnalyzer } from './patterns/topic-coherence-analyzer.js';
 import { ImplicitRequirementExtractor } from './patterns/implicit-requirement-extractor.js';
-import { IntentAnalysis, OptimizationMode, OptimizationPhase, PromptIntent } from './types.js';
+import {
+  IntentAnalysis,
+  OptimizationMode,
+  OptimizationPhase,
+  PromptIntent,
+  DepthLevel,
+} from './types.js';
 import { IntelligenceConfig } from '../../types/config.js';
 
 export class PatternLibrary implements IPatternLibrary {
@@ -83,7 +89,7 @@ export class PatternLibrary implements IPatternLibrary {
   }
 
   private registerDefaultPatterns(): void {
-    // Register core patterns (available in fast & deep modes)
+    // Register core patterns (available in standard & comprehensive scopes)
     this.register(new ConcisenessFilter()); // HIGH - Remove verbosity
     this.register(new ObjectiveClarifier()); // HIGH - Add clarity
     this.register(new TechnicalContextEnricher()); // MEDIUM - Add technical details
@@ -91,7 +97,7 @@ export class PatternLibrary implements IPatternLibrary {
     this.register(new CompletenessValidator()); // MEDIUM - Check missing elements
     this.register(new ActionabilityEnhancer()); // HIGH - Vague to specific
 
-    // v4.0 Deep mode patterns
+    // v4.0 Comprehensive scope patterns
     this.register(new AlternativePhrasingGenerator()); // P5 - Generate alternative structures
     this.register(new EdgeCaseIdentifier()); // P4 - Identify edge cases by domain
     this.register(new ValidationChecklistCreator()); // P3 - Create validation checklists
@@ -99,17 +105,17 @@ export class PatternLibrary implements IPatternLibrary {
     this.register(new ScopeDefiner()); // P5 - Add scope boundaries
     this.register(new PRDStructureEnforcer()); // P9 - Ensure PRD completeness
 
-    // v4.0 Both mode patterns (fast & deep)
+    // v4.0 Both scope patterns (standard & comprehensive)
     this.register(new StepDecomposer()); // P7 - Break complex prompts into steps
     this.register(new ContextPrecisionBooster()); // P8 - Add precise context when missing
 
     // v4.1 New patterns - Agent transparency & quality improvements
-    this.register(new AmbiguityDetector()); // P9 - Identify ambiguous terms (both modes)
-    this.register(new OutputFormatEnforcer()); // P7 - Add output format specs (both modes)
-    this.register(new SuccessCriteriaEnforcer()); // P6 - Add success criteria (both modes)
-    this.register(new ErrorToleranceEnhancer()); // P5 - Add error handling (deep only)
-    this.register(new PrerequisiteIdentifier()); // P6 - Identify prerequisites (deep only)
-    this.register(new DomainContextEnricher()); // P5 - Add domain best practices (both modes)
+    this.register(new AmbiguityDetector()); // P9 - Identify ambiguous terms (both scopes)
+    this.register(new OutputFormatEnforcer()); // P7 - Add output format specs (both scopes)
+    this.register(new SuccessCriteriaEnforcer()); // P6 - Add success criteria (both scopes)
+    this.register(new ErrorToleranceEnhancer()); // P5 - Add error handling (comprehensive only)
+    this.register(new PrerequisiteIdentifier()); // P6 - Identify prerequisites (comprehensive only)
+    this.register(new DomainContextEnricher()); // P5 - Add domain best practices (both scopes)
 
     // v4.3.2 PRD patterns
     this.register(new RequirementPrioritizer()); // P7 - Separate must-have from nice-to-have
@@ -155,7 +161,8 @@ export class PatternLibrary implements IPatternLibrary {
       actionability: number;
       overall: number;
     },
-    mode: OptimizationMode
+    mode: OptimizationMode,
+    depthLevel?: DepthLevel
   ): BasePattern[] {
     // Create IntentAnalysis from parameters
     const intentAnalysis: IntentAnalysis = {
@@ -170,14 +177,21 @@ export class PatternLibrary implements IPatternLibrary {
     };
 
     // Use existing selectPatterns method
-    return this.selectPatterns(intentAnalysis, mode);
+    return this.selectPatterns(intentAnalysis, mode, depthLevel);
   }
 
   /**
-   * Select applicable patterns for the given context
+   * v4.11: Select applicable patterns for the given context
+   * Now uses DepthLevel ('standard' | 'comprehensive') for pattern filtering
    */
-  selectPatterns(intent: IntentAnalysis, mode: OptimizationMode): BasePattern[] {
+  selectPatterns(
+    intent: IntentAnalysis,
+    mode: OptimizationMode,
+    depthLevel?: DepthLevel
+  ): BasePattern[] {
     const applicablePatterns: BasePattern[] = [];
+    // v4.11: Default to 'standard' depth for 'improve' mode if not specified
+    const effectiveDepth = depthLevel || (mode === 'improve' ? 'standard' : 'comprehensive');
 
     for (const pattern of this.patterns.values()) {
       // v4.4: Check if pattern is disabled via config
@@ -185,8 +199,8 @@ export class PatternLibrary implements IPatternLibrary {
         continue;
       }
 
-      // Check mode compatibility
-      if (pattern.mode !== 'both' && pattern.mode !== mode) {
+      // v4.11: Check scope compatibility using DepthLevel
+      if (pattern.scope !== 'both' && pattern.scope !== effectiveDepth) {
         continue;
       }
 
@@ -293,16 +307,17 @@ export class PatternLibrary implements IPatternLibrary {
   }
 
   /**
-   * v4.5: Select patterns for specific mode with phase-awareness
-   * Maps PRD and conversational modes to appropriate base modes and patterns
+   * v4.11: Select patterns for specific mode with phase-awareness
+   * Maps PRD and conversational modes to appropriate depth levels for pattern selection
    */
   selectPatternsForMode(
     mode: OptimizationMode,
     intent: IntentAnalysis,
-    phase?: OptimizationPhase
+    phase?: OptimizationPhase,
+    depthLevel?: DepthLevel
   ): BasePattern[] {
-    // Map PRD/conversational modes to base modes for pattern selection
-    const baseMode = this.mapToBaseMode(mode, phase);
+    // v4.11: Map mode/phase to depth level for pattern selection
+    const effectiveDepth = depthLevel || this.mapToDepthLevel(mode, phase);
     const applicablePatterns: BasePattern[] = [];
 
     for (const pattern of this.patterns.values()) {
@@ -311,8 +326,8 @@ export class PatternLibrary implements IPatternLibrary {
         continue;
       }
 
-      // Check mode compatibility (use mapped base mode)
-      if (pattern.mode !== 'both' && pattern.mode !== baseMode) {
+      // v4.11: Check scope compatibility using depth level
+      if (pattern.scope !== 'both' && pattern.scope !== effectiveDepth) {
         continue;
       }
 
@@ -362,20 +377,20 @@ export class PatternLibrary implements IPatternLibrary {
   }
 
   /**
-   * Map extended modes to base modes for pattern compatibility
+   * v4.11: Map mode and phase to depth level for pattern selection
    */
-  private mapToBaseMode(mode: OptimizationMode, phase?: OptimizationPhase): 'fast' | 'deep' {
+  private mapToDepthLevel(mode: OptimizationMode, phase?: OptimizationPhase): DepthLevel {
     switch (mode) {
       case 'prd':
-        // PRD uses deep mode for output generation, fast for validation
-        return phase === 'question-validation' ? 'fast' : 'deep';
+        // PRD uses comprehensive for output generation, standard for validation
+        return phase === 'question-validation' ? 'standard' : 'comprehensive';
       case 'conversational':
-        // Conversational uses fast mode for tracking, deep for summarization
-        return phase === 'summarization' ? 'deep' : 'fast';
-      case 'fast':
-      case 'deep':
+        // Conversational uses standard for tracking, comprehensive for summarization
+        return phase === 'summarization' ? 'comprehensive' : 'standard';
+      case 'improve':
       default:
-        return mode as 'fast' | 'deep';
+        // 'improve' mode defaults to standard; caller can override with depthLevel param
+        return 'standard';
     }
   }
 
@@ -387,10 +402,22 @@ export class PatternLibrary implements IPatternLibrary {
   }
 
   /**
-   * Get patterns by mode
+   * v4.11: Get patterns by scope (standard or comprehensive)
+   */
+  getPatternsByScope(scope: DepthLevel): BasePattern[] {
+    return Array.from(this.patterns.values()).filter(
+      (p) => p.scope === scope || p.scope === 'both'
+    );
+  }
+
+  /**
+   * Get patterns by mode (backward compatibility)
+   * @deprecated Use getPatternsByScope() instead
    */
   getPatternsByMode(mode: OptimizationMode): BasePattern[] {
-    return Array.from(this.patterns.values()).filter((p) => p.mode === mode || p.mode === 'both');
+    // v4.11: Map old mode names to scope for backward compatibility
+    const scope: DepthLevel = mode === 'improve' ? 'standard' : 'comprehensive';
+    return this.getPatternsByScope(scope);
   }
 
   /**

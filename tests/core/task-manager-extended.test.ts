@@ -36,17 +36,15 @@ describe('TaskManager - Extended (Error Scenarios & Edge Cases)', () => {
       const projectDir = path.join(outputsDir, 'no-prd');
       await fs.ensureDir(projectDir);
 
-      await expect(
-        manager.generateTasksFromPrd(projectDir)
-      ).rejects.toThrow('No PRD artifacts found');
+      await expect(manager.generateTasksFromPrd(projectDir)).rejects.toThrow(
+        'No PRD artifacts found'
+      );
     });
 
     it('should throw error when PRD directory not found', async () => {
       const projectDir = path.join(outputsDir, 'missing-project');
 
-      await expect(
-        manager.generateTasksFromPrd(projectDir)
-      ).rejects.toThrow();
+      await expect(manager.generateTasksFromPrd(projectDir)).rejects.toThrow();
     });
 
     it('should find full-prd.md as priority source', async () => {
@@ -105,9 +103,9 @@ describe('TaskManager - Extended (Error Scenarios & Edge Cases)', () => {
 
       await fs.writeFile(path.join(projectDir, 'full-prd.md'), '# Full');
 
-      await expect(
-        manager.generateTasksFromPrd(projectDir, { source: 'quick' })
-      ).rejects.toThrow('No PRD artifacts found for source');
+      await expect(manager.generateTasksFromPrd(projectDir, { source: 'quick' })).rejects.toThrow(
+        'No PRD artifacts found for source'
+      );
     });
   });
 
@@ -280,7 +278,7 @@ Just some general requirements without structured features.
       expect(allTasks.some((t) => t.prdReference !== undefined)).toBe(true);
     });
 
-    it('should use fast mode optimization when specified', async () => {
+    it('should use standard depth optimization when specified', async () => {
       const projectDir = path.join(outputsDir, 'fast-mode');
       await fs.ensureDir(projectDir);
 
@@ -304,7 +302,7 @@ Just some general requirements without structured features.
       expect(result.totalTasks).toBeGreaterThan(0);
     });
 
-    it('should use deep mode optimization when specified', async () => {
+    it('should use comprehensive depth optimization when specified', async () => {
       const projectDir = path.join(outputsDir, 'deep-mode');
       await fs.ensureDir(projectDir);
 
@@ -371,10 +369,7 @@ Just some general requirements without structured features.
       await manager.generateTasksFromPrd(projectDir);
 
       // New file should be created and different from original
-      const newTasks = await fs.readFile(
-        path.join(projectDir, 'tasks.md'),
-        'utf-8'
-      );
+      const newTasks = await fs.readFile(path.join(projectDir, 'tasks.md'), 'utf-8');
 
       expect(newTasks).not.toBe(originalTasks);
       expect(newTasks).toContain('# Implementation Tasks');
@@ -393,9 +388,7 @@ Just some general requirements without structured features.
       try {
         await fs.chmod(projectDir, 0o444);
 
-        await expect(
-          manager.generateTasksFromPrd(projectDir)
-        ).rejects.toThrow();
+        await expect(manager.generateTasksFromPrd(projectDir)).rejects.toThrow();
 
         await fs.chmod(projectDir, 0o755);
       } catch {

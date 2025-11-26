@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -30,7 +30,7 @@ export class OutputFormatEnforcer extends BasePattern {
     'testing',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 7; // MEDIUM-HIGH - important enrichment
   readonly phases: PatternPhase[] = ['all'];
 

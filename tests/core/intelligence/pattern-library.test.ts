@@ -24,7 +24,7 @@ describe('PatternLibrary', () => {
           actionability: 50,
           overall: 50,
         },
-        'fast'
+        'standard'
       );
 
       expect(patterns.length).toBeGreaterThan(0);
@@ -42,7 +42,7 @@ describe('PatternLibrary', () => {
           actionability: 50,
           overall: 50,
         },
-        'fast'
+        'standard'
       );
 
       // High priority patterns should come first (10 is highest)
@@ -66,7 +66,7 @@ describe('PatternLibrary', () => {
         'fix it',
         'code-generation',
         lowQuality,
-        'fast'
+        'standard'
       );
 
       // Should get multiple patterns for low quality
@@ -87,20 +87,20 @@ describe('PatternLibrary', () => {
         'create login',
         'code-generation',
         quality,
-        'fast'
+        'standard'
       );
       const debugPatterns = library.getApplicablePatterns(
         'fix error',
         'debugging',
         quality,
-        'fast'
+        'standard'
       );
 
       expect(codePatterns).toBeDefined();
       expect(debugPatterns).toBeDefined();
     });
 
-    it('should respect fast vs deep mode', () => {
+    it('should respect fast vs comprehensive depth', () => {
       const quality = {
         clarity: 50,
         efficiency: 50,
@@ -114,13 +114,13 @@ describe('PatternLibrary', () => {
         'create api',
         'code-generation',
         quality,
-        'fast'
+        'standard'
       );
       const deepPatterns = library.getApplicablePatterns(
         'create api',
         'code-generation',
         quality,
-        'deep'
+        'comprehensive'
       );
 
       // Both should return patterns (deep may return more but not tested here)
@@ -143,7 +143,7 @@ describe('PatternLibrary', () => {
           actionability: 40,
           overall: 38,
         },
-        'fast'
+        'standard'
       );
 
       let result = prompt;
@@ -159,7 +159,7 @@ describe('PatternLibrary', () => {
               needsStructure: false,
             },
           },
-          mode: 'fast',
+          depthLevel: 'standard',
           originalPrompt: prompt,
         });
         result = patternResult.enhancedPrompt;
@@ -185,7 +185,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: verbose,
       });
 
@@ -207,7 +207,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: withPleasantries,
       });
 
@@ -230,7 +230,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: technical,
       });
 
@@ -255,7 +255,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: vague,
       });
 
@@ -277,7 +277,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: unclear,
       });
 
@@ -300,7 +300,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: unorganized,
       });
 
@@ -325,7 +325,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: basic,
       });
 
@@ -348,7 +348,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: incomplete,
       });
 
@@ -371,7 +371,7 @@ describe('PatternLibrary', () => {
             needsStructure: false,
           },
         },
-        mode: 'fast',
+        depthLevel: 'standard',
         originalPrompt: withTech,
       });
 
@@ -393,7 +393,7 @@ describe('PatternLibrary', () => {
           actionability: 0,
           overall: 0,
         },
-        'fast'
+        'standard'
       );
 
       expect(patterns).toBeDefined();
@@ -419,7 +419,7 @@ describe('PatternLibrary', () => {
           actionability: 90,
           overall: 90,
         },
-        'fast'
+        'standard'
       );
 
       // Should still return some patterns (even high quality can be improved)
@@ -439,7 +439,7 @@ describe('PatternLibrary', () => {
           actionability: 50,
           overall: 50,
         },
-        'fast'
+        'standard'
       );
 
       // Should not throw even if patterns fail
@@ -457,7 +457,7 @@ describe('PatternLibrary', () => {
                 needsStructure: false,
               },
             },
-            mode: 'fast',
+            depthLevel: 'standard',
             originalPrompt: prompt,
           });
           result = patternResult.enhancedPrompt;
@@ -489,7 +489,7 @@ describe('PatternLibrary', () => {
           actionability: 50,
           overall: 50,
         },
-        'fast'
+        'standard'
       );
 
       // conciseness-filter should not be in the list
@@ -517,7 +517,7 @@ describe('PatternLibrary', () => {
           actionability: 50,
           overall: 50,
         },
-        'fast'
+        'standard'
       );
 
       // conciseness-filter should be last in sorted list (lowest priority)
@@ -571,7 +571,7 @@ describe('PatternLibrary', () => {
           actionability: 50,
           overall: 50,
         },
-        'fast'
+        'standard'
       );
 
       expect(patterns.length).toBeGreaterThan(0);
@@ -598,7 +598,7 @@ describe('PatternLibrary', () => {
           actionability: 50,
           overall: 50,
         },
-        'fast'
+        'standard'
       );
 
       const conciseness = patterns.find((p) => p.id === 'conciseness-filter');

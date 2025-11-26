@@ -1,13 +1,16 @@
 import fs from 'fs-extra';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { DepthLevel } from './intelligence/types.js';
 
-export type PromptSource = 'fast' | 'deep';
-
+/**
+ * v4.11: Unified prompt metadata
+ * Replaces separate fast/deep storage with single directory and depthUsed field
+ */
 export interface PromptMetadata {
   id: string;
   filename: string;
-  source: PromptSource;
+  depthUsed: DepthLevel; // v4.11: Replaces 'source' field
   timestamp: string;
   createdAt: Date;
   path: string;
@@ -33,7 +36,7 @@ export interface PromptData {
 }
 
 export interface PromptFilters {
-  source?: PromptSource;
+  depthUsed?: DepthLevel; // v4.11: Filter by depth level
   executed?: boolean;
   stale?: boolean; // >30 days old
   old?: boolean; // >7 days old
@@ -41,8 +44,8 @@ export interface PromptFilters {
 
 export interface StorageStats {
   totalPrompts: number;
-  fastPrompts: number;
-  deepPrompts: number;
+  standardPrompts: number; // v4.11: Renamed from fastPrompts
+  comprehensivePrompts: number; // v4.11: Renamed from deepPrompts
   executedPrompts: number;
   pendingPrompts: number;
   stalePrompts: number;
@@ -54,7 +57,7 @@ export class PromptManager {
   private readonly promptsDir: string;
 
   constructor(baseDir?: string) {
-    // If baseDir ends with 'prompts', use it directly; otherwise append 'prompts'
+    // v4.11: Single prompts directory (no fast/deep subdirs)
     if (baseDir) {
       this.promptsDir = baseDir.endsWith('prompts') ? baseDir : path.join(baseDir, 'prompts');
     } else {
@@ -63,24 +66,23 @@ export class PromptManager {
   }
 
   /**
-   * Get index file path for a specific source
+   * v4.11: Get unified index file path
    */
-  private getIndexPath(source: PromptSource): string {
-    return path.join(this.promptsDir, source, '.index.json');
+  private getIndexPath(): string {
+    return path.join(this.promptsDir, '.index.json');
   }
 
   /**
-   * Ensure prompts directory structure exists
+   * v4.11: Ensure prompts directory exists (single directory)
    */
   async ensurePromptsDir(): Promise<void> {
-    await fs.ensureDir(path.join(this.promptsDir, 'fast'));
-    await fs.ensureDir(path.join(this.promptsDir, 'deep'));
+    await fs.ensureDir(this.promptsDir);
   }
 
   /**
-   * Generate unique prompt ID with timestamp and hash
+   * v4.11: Generate unique prompt ID with depth and timestamp
    */
-  generatePromptId(source: PromptSource, _originalPrompt: string): string {
+  generatePromptId(depthLevel: DepthLevel, _originalPrompt: string): string {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T');
     const date = timestamp[0].replace(/-/g, '');
     const time = timestamp[1].split('-').slice(0, 3).join('');
@@ -88,29 +90,33 @@ export class PromptManager {
     // Use UUID for uniqueness (mockable for tests - first 13 chars for readability)
     const hash = uuidv4().substring(0, 13);
 
-    return `${source}-${date}-${time}-${hash}`;
+    // v4.11: Use depth level abbreviation in ID
+    const depthAbbrev = depthLevel === 'comprehensive' ? 'comp' : 'std';
+
+    return `${depthAbbrev}-${date}-${time}-${hash}`;
   }
 
   /**
-   * Save optimized prompt to file system
+   * v4.11: Save optimized prompt to file system
    */
   async savePrompt(
     content: string,
-    source: PromptSource,
+    depthUsed: DepthLevel,
     originalPrompt: string,
     linkedProject?: string
   ): Promise<PromptMetadata> {
     await this.ensurePromptsDir();
 
-    const id = this.generatePromptId(source, originalPrompt);
+    const id = this.generatePromptId(depthUsed, originalPrompt);
     const filename = `${id}.md`;
-    const filePath = path.join(this.promptsDir, source, filename);
+    // v4.11: Single directory, no subdirs
+    const filePath = path.join(this.promptsDir, filename);
     const now = new Date();
 
     const metadata: PromptMetadata = {
       id,
       filename,
-      source,
+      depthUsed, // v4.11: Replaces 'source'
       timestamp: now.toISOString(),
       createdAt: now,
       path: filePath,
@@ -128,7 +134,7 @@ export class PromptManager {
     const frontmatter = [
       '---',
       `id: ${id}`,
-      `source: ${source}`,
+      `depthUsed: ${depthUsed}`,
       `timestamp: ${metadata.timestamp}`,
       `executed: ${metadata.executed}`,
       `originalPrompt: ${originalPrompt}`,
@@ -151,7 +157,7 @@ export class PromptManager {
   }
 
   /**
-   * Load prompt by ID
+   * v4.11: Load prompt by ID
    */
   async loadPrompt(id: string): Promise<PromptData | null> {
     const index = await this.loadIndex();
@@ -161,7 +167,8 @@ export class PromptManager {
       return null;
     }
 
-    const filePath = path.join(this.promptsDir, metadata.source, metadata.filename);
+    // v4.11: Single directory - no subdirs
+    const filePath = path.join(this.promptsDir, metadata.filename);
 
     if (!(await fs.pathExists(filePath))) {
       return null;
@@ -179,22 +186,18 @@ export class PromptManager {
   }
 
   /**
-   * List prompts with optional filtering
+   * v4.11: List prompts with optional filtering
    */
   async listPrompts(filters?: PromptFilters): Promise<PromptMetadata[]> {
-    const index = await this.loadIndex(filters?.source);
+    const index = await this.loadIndex();
     let prompts = index.prompts;
-
-    // Ensure index exists when filtering by source (for corruption recovery tests)
-    if (filters?.source) {
-      const indexPath = this.getIndexPath(filters.source);
-      if (!(await fs.pathExists(indexPath))) {
-        await this.saveIndex({ version: '1.0', prompts: [] }, filters.source);
-      }
-    }
 
     // Apply filters
     if (filters) {
+      // v4.11: Filter by depth level
+      if (filters.depthUsed) {
+        prompts = prompts.filter((p) => p.depthUsed === filters.depthUsed);
+      }
       if (filters.executed !== undefined) {
         prompts = prompts.filter((p) => p.executed === filters.executed);
       }
@@ -222,80 +225,62 @@ export class PromptManager {
   }
 
   /**
-   * Mark prompt as executed
+   * v4.11: Mark prompt as executed
    */
   async markExecuted(id: string): Promise<void> {
-    // Load all indexes to find the prompt
-    const allPrompts = await this.listPrompts();
-    const prompt = allPrompts.find((p) => p.id === id);
+    const index = await this.loadIndex();
+    const indexPrompt = index.prompts.find((p) => p.id === id);
 
-    if (!prompt) {
+    if (!indexPrompt) {
       throw new Error(`Prompt not found: ${id}`);
     }
 
-    // Load source-specific index
-    const index = await this.loadIndex(prompt.source);
-    const indexPrompt = index.prompts.find((p) => p.id === id);
-
-    if (indexPrompt) {
-      indexPrompt.executed = true;
-      indexPrompt.executedAt = new Date().toISOString();
-      await this.saveIndex(index, prompt.source);
-    }
+    indexPrompt.executed = true;
+    indexPrompt.executedAt = new Date().toISOString();
+    await this.saveIndex(index);
   }
 
   /**
-   * Mark prompt as verified (v4.8)
+   * v4.11: Mark prompt as verified (v4.8)
    */
   async markVerified(id: string): Promise<void> {
-    // Load all indexes to find the prompt
-    const allPrompts = await this.listPrompts();
-    const prompt = allPrompts.find((p) => p.id === id);
+    const index = await this.loadIndex();
+    const indexPrompt = index.prompts.find((p) => p.id === id);
 
-    if (!prompt) {
+    if (!indexPrompt) {
       throw new Error(`Prompt not found: ${id}`);
     }
 
-    // Load source-specific index
-    const index = await this.loadIndex(prompt.source);
-    const indexPrompt = index.prompts.find((p) => p.id === id);
-
-    if (indexPrompt) {
-      indexPrompt.verified = true;
-      indexPrompt.verifiedAt = new Date().toISOString();
-      await this.saveIndex(index, prompt.source);
-    }
+    indexPrompt.verified = true;
+    indexPrompt.verifiedAt = new Date().toISOString();
+    await this.saveIndex(index);
   }
 
   /**
-   * Delete prompts by filter
+   * v4.11: Delete prompts by filter
    */
   async deletePrompts(filters: PromptFilters): Promise<number> {
     const toDelete = await this.listPrompts(filters);
     let deleteCount = 0;
 
-    // Group by source for index updates
-    const bySource = new Map<PromptSource, Set<string>>();
+    const deletedIds = new Set<string>();
 
     for (const prompt of toDelete) {
-      const filePath = path.join(this.promptsDir, prompt.source, prompt.filename);
+      // v4.11: Single directory - no subdirs
+      const filePath = path.join(this.promptsDir, prompt.filename);
 
       if (await fs.pathExists(filePath)) {
         await fs.remove(filePath);
         deleteCount++;
-
-        if (!bySource.has(prompt.source)) {
-          bySource.set(prompt.source, new Set());
-        }
-        bySource.get(prompt.source)!.add(prompt.id);
+        deletedIds.add(prompt.id);
       }
     }
 
-    // Update each source index
-    for (const [source, deletedIds] of bySource.entries()) {
-      const index = await this.loadIndex(source);
+    // Update unified index
+    if (deletedIds.size > 0) {
+      const index = await this.loadIndex();
       index.prompts = index.prompts.filter((p) => !deletedIds.has(p.id));
-      await this.saveIndex(index, source);
+      await this.saveIndex(index);
     }
 
     return deleteCount;
@@ -319,15 +304,15 @@ export class PromptManager {
   }
 
   /**
-   * Get storage statistics
+   * v4.11: Get storage statistics
    */
   async getStorageStats(): Promise<StorageStats> {
     const allPrompts = await this.listPrompts();
 
     const stats: StorageStats = {
       totalPrompts: allPrompts.length,
-      fastPrompts: allPrompts.filter((p) => p.source === 'fast').length,
-      deepPrompts: allPrompts.filter((p) => p.source === 'deep').length,
+      standardPrompts: allPrompts.filter((p) => p.depthUsed === 'standard').length,
+      comprehensivePrompts: allPrompts.filter((p) => p.depthUsed === 'comprehensive').length,
       executedPrompts: allPrompts.filter((p) => p.executed).length,
       pendingPrompts: allPrompts.filter((p) => !p.executed).length,
       stalePrompts: allPrompts.filter((p) => (p.ageInDays || 0) > 30).length,
@@ -340,26 +325,13 @@ export class PromptManager {
   }
 
   /**
-   * Load index from file
-   * If source is specified, loads that source's index only
-   * If source is undefined, loads and merges all source indexes
+   * v4.11: Load unified index from file
    */
-  private async loadIndex(source?: PromptSource): Promise<PromptsIndex> {
-    // If no source specified, load all indexes and merge
-    if (!source) {
-      const fastIndex = await this.loadIndex('fast');
-      const deepIndex = await this.loadIndex('deep');
-      return {
-        version: '1.0',
-        prompts: [...(fastIndex.prompts || []), ...(deepIndex.prompts || [])],
-      };
-    }
-
-    // Load specific source index
-    const indexPath = this.getIndexPath(source);
+  private async loadIndex(): Promise<PromptsIndex> {
+    const indexPath = this.getIndexPath();
     if (!(await fs.pathExists(indexPath))) {
       return {
-        version: '1.0',
+        version: '2.0', // v4.11: New version for unified index
         prompts: [],
       };
     }
@@ -369,32 +341,32 @@ export class PromptManager {
       const parsed = JSON.parse(content);
       // Ensure prompts array exists
       return {
-        version: parsed.version || '1.0',
+        version: parsed.version || '2.0',
         prompts: Array.isArray(parsed.prompts) ? parsed.prompts : [],
       };
     } catch {
       // Corrupt index, return empty
       return {
-        version: '1.0',
+        version: '2.0',
         prompts: [],
       };
     }
   }
 
   /**
-   * Save index to file for a specific source
+   * v4.11: Save unified index to file
    */
-  private async saveIndex(index: PromptsIndex, source: PromptSource): Promise<void> {
-    const indexPath = this.getIndexPath(source);
+  private async saveIndex(index: PromptsIndex): Promise<void> {
+    const indexPath = this.getIndexPath();
     await fs.ensureDir(path.dirname(indexPath));
     await fs.writeFile(indexPath, JSON.stringify(index, null, 2), 'utf-8');
   }
 
   /**
-   * Add prompt to index
+   * v4.11: Add prompt to unified index
    */
   private async addToIndex(metadata: PromptMetadata): Promise<void> {
-    const index = await this.loadIndex(metadata.source);
+    const index = await this.loadIndex();
 
     // Remove any existing entry with same ID (shouldn't happen, but be safe)
     index.prompts = index.prompts.filter((p) => p.id !== metadata.id);
@@ -402,6 +374,6 @@ export class PromptManager {
     // Add new entry
     index.prompts.push(metadata);
 
-    await this.saveIndex(index, metadata.source);
+    await this.saveIndex(index);
   }
 }

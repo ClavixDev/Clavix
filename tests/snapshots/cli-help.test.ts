@@ -9,8 +9,7 @@ import { describe, it, expect, jest } from '@jest/globals';
 import { sanitizeVersions, prepareObjectSnapshot } from '../helpers/snapshot-utils.js';
 
 // Import command classes directly for metadata testing
-const { default: Fast } = await import('../../src/cli/commands/fast.js');
-const { default: Deep } = await import('../../src/cli/commands/deep.js');
+const { default: Improve } = await import('../../src/cli/commands/improve.js');
 const { default: Prd } = await import('../../src/cli/commands/prd.js');
 const { default: Init } = await import('../../src/cli/commands/init.js');
 const { default: Update } = await import('../../src/cli/commands/update.js');
@@ -55,14 +54,9 @@ describe('CLI Command Metadata Snapshots', () => {
   }
 
   describe('prompt improvement commands', () => {
-    it('fast command metadata should match snapshot', () => {
-      const metadata = extractCommandMetadata(Fast);
-      expect(prepareObjectSnapshot(metadata)).toMatchSnapshot('fast-command-metadata');
-    });
-
-    it('deep command metadata should match snapshot', () => {
-      const metadata = extractCommandMetadata(Deep);
-      expect(prepareObjectSnapshot(metadata)).toMatchSnapshot('deep-command-metadata');
+    it('improve command metadata should match snapshot', () => {
+      const metadata = extractCommandMetadata(Improve);
+      expect(prepareObjectSnapshot(metadata)).toMatchSnapshot('improve-command-metadata');
     });
   });
 
@@ -136,8 +130,7 @@ describe('CLI Command Metadata Snapshots', () => {
 
   describe('command consistency', () => {
     const allCommands = [
-      { name: 'fast', Class: Fast },
-      { name: 'deep', Class: Deep },
+      { name: 'improve', Class: Improve },
       { name: 'prd', Class: Prd },
       { name: 'init', Class: Init },
       { name: 'update', Class: Update },

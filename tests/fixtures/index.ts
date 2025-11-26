@@ -17,7 +17,7 @@ export const PROMPTS = {
   EXCELLENT:
     'As a senior React developer, create a TypeScript login component with email/password fields, validation using Yup, Material-UI styling, accessible error display with ARIA attributes, submit button with loading state, and unit tests using React Testing Library. Return only the TSX component code.',
 
-  // Problematic prompts that should trigger warnings or deep mode
+  // Problematic prompts that should trigger warnings or comprehensive depth
   VAGUE: 'make thing',
   TOO_SHORT: 'app',
   VERBOSE:

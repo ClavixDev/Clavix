@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -33,7 +33,7 @@ export class AmbiguityDetector extends BasePattern {
     'migration',
   ];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 9; // VERY HIGH - structural integrity
   readonly phases: PatternPhase[] = ['all'];
 

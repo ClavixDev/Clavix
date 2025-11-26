@@ -79,33 +79,28 @@ describe('ClaudeCodeAdapter', () => {
 
   describe('generateCommands', () => {
     it('should generate Claude Code command files', async () => {
+      // v4.11: Using unified improve template
       const templates: CommandTemplate[] = [
         {
-          name: 'fast',
-          description: 'Fast CLEAR improvements',
-          content: '# Fast Mode\n\nQuick CLEAR analysis',
+          name: 'improve',
+          description: 'Smart prompt optimization',
+          content: '# Improve Mode\n\nSmart depth auto-selection',
         },
         {
-          name: 'deep',
-          description: 'Deep CLEAR analysis',
-          content: '# Deep Mode\n\nComprehensive analysis',
+          name: 'prd',
+          description: 'PRD generation',
+          content: '# PRD Mode\n\nComprehensive planning',
         },
       ];
 
       await adapter.generateCommands(templates);
 
       const commandPath = adapter.getCommandPath();
-      const file1 = await fs.readFile(
-        path.join(commandPath, 'fast.md'),
-        'utf-8'
-      );
-      const file2 = await fs.readFile(
-        path.join(commandPath, 'deep.md'),
-        'utf-8'
-      );
+      const improveFile = await fs.readFile(path.join(commandPath, 'improve.md'), 'utf-8');
+      const prdFile = await fs.readFile(path.join(commandPath, 'prd.md'), 'utf-8');
 
-      expect(file1).toBe('# Fast Mode\n\nQuick CLEAR analysis');
-      expect(file2).toBe('# Deep Mode\n\nComprehensive analysis');
+      expect(improveFile).toBe('# Improve Mode\n\nSmart depth auto-selection');
+      expect(prdFile).toBe('# PRD Mode\n\nComprehensive planning');
     });
 
     it('should create subdirectory structure', async () => {
@@ -437,9 +432,7 @@ Old B
         ];
 
         try {
-          await expect(adapter.injectDocumentation(blocks)).rejects.toThrow(
-            IntegrationError
-          );
+          await expect(adapter.injectDocumentation(blocks)).rejects.toThrow(IntegrationError);
         } finally {
           // Cleanup
           await fs.chmod('CLAUDE.md', 0o644);

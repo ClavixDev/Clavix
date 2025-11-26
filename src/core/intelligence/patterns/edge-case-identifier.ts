@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -30,7 +30,7 @@ export class EdgeCaseIdentifier extends BasePattern {
     'security-review',
   ];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 4; // LOW - polish phase
   readonly phases: PatternPhase[] = ['all'];
 

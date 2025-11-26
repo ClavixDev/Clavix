@@ -9,7 +9,7 @@ describe('OutputFormatEnforcer', () => {
   beforeEach(() => {
     pattern = new OutputFormatEnforcer();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -39,8 +39,8 @@ describe('OutputFormatEnforcer', () => {
       );
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(pattern.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(pattern.scope).toBe('both');
     });
 
     it('should have priority 7', () => {

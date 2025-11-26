@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -26,7 +26,7 @@ export class ConversationSummarizer extends BasePattern {
 
   readonly applicableIntents: PromptIntent[] = ['summarization', 'planning', 'prd-generation'];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 8; // HIGH - core enhancement
   readonly phases: PatternPhase[] = ['summarization'];
 

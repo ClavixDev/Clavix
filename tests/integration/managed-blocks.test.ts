@@ -72,8 +72,8 @@ describe('Managed Block Injection Integration', () => {
       const lines = fileContent.split('\n');
 
       // Managed block should be at the end
-      const startIndex = lines.findIndex(line => line.includes('<!-- CLAVIX:START -->'));
-      const endIndex = lines.findIndex(line => line.includes('<!-- CLAVIX:END -->'));
+      const startIndex = lines.findIndex((line) => line.includes('<!-- CLAVIX:START -->'));
+      const endIndex = lines.findIndex((line) => line.includes('<!-- CLAVIX:END -->'));
 
       expect(startIndex).toBeGreaterThan(2); // After existing content
       expect(endIndex).toBeGreaterThan(startIndex);
@@ -200,7 +200,9 @@ describe('Managed Block Injection Integration', () => {
       await FileSystem.writeFileAtomic(agentsFile, existingContent);
 
       const clavixContent = DocInjector.getDefaultAgentsContent();
-      const clavixBlock = clavixContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
+      const clavixBlock =
+        clavixContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() ||
+        '';
 
       await DocInjector.injectBlock(agentsFile, clavixBlock);
 
@@ -223,7 +225,9 @@ describe('Managed Block Injection Integration', () => {
       await FileSystem.writeFileAtomic(claudeFile, existingContent);
 
       const clavixContent = DocInjector.getDefaultClaudeContent();
-      const clavixBlock = clavixContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
+      const clavixBlock =
+        clavixContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() ||
+        '';
 
       await DocInjector.injectBlock(claudeFile, clavixBlock);
 
@@ -235,8 +239,8 @@ describe('Managed Block Injection Integration', () => {
 
       // Should have Clavix block with slash commands
       expect(fileContent).toContain('<!-- CLAVIX:START -->');
-      expect(fileContent).toContain('/clavix:fast');
-      expect(fileContent).toContain('/clavix:deep');
+      // v4.11: /clavix:fast and /clavix:deep merged into /clavix:improve
+      expect(fileContent).toContain('/clavix:improve');
       expect(fileContent).toContain('/clavix:prd');
     });
 

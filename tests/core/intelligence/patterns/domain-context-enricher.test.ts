@@ -9,7 +9,7 @@ describe('DomainContextEnricher', () => {
   beforeEach(() => {
     pattern = new DomainContextEnricher();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -34,7 +34,7 @@ describe('DomainContextEnricher', () => {
     });
 
     it('should support both modes', () => {
-      expect(pattern.mode).toBe('both');
+      expect(pattern.scope).toBe('both');
     });
 
     it('should have priority 5', () => {

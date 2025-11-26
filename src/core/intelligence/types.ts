@@ -25,7 +25,10 @@ export type QualityDimension =
 
 export type ImpactLevel = 'low' | 'medium' | 'high';
 
-export type OptimizationMode = 'fast' | 'deep' | 'prd' | 'conversational';
+export type OptimizationMode = 'improve' | 'prd' | 'conversational';
+
+// v4.11: Depth level for improve mode (replaces fast/deep distinction)
+export type DepthLevel = 'standard' | 'comprehensive';
 
 // v4.3.2: Phase context for pattern selection
 export type OptimizationPhase =
@@ -74,7 +77,7 @@ export interface EscalationAnalysis {
   escalationScore: number; // 0-100
   escalationConfidence: 'high' | 'medium' | 'low';
   reasons: EscalationReason[];
-  deepModeValue: string;
+  comprehensiveValue: string; // v4.11: renamed from deepModeValue
 }
 
 export interface QualityMetrics {
@@ -106,6 +109,8 @@ export interface PatternContext {
   phase?: OptimizationPhase;
   documentType?: DocumentType;
   questionId?: string; // For PRD question-specific patterns
+  // v4.11: Depth level for improve mode pattern selection
+  depthLevel?: DepthLevel;
 }
 
 export interface PatternResult {
@@ -128,6 +133,7 @@ export interface OptimizationResult {
   improvements: Improvement[];
   appliedPatterns: PatternSummary[];
   mode: OptimizationMode;
+  depthUsed?: DepthLevel; // v4.11: populated for 'improve' mode
   processingTimeMs: number;
 }
 
@@ -153,7 +159,8 @@ export interface EdgeCase {
   consideration: string;
 }
 
-export interface DeepModeExtras {
+// v4.11: Renamed from DeepModeExtras
+export interface ComprehensiveModeExtras {
   alternatives: AlternativeApproach[];
   structures: AlternativeStructure[];
   validation: ValidationItem[];

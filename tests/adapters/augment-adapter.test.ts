@@ -70,15 +70,16 @@ describe('AugmentAdapter', () => {
 
   describe('formatCommand', () => {
     it('adds Augment frontmatter without altering placeholders', () => {
+      // v4.11: Use 'improve' instead of 'fast'
       const template: CommandTemplate = {
-        name: 'fast',
+        name: 'improve',
         description: 'Clear improvements',
         content: 'Input: {{ARGS}}',
       };
 
-      const formatted = (adapter as unknown as { formatCommand(t: CommandTemplate): string }).formatCommand(
-        template
-      );
+      const formatted = (
+        adapter as unknown as { formatCommand(t: CommandTemplate): string }
+      ).formatCommand(template);
 
       expect(formatted.startsWith('---\ndescription: Clear improvements')).toBe(true);
       expect(formatted).toContain('argument-hint: [prompt]');
@@ -88,22 +89,23 @@ describe('AugmentAdapter', () => {
 
   describe('generateCommands', () => {
     it('writes markdown command files with Augment frontmatter', async () => {
+      // v4.11: Use 'improve' instead of 'fast'
       const templates: CommandTemplate[] = [
         {
-          name: 'fast',
-          description: 'Fast mode',
-          content: 'Handle {{ARGS}} quickly.',
+          name: 'improve',
+          description: 'Smart depth optimization',
+          content: 'Handle {{ARGS}} with smart depth.',
         },
       ];
 
       await adapter.generateCommands(templates);
 
-      const filePath = path.join('.augment/commands/clavix', 'fast.md');
+      const filePath = path.join('.augment/commands/clavix', 'improve.md');
       const content = await fs.readFile(filePath, 'utf8');
 
-      expect(content).toContain('description: Fast mode');
+      expect(content).toContain('description: Smart depth optimization');
       expect(content).toContain('argument-hint: [prompt]');
-      expect(content).toContain('Handle {{ARGS}} quickly.');
+      expect(content).toContain('Handle {{ARGS}} with smart depth.');
     });
   });
 

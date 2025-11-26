@@ -153,7 +153,7 @@ function createMockOptimizationResult(overrides: Record<string, any> = {}) {
   return {
     original: 'PRD content',
     enhanced: 'Enhanced PRD content',
-    mode: 'fast',
+    depthLevel: 'standard',
     quality: {
       clarity: 85,
       structure: 80,

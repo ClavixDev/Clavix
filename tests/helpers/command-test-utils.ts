@@ -201,7 +201,7 @@ export function createPromptManagerMock(
         jest.fn().mockResolvedValue({ id: 'test-prompt-id', path: '/test/path' }),
       loadPrompt:
         overrides.loadPrompt ??
-        jest.fn().mockResolvedValue({ content: 'test content', mode: 'fast' }),
+        jest.fn().mockResolvedValue({ content: 'test content', depthLevel: 'standard' }),
       listPrompts: overrides.listPrompts ?? jest.fn().mockResolvedValue([]),
       deletePrompt: overrides.deletePrompt ?? jest.fn().mockResolvedValue(undefined),
       markAsExecuted: overrides.markAsExecuted ?? jest.fn().mockResolvedValue(undefined),
@@ -358,8 +358,8 @@ export async function initializeClavixDirectory(
   await fs.ensureDir(clavixDir);
   await fs.ensureDir(path.join(clavixDir, 'sessions'));
   await fs.ensureDir(path.join(clavixDir, 'outputs'));
-  await fs.ensureDir(path.join(clavixDir, 'outputs', 'prompts', 'fast'));
-  await fs.ensureDir(path.join(clavixDir, 'outputs', 'prompts', 'deep'));
+  await fs.ensureDir(path.join(clavixDir, 'outputs', 'prompts'));
+  await fs.ensureDir(path.join(clavixDir, 'outputs', 'prompts'));
 
   const defaultConfig = {
     version: '3.6.1',

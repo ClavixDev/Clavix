@@ -4,7 +4,12 @@ import inquirer from 'inquirer';
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import Init from '../../src/cli/commands/init';
 import Update from '../../src/cli/commands/update';
-import { AgentAdapter, CommandTemplate, ManagedBlock, ValidationResult } from '../../src/types/agent';
+import {
+  AgentAdapter,
+  CommandTemplate,
+  ManagedBlock,
+  ValidationResult,
+} from '../../src/types/agent';
 
 const originalCwd = process.cwd();
 const originalPrompt = inquirer.prompt;
@@ -28,13 +33,23 @@ const buildAdapter = (name: string, commandPath: string): AgentAdapter => ({
 });
 
 const callInitHandler = async (adapter: AgentAdapter, commandNames: string[]): Promise<void> => {
-  const templates: CommandTemplate[] = commandNames.map(name => ({ name, content: '', description: '' }));
-  const handler = (Init.prototype as unknown as { handleLegacyCommands: Function }).handleLegacyCommands;
+  const templates: CommandTemplate[] = commandNames.map((name) => ({
+    name,
+    content: '',
+    description: '',
+  }));
+  const handler = (Init.prototype as unknown as { handleLegacyCommands: Function })
+    .handleLegacyCommands;
   await handler.call({ log: () => {} }, adapter, templates);
 };
 
-const callUpdateHandler = async (adapter: AgentAdapter, commandNames: string[], force: boolean): Promise<number> => {
-  const handler = (Update.prototype as unknown as { handleLegacyCommands: Function }).handleLegacyCommands;
+const callUpdateHandler = async (
+  adapter: AgentAdapter,
+  commandNames: string[],
+  force: boolean
+): Promise<number> => {
+  const handler = (Update.prototype as unknown as { handleLegacyCommands: Function })
+    .handleLegacyCommands;
   return handler.call({ log: () => {} }, adapter, commandNames, force);
 };
 
@@ -64,14 +79,15 @@ describe('legacy command cleanup handlers', () => {
   it('Init handler removes legacy files when user confirms', async () => {
     const commandDir = path.join(testDir, '.cursor', 'commands');
     await fs.ensureDir(commandDir);
-    const legacyPath = path.join(commandDir, 'fast.md');
+    // Legacy file: unprefixed command name (e.g., 'prd.md' when expecting 'clavix-prd.md')
+    const legacyPath = path.join(commandDir, 'prd.md');
     await fs.writeFile(legacyPath, '# legacy');
-    await fs.writeFile(path.join(commandDir, 'clavix-fast.md'), '# new');
+    await fs.writeFile(path.join(commandDir, 'clavix-prd.md'), '# new');
 
     mockInquirer({ removeLegacy: true });
 
     const adapter = buildAdapter('cursor', commandDir);
-    await callInitHandler(adapter, ['fast']);
+    await callInitHandler(adapter, ['prd']);
 
     expect(await fs.pathExists(legacyPath)).toBe(false);
   });
@@ -79,13 +95,13 @@ describe('legacy command cleanup handlers', () => {
   it('Init handler keeps files when user declines removal', async () => {
     const commandDir = path.join(testDir, '.cursor', 'commands');
     await fs.ensureDir(commandDir);
-    const legacyPath = path.join(commandDir, 'fast.md');
+    const legacyPath = path.join(commandDir, 'prd.md');
     await fs.writeFile(legacyPath, '# legacy');
 
     mockInquirer({ removeLegacy: false });
 
     const adapter = buildAdapter('cursor', commandDir);
-    await callInitHandler(adapter, ['fast']);
+    await callInitHandler(adapter, ['prd']);
 
     expect(await fs.pathExists(legacyPath)).toBe(true);
   });
@@ -93,11 +109,11 @@ describe('legacy command cleanup handlers', () => {
   it('Update handler removes files automatically when force flag is true', async () => {
     const commandDir = path.join(testDir, '.cursor', 'commands');
     await fs.ensureDir(commandDir);
-    const legacyPath = path.join(commandDir, 'fast.md');
+    const legacyPath = path.join(commandDir, 'prd.md');
     await fs.writeFile(legacyPath, '# legacy');
 
     const adapter = buildAdapter('cursor', commandDir);
-    const removed = await callUpdateHandler(adapter, ['fast'], true);
+    const removed = await callUpdateHandler(adapter, ['prd'], true);
 
     expect(removed).toBeGreaterThan(0);
     expect(await fs.pathExists(legacyPath)).toBe(false);
@@ -106,13 +122,13 @@ describe('legacy command cleanup handlers', () => {
   it('Update handler prompts user when force flag is false', async () => {
     const commandDir = path.join(testDir, '.cursor', 'commands');
     await fs.ensureDir(commandDir);
-    const legacyPath = path.join(commandDir, 'fast.md');
+    const legacyPath = path.join(commandDir, 'prd.md');
     await fs.writeFile(legacyPath, '# legacy');
 
     const promptMock = mockInquirer({ removeLegacy: false });
 
     const adapter = buildAdapter('cursor', commandDir);
-    const removed = await callUpdateHandler(adapter, ['fast'], false);
+    const removed = await callUpdateHandler(adapter, ['prd'], false);
 
     expect(removed).toBe(0);
     expect(promptMock).toHaveBeenCalled();

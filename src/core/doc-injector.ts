@@ -197,6 +197,7 @@ export class DocInjector {
 
   /**
    * Create default AGENTS.md content
+   * v4.11: Updated for unified /clavix:improve command
    */
   static getDefaultAgentsContent(): string {
     return `# AI Agent Instructions
@@ -208,16 +209,17 @@ This file contains instructions for AI agents working with this project.
 
 Clavix is installed in this project. Use the following slash commands:
 
-- \`/clavix:fast [prompt]\` - Quick prompt improvements with smart triage
-- \`/clavix:deep [prompt]\` - Comprehensive prompt analysis
+- \`/clavix:improve [prompt]\` - Optimize prompts with smart depth auto-selection
 - \`/clavix:prd\` - Generate a PRD through guided questions
 - \`/clavix:start\` - Start conversational mode for iterative refinement
 - \`/clavix:summarize\` - Extract optimized prompt from conversation
 
 **When to use:**
-- **Fast mode**: Quick cleanup for simple prompts
-- **Deep mode**: Comprehensive analysis for complex requirements
+- **Standard depth**: Quick cleanup for simple, clear prompts
+- **Comprehensive depth**: Thorough analysis for complex requirements
 - **PRD mode**: Strategic planning with architecture and business impact
+
+Clavix automatically selects the appropriate depth based on your prompt quality.
 
 For more information, run \`clavix --help\` in your terminal.
 <!-- CLAVIX:END -->
@@ -227,6 +229,7 @@ For more information, run \`clavix --help\` in your terminal.
   /**
    * Create the CLAUDE.md block content (without file wrapper)
    * This is the single source of truth for Claude Code documentation
+   * v4.11: Updated for unified /clavix:improve command
    */
   static getClaudeBlockContent(): string {
     return `## Clavix Integration
@@ -235,11 +238,8 @@ This project uses Clavix for prompt improvement and PRD generation. The followin
 
 ### Prompt Optimization Commands
 
-#### /clavix:fast [prompt]
-Quick prompt improvements with smart triage. Clavix will analyze your prompt and recommend deep analysis if needed. Perfect for making "shitty prompts good" quickly.
-
-#### /clavix:deep [prompt]
-Comprehensive prompt analysis with alternative phrasings, edge cases, implementation examples, and potential issues. Use for complex requirements or when you want thorough exploration.
+#### /clavix:improve [prompt]
+Optimize prompts with smart depth auto-selection. Clavix analyzes your prompt quality and automatically selects the appropriate depth (standard or comprehensive). Use for all prompt optimization needs.
 
 ### PRD & Planning Commands
 
@@ -263,17 +263,16 @@ Analyze the current conversation and extract key requirements into a structured 
 ### Utility Commands
 
 #### /clavix:execute
-Run saved prompts with lifecycle awareness. Execute previously saved fast/deep prompts.
+Run saved prompts with lifecycle awareness. Execute previously optimized prompts.
 
 #### /clavix:prompts
-Manage your saved fast/deep prompts. List, view, and organize your prompt library.
+Manage your saved prompts. List, view, and organize your prompt library.
 
 #### /clavix:archive
 Archive completed projects. Move finished PRDs and outputs to the archive for future reference.
 
 **When to use which mode:**
-- **Fast mode** (\`/clavix:fast\`): Quick cleanup for simple prompts
-- **Deep mode** (\`/clavix:deep\`): Comprehensive analysis for complex requirements
+- **Improve mode** (\`/clavix:improve\`): Smart prompt optimization with auto-depth selection
 - **PRD mode** (\`/clavix:prd\`): Strategic planning with architecture and business impact
 
 **Recommended Workflow:**

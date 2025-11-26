@@ -328,8 +328,8 @@ Content
 
     it('should contain slash command documentation', () => {
       const content = DocInjector.getDefaultAgentsContent();
-      expect(content).toContain('/clavix:fast');
-      expect(content).toContain('/clavix:deep');
+      // v4.11: Unified /clavix:improve command
+      expect(content).toContain('/clavix:improve');
       expect(content).toContain('/clavix:prd');
       expect(content).toContain('/clavix:start');
       expect(content).toContain('/clavix:summarize');
@@ -338,8 +338,9 @@ Content
     it('should contain usage guidance', () => {
       const content = DocInjector.getDefaultAgentsContent();
       expect(content).toContain('When to use');
-      expect(content).toContain('Fast mode');
-      expect(content).toContain('Deep mode');
+      // v4.11: New depth terminology
+      expect(content).toContain('Standard depth');
+      expect(content).toContain('Comprehensive depth');
     });
   });
 
@@ -358,8 +359,8 @@ Content
 
     it('should contain slash command documentation', () => {
       const content = DocInjector.getDefaultClaudeContent();
-      expect(content).toContain('/clavix:fast');
-      expect(content).toContain('/clavix:deep');
+      // v4.11: Unified /clavix:improve command
+      expect(content).toContain('/clavix:improve');
       expect(content).toContain('/clavix:prd');
       expect(content).toContain('/clavix:start');
       expect(content).toContain('/clavix:summarize');
@@ -372,8 +373,8 @@ Content
 
     it('should contain mode descriptions', () => {
       const content = DocInjector.getDefaultClaudeContent();
-      expect(content).toContain('Quick prompt improvements');
-      expect(content).toContain('Comprehensive prompt analysis');
+      // v4.11: Updated descriptions
+      expect(content).toContain('smart depth auto-selection');
       expect(content).toContain('PRD generation workflow');
     });
 

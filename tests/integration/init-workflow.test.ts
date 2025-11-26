@@ -58,11 +58,13 @@ describe('Init Workflow Integration', () => {
 
     // 4. Inject documentation blocks
     const agentsContent = DocInjector.getDefaultAgentsContent();
-    const agentsBlock = agentsContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
+    const agentsBlock =
+      agentsContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
     await DocInjector.injectBlock('AGENTS.md', agentsBlock);
 
     const claudeContent = DocInjector.getDefaultClaudeContent();
-    const claudeBlock = claudeContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
+    const claudeBlock =
+      claudeContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
     await DocInjector.injectBlock('CLAUDE.md', claudeBlock);
 
     expect(await FileSystem.exists('AGENTS.md')).toBe(true);
@@ -74,8 +76,8 @@ describe('Init Workflow Integration', () => {
     expect(agentsFile).toContain('<!-- CLAVIX:START -->');
     expect(agentsFile).toContain('/clavix:prd');
     expect(claudeFile).toContain('<!-- CLAVIX:START -->');
-    expect(claudeFile).toContain('/clavix:fast');
-    expect(claudeFile).toContain('/clavix:deep');
+    // v4.11: /clavix:fast and /clavix:deep merged into /clavix:improve
+    expect(claudeFile).toContain('/clavix:improve');
   });
 
   it('should handle re-initialization correctly', async () => {
@@ -90,7 +92,8 @@ describe('Init Workflow Integration', () => {
 
     // Re-inject managed block
     const agentsContent = DocInjector.getDefaultAgentsContent();
-    const agentsBlock = agentsContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
+    const agentsBlock =
+      agentsContent.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/)?.[1]?.trim() || '';
     await DocInjector.injectBlock('AGENTS.md', agentsBlock);
 
     const finalContent = await FileSystem.readFile('AGENTS.md');

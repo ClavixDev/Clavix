@@ -157,7 +157,7 @@ describe('Multi-Provider Workflow Integration', () => {
       await fs.ensureDir(path.join(testHomeDir, '.codex'));
 
       const detected = await agentManager.detectAgents();
-      const names = detected.map(a => a.name);
+      const names = detected.map((a) => a.name);
 
       expect(detected).toHaveLength(14);
       expect(names).toEqual(
@@ -176,22 +176,23 @@ describe('Multi-Provider Workflow Integration', () => {
           'gemini',
           'qwen',
           'codex',
-        ]),
+        ])
       );
     });
   });
 
   describe('Command Generation Across Providers', () => {
+    // v4.11: Unified improve template
     const testTemplates: CommandTemplate[] = [
       {
-        name: 'fast',
-        description: 'Fast improvements',
-        content: '# Fast Mode\n\nQuick CLEAR analysis',
+        name: 'improve',
+        description: 'Smart prompt optimization',
+        content: '# Improve Mode\n\nSmart depth auto-selection',
       },
       {
-        name: 'deep',
-        description: 'Deep analysis',
-        content: '# Deep Mode\n\nComprehensive CLEAR analysis',
+        name: 'prd',
+        description: 'PRD generation',
+        content: '# PRD Mode\n\nComprehensive planning',
       },
     ];
 
@@ -199,22 +200,22 @@ describe('Multi-Provider Workflow Integration', () => {
       const adapter = agentManager.requireAdapter('claude-code');
       await adapter.generateCommands(testTemplates);
 
-      expect(await fs.pathExists('.claude/commands/clavix/fast.md')).toBe(true);
-      expect(await fs.pathExists('.claude/commands/clavix/deep.md')).toBe(true);
+      expect(await fs.pathExists('.claude/commands/clavix/improve.md')).toBe(true);
+      expect(await fs.pathExists('.claude/commands/clavix/prd.md')).toBe(true);
 
-      const content = await fs.readFile('.claude/commands/clavix/fast.md', 'utf-8');
-      expect(content).toContain('Fast Mode');
+      const content = await fs.readFile('.claude/commands/clavix/improve.md', 'utf-8');
+      expect(content).toContain('Improve Mode');
     });
 
     it('should generate commands for Cursor', async () => {
       const adapter = agentManager.requireAdapter('cursor');
       await adapter.generateCommands(testTemplates);
 
-      expect(await fs.pathExists('.cursor/commands/clavix-fast.md')).toBe(true);
-      expect(await fs.pathExists('.cursor/commands/clavix-deep.md')).toBe(true);
+      expect(await fs.pathExists('.cursor/commands/clavix-improve.md')).toBe(true);
+      expect(await fs.pathExists('.cursor/commands/clavix-prd.md')).toBe(true);
 
-      const content = await fs.readFile('.cursor/commands/clavix-fast.md', 'utf-8');
-      expect(content).toContain('Fast Mode');
+      const content = await fs.readFile('.cursor/commands/clavix-improve.md', 'utf-8');
+      expect(content).toContain('Improve Mode');
       expect(content).not.toContain('---'); // No frontmatter
     });
 
@@ -222,11 +223,11 @@ describe('Multi-Provider Workflow Integration', () => {
       const adapter = agentManager.requireAdapter('droid');
       await adapter.generateCommands(testTemplates);
 
-      expect(await fs.pathExists('.factory/commands/clavix-fast.md')).toBe(true);
+      expect(await fs.pathExists('.factory/commands/clavix-improve.md')).toBe(true);
 
-      const content = await fs.readFile('.factory/commands/clavix-fast.md', 'utf-8');
+      const content = await fs.readFile('.factory/commands/clavix-improve.md', 'utf-8');
       expect(content).toContain('---');
-      expect(content).toContain('description: Fast improvements');
+      expect(content).toContain('description: Smart prompt optimization');
       expect(content).toContain('argument-hint: [prompt]');
     });
 
@@ -234,32 +235,26 @@ describe('Multi-Provider Workflow Integration', () => {
       const adapter = agentManager.requireAdapter('opencode');
       await adapter.generateCommands(testTemplates);
 
-      expect(await fs.pathExists('.opencode/command/clavix-fast.md')).toBe(true);
+      expect(await fs.pathExists('.opencode/command/clavix-improve.md')).toBe(true);
 
-      const content = await fs.readFile('.opencode/command/clavix-fast.md', 'utf-8');
+      const content = await fs.readFile('.opencode/command/clavix-improve.md', 'utf-8');
       expect(content).toContain('---');
-      expect(content).toContain('description: Fast improvements');
+      expect(content).toContain('description: Smart prompt optimization');
     });
 
     it('should generate commands for Amp without frontmatter', async () => {
       const adapter = agentManager.requireAdapter('amp');
       await adapter.generateCommands(testTemplates);
 
-      expect(await fs.pathExists('.agents/commands/clavix-fast.md')).toBe(true);
+      expect(await fs.pathExists('.agents/commands/clavix-improve.md')).toBe(true);
 
-      const content = await fs.readFile('.agents/commands/clavix-fast.md', 'utf-8');
-      expect(content).toContain('Fast Mode');
+      const content = await fs.readFile('.agents/commands/clavix-improve.md', 'utf-8');
+      expect(content).toContain('Improve Mode');
       expect(content).not.toContain('---'); // No frontmatter
     });
 
     it('should generate same content for all providers simultaneously', async () => {
-      const adapters = [
-        'claude-code',
-        'cursor',
-        'droid',
-        'opencode',
-        'amp',
-      ];
+      const adapters = ['claude-code', 'cursor', 'droid', 'opencode', 'amp'];
 
       for (const name of adapters) {
         const adapter = agentManager.requireAdapter(name);
@@ -267,11 +262,11 @@ describe('Multi-Provider Workflow Integration', () => {
       }
 
       // All should have the commands
-      expect(await fs.pathExists('.claude/commands/clavix/fast.md')).toBe(true);
-      expect(await fs.pathExists('.cursor/commands/clavix-fast.md')).toBe(true);
-      expect(await fs.pathExists('.factory/commands/clavix-fast.md')).toBe(true);
-      expect(await fs.pathExists('.opencode/command/clavix-fast.md')).toBe(true);
-      expect(await fs.pathExists('.agents/commands/clavix-fast.md')).toBe(true);
+      expect(await fs.pathExists('.claude/commands/clavix/improve.md')).toBe(true);
+      expect(await fs.pathExists('.cursor/commands/clavix-improve.md')).toBe(true);
+      expect(await fs.pathExists('.factory/commands/clavix-improve.md')).toBe(true);
+      expect(await fs.pathExists('.opencode/command/clavix-improve.md')).toBe(true);
+      expect(await fs.pathExists('.agents/commands/clavix-improve.md')).toBe(true);
     });
   });
 
@@ -314,9 +309,7 @@ describe('Multi-Provider Workflow Integration', () => {
   describe('Directory Structure Differences', () => {
     it('should respect Claude Code subdirectory structure', async () => {
       const adapter = agentManager.requireAdapter('claude-code');
-      const templates: CommandTemplate[] = [
-        { name: 'test', description: 'Test', content: 'Test' },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'test', description: 'Test', content: 'Test' }];
 
       await adapter.generateCommands(templates);
 
@@ -327,9 +320,7 @@ describe('Multi-Provider Workflow Integration', () => {
 
     it('should use flat structure for Cursor', async () => {
       const adapter = agentManager.requireAdapter('cursor');
-      const templates: CommandTemplate[] = [
-        { name: 'test', description: 'Test', content: 'Test' },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'test', description: 'Test', content: 'Test' }];
 
       await adapter.generateCommands(templates);
 
@@ -341,10 +332,17 @@ describe('Multi-Provider Workflow Integration', () => {
 
     it('should use flat structure for all providers except Claude Code', async () => {
       // Note: copilot removed as it's now handled via CopilotInstructionsGenerator
-      const flatProviders = ['cursor', 'droid', 'opencode', 'amp', 'codebuddy', 'kilocode', 'cline', 'roocode'];
-      const templates: CommandTemplate[] = [
-        { name: 'test', description: 'Test', content: 'Test' },
+      const flatProviders = [
+        'cursor',
+        'droid',
+        'opencode',
+        'amp',
+        'codebuddy',
+        'kilocode',
+        'cline',
+        'roocode',
       ];
+      const templates: CommandTemplate[] = [{ name: 'test', description: 'Test', content: 'Test' }];
 
       for (const name of flatProviders) {
         const adapter = agentManager.requireAdapter(name);
@@ -364,7 +362,17 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should identify frontmatter support differences', () => {
       // Note: copilot removed as it's now handled via CopilotInstructionsGenerator
       const withFrontmatter = ['augment', 'droid', 'opencode', 'codebuddy', 'codex', 'roocode'];
-      const withoutFrontmatter = ['claude-code', 'cursor', 'amp', 'crush', 'windsurf', 'kilocode', 'cline', 'gemini', 'qwen'];
+      const withoutFrontmatter = [
+        'claude-code',
+        'cursor',
+        'amp',
+        'crush',
+        'windsurf',
+        'kilocode',
+        'cline',
+        'gemini',
+        'qwen',
+      ];
 
       for (const name of withFrontmatter) {
         const adapter = agentManager.requireAdapter(name);
@@ -382,7 +390,17 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(claudeAdapter.features?.supportsSubdirectories).toBe(true);
 
       // Note: copilot removed as it's now handled via CopilotInstructionsGenerator
-      const otherAdapters = ['cursor', 'droid', 'opencode', 'amp', 'codebuddy', 'kilocode', 'cline', 'roocode', 'codex'];
+      const otherAdapters = [
+        'cursor',
+        'droid',
+        'opencode',
+        'amp',
+        'codebuddy',
+        'kilocode',
+        'cline',
+        'roocode',
+        'codex',
+      ];
       for (const name of otherAdapters) {
         const adapter = agentManager.requireAdapter(name);
         expect(adapter.features?.supportsSubdirectories).toBe(false);
@@ -405,12 +423,12 @@ describe('Multi-Provider Workflow Integration', () => {
       expect(choices[0].value).toBe('claude-code');
 
       // Verify new providers are included
-      expect(choices.find(c => c.value === 'windsurf')).toBeDefined();
-      expect(choices.find(c => c.value === 'kilocode')).toBeDefined();
-      expect(choices.find(c => c.value === 'llxprt')).toBeDefined();
-      expect(choices.find(c => c.value === 'cline')).toBeDefined();
-      expect(choices.find(c => c.value === 'roocode')).toBeDefined();
-      expect(choices.find(c => c.value === 'augment')).toBeDefined();
+      expect(choices.find((c) => c.value === 'windsurf')).toBeDefined();
+      expect(choices.find((c) => c.value === 'kilocode')).toBeDefined();
+      expect(choices.find((c) => c.value === 'llxprt')).toBeDefined();
+      expect(choices.find((c) => c.value === 'cline')).toBeDefined();
+      expect(choices.find((c) => c.value === 'roocode')).toBeDefined();
+      expect(choices.find((c) => c.value === 'augment')).toBeDefined();
       // copilot is no longer an adapter
     });
 
@@ -424,7 +442,9 @@ describe('Multi-Provider Workflow Integration', () => {
     it('should include directory info in choice names', () => {
       const choices = agentManager.getAdapterChoices();
 
-      expect(choices.find((c) => c.value === 'claude-code')?.name).toContain('.claude/commands/clavix');
+      expect(choices.find((c) => c.value === 'claude-code')?.name).toContain(
+        '.claude/commands/clavix'
+      );
       expect(choices.find((c) => c.value === 'cursor')?.name).toContain('.cursor/commands');
       expect(choices.find((c) => c.value === 'droid')?.name).toContain('.factory/commands');
     });

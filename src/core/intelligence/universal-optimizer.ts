@@ -11,16 +11,18 @@ import {
   PatternContext,
   EscalationAnalysis,
   EscalationReason,
+  DepthLevel,
 } from './types.js';
 
 /**
- * v4.3.2: Extended context options for PRD and Conversational modes
+ * v4.11: Extended context options for optimization modes
  */
 export interface OptimizationContextOverride {
   phase?: OptimizationPhase;
   documentType?: DocumentType;
   questionId?: string;
   intent?: string; // Override intent detection
+  depthLevel?: DepthLevel; // v4.11: Explicit depth level for improve mode
 }
 
 export class UniversalOptimizer {
@@ -39,10 +41,10 @@ export class UniversalOptimizer {
   }
 
   /**
-   * Optimize a prompt using Clavix Intelligence
+   * v4.11: Optimize a prompt using Clavix Intelligence
    * @param prompt The prompt to optimize
-   * @param mode The optimization mode
-   * @param contextOverride Optional context override for PRD/Conversational modes
+   * @param mode The optimization mode ('improve' | 'prd' | 'conversational')
+   * @param contextOverride Optional context override including depthLevel
    */
   async optimize(
     prompt: string,
@@ -60,11 +62,19 @@ export class UniversalOptimizer {
       };
     }
 
+    // v4.11: Get depth level (explicit or auto-detected)
+    const depthLevel = contextOverride?.depthLevel;
+
     // Step 2: Select applicable patterns using mode-aware selection
     const patterns =
       mode === 'prd' || mode === 'conversational'
-        ? this.patternLibrary.selectPatternsForMode(mode, intent, contextOverride?.phase)
-        : this.patternLibrary.selectPatterns(intent, mode);
+        ? this.patternLibrary.selectPatternsForMode(
+            mode,
+            intent,
+            contextOverride?.phase,
+            depthLevel
+          )
+        : this.patternLibrary.selectPatterns(intent, mode, depthLevel);
 
     // Step 3: Apply patterns sequentially
     let enhanced = prompt;
@@ -79,6 +89,8 @@ export class UniversalOptimizer {
       phase: contextOverride?.phase,
       documentType: contextOverride?.documentType,
       questionId: contextOverride?.questionId,
+      // v4.11: Depth level for pattern selection
+      depthLevel,
     };
 
     for (const pattern of patterns) {
@@ -114,6 +126,7 @@ export class UniversalOptimizer {
       improvements,
       appliedPatterns,
       mode,
+      depthUsed: depthLevel, // v4.11: Track which depth was used
       processingTimeMs,
     };
   }
@@ -178,16 +191,23 @@ export class UniversalOptimizer {
   }
 
   /**
-   * Determine if deep mode should be recommended (for fast mode results)
+   * v4.11: Determine if comprehensive depth should be recommended
    * @deprecated Use analyzeEscalation() for more detailed analysis
    */
-  shouldRecommendDeepMode(result: OptimizationResult): boolean {
+  shouldRecommendComprehensive(result: OptimizationResult): boolean {
     const escalation = this.analyzeEscalation(result);
     return escalation.shouldEscalate;
   }
 
   /**
-   * v4.0: Analyze whether to escalate from fast mode to deep mode
+   * @deprecated Use shouldRecommendComprehensive() instead
+   */
+  shouldRecommendDeepMode(result: OptimizationResult): boolean {
+    return this.shouldRecommendComprehensive(result);
+  }
+
+  /**
+   * v4.11: Analyze whether to escalate from standard to comprehensive depth
    * Uses multi-factor scoring for intelligent triage decisions
    *
    * IMPORTANT: Quality checks use the ORIGINAL prompt, not the enhanced one,
@@ -305,8 +325,8 @@ export class UniversalOptimizer {
       escalationConfidence = 'low';
     }
 
-    // Generate deep mode value proposition
-    const deepModeValue = this.generateDeepModeValue(result, reasons);
+    // v4.11: Generate comprehensive mode value proposition
+    const comprehensiveValue = this.generateComprehensiveValue(result, reasons);
 
     return {
       // Threshold of 45 ensures planning prompts with missing completeness trigger escalation
@@ -314,17 +334,20 @@ export class UniversalOptimizer {
       escalationScore: Math.min(totalScore, 100),
       escalationConfidence,
       reasons,
-      deepModeValue,
+      comprehensiveValue,
     };
   }
 
   /**
-   * Generate a user-friendly explanation of what deep mode would provide
+   * v4.11: Generate a user-friendly explanation of what comprehensive depth would provide
    */
-  private generateDeepModeValue(result: OptimizationResult, reasons: EscalationReason[]): string {
+  private generateComprehensiveValue(
+    result: OptimizationResult,
+    reasons: EscalationReason[]
+  ): string {
     const benefits: string[] = [];
 
-    // Based on primary issues, suggest specific deep mode benefits
+    // Based on primary issues, suggest specific comprehensive depth benefits
     const hasLowQuality = reasons.some((r) => r.factor === 'low-quality');
     const hasLowCompleteness = reasons.some((r) => r.factor === 'missing-completeness');
     const hasHighAmbiguity = reasons.some((r) => r.factor === 'high-ambiguity');
@@ -357,25 +380,26 @@ export class UniversalOptimizer {
       benefits.push('security checklist and threat analysis');
     }
 
-    // Always include validation checklist for deep mode
+    // Always include validation checklist for comprehensive depth
     benefits.push('validation checklist');
 
     if (benefits.length === 0) {
-      return 'Deep mode provides comprehensive analysis with alternative approaches.';
+      return 'Comprehensive analysis provides thorough examination with alternative approaches.';
     }
 
-    return `Deep mode would provide: ${benefits.join(', ')}.`;
+    return `Comprehensive analysis would provide: ${benefits.join(', ')}.`;
   }
 
   /**
-   * Get recommendation message for user
-   * v4.0: Enhanced with escalation analysis details
+   * v4.11: Get recommendation message for user
+   * Enhanced with escalation analysis for improve mode
    */
   getRecommendation(result: OptimizationResult): string | null {
-    if (result.mode === 'fast') {
+    // v4.11: Check for escalation only in improve mode with standard depth
+    if (result.mode === 'improve' && result.depthUsed !== 'comprehensive') {
       const escalation = this.analyzeEscalation(result);
       if (escalation.shouldEscalate) {
-        return `${escalation.deepModeValue} Run: /clavix:deep`;
+        return `${escalation.comprehensiveValue} Run: /clavix:improve --comprehensive`;
       }
     }
 
@@ -395,7 +419,7 @@ export class UniversalOptimizer {
   }
 
   /**
-   * v4.0: Get detailed escalation recommendation with all reasons
+   * v4.11: Get detailed escalation recommendation with all reasons
    * Useful for verbose output or debugging
    */
   getDetailedRecommendation(result: OptimizationResult): {
@@ -403,7 +427,11 @@ export class UniversalOptimizer {
     escalation?: EscalationAnalysis;
     qualityLevel: 'excellent' | 'good' | 'decent' | 'needs-work';
   } {
-    const escalation = result.mode === 'fast' ? this.analyzeEscalation(result) : undefined;
+    // v4.11: Check escalation for improve mode with non-comprehensive depth
+    const escalation =
+      result.mode === 'improve' && result.depthUsed !== 'comprehensive'
+        ? this.analyzeEscalation(result)
+        : undefined;
 
     let qualityLevel: 'excellent' | 'good' | 'decent' | 'needs-work';
     let message: string;
@@ -423,7 +451,7 @@ export class UniversalOptimizer {
     }
 
     if (escalation?.shouldEscalate) {
-      message = `${escalation.deepModeValue} Run: /clavix:deep`;
+      message = `${escalation.comprehensiveValue} Run: /clavix:improve --comprehensive`;
     }
 
     return {
@@ -434,21 +462,21 @@ export class UniversalOptimizer {
   }
 
   /**
-   * Get statistics about the optimizer
+   * v4.11: Get statistics about the optimizer
    */
   getStatistics(): {
     totalPatterns: number;
-    fastModePatterns: number;
-    deepModePatterns: number;
+    standardPatterns: number;
+    comprehensivePatterns: number;
   } {
     const totalPatterns = this.patternLibrary.getPatternCount();
-    const fastModePatterns = this.patternLibrary.getPatternsByMode('fast').length;
-    const deepModePatterns = this.patternLibrary.getPatternsByMode('deep').length;
+    const standardPatterns = this.patternLibrary.getPatternsByScope('standard').length;
+    const comprehensivePatterns = this.patternLibrary.getPatternsByScope('comprehensive').length;
 
     return {
       totalPatterns,
-      fastModePatterns,
-      deepModePatterns,
+      standardPatterns,
+      comprehensivePatterns,
     };
   }
 }

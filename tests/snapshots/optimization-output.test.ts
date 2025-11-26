@@ -25,7 +25,7 @@ describe('Optimization Output Snapshots', () => {
     jest.clearAllMocks();
   });
 
-  describe('fast mode output structure', () => {
+  describe('standard depth output structure', () => {
     it('should produce consistent structure for simple prompts', async () => {
       const result = await optimizer.optimize('Create a login page', 'fast');
 
@@ -58,7 +58,7 @@ describe('Optimization Output Snapshots', () => {
       expect(prepareObjectSnapshot(sanitized)).toMatchSnapshot('fast-mode-complex-prompt');
     });
 
-    it('fast mode result should have required fields', async () => {
+    it('standard depth result should have required fields', async () => {
       const result = await optimizer.optimize('Test prompt', 'fast');
 
       expect(result).toHaveProperty('original');
@@ -74,7 +74,7 @@ describe('Optimization Output Snapshots', () => {
     });
   });
 
-  describe('deep mode output structure', () => {
+  describe('comprehensive depth output structure', () => {
     it('should produce consistent structure with alternatives', async () => {
       const result = await optimizer.optimize('Add dark mode to my app', 'deep');
 
@@ -86,7 +86,7 @@ describe('Optimization Output Snapshots', () => {
       expect(prepareObjectSnapshot(sanitized)).toMatchSnapshot('deep-mode-with-alternatives');
     });
 
-    it('deep mode result should have required fields', async () => {
+    it('comprehensive depth result should have required fields', async () => {
       const result = await optimizer.optimize('Test prompt', 'deep');
 
       expect(result).toHaveProperty('original');

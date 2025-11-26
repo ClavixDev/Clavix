@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -24,7 +24,7 @@ export class RequirementPrioritizer extends BasePattern {
 
   readonly applicableIntents: PromptIntent[] = ['prd-generation', 'planning'];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 7; // MEDIUM-HIGH - important enrichment
   readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
 

@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -24,7 +24,7 @@ export class CompletenessValidator extends BasePattern {
 
   readonly applicableIntents: PromptIntent[] = ['code-generation', 'planning', 'refinement'];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
   readonly phases: PatternPhase[] = ['all'];
 

@@ -13,7 +13,7 @@ import { jest } from '@jest/globals';
 export interface MockOptimizationResult {
   original: string;
   enhanced: string;
-  mode: 'fast' | 'deep';
+  depthLevel: 'standard' | 'deep';
   intent: {
     primaryIntent: string;
     confidence: number;
@@ -53,7 +53,7 @@ export function createMockOptimizationResult(
     original: 'Create a login page',
     enhanced:
       'Create a secure login page with email and password fields, form validation, error handling, and responsive design using React and TypeScript.',
-    mode: 'fast',
+    depthLevel: 'standard',
     intent: {
       primaryIntent: 'code-generation',
       confidence: 85,
@@ -94,7 +94,7 @@ export function createMockOptimizationResult(
 }
 
 /**
- * Create a low-quality optimization result that triggers deep mode recommendation
+ * Create a low-quality optimization result that triggers comprehensive depth recommendation
  */
 export function createLowQualityOptimizationResult(
   overrides: Partial<MockOptimizationResult> = {}
@@ -402,7 +402,7 @@ export function createMultiIntegrationConfig(
 export interface MockPrompt {
   id: string;
   content: string;
-  mode: 'fast' | 'deep';
+  depthLevel: 'standard' | 'deep';
   original: string;
   created: string;
   status: 'new' | 'executed' | 'old' | 'stale';
@@ -414,7 +414,7 @@ export function createMockPrompt(overrides: Partial<MockPrompt> = {}): MockPromp
     id: `prompt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     content:
       'Create a secure login page with email and password fields, form validation, and error handling.',
-    mode: 'fast',
+    depthLevel: 'standard',
     original: 'Create a login page',
     created: new Date().toISOString(),
     status: 'new',

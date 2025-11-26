@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -25,7 +25,7 @@ export class TechnicalContextEnricher extends BasePattern {
 
   readonly applicableIntents: PromptIntent[] = ['code-generation', 'refinement', 'debugging'];
 
-  readonly mode: PatternMode = 'both';
+  readonly scope: PatternScope = 'both';
   readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary context
   readonly phases: PatternPhase[] = ['all'];
 

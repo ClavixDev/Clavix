@@ -5,12 +5,17 @@ import { PromptIntent, PatternContext, PatternResult } from '../types.js';
 // ============================================================================
 
 /**
- * Pattern mode determines when a pattern is active.
- * - 'fast': Only in fast optimization mode
- * - 'deep': Only in deep analysis mode
- * - 'both': Available in both modes
+ * v4.11: Pattern scope determines when a pattern is active.
+ * - 'standard': Only for standard depth optimization
+ * - 'comprehensive': Only for comprehensive depth analysis
+ * - 'both': Available at both depth levels
+ *
+ * Note: Renamed from PatternMode in v4.11. 'fast' → 'standard', 'deep' → 'comprehensive'
  */
-export type PatternMode = 'fast' | 'deep' | 'both';
+export type PatternScope = 'standard' | 'comprehensive' | 'both';
+
+// v4.11: Backward compatibility alias (deprecated, will be removed in v5.0)
+export type PatternMode = PatternScope;
 
 /**
  * Pattern phases for PRD and Conversational modes.
@@ -160,8 +165,8 @@ export abstract class BasePattern {
   /** Which intents this pattern is applicable to */
   abstract readonly applicableIntents: PromptIntent[];
 
-  /** Which mode(s) this pattern runs in */
-  abstract readonly mode: PatternMode;
+  /** Which depth level(s) this pattern runs at (v4.11: renamed from mode) */
+  abstract readonly scope: PatternScope;
 
   /** Execution priority (1-10, higher runs first) */
   abstract readonly priority: PatternPriority;
@@ -246,9 +251,13 @@ export abstract class BasePattern {
    * Can be overridden for custom applicability logic.
    */
   isApplicable(context: PatternContext): boolean {
-    // Check mode compatibility
-    if (this.mode !== 'both' && this.mode !== context.mode) {
-      return false;
+    // v4.11: Check scope compatibility with depth level
+    // For improve mode, compare scope with depthLevel
+    // For prd/conversational modes, use the derived depth from phase
+    if (context.depthLevel) {
+      if (this.scope !== 'both' && this.scope !== context.depthLevel) {
+        return false;
+      }
     }
 
     // Check intent compatibility

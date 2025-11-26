@@ -9,7 +9,7 @@ describe('StructureOrganizer', () => {
   beforeEach(() => {
     organizer = new StructureOrganizer();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -37,8 +37,8 @@ describe('StructureOrganizer', () => {
       expect(organizer.description).toBe('Reorders information into logical sections');
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(organizer.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(organizer.scope).toBe('both');
     });
 
     it('should have priority 8', () => {

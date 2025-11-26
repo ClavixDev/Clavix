@@ -9,7 +9,7 @@ describe('AmbiguityDetector', () => {
   beforeEach(() => {
     pattern = new AmbiguityDetector();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -40,7 +40,7 @@ describe('AmbiguityDetector', () => {
     });
 
     it('should support both modes', () => {
-      expect(pattern.mode).toBe('both');
+      expect(pattern.scope).toBe('both');
     });
 
     it('should have priority 9 (high)', () => {

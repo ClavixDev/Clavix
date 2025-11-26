@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -31,7 +31,7 @@ export class PrerequisiteIdentifier extends BasePattern {
     'debugging',
   ];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 6; // MEDIUM - standard enhancement
   readonly phases: PatternPhase[] = ['all'];
 

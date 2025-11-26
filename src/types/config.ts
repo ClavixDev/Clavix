@@ -15,12 +15,11 @@ export interface ClavixConfig {
 /**
  * v4.4 Intelligence Configuration
  * Configure pattern behavior, enable/disable patterns, adjust priorities
+ * v4.11: Removed defaultMode (fast/deep replaced by improve with auto-detection)
  */
 export interface IntelligenceConfig {
   /** Pattern-specific settings */
   patterns?: PatternSettingsConfig;
-  /** Default mode for optimization */
-  defaultMode?: 'fast' | 'deep';
   /** Enable verbose pattern logging */
   verbosePatternLogs?: boolean;
 }

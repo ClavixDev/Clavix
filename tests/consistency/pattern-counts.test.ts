@@ -45,37 +45,45 @@ describe('Pattern Count Consistency', () => {
   });
 
   describe('Pattern Counts by Mode', () => {
-    it('fast mode pattern count matches documentation', () => {
+    it('standard depth pattern count matches documentation', () => {
       // Use code-generation as a common intent that all core patterns support
-      const fastPatterns = patternLibrary.selectPatterns(createIntent('code-generation'), 'fast');
+      const standardPatterns = patternLibrary.selectPatterns(
+        createIntent('code-generation'),
+        'standard'
+      );
 
-      const count = fastPatterns.length;
-      // Documentation says: "Fast | 12 core patterns"
+      const count = standardPatterns.length;
+      // Documentation says: "Standard | 12 patterns available, 4-7 typically applied"
       // Allow some variance based on intent-specific filtering, but should be close to 12
-      expect(count).toBeGreaterThanOrEqual(8); // Minimum reasonable for fast mode
-      expect(count).toBeLessThanOrEqual(15); // Maximum reasonable for fast mode
+      expect(count).toBeGreaterThanOrEqual(8); // Minimum reasonable for standard depth
+      expect(count).toBeLessThanOrEqual(20); // Maximum reasonable for standard depth
 
       // Verify documentation mentions the actual count or is close
-      // Pattern visibility says 12, verify fast patterns are reasonable
-      console.log(`Fast mode patterns for code-generation: ${count}`);
+      console.log(`Standard depth patterns for code-generation: ${count}`);
     });
 
-    it('deep mode pattern count matches documentation', () => {
+    it('comprehensive depth pattern count matches documentation', () => {
       // Use code-generation as a common intent
-      const deepPatterns = patternLibrary.selectPatterns(createIntent('code-generation'), 'deep');
+      const comprehensivePatterns = patternLibrary.selectPatterns(
+        createIntent('code-generation'),
+        'comprehensive'
+      );
 
-      const count = deepPatterns.length;
-      // Documentation says: "Deep | 27 total patterns"
+      const count = comprehensivePatterns.length;
+      // Documentation says: "Comprehensive | 27 total patterns, 8-14 typically applied"
       // Allow variance based on intent filtering
-      expect(count).toBeGreaterThanOrEqual(15); // Minimum reasonable for deep mode
-      expect(count).toBeLessThanOrEqual(30); // Maximum reasonable for deep mode
+      expect(count).toBeGreaterThanOrEqual(15); // Minimum reasonable for comprehensive depth
+      expect(count).toBeLessThanOrEqual(30); // Maximum reasonable for comprehensive depth
 
-      console.log(`Deep mode patterns for code-generation: ${count}`);
+      console.log(`Comprehensive depth patterns for code-generation: ${count}`);
     });
 
     it('prd mode pattern count matches documentation', () => {
       // Use prd-generation intent for PRD mode
-      const prdPatterns = patternLibrary.selectPatterns(createIntent('prd-generation'), 'deep');
+      const prdPatterns = patternLibrary.selectPatterns(
+        createIntent('prd-generation'),
+        'comprehensive'
+      );
 
       const count = prdPatterns.length;
       // Documentation says: "PRD | 15 patterns"
@@ -87,7 +95,10 @@ describe('Pattern Count Consistency', () => {
 
     it('conversational mode pattern count matches documentation', () => {
       // Use summarization intent for conversational mode
-      const convPatterns = patternLibrary.selectPatterns(createIntent('summarization'), 'deep');
+      const convPatterns = patternLibrary.selectPatterns(
+        createIntent('summarization'),
+        'comprehensive'
+      );
 
       const count = convPatterns.length;
       // Conversational mode only includes patterns that specifically support summarization intent
@@ -191,8 +202,8 @@ describe('Pattern Count Consistency', () => {
 
       // Collect all unique pattern IDs across all intents and modes
       intents.forEach((intent) => {
-        const fastPatterns = patternLibrary.selectPatterns(createIntent(intent), 'fast');
-        const deepPatterns = patternLibrary.selectPatterns(createIntent(intent), 'deep');
+        const fastPatterns = patternLibrary.selectPatterns(createIntent(intent), 'standard');
+        const deepPatterns = patternLibrary.selectPatterns(createIntent(intent), 'comprehensive');
 
         fastPatterns.forEach((p) => allPatternIds.add(p.id));
         deepPatterns.forEach((p) => allPatternIds.add(p.id));

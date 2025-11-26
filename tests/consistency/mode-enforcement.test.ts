@@ -9,10 +9,10 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '../..');
 
 /**
- * Mode Enforcement Consistency Tests (v4.7)
+ * Mode Enforcement Consistency Tests (v4.11)
  *
  * These tests verify that:
- * 1. Optimization templates (fast, deep) have strong "STOP" instructions
+ * 1. Unified improve.md template has strong "STOP" instructions
  * 2. No references to the removed /clavix:prompts slash command exist
  * 3. Agent connectors have consistent mode enforcement sections
  */
@@ -21,70 +21,53 @@ describe('Mode Enforcement Consistency', () => {
   const templatesDir = path.join(ROOT_DIR, 'src/templates/slash-commands/_canonical');
   const agentsDir = path.join(ROOT_DIR, 'src/templates/agents');
 
-  describe('Optimization Mode Templates (fast.md, deep.md)', () => {
-    let fastTemplate: string;
-    let deepTemplate: string;
+  describe('Unified Improve Template (improve.md)', () => {
+    let improveTemplate: string;
 
     beforeAll(async () => {
-      fastTemplate = await fs.readFile(path.join(templatesDir, 'fast.md'), 'utf-8');
-      deepTemplate = await fs.readFile(path.join(templatesDir, 'deep.md'), 'utf-8');
+      improveTemplate = await fs.readFile(path.join(templatesDir, 'improve.md'), 'utf-8');
     });
 
-    it('fast.md has STOP instruction at top', () => {
+    it('improve.md has STOP instruction at top', () => {
       // Should have the stop header near the beginning (within first 2000 chars)
-      const topSection = fastTemplate.slice(0, 2000);
-      expect(topSection).toContain('⛔ STOP');
+      const topSection = improveTemplate.slice(0, 2000);
+      expect(topSection).toContain('STOP');
       expect(topSection).toContain('OPTIMIZATION MODE');
       expect(topSection).toContain('NOT IMPLEMENTATION');
     });
 
-    it('deep.md has STOP instruction at top', () => {
-      const topSection = deepTemplate.slice(0, 2000);
-      expect(topSection).toContain('⛔ STOP');
-      expect(topSection).toContain('OPTIMIZATION MODE');
-      expect(topSection).toContain('NOT IMPLEMENTATION');
+    it('improve.md has explicit forbidden actions section', () => {
+      expect(improveTemplate).toContain('ALL FORBIDDEN');
+      expect(improveTemplate).toContain('Writing any code files');
+      expect(improveTemplate).toContain('Exploring the codebase');
     });
 
-    it('fast.md has explicit forbidden actions section', () => {
-      expect(fastTemplate).toContain('ALL FORBIDDEN');
-      expect(fastTemplate).toContain('Writing any code files');
-      expect(fastTemplate).toContain('Exploring the codebase');
+    it('improve.md tells agent to run /clavix:execute for implementation', () => {
+      expect(improveTemplate).toContain('/clavix:execute');
+      expect(improveTemplate).toContain('--latest');
     });
 
-    it('deep.md has explicit forbidden actions section', () => {
-      expect(deepTemplate).toContain('ALL FORBIDDEN');
-      expect(deepTemplate).toContain('Writing any code files');
-      expect(deepTemplate).toContain('Exploring the codebase');
+    it('improve.md has verification requirements', () => {
+      // v4.11.1: Changed from CLI Verification block to stronger Read tool verification
+      expect(improveTemplate).toContain('VERIFICATION (REQUIRED');
+      expect(improveTemplate).toContain('clavix prompts list');
     });
 
-    it('fast.md tells agent to run /clavix:execute for implementation', () => {
-      expect(fastTemplate).toContain('/clavix:execute');
-      expect(fastTemplate).toContain('--latest');
+    it('improve.md has required response ending instruction', () => {
+      expect(improveTemplate).toContain('Your response MUST end with');
+      // v4.11.1: Changed from "Prompt optimized and saved" to require actual file path
+      expect(improveTemplate).toContain('Prompt saved to:');
     });
 
-    it('deep.md tells agent to run /clavix:execute for implementation', () => {
-      expect(deepTemplate).toContain('/clavix:execute');
-      expect(deepTemplate).toContain('--latest');
+    it('improve.md supports both standard and comprehensive depth', () => {
+      expect(improveTemplate).toContain('Standard Depth');
+      expect(improveTemplate).toContain('Comprehensive Depth');
     });
 
-    it('fast.md has CLI verification block', () => {
-      expect(fastTemplate).toContain('Agent Verification');
-      expect(fastTemplate).toContain('clavix prompts list');
-    });
-
-    it('deep.md has CLI verification block', () => {
-      expect(deepTemplate).toContain('Agent Verification');
-      expect(deepTemplate).toContain('clavix prompts list');
-    });
-
-    it('fast.md has required response ending instruction', () => {
-      expect(fastTemplate).toContain('Your response MUST end with');
-      expect(fastTemplate).toContain('Prompt optimized and saved');
-    });
-
-    it('deep.md has required response ending instruction', () => {
-      expect(deepTemplate).toContain('Your response MUST end with');
-      expect(deepTemplate).toContain('analysis complete');
+    it('improve.md has smart depth selection logic', () => {
+      expect(improveTemplate).toContain('Quality Score >= 75%');
+      expect(improveTemplate).toContain('Quality Score 60-74%');
+      expect(improveTemplate).toContain('Quality Score < 60%');
     });
   });
 
@@ -145,8 +128,8 @@ describe('Mode Enforcement Consistency', () => {
 
   describe('Navigation Consistency', () => {
     const workflowTemplates = [
-      'fast.md',
-      'deep.md',
+      'improve.md',
+      'improve.md',
       'execute.md',
       'prd.md',
       'plan.md',

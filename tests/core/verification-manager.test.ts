@@ -57,7 +57,7 @@ describe('VerificationManager', () => {
       await verificationManager.initializeVerification(promptId);
 
       // VerificationManager stores reports in outputDir/source/id.verification.json
-      const reportPath = path.join(testDir, 'deep', `${promptId}.verification.json`);
+      const reportPath = path.join(testDir, `${promptId}.verification.json`);
       expect(fs.existsSync(reportPath)).toBe(true);
     });
 
@@ -376,7 +376,7 @@ describe('VerificationManager', () => {
       const report = {
         version: '1.0' as const,
         promptId: 'test',
-        source: 'deep' as const,
+        depthUsed: 'comprehensive' as const,
         startedAt: new Date().toISOString(),
         status: 'completed' as const,
         items: [
@@ -428,7 +428,7 @@ describe('VerificationManager', () => {
       const report = {
         version: '1.0' as const,
         promptId: 'test',
-        source: 'deep' as const,
+        depthUsed: 'comprehensive' as const,
         startedAt: new Date().toISOString(),
         status: 'pending' as const,
         items: [
@@ -467,7 +467,7 @@ describe('VerificationManager', () => {
       const report = {
         version: '1.0' as const,
         promptId: 'test',
-        source: 'deep' as const,
+        depthUsed: 'comprehensive' as const,
         startedAt: new Date().toISOString(),
         status: 'completed' as const,
         items: [
@@ -521,7 +521,7 @@ describe('VerificationManager', () => {
       const report = {
         version: '1.0' as const,
         promptId: 'test',
-        source: 'deep' as const,
+        depthUsed: 'comprehensive' as const,
         startedAt: new Date().toISOString(),
         status: 'requires-attention' as const,
         items: [
@@ -560,7 +560,7 @@ describe('VerificationManager', () => {
       const report = {
         version: '1.0' as const,
         promptId: 'test',
-        source: 'deep' as const,
+        depthUsed: 'comprehensive' as const,
         startedAt: new Date().toISOString(),
         status: 'completed' as const,
         items: [
@@ -601,7 +601,7 @@ describe('VerificationManager', () => {
       const report = {
         version: '1.0' as const,
         promptId: 'test-123',
-        source: 'deep' as const,
+        depthUsed: 'comprehensive' as const,
         startedAt: new Date().toISOString(),
         status: 'in-progress' as const,
         items: [
@@ -660,7 +660,7 @@ describe('VerificationManager', () => {
       const report = {
         version: '1.0' as const,
         promptId: 'test',
-        source: 'deep' as const,
+        depthUsed: 'comprehensive' as const,
         startedAt: new Date().toISOString(),
         status: 'completed' as const,
         items: [

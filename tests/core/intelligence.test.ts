@@ -42,11 +42,12 @@ describe('UniversalOptimizer', () => {
             },
           }),
           getPatternCount: jest.fn().mockReturnValue(1),
-          getPatternsByMode: jest.fn().mockReturnValue([]),
+          getPatternsByScope: jest.fn().mockReturnValue([]),
         },
       ]),
       getPatternCount: jest.fn().mockReturnValue(1),
-      getPatternsByMode: jest.fn().mockReturnValue([]),
+      // v4.11: Use getPatternsByScope instead of getPatternsByMode
+      getPatternsByScope: jest.fn().mockReturnValue([]),
     };
 
     mockQualityAssessor = {
@@ -125,7 +126,7 @@ describe('UniversalOptimizer', () => {
   });
 
   describe('shouldRecommendDeepMode', () => {
-    it('should recommend deep mode for planning tasks', () => {
+    it('should recommend comprehensive depth for planning tasks', () => {
       const result: any = {
         intent: {
           primaryIntent: 'planning',
@@ -142,7 +143,7 @@ describe('UniversalOptimizer', () => {
       expect(optimizer.shouldRecommendDeepMode(result)).toBe(true);
     });
 
-    it('should recommend deep mode for low quality results', () => {
+    it('should recommend comprehensive depth for low quality results', () => {
       const result: any = {
         intent: {
           primaryIntent: 'code-generation',
@@ -156,13 +157,13 @@ describe('UniversalOptimizer', () => {
         quality: { overall: 60 },
         original: 'test',
       };
-      // v4.0: Deep mode recommendation depends on multiple factors
+      // v4.0: Comprehensive depth recommendation depends on multiple factors
       // Low quality alone may or may not trigger it depending on threshold
       const shouldDeep = optimizer.shouldRecommendDeepMode(result);
       expect(typeof shouldDeep).toBe('boolean');
     });
 
-    it('should recommend deep mode for open ended unstructured tasks', () => {
+    it('should recommend comprehensive depth for open ended unstructured tasks', () => {
       const result: any = {
         intent: {
           primaryIntent: 'code-generation', // Changed from 'feature' to valid PromptIntent
@@ -171,13 +172,13 @@ describe('UniversalOptimizer', () => {
         quality: { overall: 80 },
         original: 'test',
       };
-      // Open-ended tasks with needsStructure should recommend deep mode
+      // Open-ended tasks with needsStructure should recommend comprehensive depth
       // depending on internal logic (may be true or false based on threshold)
       const shouldDeep = optimizer.shouldRecommendDeepMode(result);
       expect(typeof shouldDeep).toBe('boolean');
     });
 
-    it('should NOT recommend deep mode for high quality simple tasks', () => {
+    it('should NOT recommend comprehensive depth for high quality simple tasks', () => {
       const result: any = {
         intent: {
           primaryIntent: 'code-generation', // Changed from 'feature' to valid PromptIntent
@@ -196,7 +197,7 @@ describe('UniversalOptimizer', () => {
       // Test that the method returns string or null
 
       const result: any = {
-        mode: 'fast',
+        depthLevel: 'standard',
         original: 'Short test prompt',
         quality: { overall: 60, completeness: 50, specificity: 50 },
         intent: {
@@ -219,7 +220,7 @@ describe('UniversalOptimizer', () => {
     it('should handle high quality prompts', () => {
       // v4.0: High quality prompts may get "Excellent" message or null
       const result: any = {
-        mode: 'fast',
+        depthLevel: 'standard',
         original:
           'High quality test prompt with excellent structure and clarity for implementation',
         quality: { overall: 95, completeness: 95, specificity: 90 },
@@ -248,7 +249,8 @@ describe('UniversalOptimizer', () => {
     it('should return stats from library', () => {
       const stats = optimizer.getStatistics();
       expect(stats.totalPatterns).toBe(1);
-      expect(mockPatternLibrary.getPatternsByMode).toHaveBeenCalledTimes(2); // fast and deep
+      // v4.11: Uses getPatternsByScope instead of getPatternsByMode
+      expect(mockPatternLibrary.getPatternsByScope).toHaveBeenCalledTimes(2); // standard and comprehensive
     });
   });
 });

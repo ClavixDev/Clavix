@@ -123,8 +123,8 @@ describe('Analyze Command', () => {
       await cmd.run();
 
       const output = JSON.parse(consoleOutput[0]);
-      // High quality prompts with clear scope should recommend fast
-      expect(['fast', 'deep']).toContain(output.escalation.recommend);
+      // v4.11: escalation now recommends 'improve' (unified) or 'prd'
+      expect(['improve', 'prd']).toContain(output.escalation.recommend);
     });
 
     it('should have escalation data for vague prompts', async () => {
@@ -136,7 +136,8 @@ describe('Analyze Command', () => {
       expect(output.escalation).toBeDefined();
       expect(output.escalation.score).toBeGreaterThanOrEqual(0);
       expect(output.escalation.recommend).toBeDefined();
-      expect(['fast', 'deep', 'prd']).toContain(output.escalation.recommend);
+      // v4.11: escalation now recommends 'improve' (unified) or 'prd'
+      expect(['improve', 'prd']).toContain(output.escalation.recommend);
     });
 
     it('should have escalation factors array', async () => {

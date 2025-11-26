@@ -79,6 +79,13 @@ const AGENT_FACING_SECTION_MARKERS = [
   'Patterns Applied',
   'Applied patterns',
   'What I Generate',
+  // v4.11 output format sections
+  'Output Format',
+  'Depth Output Format',
+  'Standard Depth Output',
+  'Comprehensive Depth Output',
+  'Depth Selection',
+  'Smart Depth Selection',
 ];
 
 // Phrases that SHOULD appear (positive validation)

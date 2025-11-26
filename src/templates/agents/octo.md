@@ -4,12 +4,12 @@ Clavix workflows optimized for Octofriend's capabilities: model switching, multi
 
 ---
 
-## ⛔ CLAVIX MODE ENFORCEMENT (v4.7)
+## ⛔ CLAVIX MODE ENFORCEMENT (v4.11)
 
 **CRITICAL: Know which mode you're in and STOP at the right point.**
 
 **OPTIMIZATION workflows** (NO CODE ALLOWED):
-- `/clavix:fast`, `/clavix:deep` - Prompt optimization only
+- `/clavix:improve` - Prompt optimization with smart depth auto-selection
 - Your role: Analyze, optimize, show improved prompt, **STOP**
 - ❌ DO NOT implement the prompt's requirements
 - ✅ After showing optimized prompt, tell user: "Run `/clavix:execute --latest` to implement"
@@ -36,8 +36,7 @@ See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 |----------|------|---------|
 | Conversational mode | `start.md` | Natural requirements gathering |
 | Extract requirements | `summarize.md` | Convert conversation → PRD + prompts |
-| Quick improvements | `fast.md` | Prompt optimization with triage |
-| Deep analysis | `deep.md` | Comprehensive analysis + alternatives |
+| Smart optimization | `improve.md` | Prompt optimization with auto-depth |
 | PRD generation | `prd.md` | Strategic planning through questions |
 
 **Core references:**
@@ -59,8 +58,7 @@ See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 | Keywords | Workflow | Mode |
 |----------|----------|------|
 | prd, product requirements, specification | `prd` | Planning |
-| fast, quick, improve prompt | `fast` | Planning |
-| deep, comprehensive, analysis | `deep` | Planning |
+| improve, optimize, enhance prompt | `improve` | Planning |
 | start, conversational, discuss | `start` | Planning |
 | summarize, extract, requirements | `summarize` | Planning |
 | implement, build, execute | `implement` | Implementation |
@@ -74,12 +72,12 @@ See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 ### Model Switching Strategy
 
 **Fast models** (Qwen-Max, etc.):
-- Quick improvements (`fast` workflow)
+- Standard depth optimization (`improve` workflow)
 - Formatting and structure
 - Straightforward questions
 
 **Thinking models** (DeepSeek-R1, etc.):
-- Deep analysis (`deep` workflow)
+- Comprehensive depth optimization (`improve` workflow)
 - Architectural decisions
 - Complex problem-solving
 - PRD generation (`prd` workflow)

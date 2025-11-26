@@ -9,7 +9,7 @@ describe('TechnicalContextEnricher', () => {
   beforeEach(() => {
     enricher = new TechnicalContextEnricher();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -39,8 +39,8 @@ describe('TechnicalContextEnricher', () => {
       );
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(enricher.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(enricher.scope).toBe('both');
     });
 
     it('should have priority 5 (MEDIUM-LOW - supplementary)', () => {

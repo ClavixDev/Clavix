@@ -5,25 +5,25 @@ Show which optimization patterns were applied and their effects.
 ### Compact Output Format
 
 ```
-Patterns: [N] applied ([MODE] mode)
+Patterns: [N] applied ([DEPTH] depth)
   [PATTERN1] → [ONE-LINE EFFECT]
   [PATTERN2] → [ONE-LINE EFFECT]
 ```
 
 ### Example Outputs
 
-**Fast mode optimization:**
+**Standard depth optimization:**
 ```
-Patterns: 4 applied (fast mode)
+Patterns: 4 applied (standard depth)
   ConcisenessFilter → Removed 3 pleasantries, 2 filler phrases
   ObjectiveClarifier → Added clear objective statement
   StructureOrganizer → Reordered to context→requirements→output
   ActionabilityEnhancer → Replaced 2 vague terms with specifics
 ```
 
-**Deep mode optimization:**
+**Comprehensive depth optimization:**
 ```
-Patterns: 7 applied (deep mode)
+Patterns: 7 applied (comprehensive depth)
   ConcisenessFilter → Removed 5 pleasantries
   ObjectiveClarifier → Added objective section
   StructureOrganizer → Reorganized into 4 sections
@@ -43,7 +43,7 @@ Patterns: 7 applied (deep mode)
 
 ### Available Patterns Reference
 
-**Core Patterns (fast + deep):**
+**Standard Patterns (both scopes):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
 | ConcisenessFilter | 4 | Removes pleasantries, filler words, redundant phrases |
@@ -54,8 +54,12 @@ Patterns: 7 applied (deep mode)
 | CompletenessValidator | 6 | Identifies and flags missing required elements |
 | StepDecomposer | 5 | Breaks complex prompts into sequential steps |
 | ContextPrecisionBooster | 6 | Adds precise context when missing |
+| AmbiguityDetector | 9 | Identifies and flags ambiguous terms |
+| OutputFormatEnforcer | 7 | Adds explicit output format specifications |
+| SuccessCriteriaEnforcer | 7 | Adds measurable success criteria |
+| DomainContextEnricher | 5 | Adds domain-specific best practices |
 
-**Deep Mode Exclusive Patterns:**
+**Comprehensive Depth Exclusive Patterns:**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
 | AlternativePhrasingGenerator | 3 | Generates 2-3 alternative prompt structures |
@@ -67,15 +71,7 @@ Patterns: 7 applied (deep mode)
 | ErrorToleranceEnhancer | 5 | Adds error handling requirements |
 | PrerequisiteIdentifier | 6 | Identifies prerequisites and dependencies |
 
-**v4.1 Agent Transparency Patterns (both modes):**
-| Pattern | Priority | What It Does |
-|---------|----------|--------------|
-| AmbiguityDetector | 9 | Identifies and flags ambiguous terms |
-| OutputFormatEnforcer | 7 | Adds explicit output format specifications |
-| SuccessCriteriaEnforcer | 7 | Adds measurable success criteria |
-| DomainContextEnricher | 5 | Adds domain-specific best practices |
-
-**v4.3.2 PRD Mode Patterns (deep mode):**
+**v4.3.2 PRD Mode Patterns (comprehensive):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
 | RequirementPrioritizer | 7 | Separates must-have from nice-to-have requirements |
@@ -83,7 +79,7 @@ Patterns: 7 applied (deep mode)
 | SuccessMetricsEnforcer | 7 | Ensures measurable success criteria exist |
 | DependencyIdentifier | 5 | Identifies technical and external dependencies |
 
-**v4.3.2 Conversational Mode Patterns (deep mode):**
+**v4.3.2 Conversational Mode Patterns (comprehensive):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
 | ConversationSummarizer | 8 | Extracts structured requirements from messages |
@@ -93,14 +89,14 @@ Patterns: 7 applied (deep mode)
 ### Pattern Selection Logic
 
 Patterns are selected based on:
-1. **Mode**: Fast mode gets core patterns only; deep mode gets all
+1. **Depth**: Standard gets core patterns; comprehensive gets all
 2. **Intent**: Some patterns are intent-specific (e.g., PRDStructureEnforcer for prd-generation)
 3. **Priority**: Higher priority patterns run first (10→1)
 4. **Applicability**: Pattern checks if it can improve the prompt
 
 ### Why Patterns Were Skipped
 
-In deep mode, show skipped patterns with reasons:
+In comprehensive depth, show skipped patterns with reasons:
 
 ```
 Skipped patterns:
@@ -111,35 +107,33 @@ Skipped patterns:
 ### Pattern Categories Summary
 
 ```
-Core (always available):
+Standard (both scopes):
   ConcisenessFilter, ObjectiveClarifier, StructureOrganizer,
-  ActionabilityEnhancer, TechnicalContextEnricher, CompletenessValidator
-
-Both modes (fast & deep):
+  ActionabilityEnhancer, TechnicalContextEnricher, CompletenessValidator,
   StepDecomposer, ContextPrecisionBooster,
   AmbiguityDetector, OutputFormatEnforcer, SuccessCriteriaEnforcer,
   DomainContextEnricher
 
-Deep mode only:
+Comprehensive only:
   AlternativePhrasingGenerator, EdgeCaseIdentifier, ValidationChecklistCreator,
   AssumptionExplicitizer, ScopeDefiner, PRDStructureEnforcer,
   ErrorToleranceEnhancer, PrerequisiteIdentifier
 
-v4.3.2 PRD mode (deep):
+v4.3.2 PRD mode (comprehensive):
   RequirementPrioritizer, UserPersonaEnricher, SuccessMetricsEnforcer,
   DependencyIdentifier
 
-v4.3.2 Conversational mode (deep):
+v4.3.2 Conversational mode (comprehensive):
   ConversationSummarizer, TopicCoherenceAnalyzer, ImplicitRequirementExtractor
 ```
 
-### Pattern Count by Mode
+### Pattern Count by Depth
 
-| Mode | Patterns Available | Typical Applied |
+| Depth | Patterns Available | Typical Applied |
 |------|-------------------|-----------------|
-| Fast | 12 patterns | 4-7 patterns |
-| Deep | 27 patterns | 8-14 patterns |
-| PRD | 12 patterns | 8-12 patterns |
-| Conversational | 3 patterns | 1-3 patterns |
+| Standard | 12 patterns | 4-7 patterns |
+| Comprehensive | 27 patterns | 8-14 patterns |
+| PRD mode | 12+ patterns | 8-12 patterns |
+| Conversational | 3+ patterns | 1-3 patterns |
 
-**Note:** Deep mode has access to all 27 patterns. Pattern selection varies by intent - some patterns only apply to specific intents (e.g., PRDStructureEnforcer only for prd-generation), so typical applied count is 8-14.
+**Note:** Comprehensive depth has access to all 27 patterns. Pattern selection varies by intent - some patterns only apply to specific intents (e.g., PRDStructureEnforcer only for prd-generation), so typical applied count is 8-14.

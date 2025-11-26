@@ -97,33 +97,28 @@ describe('CrushAdapter', () => {
 
   describe('generateCommands', () => {
     it('should generate Crush command files', async () => {
+      // v4.11: Using unified improve template
       const templates: CommandTemplate[] = [
         {
-          name: 'fast',
-          description: 'Fast improvements',
-          content: '# Fast Mode\n\nQuick analysis',
+          name: 'improve',
+          description: 'Smart prompt optimization',
+          content: '# Improve Mode\n\nSmart depth auto-selection',
         },
         {
-          name: 'deep',
-          description: 'Deep analysis',
-          content: '# Deep Mode\n\nComprehensive',
+          name: 'prd',
+          description: 'PRD generation',
+          content: '# PRD Mode\n\nComprehensive planning',
         },
       ];
 
       await adapter.generateCommands(templates);
 
       const commandPath = adapter.getCommandPath();
-      const file1 = await fs.readFile(
-        path.join(commandPath, 'fast.md'),
-        'utf-8'
-      );
-      const file2 = await fs.readFile(
-        path.join(commandPath, 'deep.md'),
-        'utf-8'
-      );
+      const improveFile = await fs.readFile(path.join(commandPath, 'improve.md'), 'utf-8');
+      const prdFile = await fs.readFile(path.join(commandPath, 'prd.md'), 'utf-8');
 
-      expect(file1).toBe('# Fast Mode\n\nQuick analysis');
-      expect(file2).toBe('# Deep Mode\n\nComprehensive');
+      expect(improveFile).toBe('# Improve Mode\n\nSmart depth auto-selection');
+      expect(prdFile).toBe('# PRD Mode\n\nComprehensive planning');
     });
 
     it('should create subdirectory structure', async () => {
@@ -167,10 +162,7 @@ describe('CrushAdapter', () => {
 
     it('should overwrite existing commands', async () => {
       await fs.ensureDir('.crush/commands/clavix');
-      await fs.writeFile(
-        '.crush/commands/clavix/test.md',
-        'Old content'
-      );
+      await fs.writeFile('.crush/commands/clavix/test.md', 'Old content');
 
       const templates: CommandTemplate[] = [
         { name: 'test', description: 'Test', content: 'New content' },
@@ -178,10 +170,7 @@ describe('CrushAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/test.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/test.md', 'utf-8');
       expect(content).toBe('New content');
       expect(content).not.toContain('Old content');
     });
@@ -203,16 +192,11 @@ describe('CrushAdapter', () => {
 
     it('should preserve content format without frontmatter', async () => {
       const content = '# Title\n\nContent without frontmatter';
-      const templates: CommandTemplate[] = [
-        { name: 'test', description: 'Test', content },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'test', description: 'Test', content }];
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(
-        '.crush/commands/clavix/test.md',
-        'utf-8'
-      );
+      const fileContent = await fs.readFile('.crush/commands/clavix/test.md', 'utf-8');
       expect(fileContent).toBe(content);
       expect(fileContent).not.toContain('---');
     });
@@ -230,10 +214,7 @@ describe('CrushAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/test.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/test.md', 'utf-8');
       expect(content).toContain('$PROMPT');
       expect(content).not.toContain('{{ARGS}}');
       expect(content).toBe('Take user input: $PROMPT');
@@ -250,10 +231,7 @@ describe('CrushAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/multi.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/multi.md', 'utf-8');
       expect(content).toBe('First: $PROMPT, Second: $PROMPT, Third: $PROMPT');
       expect(content).not.toContain('{{ARGS}}');
     });
@@ -269,10 +247,7 @@ describe('CrushAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/code.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/code.md', 'utf-8');
       expect(content).toBe('```\nUsage: command $PROMPT\n```');
     });
 
@@ -288,10 +263,7 @@ describe('CrushAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/no-args.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/no-args.md', 'utf-8');
       expect(content).toBe(originalContent);
     });
   });
@@ -387,10 +359,7 @@ Then provide:
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/long.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/long.md', 'utf-8');
       expect(content.length).toBe(10000);
     });
 
@@ -399,46 +368,33 @@ Then provide:
         {
           name: 'unicode',
           description: 'Unicode test',
-          content: 'Test with émojis 🚀 and spëcial çhars'
+          content: 'Test with émojis 🚀 and spëcial çhars',
         },
       ];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/unicode.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/unicode.md', 'utf-8');
       expect(content).toContain('émojis');
       expect(content).toContain('🚀');
     });
 
     it('should handle empty content', async () => {
-      const templates: CommandTemplate[] = [
-        { name: 'empty', description: 'Empty', content: '' },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'empty', description: 'Empty', content: '' }];
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/empty.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/empty.md', 'utf-8');
       expect(content).toBe('');
     });
 
     it('should handle markdown code blocks', async () => {
       const content = '```bash\necho "hello"\n```';
-      const templates: CommandTemplate[] = [
-        { name: 'code', description: 'Code', content },
-      ];
+      const templates: CommandTemplate[] = [{ name: 'code', description: 'Code', content }];
 
       await adapter.generateCommands(templates);
 
-      const fileContent = await fs.readFile(
-        '.crush/commands/clavix/code.md',
-        'utf-8'
-      );
+      const fileContent = await fs.readFile('.crush/commands/clavix/code.md', 'utf-8');
       expect(fileContent).toBe(content);
     });
 
@@ -453,10 +409,7 @@ Then provide:
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        '.crush/commands/clavix/unicode-args.md',
-        'utf-8'
-      );
+      const content = await fs.readFile('.crush/commands/clavix/unicode-args.md', 'utf-8');
       expect(content).toBe('Prompt: $PROMPT with émojis 🚀');
     });
   });

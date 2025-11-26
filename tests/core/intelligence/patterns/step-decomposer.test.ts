@@ -9,7 +9,7 @@ describe('StepDecomposer', () => {
   beforeEach(() => {
     pattern = new StepDecomposer();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -38,7 +38,7 @@ describe('StepDecomposer', () => {
     });
 
     it('should support both modes', () => {
-      expect(pattern.mode).toBe('both');
+      expect(pattern.scope).toBe('both');
     });
 
     it('should have priority 5 (MEDIUM-LOW - supplementary)', () => {

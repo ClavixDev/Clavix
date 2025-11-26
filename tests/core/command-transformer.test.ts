@@ -6,7 +6,7 @@ describe('CommandTransformer', () => {
   describe('transform', () => {
     describe('colon format (default)', () => {
       it('should preserve content when using colon separator', () => {
-        const content = 'Run `/clavix:fast` to optimize your prompt.';
+        const content = 'Run `/clavix:improve` to optimize your prompt.';
         const features: IntegrationFeatures = { commandFormat: { separator: ':' } };
 
         const result = CommandTransformer.transform(content, features);
@@ -15,7 +15,7 @@ describe('CommandTransformer', () => {
       });
 
       it('should preserve content when features is undefined', () => {
-        const content = 'Run `/clavix:fast` to optimize your prompt.';
+        const content = 'Run `/clavix:improve` to optimize your prompt.';
 
         const result = CommandTransformer.transform(content);
 
@@ -23,7 +23,7 @@ describe('CommandTransformer', () => {
       });
 
       it('should preserve content when commandFormat is undefined', () => {
-        const content = 'Run `/clavix:fast` to optimize your prompt.';
+        const content = 'Run `/clavix:improve` to optimize your prompt.';
         const features: IntegrationFeatures = { supportsSubdirectories: true };
 
         const result = CommandTransformer.transform(content, features);
@@ -36,19 +36,19 @@ describe('CommandTransformer', () => {
       const hyphenFeatures: IntegrationFeatures = { commandFormat: { separator: '-' } };
 
       it('should transform colon to hyphen when configured', () => {
-        const content = 'Run `/clavix:fast` to optimize your prompt.';
+        const content = 'Run `/clavix:improve` to optimize your prompt.';
 
         const result = CommandTransformer.transform(content, hyphenFeatures);
 
-        expect(result).toBe('Run `/clavix-fast` to optimize your prompt.');
+        expect(result).toBe('Run `/clavix-improve` to optimize your prompt.');
       });
 
       it('should transform multiple commands', () => {
-        const content = 'First run `/clavix:fast`, then `/clavix:execute --latest`.';
+        const content = 'First run `/clavix:improve`, then `/clavix:execute --latest`.';
 
         const result = CommandTransformer.transform(content, hyphenFeatures);
 
-        expect(result).toBe('First run `/clavix-fast`, then `/clavix-execute --latest`.');
+        expect(result).toBe('First run `/clavix-improve`, then `/clavix-execute --latest`.');
       });
 
       it('should handle hyphenated command names', () => {
@@ -68,11 +68,11 @@ describe('CommandTransformer', () => {
       });
 
       it('should transform commands in inline code', () => {
-        const content = 'Run `clavix fast` or use `/clavix:fast` slash command.';
+        const content = 'Run `clavix fast` or use `/clavix:improve` slash command.';
 
         const result = CommandTransformer.transform(content, hyphenFeatures);
 
-        expect(result).toBe('Run `clavix fast` or use `/clavix-fast` slash command.');
+        expect(result).toBe('Run `clavix fast` or use `/clavix-improve` slash command.');
       });
     });
 
@@ -96,11 +96,11 @@ describe('CommandTransformer', () => {
       });
 
       it('should distinguish CLI from slash commands', () => {
-        const content = 'CLI: `clavix fast "prompt"` vs Slash: `/clavix:fast`';
+        const content = 'CLI: `clavix fast "prompt"` vs Slash: `/clavix:improve`';
 
         const result = CommandTransformer.transform(content, hyphenFeatures);
 
-        expect(result).toBe('CLI: `clavix fast "prompt"` vs Slash: `/clavix-fast`');
+        expect(result).toBe('CLI: `clavix fast "prompt"` vs Slash: `/clavix-improve`');
       });
     });
 
@@ -121,19 +121,19 @@ describe('CommandTransformer', () => {
       });
 
       it('should handle command at start of content', () => {
-        const content = '/clavix:fast is the quick optimization mode.';
+        const content = '/clavix:improve is the quick optimization mode.';
 
         const result = CommandTransformer.transform(content, hyphenFeatures);
 
-        expect(result).toBe('/clavix-fast is the quick optimization mode.');
+        expect(result).toBe('/clavix-improve is the quick optimization mode.');
       });
 
       it('should handle command at end of content', () => {
-        const content = 'To optimize, run /clavix:fast';
+        const content = 'To optimize, run /clavix:improve';
 
         const result = CommandTransformer.transform(content, hyphenFeatures);
 
-        expect(result).toBe('To optimize, run /clavix-fast');
+        expect(result).toBe('To optimize, run /clavix-improve');
       });
 
       it('should not transform partial matches', () => {
@@ -149,12 +149,16 @@ describe('CommandTransformer', () => {
     describe('all command types', () => {
       const hyphenFeatures: IntegrationFeatures = { commandFormat: { separator: '-' } };
 
-      it('should transform /clavix:fast', () => {
-        expect(CommandTransformer.transform('/clavix:fast', hyphenFeatures)).toBe('/clavix-fast');
+      it('should transform /clavix:improve (was fast)', () => {
+        expect(CommandTransformer.transform('/clavix:improve', hyphenFeatures)).toBe(
+          '/clavix-improve'
+        );
       });
 
-      it('should transform /clavix:deep', () => {
-        expect(CommandTransformer.transform('/clavix:deep', hyphenFeatures)).toBe('/clavix-deep');
+      it('should transform /clavix:improve (was fast)', () => {
+        expect(CommandTransformer.transform('/clavix:improve', hyphenFeatures)).toBe(
+          '/clavix-improve'
+        );
       });
 
       it('should transform /clavix:execute', () => {
@@ -203,20 +207,20 @@ describe('CommandTransformer', () => {
 
   describe('formatCommand', () => {
     it('should format command with colon separator (default)', () => {
-      const result = CommandTransformer.formatCommand('fast');
-      expect(result).toBe('/clavix:fast');
+      const result = CommandTransformer.formatCommand('improve');
+      expect(result).toBe('/clavix:improve');
     });
 
     it('should format command with explicit colon separator', () => {
       const features: IntegrationFeatures = { commandFormat: { separator: ':' } };
-      const result = CommandTransformer.formatCommand('fast', features);
-      expect(result).toBe('/clavix:fast');
+      const result = CommandTransformer.formatCommand('improve', features);
+      expect(result).toBe('/clavix:improve');
     });
 
     it('should format command with hyphen separator', () => {
       const features: IntegrationFeatures = { commandFormat: { separator: '-' } };
-      const result = CommandTransformer.formatCommand('fast', features);
-      expect(result).toBe('/clavix-fast');
+      const result = CommandTransformer.formatCommand('improve', features);
+      expect(result).toBe('/clavix-improve');
     });
 
     it('should format hyphenated command names', () => {
@@ -272,10 +276,10 @@ describe('CommandTransformer', () => {
         commandFormat: { separator: '-' },
       };
 
-      const content = 'First `/clavix:fast`, then `/clavix:execute --latest`.';
+      const content = 'First `/clavix:improve`, then `/clavix:execute --latest`.';
       const result = CommandTransformer.transform(content, droidFeatures);
 
-      expect(result).toBe('First `/clavix-fast`, then `/clavix-execute --latest`.');
+      expect(result).toBe('First `/clavix-improve`, then `/clavix-execute --latest`.');
     });
   });
 });

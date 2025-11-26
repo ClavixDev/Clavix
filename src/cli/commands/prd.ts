@@ -13,7 +13,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default class Prd extends Command {
-  static description = 'Launch Clavix Planning Mode - transform ideas into structured PRDs through strategic questions';
+  static description =
+    'Launch Clavix Planning Mode - transform ideas into structured PRDs through strategic questions';
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
@@ -41,7 +42,9 @@ export default class Prd extends Command {
     const { flags } = await this.parse(Prd);
 
     console.log(chalk.bold.cyan('\n🔑 Clavix Planning Mode\n'));
-    console.log(chalk.gray('Transform your idea into structured requirements through strategic questions.\n'));
+    console.log(
+      chalk.gray('Transform your idea into structured requirements through strategic questions.\n')
+    );
     console.log(chalk.gray('This will generate two documents:'));
     console.log(chalk.gray('  📄 Full PRD - Comprehensive team-facing document'));
     console.log(chalk.gray('  ⚡ Quick PRD - AI-optimized 2-3 paragraph version\n'));
@@ -51,8 +54,8 @@ export default class Prd extends Command {
       const engine = new QuestionEngine();
 
       // Determine template path
-      const templatePath = flags.template ||
-        path.join(__dirname, '../../templates/prd-questions.md');
+      const templatePath =
+        flags.template || path.join(__dirname, '../../templates/prd-questions.md');
 
       // Load question flow
       console.log(chalk.dim('Loading questions...\n'));
@@ -128,12 +131,14 @@ export default class Prd extends Command {
               name: 'answer',
               message: question.text,
               default: question.default,
-              validate: question.validate || ((input: string) => {
-                if (currentQuestion.required && !input.trim()) {
-                  return 'This field is required';
-                }
-                return true;
-              }),
+              validate:
+                question.validate ||
+                ((input: string) => {
+                  if (currentQuestion.required && !input.trim()) {
+                    return 'This field is required';
+                  }
+                  return true;
+                }),
             },
           ]);
           answer = response.answer;
@@ -180,7 +185,6 @@ export default class Prd extends Command {
       console.log(chalk.blue('  1. Review the generated documents'));
       console.log(chalk.blue('  2. Run: clavix plan (generate task breakdown)'));
       console.log(chalk.blue('  3. Run: clavix implement (start implementation)\n'));
-
     } catch (error) {
       if (error instanceof Error) {
         console.log(chalk.red(`\n✗ Error: ${error.message}\n`));
@@ -200,10 +204,11 @@ export default class Prd extends Command {
 
     if (typeof firstAnswer === 'string') {
       // Extract first few words, convert to kebab-case
-      const words = firstAnswer.toLowerCase()
+      const words = firstAnswer
+        .toLowerCase()
         .replace(/[^a-z0-9\s]/g, '')
         .split(/\s+/)
-        .filter(w => w.length > 0)
+        .filter((w) => w.length > 0)
         .slice(0, 3);
 
       if (words.length > 0) {
@@ -298,9 +303,9 @@ export default class Prd extends Command {
       console.log(chalk.bold.cyan('✅ Validating Quick PRD Quality\n'));
       console.log(chalk.gray('Analyzing for AI consumption quality...\n'));
 
-      // Run quality assessment
+      // Run quality assessment (v4.11: use improve mode)
       const optimizer = new UniversalOptimizer();
-      const result = await optimizer.optimize(prdContent, 'fast');
+      const result = await optimizer.optimize(prdContent, 'improve');
 
       const getScoreColor = (score: number) => {
         if (score >= 80) return chalk.green;
@@ -311,10 +316,24 @@ export default class Prd extends Command {
       // Display quality assessment
       console.log(chalk.bold('📊 Quality Assessment:\n'));
 
-      console.log(getScoreColor(result.quality.clarity)(`  Clarity: ${result.quality.clarity.toFixed(0)}%`));
-      console.log(getScoreColor(result.quality.structure)(`  Structure: ${result.quality.structure.toFixed(0)}%`));
-      console.log(getScoreColor(result.quality.completeness)(`  Completeness: ${result.quality.completeness.toFixed(0)}%`));
-      console.log(getScoreColor(result.quality.overall).bold(`\n  Overall: ${result.quality.overall.toFixed(0)}%\n`));
+      console.log(
+        getScoreColor(result.quality.clarity)(`  Clarity: ${result.quality.clarity.toFixed(0)}%`)
+      );
+      console.log(
+        getScoreColor(result.quality.structure)(
+          `  Structure: ${result.quality.structure.toFixed(0)}%`
+        )
+      );
+      console.log(
+        getScoreColor(result.quality.completeness)(
+          `  Completeness: ${result.quality.completeness.toFixed(0)}%`
+        )
+      );
+      console.log(
+        getScoreColor(result.quality.overall).bold(
+          `\n  Overall: ${result.quality.overall.toFixed(0)}%\n`
+        )
+      );
 
       if (result.quality.overall >= 80) {
         console.log(chalk.green('✨ Excellent! Your Quick PRD is AI-ready.\n'));
@@ -335,8 +354,7 @@ export default class Prd extends Command {
           console.log();
         }
       }
-
-    } catch (error) {
+    } catch {
       console.log(chalk.yellow('⚠️  Could not validate PRD quality'));
       console.log(chalk.gray('Continuing without validation...\n'));
     }

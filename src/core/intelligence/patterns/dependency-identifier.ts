@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -24,7 +24,7 @@ export class DependencyIdentifier extends BasePattern {
 
   readonly applicableIntents: PromptIntent[] = ['prd-generation', 'planning', 'migration'];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 5; // MEDIUM-LOW - supplementary
   readonly phases: PatternPhase[] = ['question-validation', 'output-generation'];
 

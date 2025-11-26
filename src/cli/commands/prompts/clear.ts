@@ -8,20 +8,22 @@ export default class PromptsClear extends Command {
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> --fast',
-    '<%= config.bin %> <%= command.id %> --deep',
+    '<%= config.bin %> <%= command.id %> --standard',
+    '<%= config.bin %> <%= command.id %> --comprehensive',
     '<%= config.bin %> <%= command.id %> --executed',
     '<%= config.bin %> <%= command.id %> --stale',
     '<%= config.bin %> <%= command.id %> --all',
   ];
 
   static flags = {
-    fast: Flags.boolean({
-      description: 'Clear all fast prompts',
+    standard: Flags.boolean({
+      char: 's',
+      description: 'Clear all standard depth prompts',
       default: false,
     }),
-    deep: Flags.boolean({
-      description: 'Clear all deep prompts',
+    comprehensive: Flags.boolean({
+      char: 'c',
+      description: 'Clear all comprehensive depth prompts',
       default: false,
     }),
     executed: Flags.boolean({
@@ -50,10 +52,10 @@ export default class PromptsClear extends Command {
       // Build filters
       const filters: PromptFilters = {};
 
-      if (flags.fast && !flags.deep) {
-        filters.source = 'fast';
-      } else if (flags.deep && !flags.fast) {
-        filters.source = 'deep';
+      if (flags.standard && !flags.comprehensive) {
+        filters.depthUsed = 'standard';
+      } else if (flags.comprehensive && !flags.standard) {
+        filters.depthUsed = 'comprehensive';
       }
 
       if (flags.executed) {
@@ -65,7 +67,13 @@ export default class PromptsClear extends Command {
       }
 
       // Interactive mode
-      if (!flags.fast && !flags.deep && !flags.executed && !flags.stale && !flags.all) {
+      if (
+        !flags.standard &&
+        !flags.comprehensive &&
+        !flags.executed &&
+        !flags.stale &&
+        !flags.all
+      ) {
         await this.interactiveClear(promptManager);
         return;
       }
@@ -80,18 +88,21 @@ export default class PromptsClear extends Command {
 
       // Display what will be deleted
       console.log(chalk.bold.cyan(`\n📋 Prompts to Delete (${toDelete.length}):\n`));
-      toDelete.forEach(p => {
+      toDelete.forEach((p) => {
         const status = p.executed ? chalk.green('✓') : chalk.gray('○');
         const age = p.ageInDays === 0 ? 'today' : `${p.ageInDays}d ago`;
-        console.log(`  ${status} [${p.source}] ${p.id} (${age})`);
+        const depthLabel = p.depthUsed === 'comprehensive' ? 'comp' : 'std';
+        console.log(`  ${status} [${depthLabel}] ${p.id} (${age})`);
         console.log(`     ${chalk.gray(p.originalPrompt.substring(0, 60))}...`);
       });
       console.log();
 
       // Safety check for unexecuted prompts
-      const unexecuted = toDelete.filter(p => !p.executed);
+      const unexecuted = toDelete.filter((p) => !p.executed);
       if (unexecuted.length > 0 && !flags.force) {
-        console.log(chalk.yellow(`⚠️  Warning: ${unexecuted.length} unexecuted prompts will be deleted\n`));
+        console.log(
+          chalk.yellow(`⚠️  Warning: ${unexecuted.length} unexecuted prompts will be deleted\n`)
+        );
 
         const { proceed } = await inquirer.prompt([
           {
@@ -134,10 +145,15 @@ export default class PromptsClear extends Command {
       const stats = await promptManager.getStorageStats();
       if (stats.totalPrompts > 0) {
         console.log(chalk.gray(`Remaining prompts: ${stats.totalPrompts}`));
-        console.log(chalk.gray(`  Fast: ${stats.fastPrompts} | Deep: ${stats.deepPrompts}`));
-        console.log(chalk.gray(`  Executed: ${stats.executedPrompts} | Pending: ${stats.pendingPrompts}\n`));
+        console.log(
+          chalk.gray(
+            `  Standard: ${stats.standardPrompts} | Comprehensive: ${stats.comprehensivePrompts}`
+          )
+        );
+        console.log(
+          chalk.gray(`  Executed: ${stats.executedPrompts} | Pending: ${stats.pendingPrompts}\n`)
+        );
       }
-
     } catch (error) {
       console.log(chalk.red(`\n✗ Error: ${error}\n`));
     }
@@ -157,8 +173,8 @@ export default class PromptsClear extends Command {
       { name: 'Executed prompts only (safe)', value: 'executed' },
       { name: 'Stale prompts (>30 days old)', value: 'stale' },
       { name: 'Old prompts (>7 days old)', value: 'old' },
-      { name: 'Fast prompts only', value: 'fast' },
-      { name: 'Deep prompts only', value: 'deep' },
+      { name: 'Standard depth prompts only', value: 'standard' },
+      { name: 'Comprehensive depth prompts only', value: 'comprehensive' },
       { name: chalk.red('All prompts (dangerous)'), value: 'all' },
       { name: 'Cancel', value: 'cancel' },
     ];
@@ -186,17 +202,15 @@ export default class PromptsClear extends Command {
       filters.stale = true;
     } else if (selection === 'old') {
       filters.old = true;
-    } else if (selection === 'fast') {
-      filters.source = 'fast';
-    } else if (selection === 'deep') {
-      filters.source = 'deep';
+    } else if (selection === 'standard') {
+      filters.depthUsed = 'standard';
+    } else if (selection === 'comprehensive') {
+      filters.depthUsed = 'comprehensive';
     }
     // 'all' means no filters
 
     // Get matching prompts
-    const toDelete = selection === 'all'
-      ? allPrompts
-      : await manager.listPrompts(filters);
+    const toDelete = selection === 'all' ? allPrompts : await manager.listPrompts(filters);
 
     if (toDelete.length === 0) {
       console.log(chalk.yellow('\n⚠️  No prompts match the selected criteria\n'));
@@ -205,9 +219,10 @@ export default class PromptsClear extends Command {
 
     // Show preview
     console.log(chalk.cyan(`\nWill delete ${toDelete.length} prompt(s):\n`));
-    toDelete.slice(0, 5).forEach(p => {
+    toDelete.slice(0, 5).forEach((p) => {
       const status = p.executed ? chalk.green('✓') : chalk.gray('○');
-      console.log(`  ${status} [${p.source}] ${p.id}`);
+      const depthLabel = p.depthUsed === 'comprehensive' ? 'comp' : 'std';
+      console.log(`  ${status} [${depthLabel}] ${p.id}`);
     });
 
     if (toDelete.length > 5) {

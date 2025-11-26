@@ -272,29 +272,29 @@ export default class Init extends Command {
       }
 
       // Success message
+      // v4.11: Use generic command names - format varies by integration
+      // (claude-code uses colon like /clavix:improve, droid uses hyphen like /clavix-improve)
       console.log(chalk.bold.green('\n✅ Clavix initialized successfully!\n'));
       console.log(chalk.gray('Next steps:'));
       console.log(chalk.gray('  • Slash commands are now available in your AI agent'));
       console.log(
         chalk.gray('  • Run'),
         chalk.cyan('clavix --help'),
-        chalk.gray('to see all commands')
+        chalk.gray('to see all CLI commands')
+      );
+      console.log(chalk.gray('  • Available slash commands:'));
+      console.log(
+        chalk.gray('    ◦'),
+        chalk.cyan('improve'),
+        chalk.gray('- Smart prompt optimization with auto depth selection')
       );
       console.log(
-        chalk.gray('  • Try'),
-        chalk.cyan('/clavix:fast'),
-        chalk.gray('for quick prompt improvements')
+        chalk.gray('    ◦'),
+        chalk.cyan('prd'),
+        chalk.gray('- Generate PRD through guided questions')
       );
-      console.log(
-        chalk.gray('  • Try'),
-        chalk.cyan('/clavix:deep'),
-        chalk.gray('for comprehensive prompt analysis')
-      );
-      console.log(
-        chalk.gray('  • Use'),
-        chalk.cyan('/clavix:prd'),
-        chalk.gray('to generate a PRD\n')
-      );
+      console.log(chalk.gray('    ◦'), chalk.cyan('execute'), chalk.gray('- Run saved prompts'));
+      console.log(chalk.gray('\n  Command format varies by integration (colon vs hyphen)\n'));
     } catch (error: unknown) {
       const { getErrorMessage, toError } = await import('../../utils/error-utils.js');
       console.error(chalk.red('\n✗ Initialization failed:'), getErrorMessage(error));
@@ -347,21 +347,19 @@ Welcome to Clavix! This directory contains your local Clavix configuration and d
 │   │   ├── quick-prd.md
 │   │   ├── tasks.md
 │   │   └── .clavix-implement-config.json
-│   ├── prompts/         # Saved prompts for re-execution
-│   │   ├── fast/        # Fast mode prompts
-│   │   └── deep/        # Deep mode prompts
+│   ├── prompts/         # Saved prompts for re-execution (v4.11 unified)
 │   └── archive/         # Archived completed projects
 └── templates/           # Custom template overrides (optional)
 \`\`\`
 
 ## CLI Commands Reference
 
-### Prompt Improvement
-- \`clavix fast "<prompt>"\` - Quick Clavix Intelligence improvements with smart triage
-- \`clavix deep "<prompt>"\` - Comprehensive Clavix Intelligence analysis with alternatives
-- \`clavix execute [--latest]\` - Execute saved prompts from fast/deep optimization
+### Prompt Improvement (v4.11)
+- \`clavix improve "<prompt>"\` - Smart prompt optimization with auto depth selection
+- \`clavix improve "<prompt>" --comprehensive\` - Force comprehensive depth analysis
+- \`clavix execute [--latest]\` - Execute saved prompts
 - \`clavix prompts list\` - View all saved prompts with status (NEW/EXECUTED/OLD/STALE)
-- \`clavix prompts clear\` - Cleanup prompts (\`--executed\`, \`--stale\`, \`--fast\`, \`--deep\`, \`--all\`)
+- \`clavix prompts clear\` - Cleanup prompts (\`--executed\`, \`--stale\`, \`--standard\`, \`--comprehensive\`, \`--all\`)
 
 ### PRD & Planning
 - \`clavix prd\` - Generate PRD through guided Socratic questions
@@ -390,11 +388,13 @@ If using Claude Code, Cursor, or Windsurf, the following slash commands are avai
 
 **Note:** Running \`clavix init\` or \`clavix update\` will regenerate all slash commands from templates. Any manual edits to generated commands will be lost. If you need custom commands, create new command files instead of modifying generated ones.
 
-### Prompt Improvement
-- \`/clavix:fast [prompt]\` - Quick prompt improvements
-- \`/clavix:deep [prompt]\` - Comprehensive prompt analysis
-- \`/clavix:execute\` - Execute saved prompts
-- \`/clavix:prompts\` - Manage prompt lifecycle
+**Command format varies by integration:**
+- Claude Code, Gemini, Qwen: \`/clavix:improve\` (colon format)
+- Cursor, Droid, Windsurf, etc.: \`/clavix-improve\` (hyphen format)
+
+### Prompt Improvement (v4.11)
+- \`improve [prompt]\` - Smart optimization with auto depth selection
+- \`execute\` - Execute saved prompts
 
 ### PRD & Planning
 - \`/clavix:prd\` - Generate PRD through guided questions
@@ -410,15 +410,17 @@ If using Claude Code, Cursor, or Windsurf, the following slash commands are avai
 
 ## Workflows
 
-### Prompt Lifecycle (v2.7+)
+### Prompt Lifecycle (v4.11)
 
 1. **Create improved prompt**:
    \`\`\`bash
-   clavix fast "your prompt here"
-   # or
-   clavix deep "your prompt here"
+   clavix improve "your prompt here"
+   # Clavix auto-selects depth based on quality analysis:
+   # - <60% quality: standard depth (basic fixes)
+   # - 60-74%: asks user to choose
+   # - >=75%: comprehensive depth (polish)
    \`\`\`
-   - CLI auto-saves to \`.clavix/outputs/prompts/fast/\` or \`deep/\`
+   - CLI auto-saves to \`.clavix/outputs/prompts/\`
    - Slash commands require manual save per template instructions
 
 2. **Execute saved prompt**:
@@ -485,18 +487,19 @@ When using \`clavix implement --commit-strategy=<type>\`:
 
 **Recommendation**: Use \`none\` for most projects. Only enable auto-commits for large implementations with clear phases.
 
-## When to Use Which Mode
+## When to Use Which Mode (v4.11)
 
-- **Fast mode**: Quick cleanup for simple prompts (1-2 iterations)
-- **Deep mode**: Complex requirements needing comprehensive analysis (3-5 alternatives)
+- **Improve mode**: Smart prompt optimization with auto depth selection
+  - Standard depth: Quick cleanup for simpler prompts
+  - Comprehensive depth: Thorough analysis for complex requirements
 - **PRD mode**: Strategic planning with architecture, risks, and business impact
 - **Conversational mode** (\`start\`/\`summarize\`): Natural discussion → extract structured requirements
 
 ## Typical Workflows
 
-**Improve a prompt quickly**:
+**Improve a prompt** (v4.11 unified):
 \`\`\`bash
-clavix fast "Add user authentication"
+clavix improve "Add user authentication"
 clavix execute --latest
 \`\`\`
 
@@ -524,8 +527,7 @@ clavix archive my-project
 ## Customization
 
 Create custom templates in \`.clavix/templates/\` to override defaults:
-- \`fast.txt\` - Custom fast mode template
-- \`deep.txt\` - Custom deep mode template
+- \`improve.txt\` - Custom improve mode template
 - \`prd-questions.txt\` - Custom PRD questions
 
 Edit configuration:

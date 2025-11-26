@@ -9,7 +9,7 @@ describe('CompletenessValidator', () => {
   beforeEach(() => {
     validator = new CompletenessValidator();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -37,8 +37,8 @@ describe('CompletenessValidator', () => {
       expect(validator.description).toBe('Ensures all necessary requirements are present');
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(validator.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(validator.scope).toBe('both');
     });
 
     it('should have priority 6', () => {

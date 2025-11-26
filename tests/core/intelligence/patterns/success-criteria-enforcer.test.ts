@@ -9,7 +9,7 @@ describe('SuccessCriteriaEnforcer', () => {
   beforeEach(() => {
     pattern = new SuccessCriteriaEnforcer();
     mockContext = {
-      mode: 'fast',
+      depthLevel: 'standard',
       originalPrompt: 'Test prompt',
       intent: {
         primaryIntent: 'code-generation',
@@ -39,8 +39,8 @@ describe('SuccessCriteriaEnforcer', () => {
       );
     });
 
-    it('should support both fast and deep modes', () => {
-      expect(pattern.mode).toBe('both');
+    it('should support both fast and comprehensive depths', () => {
+      expect(pattern.scope).toBe('both');
     });
 
     it('should have priority 7 (MEDIUM-HIGH - important enrichment)', () => {

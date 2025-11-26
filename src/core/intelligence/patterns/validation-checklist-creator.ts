@@ -1,6 +1,6 @@
 import {
   BasePattern,
-  PatternMode,
+  PatternScope,
   PatternPriority,
   PatternPhase,
   PatternConfigSchema,
@@ -31,7 +31,7 @@ export class ValidationChecklistCreator extends BasePattern {
     'debugging',
   ];
 
-  readonly mode: PatternMode = 'deep';
+  readonly scope: PatternScope = 'comprehensive';
   readonly priority: PatternPriority = 3; // VERY LOW - final touches
   readonly phases: PatternPhase[] = ['all'];
 

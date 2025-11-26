@@ -207,7 +207,7 @@ describe('Critical Path: Prompt Optimization Flow', () => {
   });
 
   describe('mode behavior', () => {
-    it('fast mode should be quicker than deep mode', async () => {
+    it('standard depth should be quicker than comprehensive depth', async () => {
       const prompt = 'Add authentication to the API';
 
       const fastStart = Date.now();
@@ -218,17 +218,17 @@ describe('Critical Path: Prompt Optimization Flow', () => {
       await optimizer.optimize(prompt, 'deep');
       const deepTime = Date.now() - deepStart;
 
-      // Fast mode should be at least as fast or faster (allow some variance)
+      // Standard depth should be at least as fast or faster (allow some variance)
       expect(fastTime).toBeLessThanOrEqual(deepTime + 50);
     });
 
-    it('deep mode should provide more detailed analysis', async () => {
+    it('comprehensive depth should provide more detailed analysis', async () => {
       const prompt = 'Implement a caching layer';
 
       const fastResult = await optimizer.optimize(prompt, 'fast');
       const deepResult = await optimizer.optimize(prompt, 'deep');
 
-      // Deep mode typically provides longer enhanced output
+      // Comprehensive depth typically provides longer enhanced output
       expect(deepResult.enhanced.length).toBeGreaterThanOrEqual(fastResult.enhanced.length);
     });
   });
@@ -285,7 +285,7 @@ describe('Critical Path: Prompt Optimization Flow', () => {
     it('should have reasonable processing time', async () => {
       const result = await optimizer.optimize('Build an API', 'fast');
 
-      // Should complete in reasonable time (under 1 second for fast mode)
+      // Should complete in reasonable time (under 1 second for standard depth)
       expect(result.processingTimeMs).toBeLessThan(1000);
     });
   });
