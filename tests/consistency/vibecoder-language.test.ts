@@ -11,6 +11,11 @@ import { describe, it, expect, beforeAll } from '@jest/globals';
 import * as fs from 'fs';
 import * as path from 'path';
 import glob from 'glob';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.join(__dirname, '../..');
 
 // Phrases that should NOT appear in user-facing documentation
 // Note: These are allowed in agent-facing sections (error handling, troubleshooting, examples)
@@ -124,16 +129,14 @@ describe('Vibecoder Language Consistency', () => {
   let fileContents: Map<string, string> = new Map();
 
   beforeAll(() => {
-    const cwd = process.cwd();
-
     for (const pattern of FILES_TO_TEST) {
-      const matches = glob.sync(pattern, { cwd });
+      const matches = glob.sync(pattern, { cwd: projectRoot });
       templateFiles.push(...matches);
     }
 
     // Read all file contents
     for (const file of templateFiles) {
-      const fullPath = path.join(cwd, file);
+      const fullPath = path.join(projectRoot, file);
       if (fs.existsSync(fullPath)) {
         fileContents.set(file, fs.readFileSync(fullPath, 'utf-8'));
       }
