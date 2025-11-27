@@ -87,10 +87,10 @@ These are issues you can't fix. Stop completely and explain what they need to do
 ### How to Explain Problems
 
 **Don't say this:**
-> "ENOENT: no such file or directory, open '.clavix/outputs/prompts/fast/.index.json'"
+> "ENOENT: no such file or directory, open '.clavix/outputs/prompts/'"
 
 **Say this:**
-> "Setting up your prompt storage..." (then just create the file)
+> "Setting up your prompt storage..." (then just create the directory)
 
 **Don't say this:**
 > "Error: EACCES: permission denied, mkdir '/usr/local/clavix'"

@@ -2,13 +2,12 @@
 
 **Error: Cannot create directory**
 ```bash
-mkdir -p .clavix/outputs/prompts/{{OUTPUT_DIR}}
+mkdir -p .clavix/outputs/prompts
 ```
 
-**Error: Index file corrupted or invalid JSON**
-```bash
-echo '{"version":"1.0","prompts":[]}' > .clavix/outputs/prompts/{{OUTPUT_DIR}}/.index.json
-```
+**Error: Prompt file has invalid frontmatter**
+- Re-save the file with valid YAML frontmatter
+- Ensure id, timestamp, and executed fields are present in frontmatter
 
 **Error: Duplicate {{OUTPUT_TYPE}} ID**
 - Generate a new ID with a different timestamp or random suffix

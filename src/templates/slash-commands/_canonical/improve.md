@@ -373,9 +373,8 @@ This is a BLOCKING checkpoint. You cannot proceed to the final message until sav
 |------|--------|-------------|--------------|
 | 1 | Create directory | Write tool (create parent dirs) | Directory exists |
 | 2 | Generate prompt ID | Format: `{std\|comp}-YYYYMMDD-HHMMSS-<random>` | ID is unique |
-| 3 | Write prompt file | **Write tool** | File created |
-| 4 | Update .index.json | **Write tool** | Entry added |
-| 5 | **VERIFY: Read back files** | **Read tool** | Both files readable |
+| 3 | Write prompt file with frontmatter | **Write tool** | File created |
+| 4 | **VERIFY: Read back file** | **Read tool** | File readable |
 
 **⚠️ WARNING:** If you output "saved" without completing verification, you are LYING to the user.
 
@@ -436,63 +435,26 @@ originalPrompt: <user's original prompt text>
 <Insert edge cases>
 ```
 
-### Step 4: Update Index File (Write Tool)
-
-**Use the Write tool** to update the index at `.clavix/outputs/prompts/.index.json`:
-
-**If index file doesn't exist**, create it with:
-```json
-{
-  "version": "2.0",
-  "prompts": []
-}
-```
-
-**Then add a new metadata entry** to the `prompts` array:
-```json
-{
-  "id": "<prompt-id>",
-  "filename": "<prompt-id>.md",
-  "depthUsed": "standard|comprehensive",
-  "timestamp": "<ISO-8601 timestamp>",
-  "createdAt": "<ISO-8601 timestamp>",
-  "path": ".clavix/outputs/prompts/<prompt-id>.md",
-  "originalPrompt": "<user's original prompt text>",
-  "executed": false,
-  "executedAt": null
-}
-```
-
 ---
 
 ## ✅ VERIFICATION (REQUIRED - Must Pass Before Final Output)
 
-**After completing Steps 1-4, you MUST verify the save succeeded.**
+**After completing Steps 1-3, you MUST verify the save succeeded.**
 
-### Verification Step A: Read the Prompt File
+### Verification: Read the Prompt File
 
 Use the **Read tool** to read the file you just created:
 - Path: `.clavix/outputs/prompts/<your-prompt-id>.md`
 
-**If Read fails:** ⛔ STOP - Saving failed. Retry Steps 3-4.
-
-### Verification Step B: Read the Index File
-
-Use the **Read tool** to read the index:
-- Path: `.clavix/outputs/prompts/.index.json`
-
-**Confirm:** Your prompt ID appears in the `prompts` array.
-
-**If not found:** ⛔ STOP - Index update failed. Retry Step 4.
+**If Read fails:** ⛔ STOP - Saving failed. Retry Step 3.
 
 ### Verification Checklist
 
 Before outputting final message, confirm ALL of these:
 
 - [ ] I used the **Write tool** to create `.clavix/outputs/prompts/<id>.md`
-- [ ] I used the **Write tool** to update `.clavix/outputs/prompts/.index.json`
 - [ ] I used the **Read tool** to verify the prompt file exists and has content
-- [ ] I used the **Read tool** to verify my prompt ID is in .index.json
+- [ ] The file has valid frontmatter with id, timestamp, and executed: false
 - [ ] I know the **exact file path** I created (not a placeholder)
 
 **If ANY checkbox is unchecked: ⛔ STOP and complete the missing step.**
@@ -538,13 +500,13 @@ Wait for the user to decide what to do next.
 - `/clavix:start` - Conversational exploration before prompting
 - `/clavix:verify` - Verify implementation against checklist
 
-**CLI commands:**
-- `clavix prompts list` - View saved prompts
-- `clavix prompts clear --executed` - Clean up executed prompts
+**Managing saved prompts:**
+- List prompts: `ls .clavix/outputs/prompts/*.md`
+- Prompt files: `.clavix/outputs/prompts/<id>.md` (metadata in frontmatter)
 
 ---
 
-## Agent Transparency (v4.11)
+## Agent Transparency (v5.0)
 
 ### CLI Reference (Commands I Execute)
 {{INCLUDE:agent-protocols/cli-reference.md}}
@@ -586,10 +548,9 @@ Wait for the user to decide what to do next.
 mkdir -p .clavix/outputs/prompts
 ```
 
-**Error: Index file corrupted or invalid JSON**
-```bash
-echo '{"version":"2.0","prompts":[]}' > .clavix/outputs/prompts/.index.json
-```
+**Error: Prompt file has invalid frontmatter**
+- Re-save the prompt file with valid YAML frontmatter
+- Ensure id, timestamp, and executed fields are present
 
 ### Issue: Wrong depth auto-selected
 **Cause**: Borderline quality score

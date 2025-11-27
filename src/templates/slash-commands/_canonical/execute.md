@@ -71,19 +71,18 @@ Me:     [Finds your latest prompt]
 Me:     "Done! Here's what I built..."
 ```
 
-### The Detailed Version
+### The Detailed Version (v5 Agentic-First)
 
 **Step 1: I find your prompt**
 
-I automatically run these commands (you don't need to):
-- `clavix execute --latest` - Get most recent prompt
-- Or `clavix execute --latest --standard` - Get latest standard depth prompt
-- Or `clavix execute --latest --comprehensive` - Get latest comprehensive depth prompt
-- Or `clavix execute --id <id>` - Get specific prompt
+I read directly from the file system:
+- List `.clavix/outputs/prompts/*.md` to find saved prompts
+- Get the most recent one (by timestamp in filename or frontmatter)
+- Read the prompt file: `.clavix/outputs/prompts/<id>.md`
 
 **Step 2: I read and understand**
 
-I'll parse the prompt file, extract:
+I parse the prompt file and extract:
 - The objective (what to build)
 - Requirements (specifics to implement)
 - Technical constraints (how to build it)
@@ -91,7 +90,7 @@ I'll parse the prompt file, extract:
 
 **Step 3: I implement everything**
 
-This is where I actually write code:
+This is where I actually write code using my native tools:
 - Create new files as needed
 - Modify existing files
 - Write functions, components, classes
@@ -99,10 +98,10 @@ This is where I actually write code:
 
 **Step 4: I verify automatically**
 
-After building, I run verification myself:
-- `clavix verify --latest` - Check the implementation
-- Run any automated tests
-- Build/compile to ensure no errors
+After building, I verify by:
+- Running tests (if test suite exists)
+- Building/compiling to ensure no errors
+- Checking requirements from the checklist
 
 **Step 5: I report results**
 
@@ -176,52 +175,43 @@ I'll explain what's wrong and what you might need to do:
 
 ---
 
-## Prompt Management (Commands I Run)
-
-These are commands I execute automatically - you don't need to run them.
+## Prompt Management (v5 Agentic-First)
 
 **Where prompts live:**
-- All prompts: `.clavix/outputs/prompts/`
+- All prompts: `.clavix/outputs/prompts/*.md`
+- Metadata: In frontmatter of each `.md` file
 
-### Commands I Use (Reference)
+### How I Access Prompts (Native Tools)
 
-| What I Do | Command I Run |
-|-----------|---------------|
-| List saved prompts | `clavix prompts list` |
-| Get latest prompt | `clavix execute --latest` |
-| Get specific prompt | `clavix execute --id <id>` |
-| Run verification | `clavix verify --latest` |
-| Clean up executed | `clavix prompts clear --executed` |
-| Clean up stale (>30d) | `clavix prompts clear --stale` |
-
-### Automatic Cleanup
-
-After I finish implementing and verification passes:
-- I clean up executed prompts automatically
-- Old prompts (>30 days) get flagged as stale for removal
-- I keep your storage tidy
+| What I Do | How I Do It |
+|-----------|-------------|
+| List saved prompts | List `.clavix/outputs/prompts/*.md` files |
+| Get latest prompt | Find newest file by timestamp in filename |
+| Get specific prompt | Read `.clavix/outputs/prompts/<id>.md` |
+| Mark as executed | Edit frontmatter: `executed: true` |
+| Clean up executed | Delete files where frontmatter has `executed: true` |
 
 ### The Prompt Lifecycle
 
 ```
-1. YOU CREATE   →  /clavix:improve
-2. I EXECUTE    →  /clavix:execute (you are here)
+1. YOU CREATE   →  /clavix:improve (saves to .clavix/outputs/prompts/<id>.md)
+2. I EXECUTE    →  /clavix:execute (you are here) - I read and implement
 3. I VERIFY     →  Automatic verification
-4. I CLEANUP    →  Remove executed prompts
+4. MARK DONE    →  I update frontmatter with executed: true
 ```
 
 ---
 
 ## Finding Your Way Around
 
-Need to see what projects exist or check progress? I use these commands:
+Need to see what projects exist or check progress? I read the file system:
 
-| What I Need | Command I Run |
+| What I Need | How I Find It |
 |-------------|---------------|
-| See all projects | `clavix list` |
-| Check a specific project | `clavix show --output <project>` |
-| See active sessions | `clavix list --sessions` |
-| Find archived work | `clavix list --archived` |
+| See all projects | List directories in `.clavix/outputs/` |
+| Check a specific project | Read `.clavix/outputs/<project>/` files |
+| See saved prompts | List `.clavix/outputs/prompts/*.md` files |
+| Find archived work | List `.clavix/outputs/archive/` |
 
 ---
 
@@ -271,7 +261,7 @@ If I can't get verification to pass after trying:
 
 ---
 
-## Agent Transparency (v4.11)
+## Agent Transparency (v5.0)
 
 ### CLI Reference (Commands I Execute)
 {{INCLUDE:agent-protocols/cli-reference.md}}

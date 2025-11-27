@@ -1,4 +1,4 @@
-## File Format Reference
+## File Format Reference (v5 Agentic-First)
 
 ### .clavix-implement-config.json
 
@@ -37,8 +37,8 @@ Implementation state configuration file.
 
 **Agent Usage Rules:**
 - READ this file to determine current state
-- NEVER modify directly - use `clavix task-complete` to update
-- IF missing: Run `clavix implement` to initialize
+- UPDATE using Edit tool when marking tasks complete
+- IF missing: Create with initial state
 - IF corrupted: Report as UNRECOVERABLE error
 
 ### tasks.md Format
@@ -97,32 +97,45 @@ Created: {timestamp}
 - `Phase-1-Setup-1` - Must be lowercase
 - `phase-1-setup` - Missing task number
 
-### .index.json (Prompts)
+### Prompt Files (v5 Format)
 
-Index file for saved prompts.
+Individual prompt files with frontmatter metadata.
 
-**Location:** `.clavix/outputs/prompts/{type}/.index.json`
+**Location:** `.clavix/outputs/prompts/<id>.md`
 
-**Schema:**
-```json
-{
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "fast-20240115-103000-a1b2c3",
-      "filename": "fast-20240115-103000-a1b2c3.md",
-      "created": "2024-01-15T10:30:00.000Z",
-      "intent": "code-generation",
-      "quality": {
-        "original": 42,
-        "optimized": 78
-      },
-      "executed": false,
-      "executedAt": null
-    }
-  ]
-}
+**Format:**
+```markdown
+---
+id: std-20250127-143022-a3f2
+timestamp: 2025-01-27T14:30:22Z
+executed: false
+originalPrompt: "the user's original prompt text"
+depthUsed: standard|comprehensive
+---
+
+# Improved Prompt
+
+<optimized prompt content>
+
+## Quality Scores
+- **Clarity**: 85%
+- **Efficiency**: 80%
+- **Structure**: 90%
+- **Completeness**: 75%
+- **Actionability**: 88%
+- **Overall**: 84% (good)
+
+## Original Prompt
 ```
+<user's original prompt>
+```
+```
+
+**Agent Usage:**
+- LIST prompts: `ls .clavix/outputs/prompts/*.md`
+- READ prompt: Use Read tool on `.clavix/outputs/prompts/<id>.md`
+- FIND latest: Sort files by timestamp in filename
+- MARK executed: Edit frontmatter to set `executed: true`
 
 ### PRD Files
 
@@ -138,42 +151,13 @@ Index file for saved prompts.
 - From /clavix:summarize
 - Extracted from conversation
 
-### Session Files
-
-**Location:** `.clavix/sessions/{session-id}.json`
-
-**Schema:**
-```json
-{
-  "id": "session-uuid",
-  "projectName": "optional-name",
-  "status": "active" | "completed",
-  "created": "2024-01-15T10:00:00.000Z",
-  "updated": "2024-01-15T11:30:00.000Z",
-  "messages": [
-    {
-      "role": "user" | "assistant",
-      "content": "message text",
-      "timestamp": "2024-01-15T10:05:00.000Z"
-    }
-  ],
-  "tags": ["feature", "auth"],
-  "description": "Optional session description"
-}
-```
-
-### Directory Structure Overview
+### Directory Structure Overview (v5)
 
 ```
 .clavix/
 ├── outputs/
 │   ├── prompts/
-│   │   ├── fast/
-│   │   │   ├── .index.json
-│   │   │   └── fast-{timestamp}-{hash}.md
-│   │   └── deep/
-│   │       ├── .index.json
-│   │       └── deep-{timestamp}-{hash}.md
+│   │   └── *.md                    # Prompt files (metadata in frontmatter)
 │   ├── {project-name}/
 │   │   ├── full-prd.md
 │   │   ├── quick-prd.md
@@ -181,7 +165,5 @@ Index file for saved prompts.
 │   │   └── .clavix-implement-config.json
 │   └── archive/
 │       └── {archived-project}/
-├── sessions/
-│   └── {session-id}.json
-└── config.json (global config)
+└── config.json                     # Global config
 ```

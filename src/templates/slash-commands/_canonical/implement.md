@@ -65,9 +65,9 @@ Me:     "All tasks complete! Your project is built."
 
 ### The Detailed Version
 
-**First time I run:**
+**First time I run (v5 Agentic-First):**
 
-1. **I check for your task list** - Load tasks.md from your PRD folder
+1. **I find your task list** - Read `tasks.md` from your PRD folder (`.clavix/outputs/<project>/tasks.md`)
 2. **I ask about git commits** (only if you have lots of tasks):
    > "You've got 12 tasks. Want me to create git commits as I go?
    >
@@ -78,36 +78,32 @@ Me:     "All tasks complete! Your project is built."
    >
    > Which do you prefer? (I'll default to 'none' if you don't care)"
 
-3. **I initialize tracking** - Run `clavix implement` to set up progress tracking
-4. **I start building** - First incomplete task
+3. **I start building** - First incomplete task
 
 **Each task I work on:**
 
 1. **Read the task** - Understand what needs to be built
 2. **Check the PRD** - Make sure I understand the requirements
-3. **Implement it** - Write code, create files, build features
-4. **Mark it complete** - Run `clavix task-complete {task-id}` automatically
-5. **Move to next** - The command shows me what's next
+3. **Implement it** - Write code, create files, build features using my native tools
+4. **Mark it complete** - Use Edit tool to change `- [ ]` to `- [x]` in tasks.md
+5. **Move to next** - Find the next incomplete task
 
 **If we get interrupted:**
 
 No problem! Just run `/clavix:implement` again and I pick up where we left off.
 The checkboxes in tasks.md track exactly what's done.
 
-## ⚠️ Critical Command: task-complete
+## ⚠️ How I Mark Tasks Complete (v5 Agentic-First)
 
-**After finishing EACH task, I MUST run:**
-```bash
-clavix task-complete <task-id>
-```
+**After finishing EACH task, I use my Edit tool to update tasks.md:**
+
+Change: `- [ ] Task description` → `- [x] Task description`
 
 **Why this matters:**
-- Updates tasks.md automatically (checkboxes)
-- Tracks progress correctly in config
-- Triggers git commits (if enabled)
-- Shows me the next task
-
-**NEVER manually edit tasks.md checkboxes** - always use this command.
+- Updates tasks.md directly (checkboxes)
+- Progress is tracked by counting checkboxes
+- Git commits (if enabled) are created with my Bash tool
+- I read tasks.md to find the next incomplete task
 
 ---
 
@@ -115,27 +111,19 @@ clavix task-complete <task-id>
 
 **I handle this automatically - you don't need to do anything.**
 
-### What Happens Behind the Scenes
+### What Happens (v5 Agentic-First)
 
-After I finish implementing a task, I run:
-```bash
-clavix task-complete {task-id}
-```
+After I finish implementing a task:
 
-This does several things:
-- Updates the checkbox in tasks.md ([ ] → [x])
-- Tracks progress in the config file
-- Creates a git commit (if you enabled that)
-- Shows me the next task
-
-### Why I Don't Edit Checkboxes Manually
-
-The command keeps everything in sync. If I edited the file directly, the progress tracking could get confused. Trust the system!
+1. **I use Edit tool** to change `- [ ]` to `- [x]` in tasks.md
+2. **I count progress** by reading tasks.md and counting checkboxes
+3. **I commit** (if you enabled that) using git commands
+4. **I find next task** by scanning for the next `- [ ]` in tasks.md
 
 ### What You'll See
 
 ```
-✓ Task complete: "Set up project structure" (phase-1-setup-1)
+✓ Task complete: "Set up project structure"
 
 Progress: 2/8 tasks (25%)
 
@@ -160,14 +148,14 @@ Starting now...
 
 ## Finding Your Way Around
 
-Need to see what projects exist or check progress? I use these commands:
+Need to see what projects exist or check progress? I read the file system:
 
-| What I Need | Command I Run |
+| What I Need | How I Find It |
 |-------------|---------------|
-| See all projects | `clavix list` |
-| Check a specific project | `clavix show --output <project>` |
-| See active sessions | `clavix list --sessions` |
-| Find archived work | `clavix list --archived` |
+| See all projects | List directories in `.clavix/outputs/` |
+| Check a specific project | Read `.clavix/outputs/<project>/` files |
+| See task progress | Read `.clavix/outputs/<project>/tasks.md` |
+| Find archived work | List `.clavix/outputs/archive/` |
 
 ## When I Can't Continue (Blocked Tasks)
 
@@ -314,7 +302,7 @@ You don't need to remember these - I handle all the tracking.
 
 ---
 
-## Agent Transparency (v4.9)
+## Agent Transparency (v5.0)
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
@@ -348,14 +336,14 @@ You don't need to remember these - I handle all the tracking.
 > - Did you run `/clavix:plan` first?
 > - Is there a PRD folder in .clavix/outputs/?"
 
-### "Task command not working"
+### "Can't update tasks.md"
 
-**What happened:** The `clavix task-complete` command isn't recognized.
+**What happened:** I couldn't edit the tasks.md file to mark tasks complete.
 
 **What I'll do:**
-> "Having trouble with the task command. Let me check your Clavix version..."
+> "Having trouble updating tasks.md. Let me check permissions..."
 >
-> If it's outdated, I'll suggest: "Try `npm install -g clavix@latest` to update"
+> Common fixes: Check file permissions, ensure .clavix/outputs/ is writable
 
 ### "Can't find that task ID"
 
