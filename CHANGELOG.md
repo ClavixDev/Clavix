@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.0] - 2025-11-27
+
+### BREAKING CHANGES
+
+- **Session persistence removed** - The `.clavix/sessions/` directory is no longer created or used. Session-based workflows are now handled entirely by AI agent context.
+
+### Added
+
+- **Adapter registry infrastructure** - New config-driven adapter system (`adapter-registry.ts`, `universal-adapter.ts`) enables consistent adapter behavior through configuration rather than code duplication.
+
+- **Init reconfiguration menu** - When running `clavix init` in an already-initialized project, a menu offers three options:
+  - "Reconfigure integrations" - Change selected integrations
+  - "Update existing" - Regenerate commands for current integrations
+  - "Cancel" - Exit without changes
+
+- **Removed commands consistency test** - New test suite (`removed-commands.test.ts`) verifies deprecated commands are properly removed from CLI, manifest, and documentation.
+
+- **Template component manifest** - New `MANIFEST.md` documents all reusable components in the template system.
+
+### Changed
+
+- **Config command eliminated** - `clavix config` functionality has been merged into `clavix init`:
+  - Use `clavix init` → "Reconfigure integrations" to change integrations
+  - Use `clavix init` → "Update existing" to regenerate commands
+
+- **Legacy cleanup utility deprecated** - `legacy-command-cleanup.ts` is now marked for removal in v6.0.0 as the transition period for old naming patterns completes.
+
+### Removed
+
+- **`clavix config` command** - Use `clavix init` instead (see Changed section)
+
+- **Orphaned template components** - Removed unused `decision-rules.md` and `error-handling.md` from `_components/`
+
+- **Session references in templates** - Removed session-related content from `agents.md`, `copilot-instructions.md`, `warp.md`, `plan.md`, and `file-operations.md`
+
+### Fixed
+
+- **Test suite improvements** - Added comprehensive tests for:
+  - Update command flag behavior (docs-only, commands-only, force)
+  - Init reconfiguration menu flows
+  - v5.3 removed features (sessions directory, config command)
+
+---
+
 ## [5.2.1] - 2025-11-27
 
 ### Fixed

@@ -6,11 +6,12 @@ import {
   ClavixConfig,
   LegacyConfig,
 } from '../../src/types/config';
+import { CLAVIX_VERSION } from '../../src/utils/version';
 
 describe('Config Types', () => {
   describe('DEFAULT_CONFIG', () => {
     it('should have current version', () => {
-      expect(DEFAULT_CONFIG.version).toBe('5.2.1');
+      expect(DEFAULT_CONFIG.version).toBe(CLAVIX_VERSION);
     });
 
     it('should have empty integrations array', () => {
@@ -109,7 +110,7 @@ describe('Config Types', () => {
 
       const migrated = migrateConfig(legacy);
 
-      expect(migrated.version).toBe('3.5.0');
+      expect(migrated.version).toBe(CLAVIX_VERSION);
       expect(migrated.integrations).toEqual(['claude']);
       expect(migrated).not.toHaveProperty('agent');
     });
@@ -125,7 +126,7 @@ describe('Config Types', () => {
 
       const migrated = migrateConfig(legacy);
 
-      expect(migrated.version).toBe('3.5.0');
+      expect(migrated.version).toBe(CLAVIX_VERSION);
       expect(migrated.integrations).toEqual(['claude', 'cursor']);
       expect(migrated).not.toHaveProperty('providers');
     });

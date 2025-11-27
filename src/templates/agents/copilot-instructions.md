@@ -60,7 +60,7 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 |---------|---------|
 | `clavix init` | Initialize Clavix in a project |
 | `clavix update` | Update templates after package update |
-| `clavix config` | Manage configuration |
+| `clavix diagnose` | Check installation health |
 | `clavix version` | Show version |
 
 ### Workflow Commands (Slash Commands)
@@ -178,7 +178,6 @@ with `/clavix:summarize`. Alternatively, if you have a rough idea, try:
 
 **Artifacts stored under `.clavix/`:**
 - `.clavix/outputs/<project>/` - PRDs, tasks, prompts
-- `.clavix/sessions/` - Captured conversations
 - `.clavix/config.json` - Project configuration
 
 ---

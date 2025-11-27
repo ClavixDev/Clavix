@@ -30,7 +30,7 @@ export interface AssemblyResult {
  * Usage:
  * ```typescript
  * const assembler = new TemplateAssembler('/path/to/templates');
- * const result = await assembler.assembleTemplate('fast.md');
+ * const result = await assembler.assembleTemplate('improve.md');
  * ```
  *
  * Include marker formats:

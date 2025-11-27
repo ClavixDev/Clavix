@@ -36,8 +36,8 @@ describe('Init Workflow Integration', () => {
     expect(adapter.name).toBe('claude-code');
     expect(adapter.displayName).toBe('Claude Code');
 
-    // 2. Create directory structure
-    const dirs = ['.clavix', '.clavix/sessions', '.clavix/outputs', '.clavix/templates'];
+    // 2. Create directory structure (sessions removed in v5.3)
+    const dirs = ['.clavix', '.clavix/outputs', '.clavix/templates'];
     for (const dir of dirs) {
       await FileSystem.ensureDir(dir);
     }

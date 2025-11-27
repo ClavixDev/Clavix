@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import * as path from 'path';
 import { PermissionError, DataError } from '../types/errors.js';
+import { isPermissionError, toError } from './error-utils.js';
 
 /**
  * FileSystem utility class for safe file operations
@@ -40,8 +41,7 @@ export class FileSystem {
         }
       }
 
-      const { isNodeError, toError } = await import('./error-utils.js');
-      if (isNodeError(error) && (error.code === 'EACCES' || error.code === 'EPERM')) {
+      if (isPermissionError(error)) {
         throw new PermissionError(
           `Permission denied: Cannot write to ${filePath}`,
           'Try running with appropriate permissions or check file ownership'
@@ -65,8 +65,7 @@ export class FileSystem {
 
       return await fs.readFile(fullPath, 'utf-8');
     } catch (error: unknown) {
-      const { isNodeError, toError } = await import('./error-utils.js');
-      if (isNodeError(error) && (error.code === 'EACCES' || error.code === 'EPERM')) {
+      if (isPermissionError(error)) {
         throw new PermissionError(
           `Permission denied: Cannot read ${filePath}`,
           'Check file permissions'
@@ -86,8 +85,7 @@ export class FileSystem {
     try {
       await fs.ensureDir(fullPath);
     } catch (error: unknown) {
-      const { isNodeError, toError } = await import('./error-utils.js');
-      if (isNodeError(error) && (error.code === 'EACCES' || error.code === 'EPERM')) {
+      if (isPermissionError(error)) {
         throw new PermissionError(
           `Permission denied: Cannot create directory ${dirPath}`,
           'Check parent directory permissions'
@@ -203,8 +201,7 @@ export class FileSystem {
 
       return files;
     } catch (error: unknown) {
-      const { isNodeError, toError } = await import('./error-utils.js');
-      if (isNodeError(error) && (error.code === 'EACCES' || error.code === 'EPERM')) {
+      if (isPermissionError(error)) {
         throw new PermissionError(
           `Permission denied: Cannot read directory ${dirPath}`,
           'Check directory permissions'
@@ -225,8 +222,7 @@ export class FileSystem {
     try {
       await fs.copy(srcPath, destPath);
     } catch (error: unknown) {
-      const { isNodeError, toError } = await import('./error-utils.js');
-      if (isNodeError(error) && (error.code === 'EACCES' || error.code === 'EPERM')) {
+      if (isPermissionError(error)) {
         throw new PermissionError(
           `Permission denied: Cannot copy from ${src} to ${dest}`,
           'Check file permissions'
@@ -248,8 +244,7 @@ export class FileSystem {
         await fs.remove(fullPath);
       }
     } catch (error: unknown) {
-      const { isNodeError, toError } = await import('./error-utils.js');
-      if (isNodeError(error) && (error.code === 'EACCES' || error.code === 'EPERM')) {
+      if (isPermissionError(error)) {
         throw new PermissionError(
           `Permission denied: Cannot remove ${filePath}`,
           'Check file permissions'

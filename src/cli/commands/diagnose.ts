@@ -171,7 +171,7 @@ export default class Diagnose extends Command {
         return {
           status: 'warn',
           message: 'No integrations configured',
-          details: 'Run `clavix config` to add integrations',
+          details: 'Run `clavix init` to add integrations',
         };
       }
 

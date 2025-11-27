@@ -4,11 +4,10 @@ import { IntegrationFeatures } from '../types/agent.js';
  * CommandTransformer - Transforms slash command references in template content
  *
  * Handles conversion between command formats:
- * - Colon format: /clavix:fast (Claude Code style - uses subdirectories)
- * - Hyphen format: /clavix-fast (Cursor, Droid style - flat files)
+ * - Colon format: /clavix:improve (Claude Code style - uses subdirectories)
+ * - Hyphen format: /clavix-improve (Cursor, Droid style - flat files)
  *
- * Preserves CLI commands (clavix prompts list) unchanged - only transforms
- * slash commands that start with /clavix:
+ * Only transforms slash commands that start with /clavix:
  *
  * @since v4.8.1
  */
@@ -32,13 +31,13 @@ export class CommandTransformer {
    *
    * @example
    * // For Cursor/Droid (hyphen format):
-   * transform('/clavix:fast', { commandFormat: { separator: '-' } })
-   * // Returns: '/clavix-fast'
+   * transform('/clavix:improve', { commandFormat: { separator: '-' } })
+   * // Returns: '/clavix-improve'
    *
    * @example
    * // For Claude Code (colon format, default):
-   * transform('/clavix:fast', { commandFormat: { separator: ':' } })
-   * // Returns: '/clavix:fast' (unchanged)
+   * transform('/clavix:improve', { commandFormat: { separator: ':' } })
+   * // Returns: '/clavix:improve' (unchanged)
    */
   static transform(content: string, features?: IntegrationFeatures): string {
     const separator = features?.commandFormat?.separator ?? this.DEFAULT_SEPARATOR;
@@ -56,13 +55,13 @@ export class CommandTransformer {
    * Get the formatted command name for a specific adapter
    * Useful for generating documentation or references
    *
-   * @param commandName - Base command name (e.g., 'fast', 'execute', 'task-complete')
+   * @param commandName - Base command name (e.g., 'improve', 'prd', 'implement')
    * @param features - Adapter's integration features
-   * @returns Formatted slash command (e.g., '/clavix:fast' or '/clavix-fast')
+   * @returns Formatted slash command (e.g., '/clavix:improve' or '/clavix-improve')
    *
    * @example
-   * formatCommand('execute', { commandFormat: { separator: '-' } })
-   * // Returns: '/clavix-execute'
+   * formatCommand('improve', { commandFormat: { separator: '-' } })
+   * // Returns: '/clavix-improve'
    */
   static formatCommand(commandName: string, features?: IntegrationFeatures): string {
     const separator = features?.commandFormat?.separator ?? this.DEFAULT_SEPARATOR;

@@ -123,7 +123,7 @@ Autofix handles edge cases gracefully - let it work.
 |---------|---------|
 | `clavix init` | Initialize Clavix in a project |
 | `clavix update` | Update templates after package update |
-| `clavix config` | Manage configuration |
+| `clavix diagnose` | Check installation health |
 | `clavix version` | Show version |
 
 ### Workflow Commands (Slash Commands)

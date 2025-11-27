@@ -283,7 +283,7 @@ The generated `tasks.md` will look like:
 - Tasks are automatically optimized for clarity, structure, and actionability
 - Each task is concise and actionable
 - Tasks can reference specific PRD sections
-- Supports mini-PRD outputs from `/clavix:summarize` and session workflows via `--session` or `--active-session`
+- Supports mini-PRD outputs from `/clavix:summarize`
 - You can manually edit tasks.md before implementing
 - Use `--overwrite` flag to regenerate if needed
 
@@ -320,7 +320,6 @@ The generated `tasks.md` will look like:
    - Suggest recovery options:
      - "Generate PRD with `/clavix:prd` for comprehensive planning"
      - "Extract mini-PRD from conversation with `/clavix:summarize`"
-     - "Or use `clavix plan --session <id>` if you have a saved session"
 3. Do NOT proceed with plan generation without PRD
 
 ### Issue: Generated tasks are too granular (100+ tasks)

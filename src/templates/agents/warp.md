@@ -51,7 +51,7 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 |---------|---------|
 | `clavix init` | Initialize Clavix in a project |
 | `clavix update` | Update templates after package update |
-| `clavix config` | Manage configuration |
+| `clavix diagnose` | Check installation health |
 | `clavix version` | Show version |
 
 ### Slash Commands (Workflows)
@@ -72,7 +72,7 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 
 ### Outputs
 - Project artifacts live under `.clavix/outputs/<project>/`
-- Sessions are stored in `.clavix/sessions/`
+- Saved prompts in `.clavix/outputs/prompts/`
 - Update generated docs/commands any time with `clavix update`
 
 ---

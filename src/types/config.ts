@@ -2,6 +2,8 @@
  * Configuration types for Clavix
  */
 
+import { CLAVIX_VERSION } from '../utils/version.js';
+
 export interface ClavixConfig {
   version: string;
   integrations: string[];
@@ -45,7 +47,7 @@ export interface PreferencesConfig {
 }
 
 export const DEFAULT_CONFIG: ClavixConfig = {
-  version: '5.2.1',
+  version: CLAVIX_VERSION,
   integrations: [],
   templates: {
     prdQuestions: 'default',
@@ -85,7 +87,7 @@ export function migrateConfig(legacy: LegacyConfig): ClavixConfig {
   }
 
   return {
-    version: '3.5.0',
+    version: CLAVIX_VERSION,
     integrations,
     templates: legacy.templates,
     outputs: legacy.outputs,

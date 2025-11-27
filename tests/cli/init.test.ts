@@ -95,8 +95,8 @@ describe('Init Command', () => {
     originalCwd = process.cwd();
     process.chdir(testDir);
 
-    // Reset mocks with default implementations
-    jest.clearAllMocks();
+    // Reset mocks with default implementations (resetAllMocks clears implementations too)
+    jest.resetAllMocks();
     mockSelectIntegrations.mockResolvedValue(['claude-code']);
     mockInquirerPrompt.mockImplementation(async (questions: any[]) => {
       const answers: any = {};
@@ -126,10 +126,9 @@ describe('Init Command', () => {
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('Clavix initialized successfully');
 
-      // Verify directory structure
+      // Verify directory structure (sessions removed in v5.3)
       expect(await fs.pathExists('.clavix')).toBe(true);
       expect(await fs.pathExists('.clavix/config.json')).toBe(true);
-      expect(await fs.pathExists('.clavix/sessions')).toBe(true);
       expect(await fs.pathExists('.clavix/outputs')).toBe(true);
       expect(await fs.pathExists('.clavix/INSTRUCTIONS.md')).toBe(true);
 
@@ -211,6 +210,130 @@ describe('Init Command', () => {
       expect(result.exitCode).not.toBe(0);
       // The error message appears in stderr (console.error) and contains "Initialization failed"
       expect(result.stderr).toContain('Initialization failed');
+    });
+  });
+
+  describe('Reconfiguration Menu (v5.3)', () => {
+    beforeEach(async () => {
+      // Setup existing clavix installation
+      await fs.ensureDir('.clavix');
+      await fs.writeJSON('.clavix/config.json', {
+        ...DEFAULT_CONFIG,
+        integrations: ['claude-code'],
+      });
+    });
+
+    it('should show reconfiguration menu when project already initialized', async () => {
+      // Mock to show reconfigure menu is presented
+      mockInquirerPrompt.mockImplementationOnce(async (questions: any[]) => {
+        // Verify the reconfiguration menu question exists
+        const reconfigQuestion = questions.find((q: any) => q.name === 'action');
+        expect(reconfigQuestion).toBeDefined();
+        if (reconfigQuestion) {
+          expect(reconfigQuestion.type).toBe('list');
+          expect(reconfigQuestion.choices).toBeDefined();
+        }
+        return { action: 'cancel' };
+      });
+
+      const result = await runInitCommand(testDir);
+
+      expect(result.stdout).toContain('Clavix Initialization');
+      expect(result.stdout).toContain('cancelled');
+    });
+
+    it('should handle "Cancel" option from reconfiguration menu', async () => {
+      mockInquirerPrompt.mockImplementationOnce(async () => ({ action: 'cancel' }));
+
+      const result = await runInitCommand(testDir);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('cancelled');
+      // Config should remain unchanged
+      const config = await fs.readJSON('.clavix/config.json');
+      expect(config.integrations).toContain('claude-code');
+    });
+
+    it('should handle "Reconfigure integrations" option', async () => {
+      // This test verifies the reconfigure action path exists
+      // The actual reconfigure calls selectIntegrations which we already test in Re-initialization
+      mockInquirerPrompt.mockImplementationOnce(async () => ({ action: 'reconfigure' }));
+      // selectIntegrations returns new selections (already set in global beforeEach to ['claude-code'])
+
+      const result = await runInitCommand(testDir);
+
+      expect(result.exitCode).toBe(0);
+      // Verify integrations were updated (mock returns claude-code by default)
+      const config = await fs.readJSON('.clavix/config.json');
+      expect(config.integrations).toContain('claude-code');
+      // The main verification is that the command completed without error
+    });
+
+    it('should handle "Update existing" option to regenerate commands', async () => {
+      // First prompt returns 'update' to regenerate existing commands
+      mockInquirerPrompt.mockImplementationOnce(async () => ({ action: 'update' }));
+
+      const result = await runInitCommand(testDir);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Regenerat');
+      // Config integrations should remain the same
+      const config = await fs.readJSON('.clavix/config.json');
+      expect(config.integrations).toContain('claude-code');
+    });
+
+    it('should preserve user content in CLAUDE.md during update', async () => {
+      // Create CLAUDE.md with user content
+      await fs.writeFile(
+        'CLAUDE.md',
+        `# My Project
+
+This is my custom content that should be preserved.
+
+<!-- CLAVIX:START -->
+Old clavix content
+<!-- CLAVIX:END -->
+
+More custom content below.`
+      );
+
+      mockInquirerPrompt.mockImplementationOnce(async () => ({ action: 'update' }));
+
+      const result = await runInitCommand(testDir);
+
+      expect(result.exitCode).toBe(0);
+
+      // Verify user content is preserved
+      const claudeContent = await fs.readFile('CLAUDE.md', 'utf-8');
+      expect(claudeContent).toContain('My Project');
+      expect(claudeContent).toContain('custom content that should be preserved');
+      expect(claudeContent).toContain('More custom content below');
+      // Managed block should be updated
+      expect(claudeContent).toContain('<!-- CLAVIX:START -->');
+      expect(claudeContent).toContain('<!-- CLAVIX:END -->');
+    });
+  });
+
+  describe('Removed Features (v5.3)', () => {
+    it('should NOT create sessions directory', async () => {
+      // Fresh init - reset mocks to defaults
+      mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+
+      const result = await runInitCommand(testDir);
+
+      expect(result.exitCode).toBe(0);
+      // Sessions directory was removed in v5.3
+      expect(await fs.pathExists('.clavix/sessions')).toBe(false);
+    });
+
+    it('should NOT mention session-related commands', async () => {
+      // Fresh init - reset mocks to defaults
+      mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+
+      const result = await runInitCommand(testDir);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).not.toContain('session');
     });
   });
 });

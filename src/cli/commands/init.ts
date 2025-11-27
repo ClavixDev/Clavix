@@ -26,27 +26,10 @@ export default class Init extends Command {
     console.log(chalk.bold.cyan('\n🚀 Clavix Initialization\n'));
 
     try {
-      // Check if already initialized
-      if (await FileSystem.exists('.clavix')) {
-        const { reinit } = await inquirer.prompt([
-          {
-            type: 'confirm',
-            name: 'reinit',
-            message: 'Clavix is already initialized. Reinitialize?',
-            default: false,
-          },
-        ]);
-
-        if (!reinit) {
-          console.log(chalk.yellow('\n✓ Initialization cancelled\n'));
-          return;
-        }
-      }
-
-      // Load existing config if re-initializing
       const agentManager = new AgentManager();
       let existingIntegrations: string[] = [];
 
+      // Load existing config if present
       if (await FileSystem.exists('.clavix/config.json')) {
         try {
           const configContent = await FileSystem.readFile('.clavix/config.json');
@@ -55,6 +38,49 @@ export default class Init extends Command {
         } catch {
           // Ignore parse errors, will use empty array
         }
+      }
+
+      // Check if already initialized
+      if (await FileSystem.exists('.clavix')) {
+        // Show current state
+        console.log(chalk.cyan('You have existing Clavix configuration:'));
+        if (existingIntegrations.length > 0) {
+          const displayNames = existingIntegrations.map((name) => {
+            const adapter = agentManager.getAdapter(name);
+            return adapter?.displayName || name;
+          });
+          console.log(chalk.gray(`  Integrations: ${displayNames.join(', ')}\n`));
+        } else {
+          console.log(chalk.gray('  Integrations: (none configured)\n'));
+        }
+
+        const { action } = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'action',
+            message: 'What would you like to do?',
+            choices: [
+              { name: 'Reconfigure integrations', value: 'reconfigure' },
+              { name: 'Update existing (regenerate commands)', value: 'update' },
+              { name: 'Cancel', value: 'cancel' },
+            ],
+          },
+        ]);
+
+        if (action === 'cancel') {
+          console.log(chalk.yellow('\n✓ Initialization cancelled\n'));
+          return;
+        }
+
+        if (action === 'update') {
+          // Just regenerate commands for existing integrations
+          console.log(chalk.cyan('\n📝 Regenerating commands...\n'));
+          await this.regenerateCommands(agentManager, existingIntegrations);
+          console.log(chalk.green('\n✅ Commands updated successfully!\n'));
+          return;
+        }
+
+        // Continue with reconfiguration flow below
       }
 
       // Select integrations using shared utility
@@ -99,6 +125,34 @@ export default class Init extends Command {
         if (cleanupAction === 'cleanup') {
           console.log(chalk.gray('\n🗑️  Cleaning up deselected integrations...'));
           for (const integrationName of deselectedIntegrations) {
+            // Handle doc generators (AGENTS.md, OCTO.md, WARP.md, copilot-instructions)
+            if (integrationName === 'agents-md') {
+              await DocInjector.removeBlock('AGENTS.md');
+              console.log(chalk.gray('  ✓ Cleaned AGENTS.md Clavix block'));
+              continue;
+            }
+            if (integrationName === 'octo-md') {
+              await DocInjector.removeBlock('OCTO.md');
+              console.log(chalk.gray('  ✓ Cleaned OCTO.md Clavix block'));
+              continue;
+            }
+            if (integrationName === 'warp-md') {
+              await DocInjector.removeBlock('WARP.md');
+              console.log(chalk.gray('  ✓ Cleaned WARP.md Clavix block'));
+              continue;
+            }
+            if (integrationName === 'copilot-instructions') {
+              await DocInjector.removeBlock('.github/copilot-instructions.md');
+              console.log(chalk.gray('  ✓ Cleaned copilot-instructions.md Clavix block'));
+              continue;
+            }
+
+            // Handle Claude Code (has CLAUDE.md doc injection)
+            if (integrationName === 'claude-code') {
+              await DocInjector.removeBlock('CLAUDE.md');
+              console.log(chalk.gray('  ✓ Cleaned CLAUDE.md Clavix block'));
+            }
+
             const adapter = agentManager.getAdapter(integrationName);
             if (adapter) {
               const removed = await adapter.removeAllCommands();
@@ -310,8 +364,83 @@ export default class Init extends Command {
     }
   }
 
+  /**
+   * Regenerate commands for existing integrations (update mode)
+   */
+  private async regenerateCommands(
+    agentManager: AgentManager,
+    integrations: string[]
+  ): Promise<void> {
+    for (const integrationName of integrations) {
+      // Handle doc generators (not adapters)
+      if (integrationName === 'agents-md') {
+        console.log(chalk.gray('  ✓ Regenerating AGENTS.md...'));
+        await AgentsMdGenerator.generate();
+        continue;
+      }
+
+      if (integrationName === 'copilot-instructions') {
+        console.log(chalk.gray('  ✓ Regenerating .github/copilot-instructions.md...'));
+        await CopilotInstructionsGenerator.generate();
+        continue;
+      }
+
+      if (integrationName === 'octo-md') {
+        console.log(chalk.gray('  ✓ Regenerating OCTO.md...'));
+        await OctoMdGenerator.generate();
+        continue;
+      }
+
+      if (integrationName === 'warp-md') {
+        console.log(chalk.gray('  ✓ Regenerating WARP.md...'));
+        await WarpMdGenerator.generate();
+        continue;
+      }
+
+      // Handle regular adapters
+      const adapter = agentManager.getAdapter(integrationName);
+      if (!adapter) {
+        console.log(chalk.yellow(`  ⚠ Unknown integration: ${integrationName}`));
+        continue;
+      }
+
+      console.log(chalk.gray(`  ✓ Regenerating ${adapter.displayName} commands...`));
+
+      // Remove existing commands before regenerating
+      const removed = await adapter.removeAllCommands();
+      if (removed > 0) {
+        console.log(chalk.gray(`    Removed ${removed} existing command(s)`));
+      }
+
+      // Generate slash commands
+      const templates = await this.generateSlashCommands(adapter);
+
+      // Handle legacy command cleanup (silent in update mode)
+      const commandNames = templates.map((template) => template.name);
+      const legacyFiles = await collectLegacyCommandFiles(adapter, commandNames);
+      if (legacyFiles.length > 0) {
+        for (const file of legacyFiles) {
+          await FileSystem.remove(file);
+        }
+        console.log(chalk.gray(`    Cleaned ${legacyFiles.length} legacy file(s)`));
+      }
+
+      // Re-inject documentation blocks (Claude Code only)
+      if (integrationName === 'claude-code') {
+        console.log(chalk.gray('  ✓ Updating CLAUDE.md documentation...'));
+        await this.injectDocumentation(adapter);
+      }
+    }
+
+    // Regenerate instructions folder if needed
+    if (InstructionsGenerator.needsGeneration(integrations)) {
+      console.log(chalk.gray('\n📁 Updating .clavix/instructions/ reference folder...'));
+      await InstructionsGenerator.generate();
+    }
+  }
+
   private async createDirectoryStructure(): Promise<void> {
-    const dirs = ['.clavix', '.clavix/sessions', '.clavix/outputs', '.clavix/templates'];
+    const dirs = ['.clavix', '.clavix/outputs', '.clavix/templates'];
 
     for (const dir of dirs) {
       await FileSystem.ensureDir(dir);
@@ -341,7 +470,6 @@ Welcome to Clavix! This directory contains your local Clavix configuration and d
 ├── config.json           # Your Clavix configuration
 ├── INSTRUCTIONS.md       # This file
 ├── instructions/         # Workflow instruction files for AI agents
-├── sessions/             # Conversational mode session files
 ├── outputs/
 │   ├── <project-name>/  # Per-project outputs
 │   │   ├── full-prd.md
@@ -360,7 +488,7 @@ Welcome to Clavix! This directory contains your local Clavix configuration and d
 |---------|---------|
 | \`clavix init\` | Initialize Clavix in a project |
 | \`clavix update\` | Update templates after package update |
-| \`clavix config\` | Manage configuration |
+| \`clavix diagnose\` | Check installation health |
 | \`clavix version\` | Show version |
 
 ### Workflow Commands (Slash Commands)
@@ -430,11 +558,7 @@ PRD Creation → Task Planning → Implementation → Archive
 
 Create custom templates in \`.clavix/templates/\` to override defaults.
 
-Edit configuration:
-\`\`\`bash
-clavix config edit      # Opens config.json in $EDITOR
-clavix config set key=value
-\`\`\`
+To reconfigure integrations, run \`clavix init\` again.
 
 ## Need Help?
 

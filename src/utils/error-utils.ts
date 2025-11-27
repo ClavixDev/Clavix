@@ -83,6 +83,13 @@ export function isNodeError(error: unknown): error is NodeJSError {
 }
 
 /**
+ * Check if error is a permission error (EACCES or EPERM)
+ */
+export function isPermissionError(error: unknown): boolean {
+  return isNodeError(error) && (error.code === 'EACCES' || error.code === 'EPERM');
+}
+
+/**
  * Handles CLI errors, formatting OCLIF errors nicely and falling back to default handler.
  * @param error The error to handle
  * @param defaultHandler The default handler function (usually handle from @oclif/core)

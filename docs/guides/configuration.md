@@ -118,15 +118,13 @@ The `intelligence` section lets you customize how Clavix Intelligence™ pattern
 
 ## Managing configuration
 
-Use `clavix config` to interact with the file:
+Use `clavix init` to reconfigure your project:
 
-- `clavix config` – Launch an interactive menu to view or update preferences.
-- `clavix config get outputs.path` – Read a specific key using dot notation.
-- `clavix config set outputs.format pdf` – Write a value. Strings that parse as JSON are supported.
-- `clavix config edit` – Shortcut to the interactive preference editor.
-- `clavix config reset` – Restore defaults while preserving the provider list.
+- Run `clavix init` in an existing project to reconfigure integrations
+- Choose "Reconfigure integrations" to change which AI tools are supported
+- Choose "Update existing" to regenerate all command files
 
-> **Note:** The `-g, --global` flag is reserved for future use. At present, configuration is always project-scoped.
+Configuration is stored in `.clavix/config.json` and can be edited manually if needed. After manual edits, run `clavix update` to regenerate commands.
 
 ## Legacy migration
 
