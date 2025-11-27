@@ -430,7 +430,7 @@ describe('Config Resilience', () => {
     it('should have valid default preferences', () => {
       expect(DEFAULT_CONFIG.preferences.autoOpenOutputs).toBe(false);
       expect(DEFAULT_CONFIG.preferences.verboseLogging).toBe(false);
-      expect(DEFAULT_CONFIG.preferences.preserveSessions).toBe(true);
+      // Note: preserveSessions removed in v5.3.0 (sessions feature removed)
     });
 
     it('should serialize and deserialize default config without loss', () => {

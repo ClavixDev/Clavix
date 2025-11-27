@@ -20,8 +20,8 @@ Clavix helps Warp developers turn rough ideas into quality, AI-ready prompts and
 - ❌ DO NOT implement features during these workflows
 
 **IMPLEMENTATION workflows** (CODE ALLOWED):
-- Only after user runs execute/implement commands
-- Your role: Write code, execute tasks, implement features
+- Only after user runs `/clavix:implement`
+- Your role: Write code, implement tasks, build features
 - ✅ DO implement code during these workflows
 
 See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.

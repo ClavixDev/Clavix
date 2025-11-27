@@ -43,7 +43,6 @@ export interface OutputConfig {
 export interface PreferencesConfig {
   autoOpenOutputs: boolean;
   verboseLogging: boolean;
-  preserveSessions: boolean;
 }
 
 export const DEFAULT_CONFIG: ClavixConfig = {
@@ -61,7 +60,6 @@ export const DEFAULT_CONFIG: ClavixConfig = {
   preferences: {
     autoOpenOutputs: false,
     verboseLogging: false,
-    preserveSessions: true,
   },
 };
 

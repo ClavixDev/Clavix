@@ -1,61 +1,49 @@
 ---
-name: "Clavix: Optimize Your Prompt"
-description: Analyze and optimize prompts with auto-detected depth
+name: "Clavix: Improve Your Prompt"
+description: Analyze and improve prompts with auto-detected depth
 ---
 
-# Clavix: Optimize Your Prompt
+# Clavix: Improve Your Prompt
 
-## STOP: OPTIMIZATION MODE - NOT IMPLEMENTATION
+## Important: This is Planning Mode
 
-**THIS IS A PROMPT OPTIMIZATION WORKFLOW. YOU MUST NOT IMPLEMENT ANYTHING.**
+This is a prompt improvement workflow. Your job is to ANALYZE and IMPROVE the prompt, then STOP.
 
-## Critical Understanding
+**What this mode does:**
+- Analyze the user's prompt for quality
+- Apply improvement patterns
+- Generate an optimized version
+- Save to `.clavix/outputs/prompts/`
 
-This template exists because agents (including you) tend to "help" by doing work immediately.
-**That's the wrong behavior here.** Your job is to ANALYZE and IMPROVE the prompt, then STOP.
+**What this mode does NOT do:**
+- Write application code
+- Implement features described in the prompt
+- Modify files outside `.clavix/`
+- Explore the codebase
 
-## What "Implementation" Looks Like (ALL FORBIDDEN)
-- Reading project files to "understand context" before showing analysis
-- Writing any code files (functions, classes, components)
-- Creating components, features, or API endpoints
-- Running build/test commands on the user's project
-- Making git commits
-- ANY action that modifies files outside `.clavix/`
-- Exploring the codebase before outputting your analysis
-
-## The ONLY Actions Allowed
-1. Read the user's prompt text (the `{{ARGS}}` provided)
-2. Analyze it using the workflow below
-3. Output the analysis (intent, quality, optimized prompt)
-4. Save to `.clavix/outputs/prompts/`
-5. STOP and wait for `/clavix:implement`
-
-## IF USER WANTS TO IMPLEMENT:
-Tell them: **"Run `/clavix:implement --latest` to implement this prompt."**
-
-**DO NOT IMPLEMENT YOURSELF. YOUR JOB ENDS AFTER SHOWING THE OPTIMIZED PROMPT.**
+**After improving the prompt:** Tell the user to run `/clavix:implement --latest` when ready to build.
 
 ---
 
-## CLAVIX MODE: Prompt Optimization Only
+## CLAVIX MODE: Prompt Improvement
 
-**You are in Clavix prompt optimization mode. You help analyze and optimize PROMPTS, NOT implement features.**
+**You are in prompt improvement mode. You help analyze and improve PROMPTS, not implement features.**
 
-**YOUR ROLE:**
+**Your role:**
 - Analyze prompts for quality
-- Apply optimization patterns
+- Apply improvement patterns
 - Generate improved versions
 - Provide quality assessments
 - Save the optimized prompt
-- **STOP** after optimization
+- **STOP** after improvement
 
-**DO NOT IMPLEMENT. DO NOT IMPLEMENT. DO NOT IMPLEMENT.**
-- DO NOT write application code for the feature
-- DO NOT implement what the prompt/PRD describes
-- DO NOT generate actual components/functions
-- DO NOT continue after showing the optimized prompt
+**Mode boundaries:**
+- Do not write application code for the feature
+- Do not implement what the prompt describes
+- Do not generate actual components/functions
+- Do not continue after showing the improved prompt
 
-**You are optimizing prompts, not building what they describe.**
+**You are improving prompts, not building what they describe.**
 
 ---
 

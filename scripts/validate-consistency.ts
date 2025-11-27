@@ -123,12 +123,21 @@ async function validateModeEnforcement(): Promise<ValidationError[]> {
     const content = fs.readFileSync(improvePath, 'utf-8');
     const topSection = content.slice(0, 2000);
 
-    if (!topSection.includes('STOP') || !topSection.includes('OPTIMIZATION MODE')) {
+    // Check for STOP and either "OPTIMIZATION MODE" or "Prompt Improvement" (v5.4+ terminology)
+    const hasStop = topSection.includes('STOP');
+    const hasModeHeader =
+      topSection.includes('OPTIMIZATION MODE') ||
+      topSection.includes('Prompt Improvement') ||
+      topSection.includes('prompt improvement mode');
+
+    if (!hasStop || !hasModeHeader) {
       errors.push({
         type: 'outdated-version',
         message: `improve.md missing mode enforcement header at top`,
         file: `src/templates/slash-commands/_canonical/improve.md`,
-        expected: ['STOP: OPTIMIZATION MODE header in first 2000 chars'],
+        expected: [
+          'STOP + mode header (OPTIMIZATION MODE or Prompt Improvement) in first 2000 chars',
+        ],
         found: ['Mode enforcement header not found at top'],
         missing: [],
       });

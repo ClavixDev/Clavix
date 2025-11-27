@@ -128,11 +128,7 @@ describe('AgentErrorMessages', () => {
     expect(message).toContain('phase-1-setup-1');
   });
 
-  it('sessionNotFound includes session id and recovery options', () => {
-    const message = AgentErrorMessages.sessionNotFound('session-123');
-    expect(message).toContain('session-123');
-    expectHasRecoveryBlock(message);
-  });
+  // Note: sessionNotFound removed in v5.4.0 (sessions feature removed in v5.3.0)
 
   it('taskAlreadyCompleted clarifies no action needed', () => {
     const message = AgentErrorMessages.taskAlreadyCompleted('phase-1-setup-1');

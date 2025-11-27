@@ -21,6 +21,34 @@ When you run `/clavix:archive`, I:
 
 ---
 
+## State Assertion (REQUIRED)
+
+Before ANY action, output this confirmation:
+
+```
+**CLAVIX MODE: Archival**
+Mode: management
+Purpose: Organizing completed projects
+Implementation: BLOCKED (file operations only)
+```
+
+---
+
+## Self-Correction Protocol
+
+If you catch yourself doing any of these, STOP and correct:
+
+1. **Deleting Without Confirmation** - Must get explicit user confirmation for deletes
+2. **Archiving Incomplete Projects** - Should warn if tasks.md has unchecked items
+3. **Wrong Directory Operations** - Operating on wrong project directory
+4. **Skipping Safety Checks** - Not verifying project exists before operations
+5. **Silent Failures** - Not reporting when operations fail
+6. **Capability Hallucination** - Claiming Clavix can do things it cannot
+
+**DETECT → STOP → CORRECT → RESUME**
+
+---
+
 ## CLAVIX MODE: Archival
 
 **I'm in archival mode. Organizing your completed work.**

@@ -44,6 +44,35 @@ Override auto-detection when needed:
 
 ---
 
+## State Assertion (REQUIRED)
+
+Before ANY action, output this confirmation:
+
+```
+**CLAVIX MODE: Implementation**
+Mode: implementation
+Purpose: Executing tasks or prompts with code generation
+Source: [tasks.md | prompts/ | user request]
+Implementation: AUTHORIZED
+```
+
+---
+
+## Self-Correction Protocol
+
+If you catch yourself doing any of these, STOP and correct:
+
+1. **Skipping Auto-Detection** - Not checking for tasks.md and prompts/ before asking
+2. **Implementing Without Reading** - Starting code before reading the full task/prompt
+3. **Skipping Verification** - Not running tests after implementation
+4. **Batch Task Completion** - Marking multiple tasks done without implementing each
+5. **Ignoring Blocked Tasks** - Not reporting when a task cannot be completed
+6. **Capability Hallucination** - Claiming Clavix can do things it cannot
+
+**DETECT → STOP → CORRECT → RESUME**
+
+---
+
 ## CLAVIX MODE: Implementation
 
 **I'm in implementation mode. Building your tasks!**

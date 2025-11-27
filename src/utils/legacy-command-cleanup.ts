@@ -5,10 +5,12 @@
  * Clavix versions. It identifies files using deprecated naming conventions
  * and assists in migration to the current standard.
  *
- * @deprecated This module is scheduled for removal in v6.0.0.
- * By that version, all legacy naming patterns should be fully migrated.
- * After v6.0.0, the cleanup functionality will no longer be needed as
- * the transition period will be complete.
+ * Handles cleanup of:
+ * - fast.md, deep.md (replaced by improve.md in v4.11+)
+ * - Old naming patterns (clavix-{name} vs {name})
+ * - Subdirectory migration for Cline and Claude Code
+ *
+ * This module will be removed when v4->v5 migration support ends.
  *
  * @since v4.12.0
  */

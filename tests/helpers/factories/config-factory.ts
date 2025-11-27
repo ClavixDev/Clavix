@@ -25,18 +25,24 @@ export function createConfig(overrides: DeepPartial<ClavixConfig> = {}): ClavixC
 
 /**
  * Create a minimal valid config.
+ * v5.4: Updated to match current ClavixConfig shape (no sessions)
  */
 export function createMinimalConfig(): ClavixConfig {
   return {
-    version: '3.0',
+    version: '5.4.0',
     integrations: [],
-    outputs: {
-      sessions: '.clavix/sessions',
-      prompts: '.clavix/outputs/prompts',
-    },
     templates: {
-      enabled: false,
-      directory: '.clavix/templates',
+      prdQuestions: 'default',
+      fullPrd: 'default',
+      quickPrd: 'default',
+    },
+    outputs: {
+      path: '.clavix/outputs',
+      format: 'markdown',
+    },
+    preferences: {
+      autoOpenOutputs: false,
+      verboseLogging: false,
     },
   };
 }
@@ -65,28 +71,28 @@ export function createLegacyV2Config() {
 }
 
 /**
- * Create a config with custom output paths.
+ * Create a config with custom output path.
+ * v5.4: Updated - sessions removed in v5.3.0
  */
-export function createConfigWithCustomPaths(
-  sessions: string = 'custom/sessions',
-  prompts: string = 'custom/prompts'
-): ClavixConfig {
+export function createConfigWithCustomPaths(outputPath: string = 'custom/outputs'): ClavixConfig {
   return createConfig({
     outputs: {
-      sessions,
-      prompts,
+      path: outputPath,
+      format: 'markdown',
     },
   });
 }
 
 /**
- * Create a config with templates enabled.
+ * Create a config with custom template settings.
+ * v5.4: Updated to match current TemplateConfig shape
  */
-export function createConfigWithTemplates(directory: string = '.clavix/templates'): ClavixConfig {
+export function createConfigWithTemplates(prdTemplate: string = 'custom'): ClavixConfig {
   return createConfig({
     templates: {
-      enabled: true,
-      directory,
+      prdQuestions: prdTemplate,
+      fullPrd: prdTemplate,
+      quickPrd: prdTemplate,
     },
   });
 }

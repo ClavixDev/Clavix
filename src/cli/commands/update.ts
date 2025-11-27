@@ -72,7 +72,7 @@ export default class Update extends Command {
 
     let updatedCount = 0;
 
-    // Update for each provider
+    // Update for each integration
     for (const integrationName of integrations) {
       // Handle AGENTS.md separately
       if (integrationName === 'agents-md') {

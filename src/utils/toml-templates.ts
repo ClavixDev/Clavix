@@ -10,7 +10,7 @@ export interface ParsedTomlTemplate {
 export function parseTomlSlashCommand(
   content: string,
   templateName: string,
-  providerName: string
+  integrationName: string
 ): ParsedTomlTemplate {
   let normalized = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   if (normalized.charCodeAt(0) === 0xfeff) {
@@ -22,7 +22,7 @@ export function parseTomlSlashCommand(
 
   if (!promptHeaderMatch || promptHeaderMatch.index === undefined) {
     throw new Error(
-      `Template ${templateName}.toml for ${providerName} is missing a prompt = """ ... """ block.`
+      `Template ${templateName}.toml for ${integrationName} is missing a prompt = """ ... """ block.`
     );
   }
 
@@ -32,7 +32,7 @@ export function parseTomlSlashCommand(
 
   if (closingIndex === -1) {
     throw new Error(
-      `Template ${templateName}.toml for ${providerName} does not terminate its prompt = """ ... """ block.`
+      `Template ${templateName}.toml for ${integrationName} does not terminate its prompt = """ ... """ block.`
     );
   }
 

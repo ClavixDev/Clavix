@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.4.0] - 2025-11-27
+
+### Changed
+
+- **Documentation cleanup** - Comprehensive review and update of all documentation:
+  - Removed outdated `/docs/clavix-intelligence.md` (referenced removed pattern system)
+  - Updated `/docs/guides/workflows.md` for v5 architecture (no more `clavix fast`/`clavix deep`)
+  - Updated `/docs/how-it-works.md` to explain agentic-first architecture
+  - Fixed `/src/templates/instructions/README.md` component references
+
+- **Consistent terminology** - Standardized naming across all files:
+  - "Optimize" → "Improve" in template naming and documentation
+  - "provider" → "integration" in code comments and variables
+  - "execute" → "implement" in agent templates
+
+- **Template improvements** - Enhanced agent instruction quality:
+  - Added Self-Correction Protocol to `implement.md`, `verify.md`, `archive.md`
+  - Added State Assertion blocks for mode enforcement
+  - Softened defensive tone in `improve.md` while maintaining mode boundaries
+
+### Removed
+
+- **Dead code cleanup**:
+  - Removed `preserveSessions` from `PreferencesConfig` (sessions removed in v5.3.0)
+  - Removed `sessionNotFound()` from `AgentErrorMessages`
+  - Removed session directory references from error messages
+
+- **Outdated documentation**:
+  - Deleted `/docs/clavix-intelligence.md`
+  - Removed broken links from `/docs/README.md`
+
+### Fixed
+
+- **Test factory alignment** - Updated `config-factory.ts` to match current `ClavixConfig` shape
+- **Instructions README** - Fixed references to non-existent component files
+
+---
+
 ## [5.3.1] - 2025-11-27
 
 ### Fixed

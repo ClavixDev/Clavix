@@ -18,8 +18,7 @@ export class AgentErrorMessages {
       'No PRD artifacts found in .clavix/outputs/\n\n' +
       'Agent recovery options:\n' +
       '  1. Execute /clavix:prd to generate comprehensive PRD\n' +
-      '  2. Execute /clavix:summarize if conversation exists\n' +
-      '  3. Check .clavix/sessions/ if saved session available\n\n' +
+      '  2. Execute /clavix:summarize if conversation exists\n\n' +
       'Select option and execute, then retry this command.'
     );
   }
@@ -227,22 +226,6 @@ export class AgentErrorMessages {
       '  • phase-2-user-authentication-3\n' +
       '  • phase-3-api-integration-1\n\n' +
       'Check tasks.md for correct task IDs and retry.'
-    );
-  }
-
-  /**
-   * Error: Session not found
-   * Used by: Commands using --session flag
-   */
-  static sessionNotFound(sessionId: string): string {
-    return (
-      `Session not found: ${sessionId}\n\n` +
-      'Agent recovery options:\n' +
-      '  1. Verify session ID is correct\n' +
-      '  2. List available sessions (if supported)\n' +
-      '  3. Use --active-session flag for current session\n' +
-      '  4. Or generate PRD without session\n\n' +
-      'Session may have expired or never existed.'
     );
   }
 

@@ -270,9 +270,11 @@ npm run validate:consistency
 - `implement.md` - Task and prompt execution workflow
 
 ### Agent Protocols
-- `_components/agent-protocols/decision-rules.md` - Decision logic
+- `_components/agent-protocols/AGENT_MANUAL.md` - Universal agent protocols
+- `_components/agent-protocols/cli-reference.md` - CLI command reference
 - `_components/agent-protocols/state-awareness.md` - Workflow state tracking
-- `_components/agent-protocols/error-handling.md` - Error recovery patterns
+- `_components/agent-protocols/supportive-companion.md` - Conversational guidance
+- `_components/agent-protocols/task-blocking.md` - Blocked task handling
 
 ### Validation
 - `scripts/validate-consistency.ts` - TypeScript ↔ Template validator
@@ -280,6 +282,6 @@ npm run validate:consistency
 
 ---
 
-**Last updated:** v5.1.0
+**Last updated:** v5.4.0
 
 **Validation:** Run `npm run validate:consistency` before committing changes.

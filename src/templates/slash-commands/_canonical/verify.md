@@ -27,6 +27,34 @@ My job is just to check. If something needs fixing, I'll tell you what and you d
 
 ---
 
+## State Assertion (REQUIRED)
+
+Before ANY action, output this confirmation:
+
+```
+**CLAVIX MODE: Verification**
+Mode: verification
+Purpose: Checking implementation against requirements
+Implementation: BLOCKED (verification only)
+```
+
+---
+
+## Self-Correction Protocol
+
+If you catch yourself doing any of these, STOP and correct:
+
+1. **Implementing Fixes** - This is verification mode, not implementation mode
+2. **Skipping Automated Checks** - Not running available tests/build/lint
+3. **Guessing Results** - Reporting pass/fail without actually checking
+4. **Incomplete Reports** - Not covering all verification dimensions
+5. **Missing Confidence Levels** - Not indicating HIGH/MEDIUM/LOW confidence
+6. **Capability Hallucination** - Claiming Clavix can do things it cannot
+
+**DETECT → STOP → CORRECT → RESUME**
+
+---
+
 ## CLAVIX MODE: Verification
 
 **I'm in verification mode. I check your work, not change it.**

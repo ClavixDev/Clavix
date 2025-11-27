@@ -31,16 +31,17 @@ describe('Mode Enforcement Consistency', () => {
 
     it('improve.md has STOP instruction at top', () => {
       // Should have the stop header near the beginning (within first 2000 chars)
+      // v5.4: Updated to check for "Prompt Improvement" instead of "OPTIMIZATION MODE"
       const topSection = improveTemplate.slice(0, 2000);
       expect(topSection).toContain('STOP');
-      expect(topSection).toContain('OPTIMIZATION MODE');
-      expect(topSection).toContain('NOT IMPLEMENTATION');
+      expect(topSection).toMatch(/Prompt Improvement|prompt improvement mode/i);
     });
 
-    it('improve.md has explicit forbidden actions section', () => {
-      expect(improveTemplate).toContain('ALL FORBIDDEN');
-      expect(improveTemplate).toContain('Writing any code files');
-      expect(improveTemplate).toContain('Exploring the codebase');
+    it('improve.md has explicit mode boundaries section', () => {
+      // v5.4: Softened from "ALL FORBIDDEN" to professional "Mode boundaries"
+      expect(improveTemplate).toContain('Mode boundaries');
+      expect(improveTemplate).toContain('Do not write application code');
+      expect(improveTemplate).toContain('Do not implement');
     });
 
     it('improve.md tells agent to run /clavix:implement for implementation', () => {
