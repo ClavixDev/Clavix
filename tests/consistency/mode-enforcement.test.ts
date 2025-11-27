@@ -9,12 +9,13 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '../..');
 
 /**
- * Mode Enforcement Consistency Tests (v4.11)
+ * Mode Enforcement Consistency Tests (v5 Agentic-First)
  *
  * These tests verify that:
  * 1. Unified improve.md template has strong "STOP" instructions
  * 2. No references to the removed /clavix:prompts slash command exist
  * 3. Agent connectors have consistent mode enforcement sections
+ * 4. No references to removed CLI commands (clavix execute, clavix prompts)
  */
 
 describe('Mode Enforcement Consistency', () => {
@@ -47,15 +48,15 @@ describe('Mode Enforcement Consistency', () => {
       expect(improveTemplate).toContain('--latest');
     });
 
-    it('improve.md has verification requirements', () => {
-      // v4.11.1: Changed from CLI Verification block to stronger Read tool verification
+    it('improve.md has verification requirements (v5)', () => {
+      // v5: Uses Read tool verification, not CLI
       expect(improveTemplate).toContain('VERIFICATION (REQUIRED');
-      expect(improveTemplate).toContain('clavix prompts list');
+      // v5: Uses Read tool to verify file exists, not CLI
+      expect(improveTemplate).toMatch(/Read tool|verify.*file|file exists/i);
     });
 
     it('improve.md has required response ending instruction', () => {
       expect(improveTemplate).toContain('Your response MUST end with');
-      // v4.11.1: Changed from "Prompt optimized and saved" to require actual file path
       expect(improveTemplate).toContain('Prompt saved to:');
     });
 
@@ -89,12 +90,14 @@ describe('Mode Enforcement Consistency', () => {
       }
     });
 
-    it('CLI commands clavix prompts list/clear are still documented', async () => {
+    it('v5: No CLI command references for execute/prompts (agentic-first)', async () => {
       const executeTemplate = await fs.readFile(path.join(templatesDir, 'execute.md'), 'utf-8');
 
-      // CLI commands should still be documented
-      expect(executeTemplate).toContain('clavix prompts list');
-      expect(executeTemplate).toContain('clavix prompts clear');
+      // v5: These CLI commands were removed - agents use tools directly
+      // The templates should reference agent tools (Read, Write, Glob), not CLI
+      expect(executeTemplate).not.toContain('clavix execute --');
+      expect(executeTemplate).not.toContain('clavix prompts list');
+      expect(executeTemplate).not.toContain('clavix prompts clear');
     });
   });
 
@@ -106,7 +109,7 @@ describe('Mode Enforcement Consistency', () => {
       if (await fs.pathExists(filePath)) {
         const content = await fs.readFile(filePath, 'utf-8');
 
-        // Should have v4.7 mode enforcement
+        // Should have v5 mode enforcement
         expect(content).toContain('MODE ENFORCEMENT');
         expect(content).toContain('OPTIMIZATION workflows');
         expect(content).toContain('PLANNING workflows');
@@ -129,7 +132,6 @@ describe('Mode Enforcement Consistency', () => {
   describe('Navigation Consistency', () => {
     const workflowTemplates = [
       'improve.md',
-      'improve.md',
       'execute.md',
       'prd.md',
       'plan.md',
@@ -146,6 +148,17 @@ describe('Mode Enforcement Consistency', () => {
       if (content.includes('Related commands') || content.includes('Workflow Navigation')) {
         expect(content).not.toContain('/clavix:prompts');
       }
+    });
+  });
+
+  describe('v5: No .index.json References', () => {
+    const workflowTemplates = ['improve.md', 'execute.md'];
+
+    it.each(workflowTemplates)('%s does not reference .index.json', async (file) => {
+      const content = await fs.readFile(path.join(templatesDir, file), 'utf-8');
+
+      // v5: .index.json was removed, prompts use frontmatter metadata
+      expect(content).not.toContain('.index.json');
     });
   });
 });
