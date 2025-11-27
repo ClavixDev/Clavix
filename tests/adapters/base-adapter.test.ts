@@ -321,6 +321,41 @@ describe('BaseAdapter', () => {
 
       expect(removed).toBe(0);
     });
+
+    it('should remove clavix/ subdirectory if it exists', async () => {
+      const commandPath = adapter.getCommandPath();
+      await fs.ensureDir(commandPath);
+
+      // Create command files
+      await fs.writeFile(path.join(commandPath, 'test.md'), 'content');
+
+      // Create clavix/ subdirectory with files (legacy structure)
+      const clavixSubdir = path.join(commandPath, 'clavix');
+      await fs.ensureDir(clavixSubdir);
+      await fs.writeFile(path.join(clavixSubdir, 'legacy-command.md'), 'legacy');
+
+      const removed = await adapter.removeAllCommands();
+
+      // Should remove both the file and the subdirectory
+      expect(removed).toBe(2);
+      expect(await fs.pathExists(path.join(commandPath, 'test.md'))).toBe(false);
+      expect(await fs.pathExists(clavixSubdir)).toBe(false);
+    });
+
+    it('should handle clavix/ subdirectory when no files exist', async () => {
+      const commandPath = adapter.getCommandPath();
+      await fs.ensureDir(commandPath);
+
+      // Only create clavix/ subdirectory (no command files)
+      const clavixSubdir = path.join(commandPath, 'clavix');
+      await fs.ensureDir(clavixSubdir);
+      await fs.writeFile(path.join(clavixSubdir, 'legacy.md'), 'legacy');
+
+      const removed = await adapter.removeAllCommands();
+
+      expect(removed).toBe(1);
+      expect(await fs.pathExists(clavixSubdir)).toBe(false);
+    });
   });
 
   describe('isClavixGeneratedCommand', () => {

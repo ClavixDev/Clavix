@@ -110,6 +110,17 @@ export abstract class BaseAdapter implements AgentAdapter {
       }
     }
 
+    // Also remove clavix/ subdirectory if it exists (legacy cleanup)
+    const clavixSubdir = path.join(commandPath, 'clavix');
+    if (await FileSystem.exists(clavixSubdir)) {
+      try {
+        await FileSystem.remove(clavixSubdir);
+        removed++;
+      } catch (error) {
+        console.warn(`Failed to remove ${clavixSubdir}: ${error}`);
+      }
+    }
+
     return removed;
   }
 
