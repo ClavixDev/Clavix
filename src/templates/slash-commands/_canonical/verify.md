@@ -352,17 +352,17 @@ I generate different checklists based on what you're building:
 
 ---
 
-## Reference: Verification Commands
+## Reference: Verification Operations
 
-**I run these automatically - you don't need to type them:**
+**I perform these operations using my native tools:**
 
-| What I Run | When |
-|------------|------|
-| `clavix verify --latest` | Check most recent implementation |
-| `clavix verify --id <id>` | Check specific prompt |
-| `clavix verify --retry-failed` | Re-check only failed items |
-| `clavix verify --status` | Show current verification state |
-| `clavix verify --export markdown` | Generate report file |
+| Operation | How I Do It |
+|-----------|-------------|
+| Check most recent implementation | Read `.clavix/outputs/prompts/` directory, find newest file |
+| Check specific prompt | Read the specific `.clavix/outputs/prompts/<id>.md` file |
+| Run automated checks | Execute `npm test`, `npm run build`, `npm run lint` via Bash tool |
+| Update verification status | Edit the prompt file metadata with verification results |
+| Generate report | Create verification report in `.clavix/outputs/` |
 
 ---
 

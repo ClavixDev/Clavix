@@ -84,36 +84,24 @@ Implementation: BLOCKED - I will create tasks, not implement them
 
 **As an AI agent, you have two execution options:**
 
-#### **Option 1: Run CLI Command** (Recommended for most cases)
+#### **Agent Execution Protocol (v5)**
 
 1. **Validate prerequisites**:
    - Check if `.clavix/outputs/` directory exists
    - Look for PRD artifacts: `full-prd.md`, `quick-prd.md`, `mini-prd.md`, or `optimized-prompt.md`
    - **If not found**: Error inline - "No PRD found in `.clavix/outputs/`. Use `/clavix:prd` or `/clavix:summarize` first."
 
-2. **Run the CLI command**:
-   ```bash
-   clavix plan
-   ```
+2. **Read the PRD** from `.clavix/outputs/[project-name]/`
 
-   Or specify a project:
-   ```bash
-   clavix plan --project project-name
-   ```
+3. **Generate task breakdown** following Part B principles
 
-   Or generate from saved session (auto-creates mini-prd.md):
-   ```bash
-   clavix plan --session SESSION_ID
-   ```
+4. **Create `tasks.md`** using your Write tool with format specified in "Task Format Reference" below
 
-3. **CLI will handle**:
-   - Project selection (if multiple)
-   - Reading PRD content
-   - Generating task breakdown
-   - Creating `tasks.md` file
-   - Formatting with proper task IDs
+5. **Save to**: `.clavix/outputs/[project-name]/tasks.md`
 
-#### **Option 2: Generate Tasks Directly** (If agent has full PRD context)
+6. **Use exact format** (task IDs, checkboxes, structure)
+
+#### **Alternative: Generate Tasks Directly** (If agent has full PRD context)
 
 If you have the full PRD content in memory and want to generate tasks directly:
 

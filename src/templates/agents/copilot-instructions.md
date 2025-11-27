@@ -38,8 +38,7 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 |----------|-----------------|---------|
 | **Conversational Mode** | `workflows/start.md` | Natural requirements gathering through discussion |
 | **Extract Requirements** | `workflows/summarize.md` | Analyze conversation → mini-PRD + optimized prompts |
-| **Quick Optimization** | `workflows/fast.md` | Intent detection + quality assessment + smart triage |
-| **Deep Analysis** | `workflows/deep.md` | Comprehensive with alternatives, validation, edge cases |
+| **Prompt Optimization** | `workflows/improve.md` | Intent detection + quality assessment + auto-depth selection |
 | **PRD Generation** | `workflows/prd.md` | Socratic questions → full PRD + quick PRD |
 | **Mode Boundaries** | `core/clavix-mode.md` | Planning vs implementation distinction |
 
@@ -54,33 +53,40 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 
 ---
 
-## 📋 CLI Quick Reference
+## 📋 Clavix Commands (v5)
 
+### Setup Commands (CLI)
 | Command | Purpose |
 |---------|---------|
-| `clavix fast "<prompt>"` | Quick optimization (CLI auto-saves; slash commands require manual saving per template instructions) |
-| `clavix deep "<prompt>"` | Deep analysis (CLI auto-saves; slash commands require manual saving per template instructions) |
-| `clavix execute [--latest]` | Execute saved prompts (--latest, --fast, --deep, --id supported) |
-| `clavix prompts list` | View saved prompts with status (NEW, EXECUTED, OLD, STALE) |
-| `clavix prompts clear` | Manage cleanup (--executed, --stale, --fast, --deep, --all, --force) |
-| `clavix prd` | Guided PRD generation |
-| `clavix plan` | Transform PRD → tasks |
-| `clavix implement [--commit-strategy]` | Execute tasks |
-| `clavix start` | Begin conversational session |
-| `clavix summarize [session-id]` | Extract PRD from session |
-| `clavix list` | List sessions/outputs |
-| `clavix archive [project]` | Archive/restore projects |
-| `clavix update` | Refresh documentation |
+| `clavix init` | Initialize Clavix in a project |
+| `clavix update` | Update templates after package update |
+| `clavix config` | Manage configuration |
+| `clavix version` | Show version |
+
+### Workflow Commands (Slash Commands)
+All workflows are executed via slash commands:
+
+| Slash Command | Purpose |
+|---------------|---------|
+| `/clavix:improve` | Optimize prompts (auto-selects depth) |
+| `/clavix:prd` | Generate PRD through guided questions |
+| `/clavix:plan` | Create task breakdown from PRD |
+| `/clavix:implement` | Execute tasks with progress tracking |
+| `/clavix:start` | Begin conversational session |
+| `/clavix:summarize` | Extract requirements from conversation |
+| `/clavix:execute` | Run saved prompts |
+| `/clavix:verify` | Verify implementation |
+| `/clavix:archive` | Archive completed projects |
 
 ---
 
-## 🔄 Prompt Lifecycle Management (v2.7+)
+## 🔄 Prompt Lifecycle Workflow
 
-**Prompt Lifecycle Workflow:**
-1. **Optimize**: `clavix fast/deep "<prompt>"` → CLI auto-saves; slash commands require manual saving per template instructions
-2. **Review**: `clavix prompts list` → View all saved prompts with status
-3. **Execute**: `clavix execute --latest` → Implement when ready
-4. **Cleanup**: `clavix prompts clear --executed` → Remove completed prompts
+**Prompt Lifecycle:**
+1. **Optimize**: `/clavix:improve` → Analyzes and improves your prompt
+2. **Review**: Agent reads `.clavix/outputs/prompts/*.md` to list saved prompts
+3. **Execute**: `/clavix:execute` → Implement when ready
+4. **Cleanup**: Agent deletes old prompt files from `.clavix/outputs/prompts/`
 
 ---
 
@@ -94,10 +100,10 @@ PRD Creation → Task Planning → Implementation → Archive
 
 **Detailed steps:**
 
-1. **Planning Phase** - User creates PRD (conversational or direct)
-2. **Task Preparation** - `clavix plan` transforms PRD into tasks.md
-3. **Implementation Phase** - `clavix implement` executes tasks systematically
-4. **Completion** - `clavix archive` archives completed work
+1. **Planning Phase** - `/clavix:prd` or `/clavix:start` → `/clavix:summarize`
+2. **Task Preparation** - `/clavix:plan` transforms PRD into tasks.md
+3. **Implementation Phase** - `/clavix:implement` executes tasks systematically
+4. **Completion** - `/clavix:archive` archives completed work
 
 **Key principle:** Planning workflows create documents. Implementation workflows write code.
 
@@ -113,17 +119,17 @@ When analyzing prompts, consider these 5 dimensions:
 - **Completeness**: All specs provided (persona, format, tone, success criteria)?
 - **Actionability**: Can AI take immediate action?
 
-**Reference:** See `workflows/fast.md` for complete quality assessment patterns
+**Reference:** See `workflows/improve.md` for complete quality assessment patterns
 
 ---
 
 ## 💡 Best Practices for GitHub Copilot
 
-1. **Suggest appropriate workflow** - Fast for simple prompts, deep for complex, PRD for strategic
+1. **Suggest appropriate workflow** - `/clavix:improve` for prompts, `/clavix:prd` for strategic planning
 2. **Reference instruction files** - Point to `.clavix/instructions/workflows/*.md` instead of recreating steps
 3. **Respect mode boundaries** - Planning mode = no code, Implementation mode = write code
 4. **Use quality dimensions** - Apply 5-dimension assessment principles in responses
-5. **Guide users to CLI** - Recommend appropriate `clavix` commands for their needs
+5. **Guide users to slash commands** - Recommend appropriate `/clavix:*` commands for their needs
 
 ---
 
@@ -132,17 +138,17 @@ When analyzing prompts, consider these 5 dimensions:
 ### ❌ Jumping to implementation during planning
 **Wrong:** User discusses feature → Copilot generates code immediately
 
-**Right:** User discusses feature → Suggest `clavix prd` or `clavix start` → Create planning docs first
+**Right:** User discusses feature → Suggest `/clavix:prd` or `/clavix:start` → Create planning docs first
 
 ### ❌ Not suggesting Clavix workflows
 **Wrong:** User asks "How should I phrase this?" → Copilot provides generic advice
 
-**Right:** User asks "How should I phrase this?" → Suggest `clavix fast "<prompt>"` for quality assessment
+**Right:** User asks "How should I phrase this?" → Suggest `/clavix:improve` for quality assessment
 
 ### ❌ Recreating workflow steps inline
 **Wrong:** Copilot explains entire PRD generation process in chat
 
-**Right:** Copilot references `.clavix/instructions/workflows/prd.md` and suggests running `clavix prd`
+**Right:** Copilot references `.clavix/instructions/workflows/prd.md` and suggests running `/clavix:prd`
 
 ---
 
@@ -151,7 +157,7 @@ When analyzing prompts, consider these 5 dimensions:
 When users ask for help with prompts or requirements:
 
 1. **Detect need** - Identify if user needs planning, optimization, or implementation
-2. **Suggest command** - Recommend appropriate `clavix` command
+2. **Suggest slash command** - Recommend appropriate `/clavix:*` command
 3. **Explain benefit** - Describe expected output and value
 4. **Help interpret** - Assist with understanding Clavix-generated outputs
 5. **Apply principles** - Use quality dimensions in your responses
@@ -159,10 +165,10 @@ When users ask for help with prompts or requirements:
 **Example flow:**
 ```
 User: "I want to build a dashboard but I'm not sure how to phrase the requirements"
-Copilot: "I suggest running `clavix start` to begin conversational requirements gathering.
+Copilot: "I suggest running `/clavix:start` to begin conversational requirements gathering.
 This will help us explore your needs naturally, then we can extract structured requirements
-with `clavix summarize`. Alternatively, if you have a rough idea, try:
-clavix fast 'Build a dashboard for...' for quick optimization."
+with `/clavix:summarize`. Alternatively, if you have a rough idea, try:
+`/clavix:improve 'Build a dashboard for...'` for quick optimization."
 ```
 
 ---

@@ -137,12 +137,15 @@ PRD Creation → Task Planning → Implementation → Verification → Archive
 | `/clavix:verify` | Verification | Context-dependent |
 | `/clavix:archive` | Management | ✗ NO |
 
-### Agent-Only Commands (No Slash Command)
+### Agent Operations (v5 Agentic-First)
 
-| CLI Command | Purpose | Invoked By |
-|-------------|---------|------------|
-| `clavix analyze` | Internal prompt analysis | `improve` workflow |
-| `clavix task-complete` | Mark task done | `implement` workflow |
+In v5, agents use native tools (Write, Edit, Bash) instead of CLI commands:
+
+| Operation | How Agent Performs It |
+|-----------|----------------------|
+| Save prompt | Use Write tool to create `.clavix/outputs/prompts/<id>.md` |
+| Mark task done | Use Edit tool to change `- [ ]` to `- [x]` in tasks.md |
+| Archive project | Use Bash tool to move directory to archive/ |
 
 ---
 

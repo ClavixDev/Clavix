@@ -268,28 +268,26 @@ export default class Update extends Command {
 
 This project uses Clavix for prompt improvement and PRD generation.
 
-### Available Commands
-- \`clavix improve [prompt]\` - Unified prompt optimization with auto-depth selection
-- \`clavix improve --comprehensive [prompt]\` - Force comprehensive analysis
-- \`clavix improve --standard [prompt]\` - Force standard optimization
-- \`clavix analyze [prompt]\` - JSON analysis output for programmatic use
-- \`clavix prd\` - Generate a comprehensive PRD through guided questions
-- \`clavix start\` - Start a conversational session for iterative development
-- \`clavix summarize\` - Extract requirements from conversation history
-- \`clavix execute [--latest]\` - Execute saved prompts
-- \`clavix verify [--latest]\` - Verify implementation against checklist
+### Setup Commands (CLI)
+| Command | Purpose |
+|---------|---------|
+| \`clavix init\` | Initialize Clavix in a project |
+| \`clavix update\` | Update templates after package update |
+| \`clavix config\` | Manage configuration |
+| \`clavix version\` | Show version |
 
-### Quick Start
-\`\`\`bash
-# Prompt optimization (auto-selects depth)
-clavix improve "Build a user auth system"
-
-# Generate a PRD
-clavix prd
-
-# Start conversational mode
-clavix start
-\`\`\`
+### Workflow Commands (Slash Commands)
+| Slash Command | Purpose |
+|---------------|---------|
+| \`/clavix:improve\` | Optimize prompts (auto-selects depth) |
+| \`/clavix:prd\` | Generate PRD through guided questions |
+| \`/clavix:plan\` | Create task breakdown from PRD |
+| \`/clavix:implement\` | Execute tasks with progress tracking |
+| \`/clavix:start\` | Begin conversational session |
+| \`/clavix:summarize\` | Extract requirements from conversation |
+| \`/clavix:execute\` | Run saved prompts |
+| \`/clavix:verify\` | Verify implementation |
+| \`/clavix:archive\` | Archive completed projects |
 
 Learn more: https://github.com/clavixdev/clavix`;
   }

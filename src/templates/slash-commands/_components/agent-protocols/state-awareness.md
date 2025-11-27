@@ -19,10 +19,10 @@ Read: .clavix/outputs/{project}/.clavix-implement-config.json
 |-----------|-------|-------------|
 | Config missing, no PRD files | `NO_PROJECT` | Run /clavix:prd |
 | PRD exists, no tasks.md | `PRD_EXISTS` | Run /clavix:plan |
-| tasks.md exists, no config | `TASKS_EXIST` | Run clavix implement |
+| tasks.md exists, no config | `TASKS_EXIST` | Run /clavix:implement |
 | config.stats.remaining > 0 | `IMPLEMENTING` | Continue from currentTask |
 | config.stats.remaining == 0 | `ALL_COMPLETE` | Suggest /clavix:archive |
-| Project in archive/ directory | `ARCHIVED` | Use --restore to reactivate |
+| Project in archive/ directory | `ARCHIVED` | Move back from archive to restore |
 
 **Step 3: State assertion**
 Always output current state when starting a workflow:
@@ -54,22 +54,20 @@ NO_PROJECT:
 
 PRD_EXISTS:
   → /clavix:plan creates TASKS_EXIST
-  → clavix plan command creates TASKS_EXIST
 
 TASKS_EXIST:
-  → clavix implement initializes config → IMPLEMENTING
   → /clavix:implement starts tasks → IMPLEMENTING
 
 IMPLEMENTING:
-  → clavix task-complete reduces remaining
+  → Agent edits tasks.md (- [ ] → - [x]) reduces remaining
   → When remaining == 0 → ALL_COMPLETE
 
 ALL_COMPLETE:
-  → clavix archive moves to archive/ → ARCHIVED
+  → /clavix:archive moves to archive/ → ARCHIVED
   → Adding new tasks → back to IMPLEMENTING
 
 ARCHIVED:
-  → clavix archive --restore → back to previous state
+  → Agent moves project back from archive/ → back to previous state
 ```
 
 ### Prompt Lifecycle States (Separate from PRD)

@@ -21,7 +21,7 @@ When something goes wrong, help users gracefully. Always try to fix it yourself 
 #### Prompt Not Found
 **What happened:** User asked about a prompt that doesn't exist
 **You try first:**
-1. Run `clavix prompts list` to see what's available
+1. List files in `.clavix/outputs/prompts/` directory to see what's available
 2. Check if there's a similar prompt ID
 
 **Say:**
@@ -37,7 +37,7 @@ When something goes wrong, help users gracefully. Always try to fix it yourself 
 #### Task Not Found
 **What happened:** Tried to complete a task that doesn't exist
 **You try first:**
-1. Run `clavix implement --list` to get current tasks
+1. Read `tasks.md` file to get current tasks
 2. Check for typos in task ID
 
 **Say:**

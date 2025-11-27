@@ -33,8 +33,7 @@ See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 For complete step-by-step workflows, see `.clavix/instructions/`:
 - `.clavix/instructions/workflows/start.md` - Conversational mode
 - `.clavix/instructions/workflows/summarize.md` - Extract requirements
-- `.clavix/instructions/workflows/fast.md` - Quick prompt optimization
-- `.clavix/instructions/workflows/deep.md` - Comprehensive analysis
+- `.clavix/instructions/workflows/improve.md` - Prompt optimization (auto-depth)
 - `.clavix/instructions/workflows/prd.md` - PRD generation
 - `.clavix/instructions/troubleshooting/` - Common issues
 
@@ -47,25 +46,26 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 - Or run ad hoc: `npx clavix@latest init`
 - Verify setup: `clavix version`
 
-### Common commands
-- `clavix init` – interactive integration setup (regenerates docs & commands)
-- `clavix fast "<prompt>"` – quick quality assessment (5 dimensions) and improved prompt. CLI auto-saves; slash commands need manual saving per template instructions.
-- `clavix deep "<prompt>"` – comprehensive analysis with alternatives, edge cases, and validation checklists. CLI auto-saves; slash commands need manual saving per template instructions.
-- `clavix execute [--latest]` – execute saved prompts from fast/deep. Interactive selection or `--latest` for most recent.
-- `clavix prompts list` – view all saved prompts with age/status (NEW, EXECUTED, OLD, STALE)
-- `clavix prompts clear [--executed|--stale|--fast|--deep]` – cleanup executed or old prompts
-- `clavix prd` – answer focused questions to create full/quick PRDs
-- `clavix plan` – transform PRDs or sessions into task lists
-- `clavix implement [--commit-strategy=<type>]` – execute tasks (git: per-task, per-5-tasks, per-phase, none [default])
-- `clavix task-complete <taskId>` – mark task completed with validation and optional git commit
-- `clavix start` – capture requirement conversations in Warp
-- `clavix summarize [session-id]` – extract mini PRDs and optimized prompts
-- `clavix list` – list sessions/outputs (`--sessions`, `--outputs`, `--archived`)
-- `clavix show [session-id]` – inspect sessions or use `--output <project>`
-- `clavix archive [project]` – archive projects (or `--restore` to bring them back)
-- `clavix config get|set|edit|reset` – manage `.clavix/config.json`
-- `clavix update` – refresh documentation/commands (`--docs-only`, `--commands-only`)
-- `clavix version` – print installed CLI version
+### CLI Commands (v5)
+| Command | Purpose |
+|---------|---------|
+| `clavix init` | Initialize Clavix in a project |
+| `clavix update` | Update templates after package update |
+| `clavix config` | Manage configuration |
+| `clavix version` | Show version |
+
+### Slash Commands (Workflows)
+| Slash Command | Purpose |
+|---------------|---------|
+| `/clavix:improve` | Optimize prompts (auto-selects depth) |
+| `/clavix:prd` | Generate PRD through guided questions |
+| `/clavix:plan` | Create task breakdown from PRD |
+| `/clavix:implement` | Execute tasks with progress tracking |
+| `/clavix:start` | Begin conversational session |
+| `/clavix:summarize` | Extract requirements from conversation |
+| `/clavix:execute` | Run saved prompts |
+| `/clavix:verify` | Verify implementation |
+| `/clavix:archive` | Archive completed projects |
 
 ### Outputs
 - Project artifacts live under `.clavix/outputs/<project>/`
@@ -86,14 +86,14 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 ### ⚠️ Common Mistakes
 
 #### ❌ Jumping to implementation during planning
-**Wrong:** User runs `clavix prd`, you generate PRD then start building features
+**Wrong:** User runs `/clavix:prd`, you generate PRD then start building features
 
-**Right:** User runs `clavix prd`, you generate PRD, save files, suggest `clavix plan` as next step
+**Right:** User runs `/clavix:prd`, you generate PRD, save files, suggest `/clavix:plan` as next step
 
 #### ❌ Not referencing instruction files
 **Wrong:** Trying to remember workflow details from this file
 
-**Right:** "See `.clavix/instructions/workflows/fast.md` for complete workflow"
+**Right:** "See `.clavix/instructions/workflows/improve.md` for complete workflow"
 
 ---
 

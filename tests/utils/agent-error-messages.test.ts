@@ -16,14 +16,14 @@ describe('AgentErrorMessages', () => {
   it('noTasksFound scopes message to project name', () => {
     const message = AgentErrorMessages.noTasksFound('demo-project');
     expect(message).toContain('demo-project');
-    expect(message).toContain('clavix plan --project demo-project');
+    expect(message).toContain('/clavix:plan');
     expectHasRecoveryBlock(message);
   });
 
   it('configNotFound instructs agent to run implement', () => {
     const message = AgentErrorMessages.configNotFound();
     expect(message).toContain('Configuration file not found');
-    expect(message).toContain('clavix implement');
+    expect(message).toContain('/clavix:implement');
     expectHasRecoveryBlock(message);
   });
 
@@ -45,7 +45,11 @@ describe('AgentErrorMessages', () => {
   });
 
   it('fileOperationFailed includes path and optional error', () => {
-    const message = AgentErrorMessages.fileOperationFailed('write', '/tmp/file', 'permission denied');
+    const message = AgentErrorMessages.fileOperationFailed(
+      'write',
+      '/tmp/file',
+      'permission denied'
+    );
     expect(message).toContain('write');
     expect(message).toContain('/tmp/file');
     expect(message).toContain('permission denied');
@@ -75,7 +79,7 @@ describe('AgentErrorMessages', () => {
     const message = AgentErrorMessages.noArchivableProjects();
     expect(message).toContain('No archivable projects found');
     expect(message).toContain('.clavix/outputs');
-    expect(message).toContain('clavix archive --list');
+    expect(message).toContain('.clavix/outputs/archive/');
   });
 
   it('restoreConflict references conflicting project', () => {

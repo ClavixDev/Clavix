@@ -20,9 +20,10 @@ Clavix workflows optimized for Octofriend's capabilities: model switching, multi
 - ❌ DO NOT implement features during these workflows
 
 **IMPLEMENTATION workflows** (CODE ALLOWED):
-- `/clavix:implement`, `/clavix:execute`, `clavix task-complete`
+- `/clavix:implement`, `/clavix:execute`
 - Your role: Write code, execute tasks, implement features
 - ✅ DO implement code during these workflows
+- Mark task completion by editing tasks.md directly (`- [ ]` → `- [x]`)
 
 See `.clavix/instructions/core/clavix-mode.md` for complete mode documentation.
 
@@ -115,35 +116,40 @@ Autofix handles edge cases gracefully - let it work.
 
 ---
 
-## 📋 CLI Quick Reference
+## 📋 Clavix Commands (v5)
 
-| Command | Purpose | Output |
-|---------|---------|--------|
-| `clavix init` | Setup Clavix in project | `.clavix/config.json` |
-| `clavix prd` | Generate PRD through questions | `full-prd.md` + `quick-prd.md` |
-| `clavix fast "<prompt>"` | Quick prompt improvement (CLI auto-saves prompts; Slash commands require manual saving per template instructions) | Saved to `.clavix/outputs/prompts/fast/` |
-| `clavix deep "<prompt>"` | Comprehensive analysis (CLI auto-saves prompts; Slash commands require manual saving per template instructions) | Saved to `.clavix/outputs/prompts/deep/` |
-| `clavix execute [--latest]` | Execute prompt (interactive or --latest for most recent) | Implementation |
-| `clavix prompts list` | View all saved prompts with status | NEW, EXECUTED, OLD, STALE |
-| `clavix prompts clear` | Manage cleanup (--executed, --stale, --fast, --deep, --all) | Cleanup report |
-| `clavix start` | Conversational requirements | Session captured |
-| `clavix summarize` | Extract from conversation | `mini-prd.md` + prompts |
-| `clavix plan` | Generate tasks from PRD | `tasks.md` |
-| `clavix implement` | Execute tasks | Implementation + commits |
-| `clavix list` | Show sessions/outputs | List view |
-| `clavix update` | Refresh documentation | Updates managed files |
+### Setup Commands (CLI)
+| Command | Purpose |
+|---------|---------|
+| `clavix init` | Initialize Clavix in a project |
+| `clavix update` | Update templates after package update |
+| `clavix config` | Manage configuration |
+| `clavix version` | Show version |
+
+### Workflow Commands (Slash Commands)
+| Slash Command | Purpose |
+|---------------|---------|
+| `/clavix:improve` | Optimize prompts (auto-selects depth) |
+| `/clavix:prd` | Generate PRD through questions |
+| `/clavix:plan` | Create task breakdown from PRD |
+| `/clavix:implement` | Execute tasks with progress tracking |
+| `/clavix:start` | Begin conversational session |
+| `/clavix:summarize` | Extract requirements from conversation |
+| `/clavix:execute` | Run saved prompts |
+| `/clavix:verify` | Verify implementation |
+| `/clavix:archive` | Archive completed projects |
 
 ---
 
 ## 🔄 Prompt Execution Workflow
 
-**When you have a saved prompt to execute prompt:**
+**When you have a saved prompt to execute:**
 
-1. **List available prompts**: `clavix prompts list` - See all saved prompts with status
-2. **execute prompt**: `clavix execute --latest` - implement saved prompt interactively
-3. **implement saved prompt**: Agent executes the optimized prompt and implements the feature
+1. **List available prompts**: List files in `.clavix/outputs/prompts/*.md`
+2. **Execute prompt**: `/clavix:execute` - implement saved prompt
+3. **Implement**: Agent reads the optimized prompt and implements the feature
 
-**Note:** CLI auto-saves prompts from fast/deep commands. Slash commands require manual saving per template instructions.
+**Note:** Slash commands save prompts as `.md` files with frontmatter metadata.
 
 ---
 
@@ -151,26 +157,25 @@ Autofix handles edge cases gracefully - let it work.
 
 **Complete project flow:**
 
-1. **Planning** (`clavix prd`)
+1. **Planning** (`/clavix:prd`)
    - Creates PRD (full + quick versions)
    - Saves to `.clavix/outputs/{project}/`
 
-2. **Task Preparation** (`clavix plan`)
+2. **Task Preparation** (`/clavix:plan`)
    - Transforms PRD → curated tasks.md
    - Phase-based organization
 
-3. **Implementation** (`clavix implement`)
+3. **Implementation** (`/clavix:implement`)
    - Agent executes tasks systematically
-   - Uses `clavix task-complete` for progress
+   - Marks progress by editing tasks.md (`- [ ]` → `- [x]`)
    - Optional git commit strategies
 
-4. **Completion** (`clavix archive`)
+4. **Completion** (`/clavix:archive`)
    - Archives completed project
 
 **Alternative quick paths:**
-- **Quick improvement**: `clavix fast` → `clavix execute` → Done
-- **Deep analysis**: `clavix deep` → `clavix execute` → Done
-- **Conversational**: `clavix start` → `clavix summarize` → `clavix execute` → Done
+- **Quick improvement**: `/clavix:improve` → `/clavix:execute` → Done
+- **Conversational**: `/clavix:start` → `/clavix:summarize` → `/clavix:execute` → Done
 
 ---
 
@@ -189,9 +194,9 @@ Autofix handles edge cases gracefully - let it work.
 ## ⚠️ Common Mistakes
 
 ### ❌ Implementing during planning workflows
-**Wrong:** User runs `clavix prd`, you generate PRD then start building features
+**Wrong:** User runs `/clavix:prd`, you generate PRD then start building features
 
-**Right:** User runs `clavix prd`, you generate PRD, save files, suggest `clavix plan` as next step
+**Right:** User runs `/clavix:prd`, you generate PRD, save files, suggest `/clavix:plan` as next step
 
 ### ❌ Skipping file creation
 **Wrong:** Display optimized prompt, stop there
@@ -201,7 +206,7 @@ Autofix handles edge cases gracefully - let it work.
 ### ❌ Not referencing instruction files
 **Wrong:** Trying to remember workflow details from this file
 
-**Right:** "See `.clavix/instructions/workflows/fast.md` for complete workflow"
+**Right:** "See `.clavix/instructions/workflows/improve.md` for complete workflow"
 
 ### ❌ Using wrong model for task
 **Wrong:** Using fast model for complex architectural planning
@@ -212,9 +217,9 @@ Autofix handles edge cases gracefully - let it work.
 
 ## 🆘 When in Doubt
 
-1. **Check which command was run** - Determines your mode (planning vs implementation)
+1. **Check which slash command was run** - Determines your mode (planning vs implementation)
 2. **Reference instruction files** - They have complete step-by-step guidance
-3. **Ask the user** - "Should I implement this (run `clavix implement`), or continue planning?"
+3. **Ask the user** - "Should I implement this (run `/clavix:implement`), or continue planning?"
 4. **Switch models** - Use thinking models for complex planning tasks
 
 ---

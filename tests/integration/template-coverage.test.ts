@@ -155,10 +155,10 @@ describe('Template Coverage - Integration', () => {
       expect(fs.existsSync(copilotPath)).toBe(true);
     });
 
-    it('should have Prompt Lifecycle Management section', () => {
+    it('should have Prompt Lifecycle Workflow section', () => {
       const content = fs.readFileSync(copilotPath, 'utf-8');
 
-      expect(content).toContain('Prompt Lifecycle Management');
+      expect(content).toContain('Prompt Lifecycle Workflow');
     });
 
     it('should document complete lifecycle workflow', () => {

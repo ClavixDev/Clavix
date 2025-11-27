@@ -80,7 +80,7 @@ At key workflow stages, verify your execution matches expected state. These chec
 **CHECKPOINT 2: After Each Task**
 ```
 ✓ Task completed successfully
-✓ clavix task-complete {task-id} called
+✓ tasks.md edited: - [ ] changed to - [x] for completed task
 ✓ Next task displayed automatically
 ```
 

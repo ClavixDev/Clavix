@@ -19,7 +19,7 @@ export class AgentErrorMessages {
       'Agent recovery options:\n' +
       '  1. Execute /clavix:prd to generate comprehensive PRD\n' +
       '  2. Execute /clavix:summarize if conversation exists\n' +
-      '  3. Use clavix plan --session <id> if saved session available\n\n' +
+      '  3. Check .clavix/sessions/ if saved session available\n\n' +
       'Select option and execute, then retry this command.'
     );
   }
@@ -32,8 +32,8 @@ export class AgentErrorMessages {
     return (
       `No tasks.md found for project: ${projectName}\n\n` +
       'Agent recovery options:\n' +
-      `  1. Execute: clavix plan --project ${projectName}\n` +
-      '  2. Or execute /clavix:plan to generate interactively\n\n' +
+      `  1. Execute /clavix:plan to generate task breakdown\n` +
+      '  2. Or read PRD and generate tasks.md manually\n\n' +
       'After task generation completes, retry implementation.'
     );
   }
@@ -46,10 +46,9 @@ export class AgentErrorMessages {
     return (
       'Configuration file not found: .clavix-implement-config.json\n\n' +
       'Agent recovery:\n' +
-      '  1. Run: clavix implement\n' +
-      '  2. Wait for user to select git strategy\n' +
-      '  3. Config will be created automatically\n' +
-      '  4. Then retry task completion\n\n' +
+      '  1. Execute /clavix:implement to initialize implementation\n' +
+      '  2. Config will be created automatically\n' +
+      '  3. Then retry task completion\n\n' +
       'This is expected on first run.'
     );
   }
@@ -58,9 +57,12 @@ export class AgentErrorMessages {
    * Error: Specified task ID not found in tasks.md
    * Used by: task-complete.ts
    */
-  static taskNotFound(taskId: string, availableTasks: Array<{ id: string; description: string; completed: boolean }>): string {
+  static taskNotFound(
+    taskId: string,
+    availableTasks: Array<{ id: string; description: string; completed: boolean }>
+  ): string {
     const taskList = availableTasks
-      .map(t => {
+      .map((t) => {
         const status = t.completed ? '[x]' : '[ ]';
         return `  ${status} ${t.id} - ${t.description}`;
       })
@@ -69,7 +71,8 @@ export class AgentErrorMessages {
     return (
       `Task ID not found: ${taskId}\n\n` +
       'Available task IDs:\n' +
-      taskList + '\n\n' +
+      taskList +
+      '\n\n' +
       'Select a valid task ID from the list above and retry.'
     );
   }
@@ -93,7 +96,11 @@ export class AgentErrorMessages {
    * Error: File operation failed (write, read, move, delete)
    * Used by: Multiple commands performing file operations
    */
-  static fileOperationFailed(operation: 'read' | 'write' | 'move' | 'delete', path: string, error?: string): string {
+  static fileOperationFailed(
+    operation: 'read' | 'write' | 'move' | 'delete',
+    path: string,
+    error?: string
+  ): string {
     const errorDetail = error ? `\nError: ${error}` : '';
 
     return (
@@ -116,7 +123,8 @@ export class AgentErrorMessages {
 
     return (
       'Multiple PRD projects found:\n\n' +
-      projectList + '\n\n' +
+      projectList +
+      '\n\n' +
       'Agent recovery options:\n' +
       '  1. Specify project explicitly: --project <name>\n' +
       '  2. Or run CLI in interactive mode to let user select\n\n' +
@@ -166,8 +174,8 @@ export class AgentErrorMessages {
       '  • All projects already archived\n' +
       '  • No projects with completed tasks\n\n' +
       'Agent recovery options:\n' +
-      '  1. Run: clavix archive --list to see archived projects\n' +
-      '  2. Check: .clavix/outputs/ for active projects\n' +
+      '  1. List .clavix/outputs/archive/ to see archived projects\n' +
+      '  2. Check .clavix/outputs/ for active projects\n' +
       '  3. Or create new PRD with /clavix:prd'
     );
   }

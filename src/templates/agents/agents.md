@@ -66,36 +66,38 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 
 ---
 
-## 📋 CLI Quick Reference
+## 📋 Clavix Commands (v5)
 
+### Setup Commands (CLI)
 | Command | Purpose |
 |---------|---------|
-| `clavix init` | Interactive setup with integration selection |
-| `clavix improve "<prompt>"` | Unified optimization with auto-depth selection |
-| `clavix improve --comprehensive "<prompt>"` | Force comprehensive analysis |
-| `clavix improve --standard "<prompt>"` | Force standard optimization |
-| `clavix analyze "<prompt>"` | JSON analysis output for programmatic use |
-| `clavix execute [--latest]` | Execute saved prompts (interactive or --latest) |
-| `clavix verify [--latest]` | Verify implementation against checklist |
-| `clavix prompts list` | View saved prompts with status (NEW, EXECUTED, OLD, STALE) |
-| `clavix prompts clear` | Manage cleanup (--executed, --stale, --standard, --comprehensive, --all) |
-| `clavix prd` | Guided PRD generation → `full-prd.md` + `quick-prd.md` |
-| `clavix plan` | Transform PRD → phase-based `tasks.md` |
-| `clavix implement [--commit-strategy=<type>]` | Execute tasks (git strategies: per-task, per-5-tasks, per-phase, none) |
-| `clavix start` | Begin conversational session |
-| `clavix summarize [session-id]` | Extract PRD from session |
-| `clavix list` | List sessions and outputs |
-| `clavix archive [project]` | Archive/restore completed projects |
-| `clavix update` | Refresh documentation |
+| `clavix init` | Initialize Clavix in a project |
+| `clavix update` | Update templates after package update |
+| `clavix config` | Manage configuration |
+| `clavix version` | Show version |
+
+### Workflow Commands (Slash Commands)
+All workflows are executed via slash commands that AI agents read and follow:
+
+| Slash Command | Purpose |
+|---------------|---------|
+| `/clavix:improve` | Optimize prompts (auto-selects depth) |
+| `/clavix:prd` | Generate PRD through guided questions |
+| `/clavix:plan` | Create task breakdown from PRD |
+| `/clavix:implement` | Execute tasks with progress tracking |
+| `/clavix:start` | Begin conversational session |
+| `/clavix:summarize` | Extract requirements from conversation |
+| `/clavix:execute` | Run saved prompts |
+| `/clavix:verify` | Verify implementation |
+| `/clavix:archive` | Archive completed projects |
 
 **Quick start:**
 ```bash
 npm install -g clavix
 clavix init
-clavix version
 ```
 
-**Save behavior:** CLI auto-saves prompts to `.clavix/outputs/`. When using slash commands, the agent must save manually per template instructions (no automatic persistence).
+**How it works:** Slash commands are markdown templates. When invoked, the agent reads the template and follows its instructions using native tools (Read, Write, Edit, Bash).
 
 ---
 
@@ -110,23 +112,23 @@ PRD Creation → Task Planning → Implementation → Archive
 **Detailed steps:**
 
 1. **Planning Phase**
-   - Run: User uses conversational mode or direct PRD generation
+   - Run: `/clavix:prd` or `/clavix:start` → `/clavix:summarize`
    - Output: `.clavix/outputs/{project}/full-prd.md` + `quick-prd.md`
    - Mode: PLANNING
 
 2. **Task Preparation**
-   - Run: `clavix plan` transforms PRD into curated task list
+   - Run: `/clavix:plan` transforms PRD into curated task list
    - Output: `.clavix/outputs/{project}/tasks.md`
    - Mode: PLANNING (Pre-Implementation)
 
 3. **Implementation Phase**
-   - Run: `clavix implement [--commit-strategy=<type>]`
+   - Run: `/clavix:implement`
    - Agent executes tasks systematically
    - Mode: IMPLEMENTATION
-   - Uses `clavix task-complete <taskId>` to mark progress
+   - Agent edits tasks.md directly to mark progress (`- [ ]` → `- [x]`)
 
 4. **Completion**
-   - Run: `clavix archive [project]`
+   - Run: `/clavix:archive`
    - Archives completed work
    - Mode: Management
 
@@ -167,7 +169,7 @@ PRD Creation → Task Planning → Implementation → Archive
 ### ❌ Recreating workflow instructions inline
 **Wrong:** Copy entire fast mode workflow into response
 
-**Right:** Reference `.clavix/instructions/workflows/fast.md` and follow its steps
+**Right:** Reference `.clavix/instructions/workflows/improve.md` and follow its steps
 
 ### ❌ Not using instruction files
 **Wrong:** Make up workflow steps or guess at process

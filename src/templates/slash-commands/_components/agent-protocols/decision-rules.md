@@ -66,14 +66,14 @@ IF escalation_score < 45:
 
 ```
 AFTER implementing task:
-  → RUN: clavix task-complete {task-id}
-  → NEVER manually edit tasks.md checkboxes
+  → EDIT tasks.md: Change - [ ] to - [x] for completed task
+  → Use Edit tool to update the checkbox
 
-IF task-complete succeeds:
+IF edit succeeds:
   → SHOW: Next task automatically
   → CONTINUE with next task
 
-IF task-complete fails:
+IF edit fails:
   → SHOW error to user
   → ASK: "Task completion failed: [error]. How to proceed?"
 ```
@@ -92,7 +92,7 @@ BEFORE starting /clavix:implement:
     → SAY: "All tasks complete. Consider /clavix:archive"
 
   IF not exists:
-    → RUN: clavix implement (to initialize)
+    → CREATE config file and start implementation
 ```
 
 ### Rule 6: File Operations
@@ -158,7 +158,6 @@ IF any verification fails:
 
 AFTER optimization complete:
   → MUST save prompt to .clavix/outputs/prompts/
-  → MUST update index file
   → SHOW: "✓ Prompt saved: [filename]"
 ```
 
