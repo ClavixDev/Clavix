@@ -10,7 +10,7 @@ Clavix v5 follows an **agentic-first architecture**. This means:
 
 1. **You execute workflows directly** using your native tools (Write, Read, Edit, Bash)
 2. **Slash commands are templates** that you read and follow - not CLI commands
-3. **CLI commands are ONLY for setup** (`clavix init`, `clavix update`, `clavix config`)
+3. **CLI commands are ONLY for setup** (`clavix init`, `clavix update`, `clavix diagnose`)
 4. **You save outputs to `.clavix/outputs/`** using your Write tool
 
 **DO NOT:**

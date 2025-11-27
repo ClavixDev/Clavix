@@ -72,26 +72,24 @@ For smaller features or quick improvements:
 After optimizing prompts with `fast` or `deep`:
 
 ### Review saved prompts
-1. Run [`clavix prompts list`](../commands/prompts.md) to view all saved prompts
-2. Check execution status (○ NEW / ✓ EXECUTED)
-3. Note age warnings ([OLD] / [STALE])
-4. Review storage statistics and cleanup recommendations
+1. View saved prompts: `ls .clavix/outputs/prompts/`
+2. Check prompt frontmatter for execution status (`executed: false`)
+3. Review prompt IDs and timestamps
 
 ### Execute when ready
-1. **Quick execution**: `clavix execute --latest` (auto-selects most recent)
-2. **Filtered execution**: `clavix execute --latest --fast` (or `--deep`)
-3. **Interactive selection**: `clavix execute` (choose from list)
-4. **Specific prompt**: `clavix execute --id <prompt-id>`
+Use the `/clavix:implement` slash command:
+1. **Quick execution**: `/clavix:implement --latest` (auto-selects most recent prompt)
+2. **Task mode**: `/clavix:implement --tasks` (execute tasks from tasks.md)
 
-The command displays full optimized prompt and marks it as executed.
+The agent reads the optimized prompt and implements it.
 
 ### Clean up prompts
-1. **Safe cleanup**: `clavix prompts clear --executed` (removes already-used prompts)
-2. **Stale cleanup**: `clavix prompts clear --stale` (>30 days old)
-3. **Source cleanup**: `clavix prompts clear --fast` or `--deep`
-4. **Interactive**: `clavix prompts clear` (menu-driven selection)
+Delete old prompt files directly:
+```bash
+rm .clavix/outputs/prompts/executed-*.md
+```
 
-**Best practice**: After executing prompts, run `clavix prompts clear --executed` to keep storage lean.
+**Best practice**: After implementing prompts, delete the executed files to keep storage lean.
 
 ## 2. Plan implementation
 
@@ -123,8 +121,8 @@ Use `--no-git` flag with `task-complete` to skip commits for specific tasks.
 
 ## 5. Maintain configuration
 
-- Manage project preferences with [`clavix config`](../commands/config.md).
-- Re-run [`clavix init`](../commands/init.md) if you add providers or need to rebuild the `.clavix` directory structure.
+- Re-run [`clavix init`](../commands/init.md) to reconfigure integrations or rebuild the `.clavix` directory structure.
+- Use [`clavix diagnose`](../commands/diagnose.md) to check installation health and troubleshoot issues.
 
 ## Tips
 

@@ -12,7 +12,7 @@
 
 | Version | Highlights | Details |
 | --- | --- | --- |
-| **v5.2.0** (Latest) | Diagnose command, DRY architecture, feature matrix | [Changelog](CHANGELOG.md) |
+| **v5.2.1** (Latest) | Diagnose command, DRY architecture, feature matrix | [Changelog](CHANGELOG.md) |
 | **v5.0.0** | Agentic-first architecture - lean template delivery | [Changelog](CHANGELOG.md#500---2025-01-27) |
 | **v4.12.0** | Final v4 release with full CLI commands | [Changelog](docs/archive/v4-changelog.md) |
 
@@ -113,13 +113,12 @@ clavix update   # After npm update clavix
 
 ## CLI Commands
 
-Clavix v5 has 5 CLI commands (for setup and diagnostics, not workflows):
+Clavix v5 has 4 CLI commands (for setup and diagnostics, not workflows):
 
 | Command | Purpose |
 |---------|---------|
-| `clavix init` | Initialize Clavix in a project |
+| `clavix init` | Initialize or reconfigure Clavix in a project |
 | `clavix update` | Update templates after package update |
-| `clavix config` | Manage configuration |
 | `clavix diagnose` | Check installation and report issues |
 | `clavix version` | Show version |
 

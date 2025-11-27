@@ -12,6 +12,7 @@ import {
   migrateConfig,
   isLegacyConfig,
 } from '../../src/types/config';
+import { CLAVIX_VERSION } from '../../src/utils/version';
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { fileURLToPath } from 'url';
 
@@ -126,7 +127,7 @@ describe('Config Resilience', () => {
 
     it('should handle corrupted UTF-8 encoding', async () => {
       // Write binary data that's not valid UTF-8
-      await fs.writeFile(configPath, Buffer.from([0xFF, 0xFE, 0xFF, 0xFE]));
+      await fs.writeFile(configPath, Buffer.from([0xff, 0xfe, 0xff, 0xfe]));
 
       const content = await fs.readFile(configPath, 'utf-8');
 
@@ -299,7 +300,7 @@ describe('Config Resilience', () => {
 
       const migrated = migrateConfig(legacy);
 
-      expect(migrated.version).toBe('3.5.0');
+      expect(migrated.version).toBe(CLAVIX_VERSION);
       expect(migrated.integrations).toEqual(['claude-code']);
       expect('agent' in migrated).toBe(false);
     });
@@ -445,13 +446,7 @@ describe('Config Resilience', () => {
       const isValid = (config: unknown): config is ClavixConfig => {
         if (!config || typeof config !== 'object') return false;
         const c = config as Partial<ClavixConfig>;
-        return !!(
-          c.version &&
-          c.integrations &&
-          c.templates &&
-          c.outputs &&
-          c.preferences
-        );
+        return !!(c.version && c.integrations && c.templates && c.outputs && c.preferences);
       };
 
       expect(isValid(DEFAULT_CONFIG)).toBe(true);
@@ -464,9 +459,9 @@ describe('Config Resilience', () => {
       const invalid1: ClavixConfig = { ...DEFAULT_CONFIG, integrations: [''] };
       const invalid2 = { ...DEFAULT_CONFIG, integrations: [123] };
 
-      expect(valid.integrations.every(p => typeof p === 'string' && p.length > 0)).toBe(true);
-      expect(invalid1.integrations.every(p => typeof p === 'string' && p.length > 0)).toBe(false);
-      expect(invalid2.integrations.every(p => typeof p === 'string')).toBe(false);
+      expect(valid.integrations.every((p) => typeof p === 'string' && p.length > 0)).toBe(true);
+      expect(invalid1.integrations.every((p) => typeof p === 'string' && p.length > 0)).toBe(false);
+      expect(invalid2.integrations.every((p) => typeof p === 'string')).toBe(false);
     });
   });
 

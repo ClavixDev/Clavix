@@ -6,7 +6,7 @@ Each Clavix command is documented in its own file under this directory. Every en
 
 - [clavix init](init.md) - Initialize Clavix in a project
 - [clavix update](update.md) - Update templates after package update
-- [clavix config](config.md) - Manage configuration
+- [clavix diagnose](diagnose.md) - Check installation health
 - [clavix version](version.md) - Show version
 
 ## Slash Commands (Workflow)
@@ -28,11 +28,5 @@ These commands are executed via slash commands that AI agents read and follow:
 ### Verification & Cleanup
 - /clavix:verify - Verify implementation
 - [/clavix:archive](archive.md) - Archive completed projects
-
-## Utility Commands
-
-- [clavix list](list.md) - List projects or prompts
-- [clavix show](show.md) - Show project details
-- [clavix task-complete](task-complete.md) - Mark tasks complete
 
 Use these documents alongside the guide section for deeper context on configuration and end-to-end workflows.

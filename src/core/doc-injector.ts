@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { FileSystem } from '../utils/file-system.js';
 import { DataError } from '../types/errors.js';
+import { escapeRegex } from '../utils/string-utils.js';
 
 export interface ManagedBlockOptions {
   startMarker: string;
@@ -48,7 +49,7 @@ export class DocInjector {
 
     // Build the managed block
     const blockRegex = new RegExp(
-      `${this.escapeRegex(opts.startMarker)}[\\s\\S]*?${this.escapeRegex(opts.endMarker)}`,
+      `${escapeRegex(opts.startMarker)}[\\s\\S]*?${escapeRegex(opts.endMarker)}`,
       'g'
     );
 
@@ -102,10 +103,7 @@ export class DocInjector {
     }
 
     const content = await FileSystem.readFile(filePath);
-    const blockRegex = new RegExp(
-      `${this.escapeRegex(start)}[\\s\\S]*?${this.escapeRegex(end)}`,
-      'g'
-    );
+    const blockRegex = new RegExp(`${escapeRegex(start)}[\\s\\S]*?${escapeRegex(end)}`, 'g');
 
     return blockRegex.test(content);
   }
@@ -126,10 +124,7 @@ export class DocInjector {
     }
 
     const content = await FileSystem.readFile(filePath);
-    const blockRegex = new RegExp(
-      `${this.escapeRegex(start)}([\\s\\S]*?)${this.escapeRegex(end)}`,
-      'g'
-    );
+    const blockRegex = new RegExp(`${escapeRegex(start)}([\\s\\S]*?)${escapeRegex(end)}`, 'g');
 
     const match = blockRegex.exec(content);
     return match ? match[1].trim() : null;
@@ -151,10 +146,7 @@ export class DocInjector {
     }
 
     const content = await FileSystem.readFile(filePath);
-    const blockRegex = new RegExp(
-      `${this.escapeRegex(start)}[\\s\\S]*?${this.escapeRegex(end)}\\n?`,
-      'g'
-    );
+    const blockRegex = new RegExp(`${escapeRegex(start)}[\\s\\S]*?${escapeRegex(end)}\\n?`, 'g');
 
     if (blockRegex.test(content)) {
       await FileSystem.backup(filePath);
@@ -168,13 +160,6 @@ export class DocInjector {
    */
   private static wrapContent(content: string, startMarker: string, endMarker: string): string {
     return `${startMarker}\n${content}\n${endMarker}`;
-  }
-
-  /**
-   * Escape special regex characters
-   */
-  private static escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   /**

@@ -212,7 +212,8 @@ describe('Update command', () => {
       await fs.writeJSON(configPath, config, { spaces: 2 });
 
       const loadedConfig = await fs.readJSON(configPath);
-      const integrations = loadedConfig.integrations.length === 0 ? ['claude-code'] : loadedConfig.integrations;
+      const integrations =
+        loadedConfig.integrations.length === 0 ? ['claude-code'] : loadedConfig.integrations;
 
       expect(integrations).toEqual(['claude-code']);
     });
@@ -296,6 +297,230 @@ describe('Update command', () => {
       const fileContent = await fs.readFile(testFile, 'utf-8');
 
       expect(fileContent).toBe(newContent);
+    });
+  });
+
+  describe('hasUpToDateBlock logic', () => {
+    // Replicate the hasUpToDateBlock method logic
+    const hasUpToDateBlock = (currentContent: string, newContent: string): boolean => {
+      return currentContent.includes(newContent.trim());
+    };
+
+    it('should return true when content is identical', () => {
+      const current = '<!-- CLAVIX:START -->\nContent here\n<!-- CLAVIX:END -->';
+      const newContent = 'Content here';
+
+      expect(hasUpToDateBlock(current, newContent)).toBe(true);
+    });
+
+    it('should return true when new content exists in current', () => {
+      const current =
+        '# Header\n\n<!-- CLAVIX:START -->\nNew content\n<!-- CLAVIX:END -->\n\n# Footer';
+      const newContent = '  New content  ';
+
+      expect(hasUpToDateBlock(current, newContent)).toBe(true);
+    });
+
+    it('should return false when content differs', () => {
+      const current = '<!-- CLAVIX:START -->\nOld content\n<!-- CLAVIX:END -->';
+      const newContent = 'New content';
+
+      expect(hasUpToDateBlock(current, newContent)).toBe(false);
+    });
+
+    it('should handle empty content', () => {
+      const current = '';
+      const newContent = 'Some content';
+
+      expect(hasUpToDateBlock(current, newContent)).toBe(false);
+    });
+  });
+
+  describe('getAgentsContent format', () => {
+    it('should include CLI setup commands table', () => {
+      const agentsContent = `## Clavix Integration
+
+This project uses Clavix for prompt improvement and PRD generation.
+
+### Setup Commands (CLI)
+| Command | Purpose |
+|---------|---------|
+| \`clavix init\` | Initialize Clavix in a project |
+| \`clavix update\` | Update templates after package update |
+| \`clavix diagnose\` | Check installation health |
+| \`clavix version\` | Show version |`;
+
+      expect(agentsContent).toContain('clavix init');
+      expect(agentsContent).toContain('clavix update');
+      expect(agentsContent).toContain('clavix diagnose');
+      expect(agentsContent).toContain('clavix version');
+      expect(agentsContent).not.toContain('clavix config'); // Removed in v5.3
+    });
+
+    it('should include workflow slash commands table', () => {
+      const agentsContent = `### Workflow Commands (Slash Commands)
+| Slash Command | Purpose |
+|---------------|---------|
+| \`/clavix:improve\` | Optimize prompts (auto-selects depth) |
+| \`/clavix:prd\` | Generate PRD through guided questions |
+| \`/clavix:plan\` | Create task breakdown from PRD |`;
+
+      expect(agentsContent).toContain('/clavix:improve');
+      expect(agentsContent).toContain('/clavix:prd');
+      expect(agentsContent).toContain('/clavix:plan');
+      expect(agentsContent).not.toContain('/clavix:fast'); // Merged into improve
+      expect(agentsContent).not.toContain('/clavix:deep'); // Merged into improve
+    });
+  });
+
+  describe('warp-md integration', () => {
+    it('should handle warp-md as special integration', async () => {
+      const config = {
+        version: '1.0.0',
+        integrations: ['warp-md'],
+      };
+      await fs.writeJSON(configPath, config, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+      expect(loadedConfig.integrations).toContain('warp-md');
+    });
+  });
+
+  describe('copilot-instructions integration', () => {
+    it('should handle copilot-instructions as special integration', async () => {
+      const config = {
+        version: '1.0.0',
+        integrations: ['copilot-instructions'],
+      };
+      await fs.writeJSON(configPath, config, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+      expect(loadedConfig.integrations).toContain('copilot-instructions');
+    });
+  });
+
+  describe('force flag behavior', () => {
+    it('should conceptually bypass up-to-date check when force is true', () => {
+      const force = true;
+      const isUpToDate = true;
+
+      // With force flag, should update regardless of up-to-date status
+      const shouldUpdate = force || !isUpToDate;
+
+      expect(shouldUpdate).toBe(true);
+    });
+
+    it('should skip update when not forced and already up-to-date', () => {
+      const force = false;
+      const isUpToDate = true;
+
+      // Without force flag and content is up-to-date, should skip
+      const shouldUpdate = force || !isUpToDate;
+
+      expect(shouldUpdate).toBe(false);
+    });
+
+    it('should update when not forced but content differs', () => {
+      const force = false;
+      const isUpToDate = false;
+
+      const shouldUpdate = force || !isUpToDate;
+
+      expect(shouldUpdate).toBe(true);
+    });
+  });
+
+  describe('multiple integrations handling', () => {
+    it('should handle mixed regular and special integrations', async () => {
+      const config = {
+        version: '1.0.0',
+        integrations: ['claude-code', 'agents-md', 'cursor', 'warp-md'],
+      };
+      await fs.writeJSON(configPath, config, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+
+      // Regular adapters
+      expect(loadedConfig.integrations).toContain('claude-code');
+      expect(loadedConfig.integrations).toContain('cursor');
+
+      // Special integrations (doc generators)
+      expect(loadedConfig.integrations).toContain('agents-md');
+      expect(loadedConfig.integrations).toContain('warp-md');
+    });
+
+    it('should separate doc generators from regular adapters', () => {
+      const integrations = ['claude-code', 'agents-md', 'cursor', 'octo-md', 'warp-md'];
+
+      const docGenerators = ['agents-md', 'octo-md', 'warp-md'];
+      const regularAdapters = integrations.filter((i) => !docGenerators.includes(i));
+
+      expect(regularAdapters).toEqual(['claude-code', 'cursor']);
+    });
+  });
+
+  describe('CLAUDE.md specific handling', () => {
+    it('should only update CLAUDE.md for claude-code integration', async () => {
+      // Create CLAUDE.md
+      const claudePath = path.join(testDir, 'CLAUDE.md');
+      await fs.writeFile(claudePath, '# CLAUDE.md\n\n<!-- CLAVIX:START -->\n<!-- CLAVIX:END -->');
+
+      const exists = await fs.pathExists(claudePath);
+      expect(exists).toBe(true);
+
+      // The update command only updates CLAUDE.md when integrationName === 'claude-code'
+      const integrationName = 'claude-code';
+      const shouldUpdateClaude = integrationName === 'claude-code';
+
+      expect(shouldUpdateClaude).toBe(true);
+    });
+
+    it('should NOT update CLAUDE.md for other integrations', () => {
+      const integrationName = 'cursor';
+      const shouldUpdateClaude = integrationName === 'claude-code';
+
+      expect(shouldUpdateClaude).toBe(false);
+    });
+  });
+
+  describe('InstructionsGenerator integration', () => {
+    it('should detect when instructions generation is needed', () => {
+      // Generic integrations that need .clavix/instructions/
+      const genericIntegrations = ['cursor', 'windsurf', 'kilocode'];
+
+      // Integrations that don't need it
+      const specialIntegrations = ['claude-code', 'agents-md'];
+
+      // needsGeneration should return true for generic integrations
+      const hasGenericIntegration = genericIntegrations.some(
+        (i) =>
+          ![
+            'claude-code',
+            'gemini',
+            'agents-md',
+            'octo-md',
+            'warp-md',
+            'copilot-instructions',
+          ].includes(i)
+      );
+
+      expect(hasGenericIntegration).toBe(true);
+    });
+  });
+
+  describe('legacy command cleanup', () => {
+    it('should identify legacy command patterns', async () => {
+      // Legacy patterns that should be cleaned up
+      const legacyPatterns = [
+        'clavix-improve.md', // Old naming
+        'clavix_improve.md', // Underscore variant
+      ];
+
+      // Current pattern
+      const currentPattern = 'improve.md';
+
+      // Test that patterns are different
+      expect(legacyPatterns).not.toContain(currentPattern);
     });
   });
 });

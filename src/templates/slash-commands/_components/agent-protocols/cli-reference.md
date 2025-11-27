@@ -26,13 +26,10 @@ These are commands the **user** runs in their terminal to set up Clavix:
 - `--docs-only` - Update only documentation
 - `--commands-only` - Update only slash commands
 
-#### `clavix config get <key>`
-**What it does:** Gets a configuration value
-**Example:** `clavix config get integrations`
-
-#### `clavix config set <key> <value>`
-**What it does:** Updates a configuration value
-**Example:** `clavix config set preferences.verboseLogging true`
+#### `clavix diagnose`
+**What it does:** Runs diagnostic checks on Clavix installation
+**When user runs it:** To troubleshoot issues
+**Reports:** Version, config status, template integrity, integration health
 
 #### `clavix version`
 **What it does:** Shows current Clavix version
@@ -104,15 +101,16 @@ originalPrompt: "the user's original prompt"
 
 ---
 
-### Migration from v4
+### Removed Commands (v4 Legacy)
 
-If you see references to old CLI commands in conversations, they no longer exist:
+**IMPORTANT:** These commands were removed in v5. Do NOT try to run them:
 
-| Old Command | v5 Equivalent |
-|-------------|---------------|
-| `clavix fast/deep "prompt"` | Agent analyzes and saves to `.clavix/outputs/prompts/<id>.md` |
-| `clavix execute --latest` | Agent lists prompts dir, finds newest, reads it |
-| `clavix implement` | Agent follows `/clavix:implement` template |
-| `clavix task-complete <id>` | Agent uses Edit tool on tasks.md |
-| `clavix archive <name>` | Agent moves directory with Bash tool |
-| `clavix prompts list` | Agent lists `.clavix/outputs/prompts/*.md` files |
+| Removed Command | How Agents Handle This Now |
+|-----------------|---------------------------|
+| `clavix fast/deep` | Use `/clavix:improve` - saves to `.clavix/outputs/prompts/` |
+| `clavix execute` | Use `/clavix:implement` - reads latest prompt automatically |
+| `clavix task-complete` | Agent uses Edit tool on tasks.md directly |
+| `clavix prompts list` | Agent uses Glob/Bash to list `.clavix/outputs/prompts/*.md` |
+| `clavix config` | User can run `clavix init` to reconfigure |
+
+**If user asks you to run these commands:** Explain they were removed in v5 and the equivalent workflow.

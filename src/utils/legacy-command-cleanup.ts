@@ -1,3 +1,18 @@
+/**
+ * Legacy Command Cleanup Utility
+ *
+ * This module handles cleanup of old command naming patterns from previous
+ * Clavix versions. It identifies files using deprecated naming conventions
+ * and assists in migration to the current standard.
+ *
+ * @deprecated This module is scheduled for removal in v6.0.0.
+ * By that version, all legacy naming patterns should be fully migrated.
+ * After v6.0.0, the cleanup functionality will no longer be needed as
+ * the transition period will be complete.
+ *
+ * @since v4.12.0
+ */
+
 import * as path from 'path';
 import { AgentAdapter } from '../types/agent.js';
 import { FileSystem } from './file-system.js';

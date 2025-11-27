@@ -150,24 +150,28 @@ List created files:
 
 ---
 
-### Timestamped Sessions
+### Timestamped Prompts
 
 ```markdown
-**Step 1: Generate session timestamp**
-Create timestamp: `YYYY-MM-DD-HHMM` format (e.g., `2025-11-24-1430`)
+**Step 1: Generate prompt timestamp**
+Create timestamp: `YYYYMMDD-HHMMSS` format (e.g., `20251124-143022`)
 
-**Step 2: Create session directory**
-```bash
-mkdir -p .clavix/sessions/[timestamp]
-```
+**Step 2: Create prompt file**
+Use the Write tool to create `.clavix/outputs/prompts/std-[timestamp]-[random].md`
 
-**Step 3: Write session file**
-Use the Write tool to create `.clavix/sessions/[timestamp]/conversation.md`
+---
+id: std-[timestamp]-[random]
+depthUsed: standard|comprehensive
+timestamp: [ISO-8601]
+executed: false
+---
+
+# Improved Prompt
 
 [Content here]
 
-**Step 4: Verify**
-Confirm: `.clavix/sessions/[timestamp]/conversation.md` ✓
+**Step 3: Verify**
+Confirm: `.clavix/outputs/prompts/std-[timestamp]-[random].md` ✓
 ```
 
 ---

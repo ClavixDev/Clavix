@@ -8,6 +8,7 @@ import {
 } from '../../types/agent.js';
 import { FileSystem } from '../../utils/file-system.js';
 import { IntegrationError } from '../../types/errors.js';
+import { escapeRegex } from '../../utils/string-utils.js';
 
 /**
  * Base adapter class with shared logic for all integrations
@@ -169,8 +170,9 @@ export abstract class BaseAdapter implements AgentAdapter {
 
   /**
    * Escape special regex characters
+   * @deprecated Use escapeRegex from utils/string-utils.js directly
    */
   protected escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return escapeRegex(str);
   }
 }
