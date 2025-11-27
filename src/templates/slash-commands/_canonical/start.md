@@ -204,17 +204,14 @@ The goal is natural exploration of requirements, not a rigid questionnaire. Foll
 
 ## Agent Transparency (v5.1)
 
+### Agent Manual (Universal Protocols)
+{{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
+
 ### Conversational Companion
 {{INCLUDE:agent-protocols/supportive-companion.md}}
 
 ### Conversation Examples
 {{INCLUDE:sections/conversation-examples.md}}
-
-### Agent Decision Rules
-{{INCLUDE:agent-protocols/decision-rules.md}}
-
-### Error Handling
-{{INCLUDE:agent-protocols/error-handling.md}}
 
 ### Recovery Patterns
 {{INCLUDE:troubleshooting/vibecoder-recovery.md}}

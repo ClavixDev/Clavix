@@ -291,17 +291,14 @@ The generated `tasks.md` will look like:
 
 ## Agent Transparency (v5.1)
 
+### Agent Manual (Universal Protocols)
+{{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
+
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
 
-### CLI Reference (Commands I Execute)
+### CLI Reference
 {{INCLUDE:agent-protocols/cli-reference.md}}
-
-### Agent Decision Rules
-{{INCLUDE:agent-protocols/decision-rules.md}}
-
-### Error Handling
-{{INCLUDE:agent-protocols/error-handling.md}}
 
 ### Recovery Patterns
 {{INCLUDE:troubleshooting/vibecoder-recovery.md}}

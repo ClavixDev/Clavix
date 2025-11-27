@@ -19,16 +19,11 @@ export class OctoMdGenerator {
    * Generate or update OCTO.md with Clavix workflows
    */
   static async generate(): Promise<void> {
-    const templatePath = path.join(
-      __dirname,
-      '../../templates/agents/octo.md'
-    );
+    const templatePath = path.join(__dirname, '../../templates/agents/octo.md');
 
     // Check if template exists
     if (!(await FileSystem.exists(templatePath))) {
-      throw new Error(
-        `OCTO.md template not found at ${templatePath}`
-      );
+      throw new Error(`OCTO.md template not found at ${templatePath}`);
     }
 
     const template = await FileSystem.readFile(templatePath);
@@ -40,10 +35,7 @@ export class OctoMdGenerator {
   /**
    * Inject or update managed block in OCTO.md
    */
-  private static async injectManagedBlock(
-    filePath: string,
-    content: string
-  ): Promise<void> {
+  private static async injectManagedBlock(filePath: string, content: string): Promise<void> {
     let fileContent = '';
 
     // Read existing file or start with empty content
@@ -52,9 +44,7 @@ export class OctoMdGenerator {
     }
 
     const blockRegex = new RegExp(
-      `${this.escapeRegex(this.START_MARKER)}[\\s\\S]*?${this.escapeRegex(
-        this.END_MARKER
-      )}`,
+      `${this.escapeRegex(this.START_MARKER)}[\\s\\S]*?${this.escapeRegex(this.END_MARKER)}`,
       'g'
     );
 

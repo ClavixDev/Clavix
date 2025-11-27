@@ -19,10 +19,7 @@ export class WarpMdGenerator {
    * Generate or update WARP.md with Clavix workflows
    */
   static async generate(): Promise<void> {
-    const templatePath = path.join(
-      __dirname,
-      '../../templates/agents/warp.md'
-    );
+    const templatePath = path.join(__dirname, '../../templates/agents/warp.md');
 
     if (!(await FileSystem.exists(templatePath))) {
       throw new Error(`WARP.md template not found at ${templatePath}`);
@@ -33,10 +30,7 @@ export class WarpMdGenerator {
     await this.injectManagedBlock(this.TARGET_FILE, template);
   }
 
-  private static async injectManagedBlock(
-    filePath: string,
-    content: string
-  ): Promise<void> {
+  private static async injectManagedBlock(filePath: string, content: string): Promise<void> {
     let fileContent = '';
 
     if (await FileSystem.exists(filePath)) {
@@ -44,9 +38,7 @@ export class WarpMdGenerator {
     }
 
     const blockRegex = new RegExp(
-      `${this.escapeRegex(this.START_MARKER)}[\\s\\S]*?${this.escapeRegex(
-        this.END_MARKER
-      )}`,
+      `${this.escapeRegex(this.START_MARKER)}[\\s\\S]*?${this.escapeRegex(this.END_MARKER)}`,
       'g'
     );
 

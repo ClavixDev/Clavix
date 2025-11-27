@@ -330,6 +330,9 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ## Agent Transparency (v5.1)
 
+### Agent Manual (Universal Protocols)
+{{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
+
 ### PRD Examples
 {{INCLUDE:sections/prd-examples.md}}
 
@@ -339,14 +342,8 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
 
-### CLI Reference (Commands I Execute)
+### CLI Reference
 {{INCLUDE:agent-protocols/cli-reference.md}}
-
-### Agent Decision Rules
-{{INCLUDE:agent-protocols/decision-rules.md}}
-
-### Error Handling
-{{INCLUDE:agent-protocols/error-handling.md}}
 
 ---
 

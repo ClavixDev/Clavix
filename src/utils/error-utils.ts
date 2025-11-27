@@ -79,11 +79,7 @@ interface NodeJSError extends Error {
  * Type guard to check if error is a NodeJS error with code property
  */
 export function isNodeError(error: unknown): error is NodeJSError {
-  return (
-    isError(error) &&
-    'code' in error &&
-    typeof (error as { code: unknown }).code === 'string'
-  );
+  return isError(error) && 'code' in error && typeof (error as { code: unknown }).code === 'string';
 }
 
 /**
@@ -92,16 +88,37 @@ export function isNodeError(error: unknown): error is NodeJSError {
  * @param defaultHandler The default handler function (usually handle from @oclif/core)
  * @param exitFn Optional exit function (defaults to process.exit)
  */
+/**
+ * OCLIF error structure for CLI errors
+ */
+interface OclifError extends Error {
+  oclif?: {
+    exit?: number;
+  };
+}
+
 export async function handleCliError(
-  error: any,
-  defaultHandler: (err: any) => Promise<void>,
+  error: unknown,
+  defaultHandler: (err: unknown) => Promise<void>,
   exitFn: (code: number) => void = process.exit
 ): Promise<void> {
+  // Type guard for OCLIF errors
+  const isOclifError = (err: unknown): err is OclifError => {
+    return (
+      err !== null &&
+      typeof err === 'object' &&
+      'oclif' in err &&
+      err.oclif !== null &&
+      typeof err.oclif === 'object' &&
+      'exit' in err.oclif
+    );
+  };
+
   // For CLIError, show only the formatted message
-  if (error && error.oclif && error.oclif.exit !== undefined) {
+  if (isOclifError(error)) {
     // Format error message (hints are now included in error.message)
     console.error(' ›   Error: ' + error.message);
-    exitFn(error.oclif.exit);
+    exitFn(error.oclif?.exit ?? 1);
     return;
   }
 

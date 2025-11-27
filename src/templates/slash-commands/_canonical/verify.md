@@ -388,17 +388,14 @@ I generate different checklists based on what you're building:
 
 ## Agent Transparency (v5.1)
 
-### CLI Reference (Commands I Execute)
-{{INCLUDE:agent-protocols/cli-reference.md}}
+### Agent Manual (Universal Protocols)
+{{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
 
-### Error Handling
-{{INCLUDE:agent-protocols/error-handling.md}}
+### CLI Reference
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### Recovery Patterns
 {{INCLUDE:troubleshooting/vibecoder-recovery.md}}
-
-### Agent Decision Rules
-{{INCLUDE:agent-protocols/decision-rules.md}}
 
 ---
 

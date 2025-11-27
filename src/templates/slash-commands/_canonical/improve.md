@@ -508,7 +508,10 @@ Wait for the user to decide what to do next.
 
 ## Agent Transparency (v5.1)
 
-### CLI Reference (Commands I Execute)
+### Agent Manual (Universal Protocols)
+{{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
+
+### CLI Reference
 {{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### How to Explain Improvements
@@ -522,12 +525,6 @@ Wait for the user to decide what to do next.
 
 ### What Made the Biggest Difference
 {{INCLUDE:sections/pattern-impact.md}}
-
-### Agent Decision Rules
-{{INCLUDE:agent-protocols/decision-rules.md}}
-
-### Error Handling
-{{INCLUDE:agent-protocols/error-handling.md}}
 
 ---
 

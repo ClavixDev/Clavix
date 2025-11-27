@@ -40,7 +40,7 @@ export class AgentErrorMessages {
 
   /**
    * Error: .clavix-implement-config.json not found
-   * Used by: task-complete.ts, implement workflow
+   * Used by: implement workflow
    */
   static configNotFound(): string {
     return (
@@ -55,7 +55,7 @@ export class AgentErrorMessages {
 
   /**
    * Error: Specified task ID not found in tasks.md
-   * Used by: task-complete.ts
+   * Used by: implement workflow
    */
   static taskNotFound(
     taskId: string,
@@ -149,7 +149,7 @@ export class AgentErrorMessages {
 
   /**
    * Error: Git repository not initialized
-   * Used by: implement.ts, task-complete.ts when git features expected
+   * Used by: implement workflow when git features expected
    */
   static gitNotInitialized(): string {
     return (
@@ -216,7 +216,7 @@ export class AgentErrorMessages {
 
   /**
    * Error: Invalid task ID format
-   * Used by: task-complete.ts
+   * Used by: implement workflow
    */
   static invalidTaskIdFormat(taskId: string): string {
     return (
@@ -248,7 +248,7 @@ export class AgentErrorMessages {
 
   /**
    * Warning: Task already completed
-   * Used by: task-complete.ts when marking already-done task
+   * Used by: implement workflow when marking already-done task
    */
   static taskAlreadyCompleted(taskId: string): string {
     return (

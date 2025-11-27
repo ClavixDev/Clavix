@@ -51,14 +51,13 @@ v5 embraces reality: **templates instruct agents directly**, no TypeScript code 
 | `clavix config` | Manage configuration |
 | `clavix version` | Show version |
 
-**9 Slash Commands (executed by AI agents):**
+**8 Slash Commands (executed by AI agents):**
 - `/clavix:improve` - Prompt optimization
 - `/clavix:prd` - PRD generation
 - `/clavix:plan` - Task breakdown
-- `/clavix:implement` - Task execution
+- `/clavix:implement` - Task/prompt execution (auto-detects source)
 - `/clavix:start` - Conversational exploration
 - `/clavix:summarize` - Extract requirements from conversation
-- `/clavix:execute` - Execute saved prompts
 - `/clavix:verify` - Verify implementation
 - `/clavix:archive` - Archive completed projects
 

@@ -53,10 +53,10 @@ export default class Config extends Command {
     if (!fs.existsSync(clavixDir) || !fs.existsSync(configPath)) {
       this.error(
         chalk.red('No .clavix directory found.') +
-        '\n' +
-        chalk.yellow('Run ') +
-        chalk.cyan('clavix init') +
-        chalk.yellow(' to initialize Clavix in this project.')
+          '\n' +
+          chalk.yellow('Run ') +
+          chalk.cyan('clavix init') +
+          chalk.yellow(' to initialize Clavix in this project.')
       );
     }
 
@@ -183,9 +183,7 @@ export default class Config extends Command {
     const allIntegrations = agentManager.getAdapters();
 
     // Show only non-selected providers
-    const availableToAdd = allIntegrations.filter(
-      (a) => !config.integrations.includes(a.name)
-    );
+    const availableToAdd = allIntegrations.filter((a) => !config.integrations.includes(a.name));
 
     if (availableToAdd.length === 0) {
       this.log(chalk.yellow('\n✓ All integrations already added!'));
@@ -223,7 +221,9 @@ export default class Config extends Command {
 
       const templates = await loadCommandTemplates(adapter);
       await adapter.generateCommands(templates);
-      this.log(chalk.green(`  ✓ Generated ${templates.length} command(s) for ${adapter.displayName}`));
+      this.log(
+        chalk.green(`  ✓ Generated ${templates.length} command(s) for ${adapter.displayName}`)
+      );
     }
 
     this.log(chalk.green('\n✅ Integrations added successfully!'));
@@ -275,9 +275,7 @@ export default class Config extends Command {
     ]);
 
     // Remove from config
-    config.integrations = config.integrations.filter(
-      (p) => !integrationsToRemove.includes(p)
-    );
+    config.integrations = config.integrations.filter((p) => !integrationsToRemove.includes(p));
     this.saveConfig(configPath, config);
 
     // Clean up command files
@@ -494,13 +492,21 @@ export default class Config extends Command {
 
   private displayConfig(config: ClavixConfig): void {
     this.log(`  ${chalk.gray('Version:')} ${config.version}`);
-    this.log(`  ${chalk.gray('Integrations:')} ${config.integrations.map(p => chalk.cyan(p)).join(', ') || chalk.gray('(none)')}`);
+    this.log(
+      `  ${chalk.gray('Integrations:')} ${config.integrations.map((p) => chalk.cyan(p)).join(', ') || chalk.gray('(none)')}`
+    );
 
     if (config.preferences) {
       this.log(`\n  ${chalk.bold('Preferences:')}`);
-      this.log(`    ${chalk.gray('Auto-open outputs:')} ${config.preferences.autoOpenOutputs ? chalk.green('yes') : chalk.gray('no')}`);
-      this.log(`    ${chalk.gray('Verbose logging:')} ${config.preferences.verboseLogging ? chalk.green('yes') : chalk.gray('no')}`);
-      this.log(`    ${chalk.gray('Preserve sessions:')} ${config.preferences.preserveSessions ? chalk.green('yes') : chalk.gray('no')}`);
+      this.log(
+        `    ${chalk.gray('Auto-open outputs:')} ${config.preferences.autoOpenOutputs ? chalk.green('yes') : chalk.gray('no')}`
+      );
+      this.log(
+        `    ${chalk.gray('Verbose logging:')} ${config.preferences.verboseLogging ? chalk.green('yes') : chalk.gray('no')}`
+      );
+      this.log(
+        `    ${chalk.gray('Preserve sessions:')} ${config.preferences.preserveSessions ? chalk.green('yes') : chalk.gray('no')}`
+      );
     }
 
     if (config.outputs) {

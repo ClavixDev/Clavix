@@ -120,10 +120,7 @@ export class FileSystem {
   /**
    * Read directory contents
    */
-  static async readdir(
-    dirPath: string,
-    options?: { withFileTypes: true }
-  ): Promise<fs.Dirent[]>;
+  static async readdir(dirPath: string, options?: { withFileTypes: true }): Promise<fs.Dirent[]>;
   static async readdir(dirPath: string): Promise<string[]>;
   static async readdir(
     dirPath: string,
@@ -163,10 +160,7 @@ export class FileSystem {
       }
       return backupPath;
     } catch {
-      throw new PermissionError(
-        `Failed to create backup of ${filePath}`,
-        'Check file permissions'
-      );
+      throw new PermissionError(`Failed to create backup of ${filePath}`, 'Check file permissions');
     }
   }
 

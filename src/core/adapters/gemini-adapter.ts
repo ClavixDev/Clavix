@@ -24,7 +24,9 @@ export class GeminiAdapter extends BaseAdapter {
 
   get directory(): string {
     const useNamespace = this.options.useNamespace ?? true;
-    return useNamespace ? path.join('.gemini', 'commands', 'clavix') : path.join('.gemini', 'commands');
+    return useNamespace
+      ? path.join('.gemini', 'commands', 'clavix')
+      : path.join('.gemini', 'commands');
   }
 
   async detectProject(): Promise<boolean> {
@@ -48,9 +50,10 @@ export class GeminiAdapter extends BaseAdapter {
   }
 
   protected formatCommand(template: CommandTemplate): string {
-    const description = template.description.trim().length > 0
-      ? `description = ${JSON.stringify(template.description)}\n\n`
-      : '';
+    const description =
+      template.description.trim().length > 0
+        ? `description = ${JSON.stringify(template.description)}\n\n`
+        : '';
 
     const content = template.content.replace(/\{\{ARGS\}\}/g, '{{args}}');
 

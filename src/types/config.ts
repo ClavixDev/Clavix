@@ -134,7 +134,7 @@ export interface PreferencesConfig {
 }
 
 export const DEFAULT_CONFIG: ClavixConfig = {
-  version: '3.5.0',
+  version: '5.1.0',
   integrations: [],
   templates: {
     prdQuestions: 'default',

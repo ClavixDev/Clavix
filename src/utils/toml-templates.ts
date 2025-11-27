@@ -10,7 +10,7 @@ export interface ParsedTomlTemplate {
 export function parseTomlSlashCommand(
   content: string,
   templateName: string,
-  providerName: string,
+  providerName: string
 ): ParsedTomlTemplate {
   let normalized = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   if (normalized.charCodeAt(0) === 0xfeff) {
@@ -21,7 +21,9 @@ export function parseTomlSlashCommand(
   const promptHeaderMatch = normalized.match(/^\s*prompt\s*=\s*"""/m);
 
   if (!promptHeaderMatch || promptHeaderMatch.index === undefined) {
-    throw new Error(`Template ${templateName}.toml for ${providerName} is missing a prompt = """ ... """ block.`);
+    throw new Error(
+      `Template ${templateName}.toml for ${providerName} is missing a prompt = """ ... """ block.`
+    );
   }
 
   const bodyStart = promptHeaderMatch.index + promptHeaderMatch[0].length;
@@ -29,7 +31,9 @@ export function parseTomlSlashCommand(
   const closingIndex = bodyRemainder.indexOf('"""');
 
   if (closingIndex === -1) {
-    throw new Error(`Template ${templateName}.toml for ${providerName} does not terminate its prompt = """ ... """ block.`);
+    throw new Error(
+      `Template ${templateName}.toml for ${providerName} does not terminate its prompt = """ ... """ block.`
+    );
   }
 
   let promptBody = bodyRemainder.slice(0, closingIndex);
@@ -39,7 +43,10 @@ export function parseTomlSlashCommand(
     promptLines.shift();
   }
 
-  promptBody = promptLines.join('\n').replace(/^\n+/, '').replace(/[\s]+$/, '');
+  promptBody = promptLines
+    .join('\n')
+    .replace(/^\n+/, '')
+    .replace(/[\s]+$/, '');
 
   return {
     description: descriptionMatch ? descriptionMatch[2] : '',

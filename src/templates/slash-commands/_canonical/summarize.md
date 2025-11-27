@@ -373,6 +373,9 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
 ## Agent Transparency (v5.1)
 
+### Agent Manual (Universal Protocols)
+{{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
+
 ### How to Explain Improvements
 {{INCLUDE:sections/improvement-explanations.md}}
 
@@ -381,12 +384,6 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
-
-### Agent Decision Rules
-{{INCLUDE:agent-protocols/decision-rules.md}}
-
-### Error Handling
-{{INCLUDE:agent-protocols/error-handling.md}}
 
 ### Recovery Patterns
 {{INCLUDE:troubleshooting/vibecoder-recovery.md}}

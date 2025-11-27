@@ -111,9 +111,7 @@ export class AgentManager {
    * Validate multiple adapters
    * Returns map of adapter name to validation result
    */
-  async validateAdapters(
-    adapterNames: string[]
-  ): Promise<Map<string, ValidationResult>> {
+  async validateAdapters(adapterNames: string[]): Promise<Map<string, ValidationResult>> {
     const results = new Map<string, ValidationResult>();
 
     for (const name of adapterNames) {

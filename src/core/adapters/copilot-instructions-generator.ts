@@ -19,16 +19,11 @@ export class CopilotInstructionsGenerator {
    * Generate or update .github/copilot-instructions.md with Clavix workflows
    */
   static async generate(): Promise<void> {
-    const templatePath = path.join(
-      __dirname,
-      '../../templates/agents/copilot-instructions.md'
-    );
+    const templatePath = path.join(__dirname, '../../templates/agents/copilot-instructions.md');
 
     // Check if template exists
     if (!(await FileSystem.exists(templatePath))) {
-      throw new Error(
-        `Copilot instructions template not found at ${templatePath}`
-      );
+      throw new Error(`Copilot instructions template not found at ${templatePath}`);
     }
 
     const template = await FileSystem.readFile(templatePath);
@@ -43,10 +38,7 @@ export class CopilotInstructionsGenerator {
   /**
    * Inject or update managed block in .github/copilot-instructions.md
    */
-  private static async injectManagedBlock(
-    filePath: string,
-    content: string
-  ): Promise<void> {
+  private static async injectManagedBlock(filePath: string, content: string): Promise<void> {
     let fileContent = '';
 
     // Read existing file or start with empty content
@@ -55,9 +47,7 @@ export class CopilotInstructionsGenerator {
     }
 
     const blockRegex = new RegExp(
-      `${this.escapeRegex(this.START_MARKER)}[\\s\\S]*?${this.escapeRegex(
-        this.END_MARKER
-      )}`,
+      `${this.escapeRegex(this.START_MARKER)}[\\s\\S]*?${this.escapeRegex(this.END_MARKER)}`,
       'g'
     );
 

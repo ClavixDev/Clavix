@@ -59,13 +59,9 @@ export abstract class BaseAdapter implements AgentAdapter {
 
       // If we reached '.' or '/', it means we can create the directory
       if (ancestorDir === '.' || ancestorDir === '/' || canCreate) {
-        warnings.push(
-          `Parent directory ${parentDir} will be created`
-        );
+        warnings.push(`Parent directory ${parentDir} will be created`);
       } else {
-        errors.push(
-          `Parent directory ${parentDir} does not exist and cannot be created`
-        );
+        errors.push(`Parent directory ${parentDir} does not exist and cannot be created`);
       }
     }
 

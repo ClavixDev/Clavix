@@ -28,11 +28,6 @@ export interface IntegrationFeatures {
   commandFormat?: { separator: ':' | '-' };
 }
 
-/**
- * @deprecated Use IntegrationFeatures instead. Will be removed in v4.0.0
- */
-export type ProviderFeatures = IntegrationFeatures;
-
 export interface ValidationResult {
   valid: boolean;
   errors?: string[];
