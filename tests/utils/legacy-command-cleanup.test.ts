@@ -107,4 +107,104 @@ describe('collectLegacyCommandFiles', () => {
 
     expect(legacyFiles).toContain(path.join(commandsDir, 'clavix:fast.md'));
   });
+
+  // v4.12: Deprecated fast/deep command cleanup tests
+  describe('v4.12 deprecated command cleanup', () => {
+    it('detects deprecated fast.md command in flat adapters', async () => {
+      const commandDir = path.join(testDir, '.cursor', 'commands');
+      await fs.ensureDir(commandDir);
+
+      // Create deprecated fast command
+      await fs.writeFile(path.join(commandDir, 'fast.md'), '# deprecated fast');
+      await fs.writeFile(path.join(commandDir, 'clavix-fast.md'), '# deprecated clavix-fast');
+
+      const adapter = buildAdapter({ name: 'cursor', commandPath: commandDir });
+      const legacyFiles = await collectLegacyCommandFiles(adapter, ['improve']);
+
+      expect(legacyFiles).toContain(path.join(commandDir, 'fast.md'));
+      expect(legacyFiles).toContain(path.join(commandDir, 'clavix-fast.md'));
+    });
+
+    it('detects deprecated deep.md command in flat adapters', async () => {
+      const commandDir = path.join(testDir, '.windsurf', 'commands');
+      await fs.ensureDir(commandDir);
+
+      // Create deprecated deep command
+      await fs.writeFile(path.join(commandDir, 'deep.md'), '# deprecated deep');
+      await fs.writeFile(path.join(commandDir, 'clavix-deep.md'), '# deprecated clavix-deep');
+
+      const adapter = buildAdapter({ name: 'windsurf', commandPath: commandDir });
+      const legacyFiles = await collectLegacyCommandFiles(adapter, ['improve']);
+
+      expect(legacyFiles).toContain(path.join(commandDir, 'deep.md'));
+      expect(legacyFiles).toContain(path.join(commandDir, 'clavix-deep.md'));
+    });
+
+    it('detects both fast and deep deprecated commands', async () => {
+      const commandDir = path.join(testDir, '.droid', 'commands');
+      await fs.ensureDir(commandDir);
+
+      // Create both deprecated commands
+      await fs.writeFile(path.join(commandDir, 'clavix-fast.md'), '# deprecated fast');
+      await fs.writeFile(path.join(commandDir, 'clavix-deep.md'), '# deprecated deep');
+      await fs.writeFile(path.join(commandDir, 'clavix-improve.md'), '# new improve');
+
+      const adapter = buildAdapter({ name: 'droid', commandPath: commandDir });
+      const legacyFiles = await collectLegacyCommandFiles(adapter, ['improve']);
+
+      expect(legacyFiles).toContain(path.join(commandDir, 'clavix-fast.md'));
+      expect(legacyFiles).toContain(path.join(commandDir, 'clavix-deep.md'));
+      // New improve should NOT be in legacy files
+      expect(legacyFiles).not.toContain(path.join(commandDir, 'clavix-improve.md'));
+    });
+
+    it('detects deprecated commands in claude-code subdirectory structure', async () => {
+      const commandsDir = path.join(testDir, '.claude', 'commands');
+      const clavixDir = path.join(commandsDir, 'clavix');
+      await fs.ensureDir(commandsDir);
+      await fs.ensureDir(clavixDir);
+
+      // Create deprecated commands in subdirectory
+      await fs.writeFile(path.join(clavixDir, 'fast.md'), '# deprecated fast');
+      await fs.writeFile(path.join(clavixDir, 'deep.md'), '# deprecated deep');
+
+      const adapter = buildAdapter({ name: 'claude-code', commandPath: clavixDir });
+      const legacyFiles = await collectLegacyCommandFiles(adapter, ['improve']);
+
+      expect(legacyFiles).toContain(path.join(clavixDir, 'fast.md'));
+      expect(legacyFiles).toContain(path.join(clavixDir, 'deep.md'));
+    });
+
+    it('detects deprecated commands with colon format in claude-code', async () => {
+      const commandsDir = path.join(testDir, '.claude', 'commands');
+      const clavixDir = path.join(commandsDir, 'clavix');
+      await fs.ensureDir(commandsDir);
+      await fs.ensureDir(clavixDir);
+
+      // Create deprecated commands with colon format in parent dir
+      await fs.writeFile(path.join(commandsDir, 'clavix:fast.md'), '# deprecated colon fast');
+      await fs.writeFile(path.join(commandsDir, 'clavix:deep.md'), '# deprecated colon deep');
+
+      const adapter = buildAdapter({ name: 'claude-code', commandPath: clavixDir });
+      const legacyFiles = await collectLegacyCommandFiles(adapter, ['improve']);
+
+      expect(legacyFiles).toContain(path.join(commandsDir, 'clavix:fast.md'));
+      expect(legacyFiles).toContain(path.join(commandsDir, 'clavix:deep.md'));
+    });
+
+    it('does not flag new improve command as deprecated', async () => {
+      const commandDir = path.join(testDir, '.amp', 'commands');
+      await fs.ensureDir(commandDir);
+
+      // Only new improve command exists
+      await fs.writeFile(path.join(commandDir, 'clavix-improve.md'), '# new improve');
+
+      const adapter = buildAdapter({ name: 'amp', commandPath: commandDir });
+      const legacyFiles = await collectLegacyCommandFiles(adapter, ['improve']);
+
+      // improve should not be detected as legacy
+      const hasImprove = legacyFiles.some((f) => f.includes('improve'));
+      expect(hasImprove).toBe(false);
+    });
+  });
 });

@@ -9,7 +9,7 @@ This guide is for agents that can only read documentation (no slash-command supp
 **CRITICAL: Know which mode you're in and STOP at the right point.**
 
 **OPTIMIZATION workflows** (NO CODE ALLOWED):
-- Fast/deep optimization - Prompt improvement only
+- Improve mode - Prompt optimization only (auto-selects depth)
 - Your role: Analyze, optimize, show improved prompt, **STOP**
 - ❌ DO NOT implement the prompt's requirements
 - ✅ After showing optimized prompt, tell user: "Run `/clavix:execute --latest` to implement"
@@ -38,11 +38,11 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 |----------|-----------------|---------|
 | **Conversational Mode** | `workflows/start.md` | Natural requirements gathering through discussion |
 | **Extract Requirements** | `workflows/summarize.md` | Analyze conversation → mini-PRD + optimized prompts |
-| **Quick Optimization** | `workflows/fast.md` | Intent detection + quality assessment + smart triage |
-| **Deep Analysis** | `workflows/deep.md` | Comprehensive with alternatives, validation, edge cases |
+| **Prompt Optimization** | `workflows/improve.md` | Intent detection + quality assessment + auto-depth selection |
 | **PRD Generation** | `workflows/prd.md` | Socratic questions → full PRD + quick PRD |
 | **Mode Boundaries** | `core/clavix-mode.md` | Planning vs implementation distinction |
 | **File Operations** | `core/file-operations.md` | File creation patterns |
+| **Verification** | `core/verification.md` | Post-implementation verification |
 
 **Troubleshooting:**
 - `troubleshooting/jumped-to-implementation.md` - If you started coding during planning
@@ -55,11 +55,12 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 
 | Keywords in User Request | Recommended Workflow | File Reference |
 |---------------------------|---------------------|----------------|
-| "improve this prompt", "make it better", "optimize" | Fast mode → Quick optimization | `workflows/fast.md` |
-| "analyze thoroughly", "edge cases", "alternatives" | Deep mode → Comprehensive analysis | `workflows/deep.md` |
+| "improve this prompt", "make it better", "optimize" | Improve mode → Auto-depth optimization | `workflows/improve.md` |
+| "analyze thoroughly", "edge cases", "alternatives" | Improve mode (--comprehensive) | `workflows/improve.md` |
 | "create a PRD", "product requirements" | PRD mode → Socratic questioning | `workflows/prd.md` |
 | "let's discuss", "not sure what I want" | Conversational mode → Start gathering | `workflows/start.md` |
 | "summarize our conversation" | Extract mode → Analyze thread | `workflows/summarize.md` |
+| "verify", "check my implementation" | Verify mode → Implementation verification | `core/verification.md` |
 
 **When detected:** Reference the corresponding `.clavix/instructions/workflows/{workflow}.md` file.
 
@@ -70,11 +71,14 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 | Command | Purpose |
 |---------|---------|
 | `clavix init` | Interactive setup with integration selection |
-| `clavix fast "<prompt>"` | Quick optimization (CLI auto-saves; agent must save manually per template instructions) |
-| `clavix deep "<prompt>"` | Deep analysis (CLI auto-saves; agent must save manually per template instructions) |
+| `clavix improve "<prompt>"` | Unified optimization with auto-depth selection |
+| `clavix improve --comprehensive "<prompt>"` | Force comprehensive analysis |
+| `clavix improve --standard "<prompt>"` | Force standard optimization |
+| `clavix analyze "<prompt>"` | JSON analysis output for programmatic use |
 | `clavix execute [--latest]` | Execute saved prompts (interactive or --latest) |
+| `clavix verify [--latest]` | Verify implementation against checklist |
 | `clavix prompts list` | View saved prompts with status (NEW, EXECUTED, OLD, STALE) |
-| `clavix prompts clear` | Manage cleanup (--executed, --stale, --fast, --deep, --all, --force) |
+| `clavix prompts clear` | Manage cleanup (--executed, --stale, --standard, --comprehensive, --all) |
 | `clavix prd` | Guided PRD generation → `full-prd.md` + `quick-prd.md` |
 | `clavix plan` | Transform PRD → phase-based `tasks.md` |
 | `clavix implement [--commit-strategy=<type>]` | Execute tasks (git strategies: per-task, per-5-tasks, per-phase, none) |
@@ -90,6 +94,8 @@ npm install -g clavix
 clavix init
 clavix version
 ```
+
+**Save behavior:** CLI auto-saves prompts to `.clavix/outputs/`. When using slash commands, the agent must save manually per template instructions (no automatic persistence).
 
 ---
 

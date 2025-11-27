@@ -54,7 +54,7 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 | 2. Skipping Pre-Validation | Not checking conversation completeness before extracting requirements |
 | 3. Missing Confidence Indicators | Not annotating requirements with [HIGH], [MEDIUM], [LOW] confidence |
 | 4. Not Creating Output Files | Not creating mini-prd.md, optimized-prompt.md, and quick-prd.md files |
-| 5. No Clavix Intelligence™ Applied | Not applying quality patterns to extracted requirements |
+| 5. No Optimization Applied | Not applying quality patterns to extracted requirements |
 | 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing workflows |
 
 **STOP**: Immediately halt the incorrect action
@@ -229,7 +229,7 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
    Use the Write tool to create `.clavix/outputs/[project-name]/optimized-prompt.md`
 
-   **Content:** Enhanced version with Clavix Intelligence™ improvements (see step 4 below for optimization)
+   **Content:** Enhanced version with pattern-based optimization (see step 4 below for optimization)
 
    **Format:**
    ```markdown
@@ -243,7 +243,7 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
    ---
 
-   ## Clavix Intelligence™ Improvements Applied
+   ## Optimization Improvements Applied
 
    1. **[ADDED]** - [Description of what was added and why]
    2. **[CLARIFIED]** - [What was ambiguous and how it was clarified]
@@ -273,8 +273,8 @@ Implementation: BLOCKED - I will extract requirements, not implement them
    - Something went wrong with file creation
    - Retry the Write tool for the missing file
 
-4. **Clavix Intelligence™ Optimization** (automatic with labeled improvements):
-   - After extracting the prompt, analyze using Clavix Intelligence™
+4. **Pattern-Based Optimization** (automatic with labeled improvements):
+   - After extracting the prompt, analyze using pattern-based optimization
    - Apply optimizations for Clarity, Efficiency, Structure, Completeness, and Actionability
    - **Label all improvements** with quality dimension tags:
      - **[Efficiency]**: "Removed 12 conversational words, reduced from 45 to 28 words"
@@ -286,7 +286,7 @@ Implementation: BLOCKED - I will extract requirements, not implement them
    - Show quality scores (before/after) and labeled improvements
    - These improvements were already applied when creating optimized-prompt.md in step 3.4
 
-   **CHECKPOINT:** Applied Clavix Intelligence™ optimization - [N] improvements added
+   **CHECKPOINT:** Applied pattern-based optimization - [N] improvements added
 
 5. **Highlight Key Insights** discovered during the conversation:
    ```markdown
@@ -324,8 +324,8 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
    **📁 Location:** `.clavix/outputs/[project-name]/`
 
-   **🎯 Clavix Intelligence™:**
-   Applied [N] optimizations:
+   **🎯 Optimizations Applied:**
+   Applied [N] improvements:
    - [Brief summary of improvements]
 
    **🔍 Key Insights:**

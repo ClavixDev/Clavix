@@ -339,6 +339,26 @@ export class QualityAssessor {
     return Math.max(0, Math.min(100, score));
   }
 
+  /**
+   * Calculate weighted overall quality score
+   * v4.12: Added comprehensive weight documentation
+   *
+   * WEIGHT RATIONALE:
+   * Weights are designed based on what matters most for each intent type:
+   *
+   * | Intent | Primary Focus | Secondary Focus | Rationale |
+   * |--------|---------------|-----------------|-----------|
+   * | code-generation | completeness (25%) | clarity, actionability (20% each) | Code needs full specs |
+   * | planning | structure, completeness (25% each) | clarity (20%) | Plans need organization |
+   * | debugging | actionability, completeness (25% each) | specificity (20%) | Need steps to reproduce |
+   * | migration | specificity, completeness (25% each) | clarity (20%) | Version/path precision |
+   * | testing | completeness (25%) | specificity, actionability (20% each) | Edge cases matter |
+   * | security-review | completeness (25%) | specificity, clarity (20% each) | Thorough coverage |
+   * | learning | clarity (30%) | structure, completeness (20% each) | Understanding > action |
+   * | default | completeness (22%) | clarity, structure, actionability (18% each) | Balanced |
+   *
+   * These weights can be overridden via ClavixConfig.intelligence.qualityWeights
+   */
   private calculateOverall(
     scores: {
       clarity: number;
@@ -350,7 +370,7 @@ export class QualityAssessor {
     },
     intent: IntentAnalysis
   ): number {
-    // v4.0: Intent-specific weights including specificity
+    // v4.0: Intent-specific weights (see rationale in method comment above)
     if (intent.primaryIntent === 'code-generation') {
       // Code generation benefits most from specificity
       return (

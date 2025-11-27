@@ -57,7 +57,7 @@ Checkpoints are standardized markers that agents output to confirm workflow step
 
 **After multi-step processes:**
 ```markdown
-**CHECKPOINT:** Completed Clavix Intelligence™ optimization - 5 improvements applied
+**CHECKPOINT:** Completed pattern-based optimization - 5 improvements applied
 **CHECKPOINT:** Analyzed conversation - extracted 12 requirements, 3 constraints
 ```
 
@@ -273,7 +273,7 @@ If workflow isn't proceeding as expected, check:
    **CHECKPOINT:** All files verified - exist at expected paths
 
 6. After optimization:
-   **CHECKPOINT:** Applied Clavix Intelligence™ - [N] improvements added
+   **CHECKPOINT:** Applied optimization patterns - [N] improvements added
 
 7. Workflow complete:
    **CHECKPOINT:** Summarization workflow complete - all outputs created

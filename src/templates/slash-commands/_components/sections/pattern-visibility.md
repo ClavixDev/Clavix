@@ -29,8 +29,8 @@ Patterns: 7 applied (comprehensive depth)
   StructureOrganizer → Reorganized into 4 sections
   TechnicalContextEnricher → Added React 18, TypeScript context
   CompletenessValidator → Flagged 3 missing requirements
-  EdgeCaseIdentifier → Added 4 edge cases (auth, network, state, browser)
-  ValidationChecklistCreator → Generated 6-item verification checklist
+  DomainContextEnricher → Added best practices for React components
+  SuccessCriteriaEnforcer → Added measurable acceptance criteria
 ```
 
 ### Pattern Impact Indicators
@@ -43,43 +43,32 @@ Patterns: 7 applied (comprehensive depth)
 
 ### Available Patterns Reference
 
-**Standard Patterns (both scopes):**
+**v4.12: Core Patterns (standard + comprehensive, scope='both'):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
-| ConcisenessFilter | 4 | Removes pleasantries, filler words, redundant phrases |
 | ObjectiveClarifier | 9 | Adds clear objective/goal statement if missing |
-| StructureOrganizer | 8 | Reorders into logical flow: context→requirements→constraints→output |
-| ActionabilityEnhancer | 4 | Converts vague language to specific, actionable terms |
-| TechnicalContextEnricher | 5 | Adds missing technical context (frameworks, tools, versions) |
-| CompletenessValidator | 6 | Identifies and flags missing required elements |
-| StepDecomposer | 5 | Breaks complex prompts into sequential steps |
-| ContextPrecisionBooster | 6 | Adds precise context when missing |
 | AmbiguityDetector | 9 | Identifies and flags ambiguous terms |
+| StructureOrganizer | 8 | Reorders into logical flow: context→requirements→constraints→output |
 | OutputFormatEnforcer | 7 | Adds explicit output format specifications |
 | SuccessCriteriaEnforcer | 7 | Adds measurable success criteria |
+| ContextPrecisionBooster | 6 | Adds precise context when missing |
+| CompletenessValidator | 6 | Identifies and flags missing required elements |
+| TechnicalContextEnricher | 5 | Adds missing technical context (frameworks, tools, versions) |
+| StepDecomposer | 5 | Breaks complex prompts into sequential steps |
 | DomainContextEnricher | 5 | Adds domain-specific best practices |
+| ConcisenessFilter | 4 | Removes pleasantries, filler words, redundant phrases |
+| ActionabilityEnhancer | 4 | Converts vague language to specific, actionable terms |
 
-**Comprehensive Depth Exclusive Patterns:**
+**v4.12 PRD Mode Patterns (comprehensive only):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
-| AlternativePhrasingGenerator | 3 | Generates 2-3 alternative prompt structures |
-| EdgeCaseIdentifier | 4 | Identifies domain-specific edge cases |
-| ValidationChecklistCreator | 3 | Creates implementation verification checklist |
-| AssumptionExplicitizer | 6 | Makes implicit assumptions explicit |
-| ScopeDefiner | 5 | Adds explicit scope boundaries |
 | PRDStructureEnforcer | 9 | Ensures PRD completeness (PRD mode only) |
-| ErrorToleranceEnhancer | 5 | Adds error handling requirements |
-| PrerequisiteIdentifier | 6 | Identifies prerequisites and dependencies |
-
-**v4.3.2 PRD Mode Patterns (comprehensive):**
-| Pattern | Priority | What It Does |
-|---------|----------|--------------|
 | RequirementPrioritizer | 7 | Separates must-have from nice-to-have requirements |
-| UserPersonaEnricher | 6 | Adds missing user context and personas |
 | SuccessMetricsEnforcer | 7 | Ensures measurable success criteria exist |
+| UserPersonaEnricher | 6 | Adds missing user context and personas |
 | DependencyIdentifier | 5 | Identifies technical and external dependencies |
 
-**v4.3.2 Conversational Mode Patterns (comprehensive):**
+**v4.12 Conversational Mode Patterns (comprehensive only):**
 | Pattern | Priority | What It Does |
 |---------|----------|--------------|
 | ConversationSummarizer | 8 | Extracts structured requirements from messages |
@@ -107,23 +96,17 @@ Skipped patterns:
 ### Pattern Categories Summary
 
 ```
-Standard (both scopes):
-  ConcisenessFilter, ObjectiveClarifier, StructureOrganizer,
-  ActionabilityEnhancer, TechnicalContextEnricher, CompletenessValidator,
-  StepDecomposer, ContextPrecisionBooster,
-  AmbiguityDetector, OutputFormatEnforcer, SuccessCriteriaEnforcer,
-  DomainContextEnricher
+v4.12: Core patterns (standard + comprehensive, 12 patterns):
+  ObjectiveClarifier, AmbiguityDetector, StructureOrganizer,
+  OutputFormatEnforcer, SuccessCriteriaEnforcer, ContextPrecisionBooster,
+  CompletenessValidator, TechnicalContextEnricher, StepDecomposer,
+  DomainContextEnricher, ConcisenessFilter, ActionabilityEnhancer
 
-Comprehensive only:
-  AlternativePhrasingGenerator, EdgeCaseIdentifier, ValidationChecklistCreator,
-  AssumptionExplicitizer, ScopeDefiner, PRDStructureEnforcer,
-  ErrorToleranceEnhancer, PrerequisiteIdentifier
+PRD mode (comprehensive only, 5 patterns):
+  PRDStructureEnforcer, RequirementPrioritizer, SuccessMetricsEnforcer,
+  UserPersonaEnricher, DependencyIdentifier
 
-v4.3.2 PRD mode (comprehensive):
-  RequirementPrioritizer, UserPersonaEnricher, SuccessMetricsEnforcer,
-  DependencyIdentifier
-
-v4.3.2 Conversational mode (comprehensive):
+Conversational mode (comprehensive only, 3 patterns):
   ConversationSummarizer, TopicCoherenceAnalyzer, ImplicitRequirementExtractor
 ```
 
@@ -131,9 +114,9 @@ v4.3.2 Conversational mode (comprehensive):
 
 | Depth | Patterns Available | Typical Applied |
 |------|-------------------|-----------------|
-| Standard | 12 patterns | 4-7 patterns |
-| Comprehensive | 27 patterns | 8-14 patterns |
-| PRD mode | 12+ patterns | 8-12 patterns |
-| Conversational | 3+ patterns | 1-3 patterns |
+| Standard | 12 patterns | 4-8 patterns |
+| Comprehensive | 20 patterns | 8-15 patterns |
+| PRD mode | 17 patterns | 8-12 patterns |
+| Conversational | 15 patterns | 6-10 patterns |
 
-**Note:** Comprehensive depth has access to all 27 patterns. Pattern selection varies by intent - some patterns only apply to specific intents (e.g., PRDStructureEnforcer only for prd-generation), so typical applied count is 8-14.
+**Note:** v4.12 has 20 total patterns after removing 7 boilerplate patterns that generated static output. Pattern selection varies by intent - some patterns only apply to specific intents (e.g., PRDStructureEnforcer only for prd-generation). Standard depth gets 12 core patterns; comprehensive adds mode-specific patterns.

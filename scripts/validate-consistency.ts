@@ -551,25 +551,25 @@ function extractEscalationThresholdsFromTemplate(content: string): number[] {
 
 /**
  * Extract escalation thresholds from UniversalOptimizer
+ * v4.12: Updated to extract from DEFAULT_THRESHOLDS constant
  */
 function extractEscalationThresholdsFromCode(content: string): number[] {
   const thresholds: number[] = [];
 
-  // Match: shouldEscalate: totalScore >= 45
-  const shouldEscalateMatch = content.match(/shouldEscalate:\s*totalScore\s*>=\s*(\d+)/);
-  if (shouldEscalateMatch) thresholds.push(parseInt(shouldEscalateMatch[1]));
+  // v4.12: Match thresholds from DEFAULT_THRESHOLDS constant
+  // Match: suggestAbove: 45
+  const suggestMatch = content.match(/suggestAbove:\s*(\d+)/);
+  if (suggestMatch) thresholds.push(parseInt(suggestMatch[1]));
 
-  // Match: if (totalScore >= 75)
-  const highMatch = content.match(
-    /if\s*\(\s*totalScore\s*>=\s*(\d+)\s*\)\s*\{\s*\n\s*escalationConfidence\s*=\s*['"]high['"]/
-  );
-  if (highMatch) thresholds.push(parseInt(highMatch[1]));
+  // Match: strongRecommendAbove: 75
+  const strongMatch = content.match(/strongRecommendAbove:\s*(\d+)/);
+  if (strongMatch) thresholds.push(parseInt(strongMatch[1]));
 
-  // Match: else if (totalScore >= 60)
-  const mediumMatch = content.match(
-    /else\s+if\s*\(\s*totalScore\s*>=\s*(\d+)\s*\)\s*\{\s*\n\s*escalationConfidence\s*=\s*['"]medium['"]/
-  );
-  if (mediumMatch) thresholds.push(parseInt(mediumMatch[1]));
+  // Calculate medium threshold (average of suggest and strong) - matches code logic
+  if (suggestMatch && strongMatch) {
+    const mediumThreshold = Math.round((parseInt(suggestMatch[1]) + parseInt(strongMatch[1])) / 2);
+    thresholds.push(mediumThreshold);
+  }
 
   return thresholds.sort((a, b) => a - b);
 }

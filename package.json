@@ -1,7 +1,7 @@
 {
   "name": "clavix",
-  "version": "4.11.2",
-  "description": "Clavix Intelligence™ for AI coding. Automatically optimizes prompts with intent detection, quality assessment, and adaptive patterns—no framework to learn. Works with Claude Code, Cursor, Windsurf, and 19+ other AI coding tools.",
+  "version": "4.12.0",
+  "description": "Prompt optimization for AI coding. Structures prompts with pattern-based intent detection, quality assessment, and workflow management. Works with Claude Code, Cursor, Windsurf, and 19+ other AI coding tools.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -42,7 +42,7 @@
     "ai",
     "prompt",
     "prompt-optimization",
-    "prompt-intelligence",
+    "prompt-structuring",
     "intent-detection",
     "quality-assessment",
     "prd",
@@ -53,7 +53,8 @@
     "developer-tools",
     "prompt-engineering",
     "ai-coding-tools",
-    "requirements"
+    "requirements",
+    "workflow"
   ],
   "author": "ClavixDev",
   "license": "Apache-2.0",

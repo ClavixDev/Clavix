@@ -13,6 +13,7 @@ import {
   EscalationReason,
   DepthLevel,
 } from './types.js';
+import { EscalationThresholdsConfig } from '../../types/config.js';
 
 /**
  * v4.11: Extended context options for optimization modes
@@ -25,19 +26,42 @@ export interface OptimizationContextOverride {
   depthLevel?: DepthLevel; // v4.11: Explicit depth level for improve mode
 }
 
+/**
+ * v4.12: Default escalation thresholds
+ * These can be overridden via ClavixConfig.intelligence.escalation
+ */
+const DEFAULT_THRESHOLDS: Required<EscalationThresholdsConfig> = {
+  comprehensiveAbove: 75,
+  standardFloor: 60,
+  intentConfidenceMin: 50,
+  strongRecommendAbove: 75,
+  suggestAbove: 45,
+};
+
 export class UniversalOptimizer {
   private intentDetector: IntentDetector;
   private patternLibrary: PatternLibrary;
   private qualityAssessor: QualityAssessor;
+  private thresholds: Required<EscalationThresholdsConfig>;
 
   constructor(
     intentDetector?: IntentDetector,
     patternLibrary?: PatternLibrary,
-    qualityAssessor?: QualityAssessor
+    qualityAssessor?: QualityAssessor,
+    escalationConfig?: EscalationThresholdsConfig
   ) {
     this.intentDetector = intentDetector || new IntentDetector();
     this.patternLibrary = patternLibrary || new PatternLibrary();
     this.qualityAssessor = qualityAssessor || new QualityAssessor();
+    // v4.12: Merge user config with defaults
+    this.thresholds = { ...DEFAULT_THRESHOLDS, ...escalationConfig };
+  }
+
+  /**
+   * v4.12: Get current threshold configuration
+   */
+  getThresholds(): Required<EscalationThresholdsConfig> {
+    return { ...this.thresholds };
   }
 
   /**
@@ -209,6 +233,7 @@ export class UniversalOptimizer {
   /**
    * v4.11: Analyze whether to escalate from standard to comprehensive depth
    * Uses multi-factor scoring for intelligent triage decisions
+   * v4.12: Uses configurable thresholds from EscalationThresholdsConfig
    *
    * IMPORTANT: Quality checks use the ORIGINAL prompt, not the enhanced one,
    * because triage decisions should be based on what the user wrote.
@@ -216,6 +241,10 @@ export class UniversalOptimizer {
   analyzeEscalation(result: OptimizationResult): EscalationAnalysis {
     const reasons: EscalationReason[] = [];
     let totalScore = 0;
+
+    // v4.12: Use configurable thresholds
+    const { standardFloor, suggestAbove, strongRecommendAbove, intentConfidenceMin } =
+      this.thresholds;
 
     // Assess the ORIGINAL prompt's quality for triage decisions
     // (result.quality is for the enhanced prompt)
@@ -236,9 +265,10 @@ export class UniversalOptimizer {
       });
     }
 
-    // Factor 2: Low confidence (<60% → up to +20 pts)
-    if (result.intent.confidence < 60) {
-      const contribution = Math.round((60 - result.intent.confidence) / 3); // Max 20 pts
+    // Factor 2: Low confidence (< intentConfidenceMin+10 → up to +20 pts)
+    const confidenceThreshold = intentConfidenceMin + 10; // Default: 60
+    if (result.intent.confidence < confidenceThreshold) {
+      const contribution = Math.round((confidenceThreshold - result.intent.confidence) / 3); // Max 20 pts
       totalScore += contribution;
       reasons.push({
         factor: 'low-confidence',
@@ -247,9 +277,10 @@ export class UniversalOptimizer {
       });
     }
 
-    // Factor 3: Overall quality score (<65 → up to +25 pts) - uses ORIGINAL quality
-    if (originalQuality.overall < 65) {
-      const contribution = Math.round((65 - originalQuality.overall) / 2.6); // Max ~25 pts
+    // Factor 3: Overall quality score (< standardFloor+5 → up to +25 pts) - uses ORIGINAL quality
+    const qualityThreshold = standardFloor + 5; // Default: 65
+    if (originalQuality.overall < qualityThreshold) {
+      const contribution = Math.round((qualityThreshold - originalQuality.overall) / 2.6); // Max ~25 pts
       totalScore += contribution;
       reasons.push({
         factor: 'low-quality',
@@ -258,8 +289,8 @@ export class UniversalOptimizer {
       });
     }
 
-    // Factor 4: Low completeness (<60% → +15 pts) - uses ORIGINAL quality
-    if (originalQuality.completeness < 60) {
+    // Factor 4: Low completeness (< standardFloor → +15 pts) - uses ORIGINAL quality
+    if (originalQuality.completeness < standardFloor) {
       const contribution = 15;
       totalScore += contribution;
       reasons.push({
@@ -269,8 +300,8 @@ export class UniversalOptimizer {
       });
     }
 
-    // Factor 5: Low specificity (<60% → +15 pts) - v4.0 new dimension, uses ORIGINAL quality
-    if (originalQuality.specificity < 60) {
+    // Factor 5: Low specificity (< standardFloor → +15 pts) - uses ORIGINAL quality
+    if (originalQuality.specificity < standardFloor) {
       const contribution = 15;
       totalScore += contribution;
       reasons.push({
@@ -292,7 +323,11 @@ export class UniversalOptimizer {
     }
 
     // Factor 7: Length mismatch (short prompt + incomplete → +15 pts) - uses ORIGINAL quality
-    if (result.original.length < 50 && originalQuality.completeness < 70) {
+    const completenessLenientThreshold = standardFloor + 10; // Default: 70
+    if (
+      result.original.length < 50 &&
+      originalQuality.completeness < completenessLenientThreshold
+    ) {
       const contribution = 15;
       totalScore += contribution;
       reasons.push({
@@ -314,12 +349,13 @@ export class UniversalOptimizer {
       });
     }
 
-    // Determine escalation confidence
-    // Thresholds: 45 for escalation, 60 for medium confidence, 75 for high confidence
+    // v4.12: Determine escalation confidence using configurable thresholds
+    // suggestAbove for escalation, (suggestAbove+strongRecommendAbove)/2 for medium, strongRecommendAbove for high
+    const mediumThreshold = Math.round((suggestAbove + strongRecommendAbove) / 2); // Default: 60
     let escalationConfidence: 'high' | 'medium' | 'low';
-    if (totalScore >= 75) {
+    if (totalScore >= strongRecommendAbove) {
       escalationConfidence = 'high';
-    } else if (totalScore >= 60) {
+    } else if (totalScore >= mediumThreshold) {
       escalationConfidence = 'medium';
     } else {
       escalationConfidence = 'low';
@@ -329,8 +365,8 @@ export class UniversalOptimizer {
     const comprehensiveValue = this.generateComprehensiveValue(result, reasons);
 
     return {
-      // Threshold of 45 ensures planning prompts with missing completeness trigger escalation
-      shouldEscalate: totalScore >= 45,
+      // v4.12: Use configurable suggestAbove threshold (default: 45)
+      shouldEscalate: totalScore >= suggestAbove,
       escalationScore: Math.min(totalScore, 100),
       escalationConfidence,
       reasons,

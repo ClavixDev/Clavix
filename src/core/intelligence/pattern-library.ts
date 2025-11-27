@@ -6,11 +6,9 @@ import { StructureOrganizer } from './patterns/structure-organizer.js';
 import { CompletenessValidator } from './patterns/completeness-validator.js';
 import { ActionabilityEnhancer } from './patterns/actionability-enhancer.js';
 // v4.0 Comprehensive scope patterns
-import { AlternativePhrasingGenerator } from './patterns/alternative-phrasing-generator.js';
-import { EdgeCaseIdentifier } from './patterns/edge-case-identifier.js';
-import { ValidationChecklistCreator } from './patterns/validation-checklist-creator.js';
-import { AssumptionExplicitizer } from './patterns/assumption-explicitizer.js';
-import { ScopeDefiner } from './patterns/scope-definer.js';
+// v4.12: Removed boilerplate patterns (AlternativePhrasingGenerator, EdgeCaseIdentifier,
+//        ValidationChecklistCreator, AssumptionExplicitizer, ScopeDefiner, ErrorToleranceEnhancer,
+//        PrerequisiteIdentifier) - these generated static output instead of improving prompts
 import { PRDStructureEnforcer } from './patterns/prd-structure-enforcer.js';
 // v4.0 Both scope patterns (standard & comprehensive)
 import { StepDecomposer } from './patterns/step-decomposer.js';
@@ -19,8 +17,6 @@ import { ContextPrecisionBooster } from './patterns/context-precision.js';
 import { AmbiguityDetector } from './patterns/ambiguity-detector.js';
 import { OutputFormatEnforcer } from './patterns/output-format-enforcer.js';
 import { SuccessCriteriaEnforcer } from './patterns/success-criteria-enforcer.js';
-import { ErrorToleranceEnhancer } from './patterns/error-tolerance-enhancer.js';
-import { PrerequisiteIdentifier } from './patterns/prerequisite-identifier.js';
 import { DomainContextEnricher } from './patterns/domain-context-enricher.js';
 // v4.3.2 PRD patterns
 import { RequirementPrioritizer } from './patterns/requirement-prioritizer.js';
@@ -90,19 +86,16 @@ export class PatternLibrary implements IPatternLibrary {
 
   private registerDefaultPatterns(): void {
     // Register core patterns (available in standard & comprehensive scopes)
-    this.register(new ConcisenessFilter()); // HIGH - Remove verbosity
-    this.register(new ObjectiveClarifier()); // HIGH - Add clarity
-    this.register(new TechnicalContextEnricher()); // MEDIUM - Add technical details
-    this.register(new StructureOrganizer()); // HIGH - Reorder logically
-    this.register(new CompletenessValidator()); // MEDIUM - Check missing elements
-    this.register(new ActionabilityEnhancer()); // HIGH - Vague to specific
+    // v4.12: 20 patterns total after removing 7 boilerplate patterns
+    this.register(new ConcisenessFilter()); // P10 - Remove verbosity
+    this.register(new ObjectiveClarifier()); // P9 - Add clarity
+    this.register(new TechnicalContextEnricher()); // P8 - Add technical details
+    this.register(new StructureOrganizer()); // P8 - Reorder logically
+    this.register(new CompletenessValidator()); // P6 - Check missing elements
+    this.register(new ActionabilityEnhancer()); // P7 - Vague to specific
 
     // v4.0 Comprehensive scope patterns
-    this.register(new AlternativePhrasingGenerator()); // P5 - Generate alternative structures
-    this.register(new EdgeCaseIdentifier()); // P4 - Identify edge cases by domain
-    this.register(new ValidationChecklistCreator()); // P3 - Create validation checklists
-    this.register(new AssumptionExplicitizer()); // P6 - Make implicit assumptions explicit
-    this.register(new ScopeDefiner()); // P5 - Add scope boundaries
+    // v4.12: Removed boilerplate patterns that generated static output
     this.register(new PRDStructureEnforcer()); // P9 - Ensure PRD completeness
 
     // v4.0 Both scope patterns (standard & comprehensive)
@@ -111,11 +104,9 @@ export class PatternLibrary implements IPatternLibrary {
 
     // v4.1 New patterns - Agent transparency & quality improvements
     this.register(new AmbiguityDetector()); // P9 - Identify ambiguous terms (both scopes)
-    this.register(new OutputFormatEnforcer()); // P7 - Add output format specs (both scopes)
+    this.register(new OutputFormatEnforcer()); // P7 - Add output format specs (comprehensive only)
     this.register(new SuccessCriteriaEnforcer()); // P6 - Add success criteria (both scopes)
-    this.register(new ErrorToleranceEnhancer()); // P5 - Add error handling (comprehensive only)
-    this.register(new PrerequisiteIdentifier()); // P6 - Identify prerequisites (comprehensive only)
-    this.register(new DomainContextEnricher()); // P5 - Add domain best practices (both scopes)
+    this.register(new DomainContextEnricher()); // P5 - Add domain best practices (comprehensive only)
 
     // v4.3.2 PRD patterns
     this.register(new RequirementPrioritizer()); // P7 - Separate must-have from nice-to-have

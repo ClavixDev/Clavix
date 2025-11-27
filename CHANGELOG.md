@@ -5,6 +5,77 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.12.0] - 2025-11-27
+
+### Honest Optimization Release
+
+**Removed boilerplate patterns and improved documentation honesty. Clavix is "just prompt improvement" - no magic, no hype.**
+
+#### Pattern Library Cleanup
+
+Removed 7 boilerplate patterns that generated static output instead of improving prompts:
+
+| Removed Pattern | Reason |
+|-----------------|--------|
+| AlternativePhrasingGenerator | Generated static suggestions, not prompt improvements |
+| EdgeCaseIdentifier | Listed generic edge cases, didn't enhance the prompt |
+| ValidationChecklistCreator | Created boilerplate checklists, not prompt-specific |
+| AssumptionExplicitizer | Added generic assumption lists |
+| ScopeDefiner | Generated templated scope statements |
+| ErrorToleranceEnhancer | Added boilerplate error handling text |
+| PrerequisiteIdentifier | Listed generic prerequisites |
+
+**Pattern count reduced from 27 to 20 patterns** - all remaining patterns actively improve prompt quality.
+
+#### Documentation Honesty
+
+- **Removed "Clavix Intelligence™" branding** - it's prompt improvement, not AI/ML
+- **Created `/docs/philosophy.md`** - explains agent-first design and honest positioning
+- **Created `/docs/guides/choosing-workflow.md`** - practical guidance for workflow selection
+- **Updated `/docs/how-it-works.md`** - clear explanation of what Clavix actually does
+- **Accurate pattern documentation** - pattern-visibility.md now shows correct priorities
+
+#### Configurable Thresholds
+
+Escalation thresholds are now configurable via `.clavix/config.json`:
+
+```json
+{
+  "intelligence": {
+    "escalation": {
+      "comprehensiveAbove": 75,
+      "standardFloor": 60,
+      "intentConfidenceMin": 50,
+      "strongRecommendAbove": 75,
+      "suggestAbove": 45
+    }
+  }
+}
+```
+
+#### Legacy Command Cleanup
+
+`clavix init` and `clavix update` now automatically remove deprecated `/clavix:fast` and `/clavix:deep` slash command files when upgrading from older versions.
+
+#### Technical Changes
+
+| Component | Change |
+|-----------|--------|
+| `types/config.ts` | Added `EscalationThresholdsConfig`, `QualityWeightsConfig` |
+| `universal-optimizer.ts` | Thresholds now use config instead of hardcoded values |
+| `quality-assessor.ts` | Added documentation for scoring weight rationale |
+| `pattern-library.ts` | Removed 7 boilerplate pattern registrations |
+| `pattern-visibility.md` | Updated to show correct 20 patterns with accurate priorities |
+| `agents.md` | Added CLI auto-save vs slash command save clarification |
+
+#### Test Updates
+
+- Updated snapshot tests for reduced pattern output
+- Fixed pattern priority expectations (12 standard scope, 20 total)
+- All 3789 tests passing
+
+---
+
 ## [4.11.1] - 2025-11-26
 
 ### Prompt Saving Guardrails

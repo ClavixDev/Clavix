@@ -1,5 +1,5 @@
 # Clavix
-> **Clavix Intelligence™** for AI coding. Transform rough ideas into production-ready prompts with automatic quality optimization—no framework to learn.
+> Prompt optimization for AI coding. Transform rough ideas into structured, actionable prompts using pattern-based analysis—no framework to learn.
 
 ## Table of contents
 - [Why Clavix?](#why-clavix)
@@ -20,24 +20,26 @@
 **Requirements:** Node.js ≥ 16.0.0 (ESM support required)
 
 ## Why Clavix?
-Better prompts lead to better code. Clavix automatically detects what you're trying to do and applies the right optimization patterns—no framework to learn, no methodology to master. Just describe what you want, and Clavix makes it AI-ready.
+Better prompts lead to better code. Clavix analyzes what you're trying to do and applies structured optimization patterns—no framework to learn, no methodology to master. Just describe what you want, and Clavix structures it for AI consumption.
 
-**What makes Clavix v3.0 unique:**
-- **95%+ Intent Detection Accuracy** - Weighted keyword scoring, phrase-based detection, and negation handling
-- **6 Production-Ready Optimization Patterns** - Automatically applied based on intent and quality assessment
-- **Zero Learning Curve** - Works with your natural language, adapts to your style
-- **Universal Integration** - Supports 20+ AI coding assistants with native slash commands
+**What Clavix provides:**
+- **Pattern-based intent detection** - Weighted keyword scoring across 11 intent categories
+- **20 optimization patterns** - Automatically applied based on intent and quality assessment
+- **Workflow management** - PRD generation, task breakdown, and implementation tracking
+- **Universal integration** - Supports 20+ AI coding assistants with native slash commands
 
 Learn more in [docs/why-clavix.md](docs/why-clavix.md).
 
 ## How It Works
-Clavix uses **Clavix Intelligence™** (v3.0+) to automatically:
-- **Detect intent** - 95%+ accuracy with weighted scoring, phrase detection, and context analysis
-- **Assess quality** - Evaluates across 5 dimensions: Clarity, Efficiency, Structure, Completeness, Actionability
-- **Apply patterns** - 6 optimization patterns automatically selected and prioritized for your specific need
-- **Generate output** - Production-ready prompts optimized for AI coding assistants
+Clavix uses pattern-based analysis to:
+- **Detect intent** - Keyword scoring and phrase detection across 11 intent categories
+- **Assess quality** - Heuristic scoring across 6 dimensions: Clarity, Efficiency, Structure, Completeness, Actionability, Specificity
+- **Apply patterns** - 20 optimization patterns automatically selected based on intent and quality
+- **Generate output** - Structured prompts optimized for AI coding assistants
 
-**The magic happens automatically**—no frameworks to learn, no manual analysis required. Just describe what you want in plain language, and Clavix transforms it into an AI-ready prompt using battle-tested optimization patterns.
+Optimization applies automatically—no frameworks to learn, no manual analysis required. Just describe what you want in plain language, and Clavix structures it into an AI-ready prompt.
+
+See [docs/philosophy.md](docs/philosophy.md) for an honest look at what Clavix is and isn't.
 
 ## Providers
 
@@ -55,11 +57,12 @@ Provider paths and argument placeholders are listed in [docs/integrations.md](do
 
 Most Clavix users work through AI coding assistants:
 
-> **💡 Choosing Your Mode:**
-> - **Fast/Deep** – Modifying or improving existing features
-> - **PRD** – Developing something completely new
+> **💡 Choosing Your Workflow:**
+> - **Improve** – Optimize a single prompt (auto-selects depth)
+> - **PRD** – Plan something new with guided questions
+> - **Start** – Explore ideas conversationally
 >
-> See [Choosing the Right Mode](docs/guides/workflows.md#choosing-the-right-mode) for detailed guidance.
+> See [Choosing the Right Workflow](docs/guides/choosing-workflow.md) for detailed guidance.
 
 ```bash
 # 1. Initialize in your project
@@ -67,23 +70,23 @@ npm install -g clavix
 clavix init
 
 # 2. Use slash commands in your AI agent
-/clavix:fast "Create a login page"
-/clavix:deep "Build an API for user management"
-/clavix:prd  # Full PRD workflow
+/clavix:improve "Create a login page"     # Optimize a prompt
+/clavix:prd                                # Full PRD workflow
+/clavix:start                              # Conversational exploration
 
 # 3. Manage saved prompts
 /clavix:execute  # Execute saved prompts
-/clavix:prompts  # Manage prompt lifecycle
+/clavix:verify   # Verify implementation against checklist
 
 # 4. Implement with task tracking
-clavix plan              # Generate tasks from PRD
-clavix implement         # Start implementation workflow
+/clavix:plan              # Generate tasks from PRD
+/clavix:implement         # Start implementation workflow
 clavix task-complete <taskId>  # Mark tasks done with auto-commit
 ```
 
 **Supported agents**: Claude Code, Cursor, Windsurf, and [17+ more providers](docs/integrations.md)
 
-Learn more: [Complete prompt lifecycle documentation](docs/commands/execute.md)
+Learn more: [Workflow guide](docs/guides/choosing-workflow.md)
 
 ### Direct CLI Usage (Alternative)
 
@@ -91,8 +94,8 @@ You can also use Clavix directly from the terminal:
 
 ```bash
 clavix init
-clavix fast "Create a login page"
-clavix deep "Build an API for user management"
+clavix improve "Create a login page"           # Auto-selects depth
+clavix improve --comprehensive "Complex API"   # Force comprehensive
 clavix prd
 ```
 
@@ -100,7 +103,8 @@ clavix prd
 - Overview & navigation: [docs/README.md](docs/README.md)
 - Command reference: [docs/commands/](docs/commands/README.md)
 - Providers: [docs/integrations.md](docs/integrations.md)
-- Clavix Intelligence: [docs/clavix-intelligence.md](docs/clavix-intelligence.md)
+- How it works: [docs/how-it-works.md](docs/how-it-works.md)
+- Philosophy: [docs/philosophy.md](docs/philosophy.md)
 - Guides: [docs/guides/](docs/guides/workflows.md)
 
 ## Requirements

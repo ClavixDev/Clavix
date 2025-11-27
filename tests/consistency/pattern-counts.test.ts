@@ -70,10 +70,10 @@ describe('Pattern Count Consistency', () => {
       );
 
       const count = comprehensivePatterns.length;
-      // Documentation says: "Comprehensive | 27 total patterns, 8-14 typically applied"
+      // v4.12: Updated to 20 total patterns after removing 7 boilerplate patterns
       // Allow variance based on intent filtering
-      expect(count).toBeGreaterThanOrEqual(15); // Minimum reasonable for comprehensive depth
-      expect(count).toBeLessThanOrEqual(30); // Maximum reasonable for comprehensive depth
+      expect(count).toBeGreaterThanOrEqual(10); // Minimum reasonable for comprehensive depth
+      expect(count).toBeLessThanOrEqual(20); // Maximum reasonable for comprehensive depth
 
       console.log(`Comprehensive depth patterns for code-generation: ${count}`);
     });
@@ -111,49 +111,48 @@ describe('Pattern Count Consistency', () => {
   });
 
   describe('Pattern Categories from Documentation', () => {
-    it('all core patterns exist in library', () => {
+    it('all core patterns (scope=both) exist in library', () => {
+      // v4.12: 12 patterns with scope='both' available in both standard and comprehensive
       const corePatterns = [
-        'conciseness-filter',
         'objective-clarifier',
+        'ambiguity-detector',
         'structure-organizer',
-        'actionability-enhancer',
-        'technical-context-enricher',
+        'output-format-enforcer',
+        'success-criteria-enforcer',
+        'context-precision',
         'completeness-validator',
+        'technical-context-enricher',
+        'step-decomposer',
+        'domain-context-enricher',
+        'conciseness-filter',
+        'actionability-enhancer',
       ];
 
       corePatterns.forEach((patternId) => {
         expect(patternLibrary.get(patternId)).toBeDefined();
       });
+
+      // Verify count matches documentation
+      expect(corePatterns.length).toBe(12);
     });
 
-    it('all both-mode patterns exist in library', () => {
-      const bothModePatterns = [
-        'step-decomposer',
-        'context-precision',
-        'ambiguity-detector',
-        'output-format-enforcer',
-        'success-criteria-enforcer',
-        'domain-context-enricher',
-      ];
-
-      bothModePatterns.forEach((patternId) => {
-        expect(patternLibrary.get(patternId)).toBeDefined();
-      });
-    });
-
-    it('all deep-only patterns exist in library', () => {
-      const deepOnlyPatterns = [
-        'alternative-phrasing-generator',
-        'edge-case-identifier',
-        'validation-checklist-creator',
-        'assumption-explicitizer',
-        'scope-definer',
+    it('all comprehensive-only patterns exist in library', () => {
+      // v4.12: PRD and conversational patterns are comprehensive-only
+      // Note: output-format-enforcer and domain-context-enricher have scope='both'
+      const comprehensiveOnlyPatterns = [
+        // PRD mode patterns
         'prd-structure-enforcer',
-        'error-tolerance-enhancer',
-        'prerequisite-identifier',
+        'requirement-prioritizer',
+        'success-metrics-enforcer',
+        'user-persona-enricher',
+        'dependency-identifier',
+        // Conversational mode patterns
+        'conversation-summarizer',
+        'topic-coherence-analyzer',
+        'implicit-requirement-extractor',
       ];
 
-      deepOnlyPatterns.forEach((patternId) => {
+      comprehensiveOnlyPatterns.forEach((patternId) => {
         expect(patternLibrary.get(patternId)).toBeDefined();
       });
     });
@@ -185,7 +184,8 @@ describe('Pattern Count Consistency', () => {
   });
 
   describe('Total Pattern Count', () => {
-    it('library has exactly 27 patterns registered', () => {
+    it('library has exactly 20 patterns registered', () => {
+      // v4.12: Count reduced from 27 to 20 after removing 7 boilerplate patterns
       // Count all patterns in the library by iterating through all intents
       const allPatternIds = new Set<string>();
 
@@ -209,46 +209,44 @@ describe('Pattern Count Consistency', () => {
         deepPatterns.forEach((p) => allPatternIds.add(p.id));
       });
 
-      // Documentation claims 27 total patterns
+      // v4.12: 20 total patterns after removing boilerplate
       console.log(`Total unique patterns across all modes/intents: ${allPatternIds.size}`);
       console.log('Pattern IDs:', Array.from(allPatternIds).sort().join(', '));
 
-      // Verify we have approximately 27 patterns
-      expect(allPatternIds.size).toBeGreaterThanOrEqual(25);
-      expect(allPatternIds.size).toBeLessThanOrEqual(30);
+      // Verify we have approximately 20 patterns
+      expect(allPatternIds.size).toBeGreaterThanOrEqual(18);
+      expect(allPatternIds.size).toBeLessThanOrEqual(22);
     });
   });
 
   describe('Pattern Priority Consistency', () => {
     it('documented priorities match actual pattern priorities', () => {
-      // Sample of patterns with their documented priorities
+      // v4.12: Updated priorities to match actual TypeScript pattern files
+      // Priorities verified from readonly priority declarations in each pattern file
       const expectedPriorities: Record<string, number> = {
+        // Core patterns (scope='both')
         'objective-clarifier': 9,
         'ambiguity-detector': 9,
-        'prd-structure-enforcer': 9,
         'structure-organizer': 8,
-        'conversation-summarizer': 8,
         'output-format-enforcer': 7,
         'success-criteria-enforcer': 7,
-        'requirement-prioritizer': 7,
-        'success-metrics-enforcer': 7,
-        'completeness-validator': 6,
         'context-precision': 6,
-        'user-persona-enricher': 6,
-        'assumption-explicitizer': 6,
-        'prerequisite-identifier': 6,
-        'topic-coherence-analyzer': 6,
+        'completeness-validator': 6,
         'technical-context-enricher': 5,
         'step-decomposer': 5,
         'domain-context-enricher': 5,
-        'error-tolerance-enhancer': 5,
-        'scope-definer': 5,
-        'dependency-identifier': 5,
         'conciseness-filter': 4,
         'actionability-enhancer': 4,
-        'edge-case-identifier': 4,
-        'alternative-phrasing-generator': 3,
-        'validation-checklist-creator': 3,
+        // PRD mode patterns (scope='comprehensive')
+        'prd-structure-enforcer': 9,
+        'requirement-prioritizer': 7,
+        'success-metrics-enforcer': 7,
+        'user-persona-enricher': 6,
+        'dependency-identifier': 5,
+        // Conversational mode patterns (scope='comprehensive')
+        'conversation-summarizer': 8,
+        'topic-coherence-analyzer': 6,
+        'implicit-requirement-extractor': 5,
       };
 
       Object.entries(expectedPriorities).forEach(([patternId, expectedPriority]) => {

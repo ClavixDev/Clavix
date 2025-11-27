@@ -2,13 +2,45 @@ import * as path from 'path';
 import { AgentAdapter } from '../types/agent.js';
 import { FileSystem } from './file-system.js';
 
+/**
+ * v4.12: Deprecated commands that have been replaced
+ * - fast → improve (unified with auto-depth)
+ * - deep → improve --comprehensive
+ */
+const DEPRECATED_COMMANDS = ['fast', 'deep'];
+
 export async function collectLegacyCommandFiles(
   adapter: AgentAdapter,
-  commandNames: string[],
+  commandNames: string[]
 ): Promise<string[]> {
   const legacyPaths = new Set<string>();
   const extension = adapter.fileExtension;
   const commandDir = path.resolve(adapter.getCommandPath());
+
+  // v4.12: Clean up deprecated fast/deep commands
+  for (const deprecatedName of DEPRECATED_COMMANDS) {
+    // Check for various naming patterns across adapters
+    const candidates = [
+      path.resolve(commandDir, `${deprecatedName}${extension}`),
+      path.resolve(commandDir, `clavix-${deprecatedName}${extension}`),
+      path.resolve(commandDir, `clavix:${deprecatedName}${extension}`),
+    ];
+
+    // For Claude Code with subdirectory structure
+    if (adapter.name === 'claude-code') {
+      const clavixDir = path.resolve(commandDir, 'clavix');
+      candidates.push(
+        path.resolve(clavixDir, `${deprecatedName}${extension}`),
+        path.resolve(clavixDir, `clavix-${deprecatedName}${extension}`)
+      );
+    }
+
+    for (const candidate of candidates) {
+      if (await FileSystem.exists(candidate)) {
+        legacyPaths.add(candidate);
+      }
+    }
+  }
 
   for (const name of commandNames) {
     const newFilePath = path.resolve(commandDir, adapter.getTargetFilename(name));
@@ -23,12 +55,12 @@ export async function collectLegacyCommandFiles(
 
       for (const candidate of oldCandidates) {
         const resolvedCandidate = path.resolve(candidate);
-        if (resolvedCandidate !== newFilePath && await FileSystem.exists(resolvedCandidate)) {
+        if (resolvedCandidate !== newFilePath && (await FileSystem.exists(resolvedCandidate))) {
           legacyPaths.add(resolvedCandidate);
         }
       }
 
-      if (defaultFilePath !== newFilePath && await FileSystem.exists(defaultFilePath)) {
+      if (defaultFilePath !== newFilePath && (await FileSystem.exists(defaultFilePath))) {
         legacyPaths.add(defaultFilePath);
       }
       continue;
@@ -36,10 +68,14 @@ export async function collectLegacyCommandFiles(
 
     if (adapter.name === 'gemini' || adapter.name === 'qwen') {
       const namespaced = commandDir.endsWith(path.join('commands', 'clavix'));
-      if (!namespaced && defaultFilePath !== newFilePath && await FileSystem.exists(defaultFilePath)) {
+      if (
+        !namespaced &&
+        defaultFilePath !== newFilePath &&
+        (await FileSystem.exists(defaultFilePath))
+      ) {
         legacyPaths.add(defaultFilePath);
       }
-    } else if (defaultFilePath !== newFilePath && await FileSystem.exists(defaultFilePath)) {
+    } else if (defaultFilePath !== newFilePath && (await FileSystem.exists(defaultFilePath))) {
       legacyPaths.add(defaultFilePath);
     }
   }

@@ -65,7 +65,7 @@ Tell them: **"Run `/clavix:execute --latest` to implement this prompt."**
 ```
 **CLAVIX MODE: Improve**
 Mode: planning
-Purpose: Optimizing user prompt with Clavix Intelligence
+Purpose: Optimizing user prompt with pattern-based analysis
 Depth: [standard|comprehensive] (auto-detected based on quality score)
 Implementation: BLOCKED - I will analyze and improve the prompt, not implement it
 ```

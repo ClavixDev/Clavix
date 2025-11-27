@@ -164,7 +164,7 @@ Implementation: BLOCKED - I will ask questions and explore needs, not implement
 
 After the conversational session, `/clavix:summarize` will:
 - Extract requirements from the conversation
-- Apply Clavix Intelligence™ optimization
+- Apply pattern-based optimization
 - Analyze intent and assess quality (Clarity, Efficiency, Structure, Completeness, Actionability)
 - Generate both original extraction and optimized version
 - Display quality scores and improvements

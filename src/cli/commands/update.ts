@@ -269,24 +269,23 @@ export default class Update extends Command {
 This project uses Clavix for prompt improvement and PRD generation.
 
 ### Available Commands
+- \`clavix improve [prompt]\` - Unified prompt optimization with auto-depth selection
+- \`clavix improve --comprehensive [prompt]\` - Force comprehensive analysis
+- \`clavix improve --standard [prompt]\` - Force standard optimization
+- \`clavix analyze [prompt]\` - JSON analysis output for programmatic use
 - \`clavix prd\` - Generate a comprehensive PRD through guided questions
-- \`clavix fast [prompt]\` - Quick prompt improvements with smart triage
-- \`clavix deep [prompt]\` - Comprehensive prompt analysis
 - \`clavix start\` - Start a conversational session for iterative development
 - \`clavix summarize\` - Extract requirements from conversation history
-- \`clavix list\` - List all sessions and outputs
-- \`clavix show [session-id]\` - Show detailed session information
+- \`clavix execute [--latest]\` - Execute saved prompts
+- \`clavix verify [--latest]\` - Verify implementation against checklist
 
 ### Quick Start
 \`\`\`bash
+# Prompt optimization (auto-selects depth)
+clavix improve "Build a user auth system"
+
 # Generate a PRD
 clavix prd
-
-# Quick prompt improvement
-clavix fast "Build a user auth system"
-
-# Deep prompt analysis
-clavix deep "Build a user auth system"
 
 # Start conversational mode
 clavix start

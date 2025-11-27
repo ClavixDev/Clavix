@@ -38,7 +38,7 @@ Implementation: [BLOCKED|ALLOWED]
 ```
 **CLAVIX MODE: Improve**
 Mode: planning
-Purpose: Optimizing user prompt with Clavix Intelligence
+Purpose: Optimizing user prompt with pattern-based analysis
 Implementation: BLOCKED - I will analyze and improve the prompt, not implement it
 ```
 

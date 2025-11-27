@@ -1,6 +1,6 @@
 ## Intent Types Reference
 
-Clavix Intelligence™ detects 11 primary intent types. This reference is synchronized with `src/core/intelligence/types.ts`.
+Clavix detects 11 primary intent types using pattern-based analysis. This reference is synchronized with `src/core/intelligence/types.ts`.
 
 ### Intent Categories
 

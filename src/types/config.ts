@@ -16,12 +16,76 @@ export interface ClavixConfig {
  * v4.4 Intelligence Configuration
  * Configure pattern behavior, enable/disable patterns, adjust priorities
  * v4.11: Removed defaultMode (fast/deep replaced by improve with auto-detection)
+ * v4.12: Added escalation thresholds configuration
  */
 export interface IntelligenceConfig {
   /** Pattern-specific settings */
   patterns?: PatternSettingsConfig;
   /** Enable verbose pattern logging */
   verbosePatternLogs?: boolean;
+  /** v4.12: Escalation threshold configuration */
+  escalation?: EscalationThresholdsConfig;
+  /** v4.12: Quality assessment weight overrides */
+  qualityWeights?: QualityWeightsConfig;
+}
+
+/**
+ * v4.12: Configurable escalation thresholds
+ * These control when comprehensive analysis is recommended vs standard
+ */
+export interface EscalationThresholdsConfig {
+  /**
+   * Quality score threshold for comprehensive mode (default: 75)
+   * Prompts >= this score get comprehensive analysis
+   */
+  comprehensiveAbove?: number;
+
+  /**
+   * Quality score threshold for standard mode floor (default: 60)
+   * Prompts between standardFloor and comprehensiveAbove get standard optimization
+   */
+  standardFloor?: number;
+
+  /**
+   * Intent confidence threshold for auto-proceed (default: 50)
+   * Below this, ask user to confirm intent
+   */
+  intentConfidenceMin?: number;
+
+  /**
+   * Escalation score threshold for strong recommendation (default: 75)
+   * Above this, strongly recommend comprehensive mode
+   */
+  strongRecommendAbove?: number;
+
+  /**
+   * Escalation score threshold for suggestion (default: 45)
+   * Above this, suggest comprehensive mode as option
+   */
+  suggestAbove?: number;
+}
+
+/**
+ * v4.12: Quality dimension weight overrides by intent
+ * Allows customizing how quality scores are weighted per intent type
+ */
+export interface QualityWeightsConfig {
+  /** Override weights for specific intents */
+  byIntent?: Record<string, QualityDimensionWeights>;
+  /** Default weights for all intents (overrides built-in defaults) */
+  defaults?: QualityDimensionWeights;
+}
+
+/**
+ * Weight distribution across quality dimensions (must sum to 100)
+ */
+export interface QualityDimensionWeights {
+  clarity?: number;
+  efficiency?: number;
+  structure?: number;
+  completeness?: number;
+  actionability?: number;
+  specificity?: number;
 }
 
 /**

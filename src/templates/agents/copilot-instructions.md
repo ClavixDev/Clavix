@@ -1,6 +1,6 @@
 # Clavix Instructions for GitHub Copilot
 
-These instructions enhance GitHub Copilot's understanding of Clavix Intelligence™ workflows available in this project.
+These instructions enhance GitHub Copilot's understanding of Clavix prompt optimization workflows available in this project.
 
 ---
 
