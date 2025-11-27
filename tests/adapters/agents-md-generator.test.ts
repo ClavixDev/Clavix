@@ -34,14 +34,6 @@ describe('AgentsMdGenerator', () => {
     it('should have correct target file', () => {
       expect(AgentsMdGenerator.TARGET_FILE).toBe('AGENTS.md');
     });
-
-    it('should have correct start marker', () => {
-      expect(AgentsMdGenerator.START_MARKER).toBe('<!-- CLAVIX:START -->');
-    });
-
-    it('should have correct end marker', () => {
-      expect(AgentsMdGenerator.END_MARKER).toBe('<!-- CLAVIX:END -->');
-    });
   });
 
   describe('generate', () => {
@@ -123,17 +115,12 @@ Content after`;
 
     it('should throw error if template does not exist', async () => {
       // Temporarily remove the template
-      const templatePath = path.join(
-        __dirname,
-        '../../src/templates/agents/agents.md'
-      );
+      const templatePath = path.join(__dirname, '../../src/templates/agents/agents.md');
       const backup = await fs.readFile(templatePath, 'utf-8');
       await fs.remove(templatePath);
 
       try {
-        await expect(AgentsMdGenerator.generate()).rejects.toThrow(
-          /template not found/
-        );
+        await expect(AgentsMdGenerator.generate()).rejects.toThrow(/template not found/);
       } finally {
         // Restore template
         await fs.writeFile(templatePath, backup);
@@ -164,11 +151,12 @@ Content after`;
       expect(result).toBe(true);
     });
 
-    it('should return true even if only start marker present', async () => {
+    it('should return false if only start marker present (no complete block)', async () => {
       await fs.writeFile('AGENTS.md', '<!-- CLAVIX:START -->');
 
       const result = await AgentsMdGenerator.hasClavixBlock();
-      expect(result).toBe(true);
+      // DocInjector.hasBlock requires both START and END markers
+      expect(result).toBe(false);
     });
   });
 
@@ -226,10 +214,7 @@ Content after`;
     });
 
     it('should handle file with special characters in existing content', async () => {
-      await fs.writeFile(
-        'AGENTS.md',
-        '# Content with $pecial ch@racters! and régex 🚀'
-      );
+      await fs.writeFile('AGENTS.md', '# Content with $pecial ch@racters! and régex 🚀');
 
       await AgentsMdGenerator.generate();
 

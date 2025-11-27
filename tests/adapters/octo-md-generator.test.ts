@@ -34,14 +34,6 @@ describe('OctoMdGenerator', () => {
     it('should have correct target file', () => {
       expect(OctoMdGenerator.TARGET_FILE).toBe('OCTO.md');
     });
-
-    it('should have correct start marker', () => {
-      expect(OctoMdGenerator.START_MARKER).toBe('<!-- CLAVIX:START -->');
-    });
-
-    it('should have correct end marker', () => {
-      expect(OctoMdGenerator.END_MARKER).toBe('<!-- CLAVIX:END -->');
-    });
   });
 
   describe('generate', () => {
@@ -121,17 +113,12 @@ Content after`;
 
     it('should throw error if template does not exist', async () => {
       // Temporarily remove the template
-      const templatePath = path.join(
-        __dirname,
-        '../../src/templates/agents/octo.md'
-      );
+      const templatePath = path.join(__dirname, '../../src/templates/agents/octo.md');
       const backup = await fs.readFile(templatePath, 'utf-8');
       await fs.remove(templatePath);
 
       try {
-        await expect(OctoMdGenerator.generate()).rejects.toThrow(
-          /template not found/
-        );
+        await expect(OctoMdGenerator.generate()).rejects.toThrow(/template not found/);
       } finally {
         // Restore template
         await fs.writeFile(templatePath, backup);
@@ -162,11 +149,12 @@ Content after`;
       expect(result).toBe(true);
     });
 
-    it('should return true even if only start marker present', async () => {
+    it('should return false if only start marker present (no complete block)', async () => {
       await fs.writeFile('OCTO.md', '<!-- CLAVIX:START -->');
 
       const result = await OctoMdGenerator.hasClavixBlock();
-      expect(result).toBe(true);
+      // DocInjector.hasBlock requires both START and END markers
+      expect(result).toBe(false);
     });
   });
 
@@ -223,10 +211,7 @@ Content after`;
     });
 
     it('should handle file with special characters in existing content', async () => {
-      await fs.writeFile(
-        'OCTO.md',
-        '# Content with $pecial ch@racters! and régex 🚀'
-      );
+      await fs.writeFile('OCTO.md', '# Content with $pecial ch@racters! and régex 🚀');
 
       await OctoMdGenerator.generate();
 

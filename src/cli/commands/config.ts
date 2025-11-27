@@ -1,4 +1,4 @@
-import { Command, Args, Flags } from '@oclif/core';
+import { Command, Args } from '@oclif/core';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import * as path from 'path';
@@ -32,20 +32,10 @@ export default class Config extends Command {
     }),
   };
 
-  static flags = {
-    global: Flags.boolean({
-      char: 'g',
-      description: 'Use global configuration (not implemented yet)',
-      default: false,
-    }),
-  };
+  static flags = {};
 
   async run(): Promise<void> {
-    const { args, flags } = await this.parse(Config);
-
-    if (flags.global) {
-      this.warn('Global configuration is not yet supported. Using project configuration.');
-    }
+    const { args } = await this.parse(Config);
 
     const clavixDir = path.join(process.cwd(), '.clavix');
     const configPath = path.join(clavixDir, 'config.json');

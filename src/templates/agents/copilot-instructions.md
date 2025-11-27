@@ -74,8 +74,12 @@ All workflows are executed via slash commands:
 | `/clavix:implement` | Execute tasks or prompts (auto-detects source) |
 | `/clavix:start` | Begin conversational session |
 | `/clavix:summarize` | Extract requirements from conversation |
-| `/clavix:verify` | Verify implementation |
-| `/clavix:archive` | Archive completed projects |
+
+### Agentic Utilities (Project Management)
+| Utility | Purpose |
+|---------|---------|
+| `/clavix:verify` | Check implementation against PRD requirements |
+| `/clavix:archive` | Archive completed work to `.clavix/archive/` |
 
 ---
 

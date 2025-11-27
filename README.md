@@ -12,7 +12,8 @@
 
 | Version | Highlights | Details |
 | --- | --- | --- |
-| **v5.0.0** (Latest) | Agentic-first architecture - lean template delivery | [Changelog](CHANGELOG.md#500---2025-01-27) |
+| **v5.2.0** (Latest) | Diagnose command, DRY architecture, feature matrix | [Changelog](CHANGELOG.md) |
+| **v5.0.0** | Agentic-first architecture - lean template delivery | [Changelog](CHANGELOG.md#500---2025-01-27) |
 | **v4.12.0** | Final v4 release with full CLI commands | [Changelog](docs/archive/v4-changelog.md) |
 
 **Requirements:** Node.js >= 18.0.0
@@ -49,6 +50,15 @@ Clavix v5 follows an **agentic-first architecture**:
 | CLI agents | Claude Code, Droid CLI, CodeBuddy CLI, OpenCode, Gemini CLI, Qwen Code, LLXPRT, Amp, Crush CLI, Codex CLI, Augment CLI |
 | Universal adapters | AGENTS.md, GitHub Copilot, OCTO.md, WARP.md |
 
+### Feature Matrix
+
+| Feature | Claude Code | Cursor/Windsurf | Gemini/Qwen | Generic Agents |
+|---------|-------------|-----------------|-------------|----------------|
+| Slash commands | ✅ Native | ✅ Native | ✅ TOML | ❌ Read-only |
+| Doc injection | ✅ CLAUDE.md | ✅ .cursor/rules | ✅ N/A | ✅ AGENTS.md |
+| Namespace dirs | ✅ clavix/ | ✅ clavix/ | ✅ clavix/ | N/A |
+| Auto-detection | ✅ Yes | ✅ Yes | ✅ Yes | N/A |
+
 Full list and configuration: [docs/integrations.md](docs/integrations.md)
 
 ## Quickstart
@@ -77,6 +87,7 @@ The AI agent reads the improve template and:
 
 ### 3. Choose Your Workflow
 
+**Core Workflows:**
 | Command | When to Use |
 |---------|-------------|
 | `/clavix:improve` | Optimize a single prompt (auto-selects depth) |
@@ -84,7 +95,13 @@ The AI agent reads the improve template and:
 | `/clavix:start` | Explore ideas conversationally first |
 | `/clavix:plan` | Generate tasks from a PRD |
 | `/clavix:implement` | Execute tasks with progress tracking |
-| `/clavix:archive` | Archive completed projects |
+| `/clavix:summarize` | Extract requirements from conversation |
+
+**Project Management:**
+| Utility | Purpose |
+|---------|---------|
+| `/clavix:verify` | Check implementation against PRD requirements |
+| `/clavix:archive` | Archive completed projects to `.clavix/archive/` |
 
 See [Choosing the Right Workflow](docs/guides/choosing-workflow.md) for detailed guidance.
 
@@ -96,13 +113,14 @@ clavix update   # After npm update clavix
 
 ## CLI Commands
 
-Clavix v5 has only 4 CLI commands (for setup, not workflows):
+Clavix v5 has 5 CLI commands (for setup and diagnostics, not workflows):
 
 | Command | Purpose |
 |---------|---------|
 | `clavix init` | Initialize Clavix in a project |
 | `clavix update` | Update templates after package update |
 | `clavix config` | Manage configuration |
+| `clavix diagnose` | Check installation and report issues |
 | `clavix version` | Show version |
 
 **All workflows** (`/clavix:improve`, `/clavix:prd`, etc.) are **slash commands** that AI agents execute by reading markdown templates.

@@ -262,13 +262,12 @@ Enter conversational mode for iterative prompt development. Discuss your require
 #### /clavix:summarize
 Analyze the current conversation and extract key requirements into a structured prompt and mini-PRD.
 
-### Utility Commands
+### Agentic Utilities
 
-#### /clavix:verify
-Verify implementation against checklist. Run automated checks and generate pass/fail reports.
+These utilities provide structured workflows for common tasks. Invoke them using the slash commands below:
 
-#### /clavix:archive
-Archive completed projects. Move finished PRDs and outputs to the archive for future reference.
+- **Verify** (\`/clavix:verify\`): Check implementation against PRD requirements. Runs automated validation and generates pass/fail reports.
+- **Archive** (\`/clavix:archive\`): Archive completed work. Moves finished PRDs and outputs to archive for future reference.
 
 **When to use which mode:**
 - **Improve mode** (\`/clavix:improve\`): Smart prompt optimization with auto-depth selection

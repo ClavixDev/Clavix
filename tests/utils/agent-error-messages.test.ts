@@ -55,6 +55,26 @@ describe('AgentErrorMessages', () => {
     expect(message).toContain('permission denied');
   });
 
+  it('fileOperationFailed works without optional error parameter', () => {
+    const message = AgentErrorMessages.fileOperationFailed('read', '/tmp/file');
+    expect(message).toContain('read');
+    expect(message).toContain('/tmp/file');
+    expect(message).not.toContain('Error:');
+  });
+
+  it('fileOperationFailed handles all operation types', () => {
+    const operations: Array<'read' | 'write' | 'move' | 'delete'> = [
+      'read',
+      'write',
+      'move',
+      'delete',
+    ];
+    for (const op of operations) {
+      const message = AgentErrorMessages.fileOperationFailed(op, '/path');
+      expect(message).toContain(op);
+    }
+  });
+
   it('multiplePrdsFound enumerates projects with indices', () => {
     const message = AgentErrorMessages.multiplePrdsFound(['alpha', 'beta']);
     expect(message).toContain('1. alpha');
@@ -93,6 +113,13 @@ describe('AgentErrorMessages', () => {
     expect(message).toContain('clavix plan');
     expect(message).toContain('Exit code: 1');
     expect(message).toContain('stacktrace');
+  });
+
+  it('cliExecutionFailed works without stderr parameter', () => {
+    const message = AgentErrorMessages.cliExecutionFailed('clavix init', 127);
+    expect(message).toContain('clavix init');
+    expect(message).toContain('Exit code: 127');
+    expect(message).not.toContain('Error output:');
   });
 
   it('invalidTaskIdFormat shows examples', () => {

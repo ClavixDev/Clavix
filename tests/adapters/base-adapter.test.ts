@@ -139,14 +139,8 @@ describe('BaseAdapter', () => {
       await adapter.generateCommands(templates);
 
       const commandPath = adapter.getCommandPath();
-      const file1 = await fs.readFile(
-        path.join(commandPath, 'test-command.md'),
-        'utf-8'
-      );
-      const file2 = await fs.readFile(
-        path.join(commandPath, 'another-command.md'),
-        'utf-8'
-      );
+      const file1 = await fs.readFile(path.join(commandPath, 'test-command.md'), 'utf-8');
+      const file2 = await fs.readFile(path.join(commandPath, 'another-command.md'), 'utf-8');
 
       expect(file1).toBe('# Test Command\n\nThis is a test command.');
       expect(file2).toBe('# Another Command\n\nAnother test.');
@@ -181,10 +175,7 @@ describe('BaseAdapter', () => {
     it('should overwrite existing commands', async () => {
       const commandPath = adapter.getCommandPath();
       await fs.ensureDir(commandPath);
-      await fs.writeFile(
-        path.join(commandPath, 'test.md'),
-        'old content'
-      );
+      await fs.writeFile(path.join(commandPath, 'test.md'), 'old content');
 
       const templates: CommandTemplate[] = [
         { name: 'test', description: 'Test command', content: 'new content' },
@@ -192,10 +183,7 @@ describe('BaseAdapter', () => {
 
       await adapter.generateCommands(templates);
 
-      const content = await fs.readFile(
-        path.join(commandPath, 'test.md'),
-        'utf-8'
-      );
+      const content = await fs.readFile(path.join(commandPath, 'test.md'), 'utf-8');
       expect(content).toBe('new content');
     });
 
@@ -230,9 +218,7 @@ describe('BaseAdapter', () => {
       try {
         await fs.chmod(commandPath, 0o444);
 
-        await expect(adapter.generateCommands(templates)).rejects.toThrow(
-          IntegrationError
-        );
+        await expect(adapter.generateCommands(templates)).rejects.toThrow(IntegrationError);
 
         // Restore permissions for cleanup
         await fs.chmod(commandPath, 0o755);
@@ -295,6 +281,67 @@ describe('BaseAdapter', () => {
     });
   });
 
+  describe('removeAllCommands', () => {
+    it('should return 0 when directory does not exist', async () => {
+      const removed = await adapter.removeAllCommands();
+      expect(removed).toBe(0);
+    });
+
+    it('should remove all command files matching extension', async () => {
+      const commandPath = adapter.getCommandPath();
+      await fs.ensureDir(commandPath);
+      await fs.writeFile(path.join(commandPath, 'test1.md'), 'content1');
+      await fs.writeFile(path.join(commandPath, 'test2.md'), 'content2');
+
+      const removed = await adapter.removeAllCommands();
+
+      expect(removed).toBe(2);
+      const files = await fs.readdir(commandPath);
+      expect(files.filter((f) => f.endsWith('.md')).length).toBe(0);
+    });
+
+    it('should not remove files with different extension', async () => {
+      const commandPath = adapter.getCommandPath();
+      await fs.ensureDir(commandPath);
+      await fs.writeFile(path.join(commandPath, 'test.md'), 'content');
+      await fs.writeFile(path.join(commandPath, 'other.txt'), 'other');
+
+      await adapter.removeAllCommands();
+
+      const files = await fs.readdir(commandPath);
+      expect(files).toContain('other.txt');
+      expect(files).not.toContain('test.md');
+    });
+
+    it('should handle empty directory', async () => {
+      const commandPath = adapter.getCommandPath();
+      await fs.ensureDir(commandPath);
+
+      const removed = await adapter.removeAllCommands();
+
+      expect(removed).toBe(0);
+    });
+  });
+
+  describe('isClavixGeneratedCommand', () => {
+    it('should match files with correct extension', () => {
+      const isMatch = (adapter as any).isClavixGeneratedCommand('test.md');
+      expect(isMatch).toBe(true);
+    });
+
+    it('should not match files with different extension', () => {
+      const isMatch = (adapter as any).isClavixGeneratedCommand('test.txt');
+      expect(isMatch).toBe(false);
+    });
+  });
+
+  describe('getTargetFilename', () => {
+    it('should append correct extension', () => {
+      const filename = adapter.getTargetFilename('my-command');
+      expect(filename).toBe('my-command.md');
+    });
+  });
+
   describe('edge cases', () => {
     it('should handle empty command list', async () => {
       await adapter.generateCommands([]);
@@ -328,26 +375,24 @@ describe('BaseAdapter', () => {
       await adapter.generateCommands(templates);
 
       const commandPath = adapter.getCommandPath();
-      const content = await fs.readFile(
-        path.join(commandPath, 'long.md'),
-        'utf-8'
-      );
+      const content = await fs.readFile(path.join(commandPath, 'long.md'), 'utf-8');
 
       expect(content.length).toBe(10000);
     });
 
     it('should handle unicode in command content', async () => {
       const templates: CommandTemplate[] = [
-        { name: 'unicode', description: 'Unicode test', content: 'Test with émojis 🚀 and spëcial çhars' },
+        {
+          name: 'unicode',
+          description: 'Unicode test',
+          content: 'Test with émojis 🚀 and spëcial çhars',
+        },
       ];
 
       await adapter.generateCommands(templates);
 
       const commandPath = adapter.getCommandPath();
-      const content = await fs.readFile(
-        path.join(commandPath, 'unicode.md'),
-        'utf-8'
-      );
+      const content = await fs.readFile(path.join(commandPath, 'unicode.md'), 'utf-8');
 
       expect(content).toContain('émojis');
       expect(content).toContain('🚀');

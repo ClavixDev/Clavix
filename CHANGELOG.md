@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.1] - 2025-11-27
+
+### Fixed
+
+- **Diagnose command false warnings** - Fixed 3 bugs where `clavix diagnose` showed incorrect warnings after successful `clavix init`:
+  - No longer expects `.clavix/commands/` directory (commands go to adapter-specific directories)
+  - Recognizes doc generator integrations (agents-md, octo-md, warp-md, copilot-instructions) as valid
+  - Removed misleading "No slash commands installed" check
+
+---
+
+## [5.2.0] - 2025-11-27
+
+### Added
+
+- **New `clavix diagnose` command** - Full diagnostic report for troubleshooting installations
+  - Version check
+  - Directory structure validation
+  - Config integrity verification
+  - Integration status with command counts
+  - Template integrity check
+  - Summary with recommendations
+
+- **Slash commands in `--help`** - Help output now shows available slash commands alongside CLI commands
+
+- **Feature matrix in README** - Clear comparison of capabilities across integrations (Claude Code, Cursor, Gemini, etc.)
+
+### Changed
+
+- **DRY adapter architecture** - Created `TomlFormattingAdapter` base class eliminating ~140 lines of duplication across Gemini, Qwen, and LLXPRT adapters
+
+- **DRY documentation generators** - Refactored `AgentsMdGenerator`, `OctoMdGenerator`, `WarpMdGenerator`, and `CopilotInstructionsGenerator` to use `DocInjector` utility
+
+- **Verify/Archive reorganized** - Now clearly documented as "Agentic Utilities" separate from core workflow commands
+
+### Removed
+
+- **Global config flag** - Removed unimplemented `-g/--global` flag from `clavix config` command
+
+- **Vestigial v4 config types** - Removed ~90 lines of unused `IntelligenceConfig`, `EscalationThresholdsConfig`, `QualityWeightsConfig`, and `PatternSettingsConfig` interfaces
+
+### Fixed
+
+- **Consistent documentation** - All agent templates (CLAUDE.md, AGENTS.md, OCTO.md, WARP.md, copilot-instructions.md) now have consistent verify/archive categorization
+
+---
+
+## [5.1.1] - 2025-11-27
+
+### Changed
+
+- Consolidated `execute` into `implement` command
+- Removed standalone `prompts` command (now part of implement workflow)
+
+---
+
 ## [5.0.0] - 2025-11-27
 
 ### BREAKING: Agentic-First Architecture

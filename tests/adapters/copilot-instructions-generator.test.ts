@@ -2,23 +2,24 @@ import { CopilotInstructionsGenerator } from '../../src/core/adapters/copilot-in
 import { FileSystem } from '../../src/utils/file-system';
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 
-// Don't mock the whole module, spy on methods
-// jest.mock('../../src/utils/file-system');
-
 describe('CopilotInstructionsGenerator', () => {
   let mockReadFile: any;
   let mockWriteFileAtomic: any;
   let mockExists: any;
   let mockEnsureDir: any;
+  let mockBackup: any;
 
   beforeEach(() => {
     mockReadFile = jest.spyOn(FileSystem, 'readFile');
-    mockWriteFileAtomic = jest.spyOn(FileSystem, 'writeFileAtomic').mockImplementation(async () => {});
+    mockWriteFileAtomic = jest
+      .spyOn(FileSystem, 'writeFileAtomic')
+      .mockImplementation(async () => {});
     mockExists = jest.spyOn(FileSystem, 'exists');
     mockEnsureDir = jest.spyOn(FileSystem, 'ensureDir').mockImplementation(async () => {});
-    
-    mockExists.mockResolvedValue(true); // Default template exists
-    mockReadFile.mockResolvedValue('# Template Content'); // Default template content
+    mockBackup = jest.spyOn(FileSystem, 'backup').mockImplementation(async () => {});
+
+    mockExists.mockResolvedValue(true);
+    mockReadFile.mockResolvedValue('# Template Content');
   });
 
   afterEach(() => {
@@ -27,36 +28,39 @@ describe('CopilotInstructionsGenerator', () => {
 
   describe('generate', () => {
     it('should generate file if it does not exist', async () => {
-      mockExists.mockResolvedValueOnce(true); // Template exists
-      mockExists.mockResolvedValueOnce(false); // Target file does not exist
+      mockExists
+        .mockResolvedValueOnce(true) // Template exists
+        .mockResolvedValueOnce(false); // Target file does not exist
 
       await CopilotInstructionsGenerator.generate();
 
       expect(mockEnsureDir).toHaveBeenCalledWith('.github');
       expect(mockWriteFileAtomic).toHaveBeenCalledWith(
-        '.github/copilot-instructions.md',
+        expect.stringContaining('copilot-instructions.md'),
         expect.stringContaining('# Template Content')
       );
       expect(mockWriteFileAtomic).toHaveBeenCalledWith(
-        '.github/copilot-instructions.md',
+        expect.stringContaining('copilot-instructions.md'),
         expect.stringContaining('<!-- CLAVIX:START -->')
       );
     });
 
     it('should update existing file with managed block', async () => {
-      mockExists.mockResolvedValueOnce(true); // Template exists
-      mockExists.mockResolvedValueOnce(true); // Target file exists
-      mockReadFile.mockResolvedValueOnce('# Template Content'); // Template read
-      mockReadFile.mockResolvedValueOnce('Existing content'); // Target read
+      mockExists
+        .mockResolvedValueOnce(true) // Template exists
+        .mockResolvedValueOnce(true); // Target file exists
+      mockReadFile
+        .mockResolvedValueOnce('# Template Content') // Template read
+        .mockResolvedValueOnce('Existing content'); // Target read
 
       await CopilotInstructionsGenerator.generate();
 
       expect(mockWriteFileAtomic).toHaveBeenCalledWith(
-        '.github/copilot-instructions.md',
+        expect.stringContaining('copilot-instructions.md'),
         expect.stringContaining('Existing content')
       );
       expect(mockWriteFileAtomic).toHaveBeenCalledWith(
-        '.github/copilot-instructions.md',
+        expect.stringContaining('copilot-instructions.md'),
         expect.stringContaining('# Template Content')
       );
     });
@@ -77,16 +81,26 @@ describe('CopilotInstructionsGenerator', () => {
       expect(result).toBe(false);
     });
 
-    it('should return true if file contains start marker', async () => {
+    it('should return true if file contains complete managed block', async () => {
       mockExists.mockResolvedValue(true);
-      mockReadFile.mockResolvedValue('some content <!-- CLAVIX:START --> content');
+      // DocInjector.hasBlock requires both START and END markers
+      mockReadFile.mockResolvedValue(
+        'some content\n<!-- CLAVIX:START -->\nblock content\n<!-- CLAVIX:END -->\nmore content'
+      );
       const result = await CopilotInstructionsGenerator.hasClavixBlock();
       expect(result).toBe(true);
     });
 
-    it('should return false if file does not contain start marker', async () => {
+    it('should return false if file does not contain markers', async () => {
       mockExists.mockResolvedValue(true);
       mockReadFile.mockResolvedValue('some content without marker');
+      const result = await CopilotInstructionsGenerator.hasClavixBlock();
+      expect(result).toBe(false);
+    });
+
+    it('should return false if file only contains start marker', async () => {
+      mockExists.mockResolvedValue(true);
+      mockReadFile.mockResolvedValue('some content <!-- CLAVIX:START --> incomplete');
       const result = await CopilotInstructionsGenerator.hasClavixBlock();
       expect(result).toBe(false);
     });

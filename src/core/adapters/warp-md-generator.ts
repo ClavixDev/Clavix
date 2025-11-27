@@ -1,7 +1,8 @@
-import { FileSystem } from '../../utils/file-system.js';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { FileSystem } from '../../utils/file-system.js';
+import { DocInjector } from '../doc-injector.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,8 +13,6 @@ const __dirname = dirname(__filename);
  */
 export class WarpMdGenerator {
   static readonly TARGET_FILE = 'WARP.md';
-  static readonly START_MARKER = '<!-- CLAVIX:START -->';
-  static readonly END_MARKER = '<!-- CLAVIX:END -->';
 
   /**
    * Generate or update WARP.md with Clavix workflows
@@ -27,45 +26,16 @@ export class WarpMdGenerator {
 
     const template = await FileSystem.readFile(templatePath);
 
-    await this.injectManagedBlock(this.TARGET_FILE, template);
+    await DocInjector.injectBlock(this.TARGET_FILE, template, {
+      createIfMissing: true,
+      validateMarkdown: false,
+    });
   }
 
-  private static async injectManagedBlock(filePath: string, content: string): Promise<void> {
-    let fileContent = '';
-
-    if (await FileSystem.exists(filePath)) {
-      fileContent = await FileSystem.readFile(filePath);
-    }
-
-    const blockRegex = new RegExp(
-      `${this.escapeRegex(this.START_MARKER)}[\\s\\S]*?${this.escapeRegex(this.END_MARKER)}`,
-      'g'
-    );
-
-    const wrappedContent = `${this.START_MARKER}\n${content}\n${this.END_MARKER}`;
-
-    if (blockRegex.test(fileContent)) {
-      fileContent = fileContent.replace(blockRegex, wrappedContent);
-    } else {
-      if (fileContent && !fileContent.endsWith('\n\n')) {
-        fileContent += '\n\n';
-      }
-      fileContent += wrappedContent + '\n';
-    }
-
-    await FileSystem.writeFileAtomic(filePath, fileContent);
-  }
-
-  private static escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
-
+  /**
+   * Check if WARP.md has Clavix block
+   */
   static async hasClavixBlock(): Promise<boolean> {
-    if (!(await FileSystem.exists(this.TARGET_FILE))) {
-      return false;
-    }
-
-    const content = await FileSystem.readFile(this.TARGET_FILE);
-    return content.includes(this.START_MARKER);
+    return DocInjector.hasBlock(this.TARGET_FILE);
   }
 }
