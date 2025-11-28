@@ -2,6 +2,7 @@ import * as path from 'path';
 import { FileSystem } from '../utils/file-system.js';
 import { DataError } from '../types/errors.js';
 import { escapeRegex } from '../utils/string-utils.js';
+import { logger } from '../utils/logger.js';
 
 export interface ManagedBlockOptions {
   startMarker: string;
@@ -176,7 +177,7 @@ export class DocInjector {
     const openBrackets = (content.match(/\[/g) || []).length;
     const closeBrackets = (content.match(/\]/g) || []).length;
     if (openBrackets !== closeBrackets) {
-      console.warn('Warning: Unbalanced brackets in markdown');
+      logger.warn('Unbalanced brackets in markdown');
     }
   }
 

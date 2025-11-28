@@ -143,8 +143,8 @@ describe('Init Command', () => {
       const result = await runInitCommand(testDir);
 
       expect(result.exitCode).toBe(0);
-      // The message is "Generating Droid CLI commands" for the droid integration
-      expect(result.stdout).toContain('Droid CLI commands');
+      // The message is "Generating Droid commands" for the droid integration
+      expect(result.stdout).toContain('Droid commands');
     });
 
     it('should abort if no integrations selected', async () => {

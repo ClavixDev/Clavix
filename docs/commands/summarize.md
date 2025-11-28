@@ -1,36 +1,63 @@
-# clavix summarize
+# /clavix:summarize
 
 ## Description
-Analyzes a saved conversation session to extract structured requirements. Generates a mini PRD, an optimized prompt, and (optionally) a CLEAR-enhanced variant suitable for AI agents.
+Extracts structured requirements from the current conversation. Use this after `/clavix:start` to turn exploratory discussion into actionable documentation.
 
 ## Syntax
 ```
-clavix summarize [session-id] [options]
+/clavix:summarize
 ```
 
 ## Arguments
-- `session-id` – (Optional) ID of the session to summarize. If omitted, Clavix uses the most recent active session.
+- None. Analyzes the current conversation context.
 
-## Flags
-- `-a, --active` – Force the command to use the most recent active session.
-- `-o, --output <dir>` – Write artifacts to a custom directory instead of `.clavix/outputs/<project>/`.
-- `--skip-clear` – Skip the CLEAR re-optimization step for the extracted prompt.
+## What It Does
+When you run `/clavix:summarize`:
+1. **Pre-validation** - Checks if enough was discussed (objective, requirements, context)
+2. **Extract requirements** - Pulls out features, constraints, success criteria
+3. **Create documentation** - Generates mini-PRD and optimized prompt files
+4. **Apply optimization** - Enhances clarity, structure, and completeness
+5. **Flag unclear areas** - Identifies what needs more discussion
 
-## Inputs
-- `.clavix/sessions/<session-id>.json` – Conversation data produced by `clavix start`.
+## Output Files
+Creates in `.clavix/outputs/[project-name]/`:
+- `mini-prd.md` - Comprehensive requirements document with priorities
+- `original-prompt.md` - Raw extraction from conversation
+- `optimized-prompt.md` - Enhanced version ready for implementation
 
-## Outputs
-- `mini-prd.md` – Concise requirements document derived from the conversation.
-- `optimized-prompt.md` – Direct extraction formatted for AI usage.
-- `clear-optimized-prompt.md` – CLEAR-enhanced version (omitted when `--skip-clear` is set).
-- Console summary of key requirements, technical constraints, and success criteria.
+## Mode Boundaries
+- ✓ Analyzing conversation
+- ✓ Extracting requirements
+- ✓ Creating documentation files
+- ✓ Applying optimization patterns
+- ✗ Writing code
+- ✗ Starting implementation
+
+## Confidence Indicators
+Extracted requirements are annotated with confidence levels:
+- **[HIGH]** - Explicitly stated multiple times with details
+- **[MEDIUM]** - Mentioned once or inferred from context
+- **[LOW]** - Assumed based on limited information
 
 ## Examples
-- `clavix summarize`
-- `clavix summarize 1234-5678`
-- `clavix summarize --active --skip-clear`
+After a `/clavix:start` conversation:
+```
+/clavix:summarize
+```
 
-## Common messages
-- `✗ Session not found: <id>` – The provided ID does not exist under `.clavix/sessions/`.
-- `✗ No active session found` – Use `clavix start` first or specify a session ID.
-- `⚠ Session has no messages to analyze` – Summaries require at least one message; add content and rerun.
+Output includes quality improvements:
+- **[Efficiency]**: Removed conversational fluff
+- **[Structure]**: Organized into context → requirements → constraints
+- **[Clarity]**: Added explicit specifications
+- **[Completeness]**: Added missing success criteria
+
+## Next Steps
+After summarization:
+- `/clavix:plan` - Generate task breakdown from the mini-PRD
+- `/clavix:implement` - Execute the optimized prompt directly
+- Continue conversation if areas flagged as unclear
+
+## Related Commands
+- `/clavix:start` - Begin conversational exploration (typical previous step)
+- `/clavix:plan` - Generate tasks from extracted requirements
+- `/clavix:improve` - Further optimize extracted prompt

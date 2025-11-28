@@ -5,6 +5,7 @@ import { AgentAdapter, CommandTemplate } from '../types/agent.js';
 import { FileSystem } from './file-system.js';
 import { TemplateAssembler } from '../core/template-assembler.js';
 import { CommandTransformer } from '../core/command-transformer.js';
+import { DataError } from '../types/errors.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -47,8 +48,11 @@ export async function loadCommandTemplates(adapter: AgentAdapter): Promise<Comma
         const result = await assembler.assembleFromContent(content);
         content = result.content;
       } catch (error) {
-        // If assembly fails, use original content
-        console.warn(`Template assembly warning for ${file}:`, error);
+        // Template assembly failures are critical - throw typed error
+        throw new DataError(
+          `Template assembly failed for ${file}: ${error}`,
+          `Check that all {{INCLUDE:}} references exist in templates directory`
+        );
       }
     }
 

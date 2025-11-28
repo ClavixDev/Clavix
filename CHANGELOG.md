@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.0] - 2025-11-27
+
+### Changed
+
+- **Adapter Architecture Refactor** - Unified adapter system using config-driven factory pattern:
+  - Migrated 12 simple adapters to `UniversalAdapter` class with `ADAPTER_CONFIGS` registry
+  - Kept dedicated classes for special adapters: `ClaudeCodeAdapter` (doc injection), `GeminiAdapter`, `QwenAdapter`, `LlxprtAdapter` (TOML format)
+  - Reduced code duplication significantly while maintaining all functionality
+
+- **Error Handling Improvements**:
+  - Template assembly failures now throw `DataError` instead of silent warnings
+  - Standardized all `console.warn` calls to use `logger.warn` utility
+  - Fixed deprecated `escapeRegex` wrapper in `base-adapter.ts`
+
+### Removed
+
+- **Code Consolidation**:
+  - Deleted 12 redundant adapter source files (cursor, windsurf, kilocode, roocode, cline, droid, opencode, crush, codebuddy, amp, augment, codex)
+  - Deleted corresponding 12 adapter test files
+  - Removed deprecated archive documentation files
+
+- **Documentation Cleanup**:
+  - Removed v4-era configuration references from `docs/guides/configuration.md`
+  - Removed outdated session references from command documentation
+  - Deleted `docs/archive/` directory with obsolete files
+
+### Fixed
+
+- Updated test files to use dynamic adapter paths instead of hardcoded directories
+- Fixed adapter contract tests to work with new factory pattern
+- Fixed multi-integration workflow tests for correct adapter detection
+
 ## [5.4.0] - 2025-11-27
 
 ### Changed

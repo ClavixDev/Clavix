@@ -12,9 +12,8 @@
 
 | Version | Highlights | Details |
 | --- | --- | --- |
-| **v5.2.1** (Latest) | Diagnose command, DRY architecture, feature matrix | [Changelog](CHANGELOG.md) |
+| **v5.5.0** (Latest) | Architecture cleanup, consolidated adapters, documentation overhaul | [Changelog](CHANGELOG.md) |
 | **v5.0.0** | Agentic-first architecture - lean template delivery | [Changelog](CHANGELOG.md#500---2025-01-27) |
-| **v4.12.0** | Final v4 release with full CLI commands | [Changelog](docs/archive/v4-changelog.md) |
 
 **Requirements:** Node.js >= 18.0.0
 
@@ -129,7 +128,6 @@ Clavix v5 has 4 CLI commands (for setup and diagnostics, not workflows):
 - Integrations: [docs/integrations.md](docs/integrations.md)
 - How it works: [docs/how-it-works.md](docs/how-it-works.md)
 - Philosophy: [docs/philosophy.md](docs/philosophy.md)
-- v4 Architecture (archived): [docs/archive/v4-architecture.md](docs/archive/v4-architecture.md)
 
 ## Requirements
 

@@ -1,30 +1,50 @@
-# clavix start
+# /clavix:start
 
 ## Description
-Starts an interactive session for capturing requirements through a conversational workflow. Messages are stored locally so you can summarize them later or resume the conversation.
+Starts conversational mode for iterative requirements gathering. Use this when you're not sure what to build yet and want to explore ideas through natural conversation.
 
 ## Syntax
 ```
-clavix start [options]
+/clavix:start
 ```
 
-## Flags
-- `-p, --project <name>` – Associate the session with a project name.
-- `-d, --description <text>` – Add a short description for easier identification.
-- `-t, --tags "tag-a,tag-b"` – Attach comma-separated tags to the session metadata.
+## Arguments
+- None. This is a slash command that starts a guided conversation.
 
-## Inputs
-- User messages entered in response to interactive prompts.
+## What It Does
+When you run `/clavix:start`:
+1. **Enter exploration mode** - The AI helps you figure out what to build
+2. **Ask clarifying questions** - Instead of jumping to implementation
+3. **Track conversation topics** - Keeps track of requirements discussed
+4. **Guide when ready** - Suggests `/clavix:summarize` when enough is captured
 
-## Outputs
-- `.clavix/sessions/<session-id>.json` – Stores conversation history, metadata, and timestamps.
-- Console acknowledgements guiding the conversation and explaining how to exit.
+## Mode Boundaries
+- ✓ Asking clarifying questions
+- ✓ Helping think through ideas
+- ✓ Identifying edge cases
+- ✓ Tracking requirements
+- ✗ Writing code
+- ✗ Starting implementation
+- ✗ Rushing to solutions
 
 ## Examples
-- `clavix start`
-- `clavix start --project onboarding-flow --description "Planning onboarding feature"`
-- `clavix start --tags discovery,ux`
+```
+/clavix:start
+```
 
-## Common messages
-- `exit`, `quit`, `bye`, or `done` – Typing any of these commands ends the session gracefully.
-- `Ctrl+C` – Interrupts the session; Clavix still saves the transcript and prints session details before terminating.
+Then have a natural conversation:
+- "I need a dashboard for analytics"
+- "What kind of analytics? Business metrics, user behavior?"
+- "Business metrics - sales and revenue"
+- "Who will use it? Executives, sales team?"
+...and so on.
+
+## Next Steps
+When the conversation has captured enough requirements:
+- `/clavix:summarize` - Extract requirements into structured outputs
+- `/clavix:prd` - Switch to guided PRD generation
+
+## Related Commands
+- `/clavix:summarize` - Extract and optimize conversation into requirements
+- `/clavix:prd` - Structured PRD generation with guided questions
+- `/clavix:improve` - Direct prompt optimization (skip conversation)
