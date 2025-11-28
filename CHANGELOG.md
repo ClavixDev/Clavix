@@ -5,6 +5,68 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.6.3] - 2025-11-28
+
+### Added
+
+- **Zod Schema Validation** - Runtime validation for configuration files:
+  - Added `zod` dependency for robust schema validation
+  - Created `src/utils/schemas.ts` with validation schemas for `integrations.json` and user `config.json`
+  - Integrated validation at adapter registry load time and in CLI commands
+  - Contextual error messages for configuration issues
+
+- **Universal Adapters in integrations.json** - 4 new documentation-only integrations:
+  - `agents-md` - AGENTS.md universal agent guidance
+  - `copilot-instructions` - GitHub Copilot instructions
+  - `octo-md` - OCTO.md octopus format
+  - `warp-md` - WARP.md format
+  - Added `type` field ("standard" or "universal") to all integration entries
+
+- **Template Documentation** - New `docs/templates.md` authoring guide:
+  - Component include system (`{{INCLUDE:}}` markers)
+  - Template anatomy and structure
+  - Quality checklist for contributors
+
+- **Schema Validation Tests** - 23 new tests covering:
+  - `IntegrationEntrySchema`, `IntegrationsConfigSchema`, `UserConfigSchema`
+  - Validation functions and error formatting
+
+### Changed
+
+- **Summarize→Plan Workflow** - Improved template coordination:
+  - Added "Suggest + Confirm" pattern for project name in summarize template
+  - Added fallback detection for `summarize/` directory in plan template
+  - Added confirmation message with task count in implement template
+
+- **Error Output Standardization** - Replaced `console.log`/`console.error` with Oclif methods:
+  - All CLI commands now use `this.log()` and `this.error()` for consistent output
+  - Contextual error hints for common configuration issues
+
+- **Template Header Standardization** - All 9 slash command templates now use consistent format:
+  - "## State Assertion (REQUIRED)" section header
+  - Consistent structure across improve, prd, plan, implement, start, summarize, refine, verify, archive
+
+- **README.md Reorganization** - Workflow-oriented documentation:
+  - Added Mermaid workflow diagram showing command relationships
+  - Organized commands by workflow: Quick Path, Full Planning, Exploratory, Refinement
+  - All 9 slash commands prominently listed
+
+- **CONTRIBUTING.md Updates** - Enhanced contributor guide:
+  - Added "Quick Start for First-Time Contributors" decision table
+  - Emphasized template-first architecture rules
+
+### Fixed
+
+- **JSON Parsing Crashes** - Wrapped all `JSON.parse` calls with try-catch:
+  - `update.ts`, `init.ts`, `version.ts` now handle malformed JSON gracefully
+  - User-friendly error messages instead of stack traces
+
+- **Test Suite Updates** - Fixed tests for adapter count changes (16 → 20):
+  - `agent-manager.test.ts` - Updated expected adapter count
+  - `adapter-interface.test.ts` - Added special case for root directory adapters
+  - `multi-integration-workflow.test.ts` - Added detection markers for universal adapters
+  - `init.test.ts` - Fixed error output assertion
+
 ## [5.5.2] - 2025-11-28
 
 ### Added

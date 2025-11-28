@@ -66,7 +66,7 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ---
 
-## State Assertion (Required)
+## State Assertion (REQUIRED)
 
 **Before starting task breakdown, output:**
 ```
@@ -88,10 +88,13 @@ Implementation: BLOCKED - I will create tasks, not implement them
 
 1. **Validate prerequisites**:
    - Check if `.clavix/outputs/` directory exists
-   - Look for PRD artifacts: `full-prd.md`, `quick-prd.md`, `mini-prd.md`, or `optimized-prompt.md`
+   - Look for PRD artifacts in this order:
+     1. **Project directories first**: Check `.clavix/outputs/<project-name>/` folders for `full-prd.md`, `quick-prd.md`, `mini-prd.md`, or `optimized-prompt.md`
+     2. **Legacy fallback**: If no project directories found, check `.clavix/outputs/summarize/` for `mini-prd.md` or `optimized-prompt.md` (backwards compatibility)
+   - **If multiple projects found**: List them and ask user which one to plan
    - **If not found**: Error inline - "No PRD found in `.clavix/outputs/`. Use `/clavix:prd` or `/clavix:summarize` first."
 
-2. **Read the PRD** from `.clavix/outputs/[project-name]/`
+2. **Read the PRD** from detected location (project directory or legacy `summarize/` folder)
 
 3. **Generate task breakdown** following Part B principles
 

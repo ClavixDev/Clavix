@@ -42,12 +42,56 @@ The AI agent reads the template and optimizes your prompt.
 
 ### 3. Choose Your Workflow
 
-| Command | When to Use |
-|---------|-------------|
-| `/clavix:improve` | Optimize a single prompt |
-| `/clavix:prd` | Plan something new with guided questions |
-| `/clavix:plan` | Generate tasks from a PRD |
-| `/clavix:implement` | Execute tasks with progress tracking |
+```mermaid
+graph TD
+    A["/clavix:improve"] --> B["/clavix:implement"]
+    C["/clavix:prd"] --> D["/clavix:plan"]
+    D --> E["/clavix:implement"]
+    E --> F["/clavix:verify"]
+    F --> G["/clavix:archive"]
+    H["/clavix:start"] --> I["/clavix:summarize"]
+    I --> D
+    J["/clavix:refine"] --> D
+    J --> B
+```
+
+#### Quick Path (Simple Tasks)
+```
+/clavix:improve → /clavix:implement
+```
+Optimize a prompt and implement it directly.
+
+#### Full Planning (Complex Features)
+```
+/clavix:prd → /clavix:plan → /clavix:implement → /clavix:verify → /clavix:archive
+```
+Structured planning with PRD, task breakdown, implementation, verification, and archival.
+
+#### Exploratory (Discovery Mode)
+```
+/clavix:start → [conversation] → /clavix:summarize → /clavix:plan
+```
+Have a conversation to explore requirements, then extract and plan.
+
+#### Refinement (Iteration)
+```
+/clavix:refine → (updated PRD or prompt) → continue workflow
+```
+Refine existing PRDs or prompts based on feedback.
+
+### All 9 Slash Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/clavix:improve` | Optimize prompts (auto-selects depth) |
+| `/clavix:prd` | Generate PRD through guided questions |
+| `/clavix:plan` | Create task breakdown from PRD |
+| `/clavix:implement` | Execute tasks or prompts |
+| `/clavix:start` | Begin conversational session |
+| `/clavix:summarize` | Extract requirements from conversation |
+| `/clavix:refine` | Refine existing PRD or prompt |
+| `/clavix:verify` | Verify implementation against requirements |
+| `/clavix:archive` | Archive completed projects |
 
 See [Getting Started](docs/getting-started.md) for the full guide.
 

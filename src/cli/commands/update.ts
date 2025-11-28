@@ -12,6 +12,7 @@ import { InstructionsGenerator } from '../../core/adapters/instructions-generato
 import { AgentAdapter } from '../../types/agent.js';
 import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
 import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
+import { validateUserConfig, formatZodErrors } from '../../utils/schemas.js';
 
 export default class Update extends Command {
   static description = 'Update managed blocks and slash commands';
@@ -57,7 +58,46 @@ export default class Update extends Command {
     this.log(chalk.bold.cyan('🔄 Updating Clavix integration...\n'));
 
     // Load config to determine integrations
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    let config: { integrations?: string[]; providers?: string[] };
+    try {
+      const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+
+      // Validate config structure with Zod
+      const validationResult = validateUserConfig(rawConfig);
+
+      if (!validationResult.success && validationResult.errors) {
+        const errorMessages = formatZodErrors(validationResult.errors);
+        this.error(
+          chalk.red(`Invalid config file structure: ${configPath}`) +
+            '\n' +
+            errorMessages.map((e) => chalk.gray(`  - ${e}`)).join('\n') +
+            '\n' +
+            chalk.yellow('  Hint: Delete .clavix/config.json and run ') +
+            chalk.cyan('clavix init') +
+            chalk.yellow(' to regenerate.')
+        );
+      }
+
+      // Log warnings (non-blocking)
+      if (validationResult.warnings) {
+        for (const warning of validationResult.warnings) {
+          this.log(chalk.yellow(`  ⚠ ${warning}`));
+        }
+      }
+
+      config = validationResult.data!;
+    } catch (error: unknown) {
+      const { getErrorMessage } = await import('../../utils/error-utils.js');
+      this.error(
+        chalk.red(`Invalid JSON in config file: ${configPath}`) +
+          '\n' +
+          chalk.gray(`  Error: ${getErrorMessage(error)}`) +
+          '\n' +
+          chalk.yellow('  Hint: Check for syntax errors or delete .clavix/config.json and run ') +
+          chalk.cyan('clavix init') +
+          chalk.yellow(' to regenerate.')
+      );
+    }
     const integrations = config.integrations || config.providers || ['claude-code'];
 
     const agentManager = new AgentManager();

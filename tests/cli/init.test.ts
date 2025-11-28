@@ -221,8 +221,10 @@ describe('Init Command', () => {
 
       // Should catch error and throw/log
       expect(result.exitCode).not.toBe(0);
-      // The error message appears in stderr (console.error) and contains "Initialization failed"
-      expect(result.stderr).toContain('Initialization failed');
+      // v5.6.3: Error messages now go through this.log() instead of console.error
+      // The error should appear in stdout or stderr
+      const combinedOutput = result.stdout + result.stderr;
+      expect(combinedOutput).toContain('Initialization failed');
     });
   });
 

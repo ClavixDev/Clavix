@@ -66,7 +66,7 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ---
 
-## State Assertion (Required)
+## State Assertion (REQUIRED)
 
 **Before starting extraction, output:**
 ```
@@ -129,13 +129,40 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
 3. **CREATE OUTPUT FILES (REQUIRED)** - You MUST create three files. This is not optional.
 
-   **Step 3.1: Create directory structure**
+   **Step 3.1: Determine project name (Suggest + Confirm)**
+
+   Before creating files, derive a project name from the conversation:
+
+   1. **Analyze conversation** to extract a meaningful name:
+      - Look for explicit project names mentioned
+      - Identify the main topic/feature being discussed
+      - Use key nouns (e.g., "auth", "dashboard", "todo")
+
+   2. **Generate suggested name**:
+      - Format: lowercase, hyphen-separated (e.g., "user-auth", "sales-dashboard")
+      - Keep it short (2-4 words max)
+      - Make it descriptive but concise
+
+   3. **Ask user to confirm**:
+      ```
+      I'll save these requirements as project "[suggested-name]".
+
+      Is this name okay? (y/n/custom name)
+      ```
+
+   4. **Handle response**:
+      - "y" or "yes" → use suggested name
+      - "n" or "no" → ask for custom name
+      - Any other text → use that as the project name (sanitize to lowercase-hyphenated)
+
+   **Step 3.2: Create directory structure**
    ```bash
    mkdir -p .clavix/outputs/[project-name]
    ```
-   Use a meaningful project name based on the conversation (e.g., "todo-app", "auth-system", "dashboard").
 
-   **Step 3.2: Write mini-prd.md**
+   **Note (Backwards Compatibility):** Legacy workflows may have used `.clavix/outputs/summarize/` as output. The `/clavix:plan` and `/clavix:implement` commands check both project directories and the legacy `summarize/` location.
+
+   **Step 3.3: Write mini-prd.md**
 
    Use the Write tool to create `.clavix/outputs/[project-name]/mini-prd.md` with this content:
 
@@ -199,7 +226,7 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
    **CHECKPOINT:** Created mini-prd.md successfully
 
-   **Step 3.3: Write original-prompt.md**
+   **Step 3.4: Write original-prompt.md**
 
    Use the Write tool to create `.clavix/outputs/[project-name]/original-prompt.md`
 
@@ -225,7 +252,7 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
    **CHECKPOINT:** Created original-prompt.md successfully
 
-   **Step 3.4: Write optimized-prompt.md**
+   **Step 3.5: Write optimized-prompt.md**
 
    Use the Write tool to create `.clavix/outputs/[project-name]/optimized-prompt.md`
 
@@ -257,7 +284,7 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
    **CHECKPOINT:** Created optimized-prompt.md successfully
 
-   **Step 3.5: Verify file creation**
+   **Step 3.6: Verify file creation**
 
    List the created files to confirm they exist:
    ```

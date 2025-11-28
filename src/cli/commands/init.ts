@@ -21,6 +21,7 @@ import { QwenAdapter } from '../../core/adapters/qwen-adapter.js';
 import { loadCommandTemplates } from '../../utils/template-loader.js';
 import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
 import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
+import { validateUserConfig } from '../../utils/schemas.js';
 
 export default class Init extends Command {
   static description = 'Initialize Clavix in the current project';
@@ -28,7 +29,7 @@ export default class Init extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>'];
 
   async run(): Promise<void> {
-    console.log(chalk.bold.cyan('\n🚀 Clavix Initialization\n'));
+    this.log(chalk.bold.cyan('\n🚀 Clavix Initialization\n'));
 
     try {
       const agentManager = new AgentManager();
@@ -38,25 +39,53 @@ export default class Init extends Command {
       if (await FileSystem.exists('.clavix/config.json')) {
         try {
           const configContent = await FileSystem.readFile('.clavix/config.json');
-          const config = JSON.parse(configContent);
-          existingIntegrations = config.integrations || config.providers || [];
-        } catch {
-          // Ignore parse errors, will use empty array
+          const rawConfig = JSON.parse(configContent);
+
+          // Validate config structure with Zod
+          const validationResult = validateUserConfig(rawConfig);
+
+          if (validationResult.success && validationResult.data) {
+            existingIntegrations =
+              validationResult.data.integrations || validationResult.data.providers || [];
+
+            // Log warnings (non-blocking)
+            if (validationResult.warnings) {
+              for (const warning of validationResult.warnings) {
+                this.log(chalk.yellow(`  ⚠ ${warning}`));
+              }
+            }
+          } else {
+            this.log(
+              chalk.yellow('⚠ Warning: Config file has invalid structure') +
+                '\n' +
+                chalk.gray('  Continuing with fresh configuration...\n')
+            );
+          }
+        } catch (error: unknown) {
+          const { getErrorMessage } = await import('../../utils/error-utils.js');
+          this.log(
+            chalk.yellow('⚠ Warning: Could not parse existing config.json') +
+              '\n' +
+              chalk.gray(`  Error: ${getErrorMessage(error)}`) +
+              '\n' +
+              chalk.gray('  Continuing with fresh configuration...\n')
+          );
+          // Continue with empty array - will prompt for new configuration
         }
       }
 
       // Check if already initialized
       if (await FileSystem.exists('.clavix')) {
         // Show current state
-        console.log(chalk.cyan('You have existing Clavix configuration:'));
+        this.log(chalk.cyan('You have existing Clavix configuration:'));
         if (existingIntegrations.length > 0) {
           const displayNames = existingIntegrations.map((name) => {
             const adapter = agentManager.getAdapter(name);
             return adapter?.displayName || name;
           });
-          console.log(chalk.gray(`  Integrations: ${displayNames.join(', ')}\n`));
+          this.log(chalk.gray(`  Integrations: ${displayNames.join(', ')}\n`));
         } else {
-          console.log(chalk.gray('  Integrations: (none configured)\n'));
+          this.log(chalk.gray('  Integrations: (none configured)\n'));
         }
 
         const { action } = await inquirer.prompt([
@@ -73,15 +102,15 @@ export default class Init extends Command {
         ]);
 
         if (action === 'cancel') {
-          console.log(chalk.yellow('\n✓ Initialization cancelled\n'));
+          this.log(chalk.yellow('\n✓ Initialization cancelled\n'));
           return;
         }
 
         if (action === 'update') {
           // Just regenerate commands for existing integrations
-          console.log(chalk.cyan('\n📝 Regenerating commands...\n'));
+          this.log(chalk.cyan('\n📝 Regenerating commands...\n'));
           await this.regenerateCommands(agentManager, existingIntegrations);
-          console.log(chalk.green('\n✅ Commands updated successfully!\n'));
+          this.log(chalk.green('\n✅ Commands updated successfully!\n'));
           return;
         }
 
@@ -89,9 +118,9 @@ export default class Init extends Command {
       }
 
       // Select integrations using shared utility
-      console.log(chalk.gray('Select AI development tools to support:\n'));
-      console.log(chalk.gray('(Space to select, Enter to confirm)\n'));
-      console.log(
+      this.log(chalk.gray('Select AI development tools to support:\n'));
+      this.log(chalk.gray('(Space to select, Enter to confirm)\n'));
+      this.log(
         chalk.cyan('ℹ'),
         chalk.gray('AGENTS.md is always enabled to provide universal agent guidance.\n')
       );
@@ -105,7 +134,7 @@ export default class Init extends Command {
       const selectedIntegrations = ensureMandatoryIntegrations(userSelectedIntegrations);
 
       if (!selectedIntegrations || selectedIntegrations.length === 0) {
-        console.log(chalk.red('\n✗ No integrations selected\n'));
+        this.log(chalk.red('\n✗ No integrations selected\n'));
         return;
       }
 
@@ -115,12 +144,12 @@ export default class Init extends Command {
       );
 
       if (deselectedIntegrations.length > 0) {
-        console.log(chalk.yellow('\n⚠ Previously configured but not selected:'));
+        this.log(chalk.yellow('\n⚠ Previously configured but not selected:'));
         for (const integrationName of deselectedIntegrations) {
           const adapter = agentManager.getAdapter(integrationName);
           const displayName = adapter?.displayName || integrationName;
           const directory = adapter?.directory || 'unknown';
-          console.log(chalk.gray(`  • ${displayName} (${directory})`));
+          this.log(chalk.gray(`  • ${displayName} (${directory})`));
         }
 
         const { cleanupAction } = await inquirer.prompt([
@@ -137,58 +166,56 @@ export default class Init extends Command {
         ]);
 
         if (cleanupAction === 'cleanup') {
-          console.log(chalk.gray('\n🗑️  Cleaning up deselected integrations...'));
+          this.log(chalk.gray('\n🗑️  Cleaning up deselected integrations...'));
           for (const integrationName of deselectedIntegrations) {
             // Handle doc generators (AGENTS.md, OCTO.md, WARP.md, copilot-instructions)
             if (integrationName === 'agents-md') {
               await DocInjector.removeBlock('AGENTS.md');
-              console.log(chalk.gray('  ✓ Cleaned AGENTS.md Clavix block'));
+              this.log(chalk.gray('  ✓ Cleaned AGENTS.md Clavix block'));
               continue;
             }
             if (integrationName === 'octo-md') {
               await DocInjector.removeBlock('OCTO.md');
-              console.log(chalk.gray('  ✓ Cleaned OCTO.md Clavix block'));
+              this.log(chalk.gray('  ✓ Cleaned OCTO.md Clavix block'));
               continue;
             }
             if (integrationName === 'warp-md') {
               await DocInjector.removeBlock('WARP.md');
-              console.log(chalk.gray('  ✓ Cleaned WARP.md Clavix block'));
+              this.log(chalk.gray('  ✓ Cleaned WARP.md Clavix block'));
               continue;
             }
             if (integrationName === 'copilot-instructions') {
               await DocInjector.removeBlock('.github/copilot-instructions.md');
-              console.log(chalk.gray('  ✓ Cleaned copilot-instructions.md Clavix block'));
+              this.log(chalk.gray('  ✓ Cleaned copilot-instructions.md Clavix block'));
               continue;
             }
 
             // Handle Claude Code (has CLAUDE.md doc injection)
             if (integrationName === 'claude-code') {
               await DocInjector.removeBlock('CLAUDE.md');
-              console.log(chalk.gray('  ✓ Cleaned CLAUDE.md Clavix block'));
+              this.log(chalk.gray('  ✓ Cleaned CLAUDE.md Clavix block'));
             }
 
             const adapter = agentManager.getAdapter(integrationName);
             if (adapter) {
               const removed = await adapter.removeAllCommands();
-              console.log(
-                chalk.gray(`  ✓ Removed ${removed} command(s) from ${adapter.displayName}`)
-              );
+              this.log(chalk.gray(`  ✓ Removed ${removed} command(s) from ${adapter.displayName}`));
             }
           }
         } else if (cleanupAction === 'update') {
           // Add them back to selection
           selectedIntegrations.push(...deselectedIntegrations);
-          console.log(chalk.gray('\n✓ Keeping all integrations\n'));
+          this.log(chalk.gray('\n✓ Keeping all integrations\n'));
         }
         // If 'skip': do nothing
       }
 
       // Create .clavix directory structure
-      console.log(chalk.cyan('\n📁 Creating directory structure...'));
+      this.log(chalk.cyan('\n📁 Creating directory structure...'));
       await this.createDirectoryStructure();
 
       // Generate config
-      console.log(chalk.cyan('⚙️  Generating configuration...'));
+      this.log(chalk.cyan('⚙️  Generating configuration...'));
       await this.generateConfig(selectedIntegrations);
 
       // Generate INSTRUCTIONS.md and QUICKSTART.md
@@ -196,7 +223,7 @@ export default class Init extends Command {
       await this.generateQuickstart();
 
       // Generate commands for each selected integration
-      console.log(
+      this.log(
         chalk.cyan(
           `\n📝 Generating commands for ${selectedIntegrations.length} integration(s)...\n`
         )
@@ -205,34 +232,34 @@ export default class Init extends Command {
       for (const integrationName of selectedIntegrations) {
         // Handle agents-md separately (it's not an adapter)
         if (integrationName === 'agents-md') {
-          console.log(chalk.gray('  ✓ Generating AGENTS.md...'));
+          this.log(chalk.gray('  ✓ Generating AGENTS.md...'));
           await AgentsMdGenerator.generate();
           continue;
         }
 
         // Handle copilot-instructions separately (it's not an adapter)
         if (integrationName === 'copilot-instructions') {
-          console.log(chalk.gray('  ✓ Generating .github/copilot-instructions.md...'));
+          this.log(chalk.gray('  ✓ Generating .github/copilot-instructions.md...'));
           await CopilotInstructionsGenerator.generate();
           continue;
         }
 
         // Handle octo-md separately (it's not an adapter)
         if (integrationName === 'octo-md') {
-          console.log(chalk.gray('  ✓ Generating OCTO.md...'));
+          this.log(chalk.gray('  ✓ Generating OCTO.md...'));
           await OctoMdGenerator.generate();
           continue;
         }
 
         if (integrationName === 'warp-md') {
-          console.log(chalk.gray('  ✓ Generating WARP.md...'));
+          this.log(chalk.gray('  ✓ Generating WARP.md...'));
           await WarpMdGenerator.generate();
           continue;
         }
 
         let adapter: AgentAdapter = agentManager.requireAdapter(integrationName);
 
-        console.log(chalk.gray(`  ✓ Generating ${adapter.displayName} commands...`));
+        this.log(chalk.gray(`  ✓ Generating ${adapter.displayName} commands...`));
 
         if (adapter.name === 'codex') {
           const codexPath = adapter.getCommandPath();
@@ -246,7 +273,7 @@ export default class Init extends Command {
           ]);
 
           if (!confirmCodex) {
-            console.log(chalk.yellow('    ⊗ Skipped Codex CLI'));
+            this.log(chalk.yellow('    ⊗ Skipped Codex CLI'));
             continue;
           }
         }
@@ -267,7 +294,7 @@ export default class Init extends Command {
               adapter.name === 'gemini'
                 ? new GeminiAdapter({ useNamespace: false })
                 : new QwenAdapter({ useNamespace: false });
-            console.log(chalk.gray(`    → Using ${adapter.getCommandPath()} (no namespacing)`));
+            this.log(chalk.gray(`    → Using ${adapter.getCommandPath()} (no namespacing)`));
           }
         }
 
@@ -275,8 +302,8 @@ export default class Init extends Command {
         if (adapter.validate) {
           const validation = await adapter.validate();
           if (!validation.valid) {
-            console.log(chalk.yellow(`    ⚠ Validation warnings for ${adapter.displayName}:`));
-            validation.errors?.forEach((err) => console.log(chalk.yellow(`      - ${err}`)));
+            this.log(chalk.yellow(`    ⚠ Validation warnings for ${adapter.displayName}:`));
+            validation.errors?.forEach((err) => this.log(chalk.yellow(`      - ${err}`)));
 
             const { continueAnyway } = await inquirer.prompt([
               {
@@ -288,7 +315,7 @@ export default class Init extends Command {
             ]);
 
             if (!continueAnyway) {
-              console.log(chalk.yellow(`    ⊗ Skipped ${adapter.displayName}`));
+              this.log(chalk.yellow(`    ⊗ Skipped ${adapter.displayName}`));
               continue;
             }
           }
@@ -297,7 +324,7 @@ export default class Init extends Command {
         // Remove all existing commands before regenerating (ensures clean state)
         const removed = await adapter.removeAllCommands();
         if (removed > 0) {
-          console.log(chalk.gray(`    Removed ${removed} existing command(s)`));
+          this.log(chalk.gray(`    Removed ${removed} existing command(s)`));
         }
 
         // Generate slash commands
@@ -319,29 +346,27 @@ export default class Init extends Command {
             return `/${slashName}`;
           });
 
-          console.log(chalk.green(`    → Registered ${commandNames.join(', ')}`));
-          console.log(chalk.gray(`    Commands saved to ${commandPath}`));
-          console.log(
-            chalk.gray('    Tip: reopen the CLI or run /help to refresh the command list.')
-          );
+          this.log(chalk.green(`    → Registered ${commandNames.join(', ')}`));
+          this.log(chalk.gray(`    Commands saved to ${commandPath}`));
+          this.log(chalk.gray('    Tip: reopen the CLI or run /help to refresh the command list.'));
         }
 
         // Inject documentation blocks (Claude Code only)
         if (integrationName === 'claude-code') {
-          console.log(chalk.gray('  ✓ Injecting CLAUDE.md documentation...'));
+          this.log(chalk.gray('  ✓ Injecting CLAUDE.md documentation...'));
           await this.injectDocumentation(adapter);
         }
       }
 
       // Generate .clavix/instructions/ folder for generic integrations
       if (InstructionsGenerator.needsGeneration(selectedIntegrations)) {
-        console.log(chalk.gray('\n📁 Generating .clavix/instructions/ reference folder...'));
+        this.log(chalk.gray('\n📁 Generating .clavix/instructions/ reference folder...'));
         await InstructionsGenerator.generate();
-        console.log(chalk.gray('  ✓ Created detailed workflow guides for generic integrations'));
+        this.log(chalk.gray('  ✓ Created detailed workflow guides for generic integrations'));
       }
 
       // Success message with prominent command format display
-      console.log(chalk.bold.green('\n✅ Clavix initialized successfully!\n'));
+      this.log(chalk.bold.green('\n✅ Clavix initialized successfully!\n'));
 
       // Determine the primary command format based on selected integrations
       const colonTools = ['claude-code', 'gemini', 'qwen', 'crush', 'llxprt', 'augment'];
@@ -351,60 +376,60 @@ export default class Init extends Command {
       const altSeparator = separator === ':' ? '-' : ':';
 
       // Show command format prominently at the TOP
-      console.log(
+      this.log(
         chalk.bold('📋 Your command format:'),
         chalk.bold.cyan(`/clavix${separator}improve`)
       );
       if (usesColon && usesHyphen) {
-        console.log(
+        this.log(
           chalk.gray('   (Some integrations use'),
           chalk.cyan(`/clavix${altSeparator}improve`),
           chalk.gray('instead)')
         );
       }
-      console.log();
+      this.log();
 
       // Available commands
-      console.log(chalk.gray('Available slash commands:'));
-      console.log(
+      this.log(chalk.gray('Available slash commands:'));
+      this.log(
         chalk.gray('  •'),
         chalk.cyan(`/clavix${separator}improve`),
         chalk.gray('- Smart prompt optimization')
       );
-      console.log(
+      this.log(
         chalk.gray('  •'),
         chalk.cyan(`/clavix${separator}prd`),
         chalk.gray('- Generate PRD through guided questions')
       );
-      console.log(
+      this.log(
         chalk.gray('  •'),
         chalk.cyan(`/clavix${separator}plan`),
         chalk.gray('- Create task breakdown from PRD')
       );
-      console.log(
+      this.log(
         chalk.gray('  •'),
         chalk.cyan(`/clavix${separator}implement`),
         chalk.gray('- Execute tasks or prompts')
       );
 
-      console.log(chalk.gray('\nNext steps:'));
-      console.log(chalk.gray('  • Slash commands are now available in your AI agent'));
-      console.log(
+      this.log(chalk.gray('\nNext steps:'));
+      this.log(chalk.gray('  • Slash commands are now available in your AI agent'));
+      this.log(
         chalk.gray('  • Run'),
         chalk.cyan('clavix diagnose'),
         chalk.gray('to verify installation')
       );
-      console.log();
+      this.log();
     } catch (error: unknown) {
       const { getErrorMessage, toError } = await import('../../utils/error-utils.js');
-      console.error(chalk.red('\n✗ Initialization failed:'), getErrorMessage(error));
+      this.log(chalk.red('\n✗ Initialization failed:'), getErrorMessage(error));
       if (
         error &&
         typeof error === 'object' &&
         'hint' in error &&
         typeof (error as { hint: unknown }).hint === 'string'
       ) {
-        console.error(chalk.yellow('  Hint:'), (error as { hint: string }).hint);
+        this.log(chalk.yellow('  Hint:'), (error as { hint: string }).hint);
       }
       throw toError(error);
     }
@@ -420,25 +445,25 @@ export default class Init extends Command {
     for (const integrationName of integrations) {
       // Handle doc generators (not adapters)
       if (integrationName === 'agents-md') {
-        console.log(chalk.gray('  ✓ Regenerating AGENTS.md...'));
+        this.log(chalk.gray('  ✓ Regenerating AGENTS.md...'));
         await AgentsMdGenerator.generate();
         continue;
       }
 
       if (integrationName === 'copilot-instructions') {
-        console.log(chalk.gray('  ✓ Regenerating .github/copilot-instructions.md...'));
+        this.log(chalk.gray('  ✓ Regenerating .github/copilot-instructions.md...'));
         await CopilotInstructionsGenerator.generate();
         continue;
       }
 
       if (integrationName === 'octo-md') {
-        console.log(chalk.gray('  ✓ Regenerating OCTO.md...'));
+        this.log(chalk.gray('  ✓ Regenerating OCTO.md...'));
         await OctoMdGenerator.generate();
         continue;
       }
 
       if (integrationName === 'warp-md') {
-        console.log(chalk.gray('  ✓ Regenerating WARP.md...'));
+        this.log(chalk.gray('  ✓ Regenerating WARP.md...'));
         await WarpMdGenerator.generate();
         continue;
       }
@@ -446,16 +471,16 @@ export default class Init extends Command {
       // Handle regular adapters
       const adapter = agentManager.getAdapter(integrationName);
       if (!adapter) {
-        console.log(chalk.yellow(`  ⚠ Unknown integration: ${integrationName}`));
+        this.log(chalk.yellow(`  ⚠ Unknown integration: ${integrationName}`));
         continue;
       }
 
-      console.log(chalk.gray(`  ✓ Regenerating ${adapter.displayName} commands...`));
+      this.log(chalk.gray(`  ✓ Regenerating ${adapter.displayName} commands...`));
 
       // Remove existing commands before regenerating
       const removed = await adapter.removeAllCommands();
       if (removed > 0) {
-        console.log(chalk.gray(`    Removed ${removed} existing command(s)`));
+        this.log(chalk.gray(`    Removed ${removed} existing command(s)`));
       }
 
       // Generate slash commands
@@ -468,19 +493,19 @@ export default class Init extends Command {
         for (const file of legacyFiles) {
           await FileSystem.remove(file);
         }
-        console.log(chalk.gray(`    Cleaned ${legacyFiles.length} legacy file(s)`));
+        this.log(chalk.gray(`    Cleaned ${legacyFiles.length} legacy file(s)`));
       }
 
       // Re-inject documentation blocks (Claude Code only)
       if (integrationName === 'claude-code') {
-        console.log(chalk.gray('  ✓ Updating CLAUDE.md documentation...'));
+        this.log(chalk.gray('  ✓ Updating CLAUDE.md documentation...'));
         await this.injectDocumentation(adapter);
       }
     }
 
     // Regenerate instructions folder if needed
     if (InstructionsGenerator.needsGeneration(integrations)) {
-      console.log(chalk.gray('\n📁 Updating .clavix/instructions/ reference folder...'));
+      this.log(chalk.gray('\n📁 Updating .clavix/instructions/ reference folder...'));
       await InstructionsGenerator.generate();
     }
   }
@@ -650,9 +675,9 @@ To reconfigure integrations, run \`clavix init\` again.
       .map((file) => path.relative(process.cwd(), file))
       .sort((a, b) => a.localeCompare(b));
 
-    console.log(chalk.gray(`    ⚠ Found ${relativePaths.length} deprecated command file(s):`));
+    this.log(chalk.gray(`    ⚠ Found ${relativePaths.length} deprecated command file(s):`));
     for (const file of relativePaths) {
-      console.log(chalk.gray(`      • ${file}`));
+      this.log(chalk.gray(`      • ${file}`));
     }
 
     const { removeLegacy } = await inquirer.prompt([
@@ -665,13 +690,13 @@ To reconfigure integrations, run \`clavix init\` again.
     ]);
 
     if (!removeLegacy) {
-      console.log(chalk.gray('    ⊗ Kept legacy files (deprecated naming retained)'));
+      this.log(chalk.gray('    ⊗ Kept legacy files (deprecated naming retained)'));
       return;
     }
 
     for (const file of legacyFiles) {
       await FileSystem.remove(file);
-      console.log(chalk.gray(`    ✓ Removed ${path.relative(process.cwd(), file)}`));
+      this.log(chalk.gray(`    ✓ Removed ${path.relative(process.cwd(), file)}`));
     }
   }
 

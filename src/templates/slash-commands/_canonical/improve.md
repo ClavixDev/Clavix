@@ -47,7 +47,7 @@ This is a prompt improvement workflow. Your job is to ANALYZE and IMPROVE the pr
 
 ---
 
-## State Assertion (Required)
+## State Assertion (REQUIRED)
 
 **Before starting analysis, output:**
 ```

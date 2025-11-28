@@ -139,8 +139,11 @@ describe('Adapter Interface Contract Tests', () => {
       for (const adapter of adapters) {
         const commandPath = adapter.getCommandPath();
         // For project-based adapters, path should contain directory
-        if (!adapter.directory.startsWith('~')) {
+        if (!adapter.directory.startsWith('~') && adapter.directory !== '.') {
           expect(commandPath).toContain(adapter.directory);
+        } else if (adapter.directory === '.') {
+          // Root directory adapters (universal adapters) should have non-empty path
+          expect(commandPath.length).toBeGreaterThan(0);
         } else {
           // For home-based adapters, path should not start with ~
           expect(commandPath.startsWith('~')).toBe(false);
