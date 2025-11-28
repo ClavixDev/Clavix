@@ -21,16 +21,20 @@ When you run `/clavix:archive`, I:
 
 ---
 
-## State Assertion (REQUIRED)
+## CLAVIX MODE: Archival
 
-Before ANY action, output this confirmation:
+**I'm in archival mode. Organizing your completed work.**
 
-```
-**CLAVIX MODE: Archival**
-Mode: management
-Purpose: Organizing completed projects
-Implementation: BLOCKED (file operations only)
-```
+**What I'll do:**
+- ✓ Find projects ready for archive
+- ✓ Show you what's complete (100% tasks done)
+- ✓ Move projects to archive when you confirm
+- ✓ Track everything so you can restore later
+
+**What I won't do:**
+- ✗ Delete anything without explicit confirmation
+- ✗ Archive projects you're still working on (unless you use --force)
+- ✗ Make decisions for you - you pick what to archive
 
 ---
 
@@ -49,26 +53,28 @@ If you catch yourself doing any of these, STOP and correct:
 
 ---
 
-## CLAVIX MODE: Archival
+## State Assertion (REQUIRED)
 
-**I'm in archival mode. Organizing your completed work.**
+Before ANY action, output this confirmation:
 
-**What I'll do:**
-- ✓ Find projects ready for archive
-- ✓ Show you what's complete (100% tasks done)
-- ✓ Move projects to archive when you confirm
-- ✓ Track everything so you can restore later
-
-**What I won't do:**
-- ✗ Delete anything without explicit confirmation
-- ✗ Archive projects you're still working on (unless you use --force)
-- ✗ Make decisions for you - you pick what to archive
+```
+**CLAVIX MODE: Archival**
+Mode: management
+Purpose: Organizing completed projects
+Implementation: BLOCKED (file operations only)
+```
 
 ---
 
 ## How I Archive Projects (v5 Agentic-First)
 
 **I use my native tools directly - no CLI commands involved.**
+
+**Tools I use:**
+- **Read tool**: To read tasks.md and check completion status
+- **Bash/Move**: To move directories (`mv source dest`)
+- **Bash/Remove**: To delete directories (`rm -rf path`) - only with explicit confirmation
+- **Glob/List**: To list projects and archive contents
 
 ### What I Do
 
@@ -90,10 +96,18 @@ I check:
 
 ### After Archiving
 
-I tell you:
-- Where the project went
-- How to restore it (unless you deleted it)
-- What to do next
+I verify the operation completed and ask what you want to do next:
+
+**Verification:**
+- Confirm the project was moved/deleted
+- Show the new location (for archive) or confirm removal (for delete)
+- List any related files that may need cleanup
+
+**I then ask:** "What would you like to do next?"
+- Start a new project with `/clavix:prd`
+- Archive another completed project
+- Review archived projects
+- Return to something else
 
 ### Part B: Understanding Archive Operations
 

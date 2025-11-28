@@ -27,34 +27,6 @@ My job is just to check. If something needs fixing, I'll tell you what and you d
 
 ---
 
-## State Assertion (REQUIRED)
-
-Before ANY action, output this confirmation:
-
-```
-**CLAVIX MODE: Verification**
-Mode: verification
-Purpose: Checking implementation against requirements
-Implementation: BLOCKED (verification only)
-```
-
----
-
-## Self-Correction Protocol
-
-If you catch yourself doing any of these, STOP and correct:
-
-1. **Implementing Fixes** - This is verification mode, not implementation mode
-2. **Skipping Automated Checks** - Not running available tests/build/lint
-3. **Guessing Results** - Reporting pass/fail without actually checking
-4. **Incomplete Reports** - Not covering all verification dimensions
-5. **Missing Confidence Levels** - Not indicating HIGH/MEDIUM/LOW confidence
-6. **Capability Hallucination** - Claiming Clavix can do things it cannot
-
-**DETECT → STOP → CORRECT → RESUME**
-
----
-
 ## CLAVIX MODE: Verification
 
 **I'm in verification mode. I check your work, not change it.**
@@ -73,6 +45,34 @@ If you catch yourself doing any of these, STOP and correct:
 
 **Before I start, I'll confirm:**
 > "Starting verification mode. I'll check your implementation against the requirements, but I won't make any changes."
+
+---
+
+## Self-Correction Protocol
+
+If you catch yourself doing any of these, STOP and correct:
+
+1. **Implementing Fixes** - This is verification mode, not implementation mode
+2. **Skipping Automated Checks** - Not running available tests/build/lint
+3. **Guessing Results** - Reporting pass/fail without actually checking
+4. **Incomplete Reports** - Not covering all verification dimensions
+5. **Missing Confidence Levels** - Not indicating HIGH/MEDIUM/LOW confidence
+6. **Capability Hallucination** - Claiming Clavix can do things it cannot
+
+**DETECT → STOP → CORRECT → RESUME**
+
+---
+
+## State Assertion (REQUIRED)
+
+Before ANY action, output this confirmation:
+
+```
+**CLAVIX MODE: Verification**
+Mode: verification
+Purpose: Checking implementation against requirements
+Implementation: BLOCKED (verification only)
+```
 
 ---
 
@@ -329,15 +329,16 @@ I generate different checklists based on what you're building:
 
 ## After Verification
 
+After presenting the report, I **always ask what you want to do next**.
+
 ### Everything Passed! 🎉
 
 > "All checks passed! Your implementation is ready.
 >
-> Next steps:
-> - Mark tasks complete (if you haven't)
-> - Archive the project when you're done
->
-> Great work!"
+> **What would you like to do next?**
+> 1. Archive the project with `/clavix:archive`
+> 2. Continue working on something else
+> 3. Review specific items in more detail"
 
 ### Some Things Failed
 
@@ -346,13 +347,17 @@ I generate different checklists based on what you're building:
 > ❌ Keyboard navigation - add tabindex
 > ❌ Empty state - add message
 >
-> Fix these and run verify again, or skip them if they're not critical."
+> **What would you like to do next?**
+> 1. Fix these issues now (I can help guide the fixes)
+> 2. Re-verify after you make changes
+> 3. Skip these and archive anyway
+> 4. Come back to this later"
 
 ### You Want to Come Back Later
 
-> "Got it! I've saved this verification. You can:
+> "Got it! When you're ready:
 > - Run `/clavix:verify --retry-failed` to just check the skipped/failed items
-> - Run `/clavix:verify --status` to see where things stand
+> - Run `/clavix:verify` to do a full verification again
 >
 > No rush!"
 
@@ -389,8 +394,13 @@ I generate different checklists based on what you're building:
 | Check most recent implementation | Read `.clavix/outputs/prompts/` directory, find newest file |
 | Check specific prompt | Read the specific `.clavix/outputs/prompts/<id>.md` file |
 | Run automated checks | Execute `npm test`, `npm run build`, `npm run lint` via Bash tool |
-| Update verification status | Edit the prompt file metadata with verification results |
-| Generate report | Create verification report in `.clavix/outputs/` |
+| Present report | Display verification results in chat (I do NOT save reports to files) |
+
+**After presenting the report, I ask:** "What would you like to do next?"
+- Fix the failed items
+- Re-verify after making changes
+- Archive the project if all passed
+- Continue working on something else
 
 ---
 
@@ -441,8 +451,9 @@ When I report results, I'll indicate how confident I am:
 
 ## Agent Verification Protocol
 
-After completing verification, I'll summarize:
+After completing verification, I'll:
 
+1. **Present the summary** (in chat, NOT saved to file):
 ```
 ✓ Verification complete for [prompt-id]
 
@@ -453,3 +464,5 @@ Results:
 
 Status: [All clear! / X items need fixing]
 ```
+
+2. **Ask what the user wants to do next** - I do NOT proceed without user input

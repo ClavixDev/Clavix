@@ -282,14 +282,51 @@ The generated `tasks.md` will look like:
 **Create directory if not exists**: Yes
 **Overwrite if exists**: Only with explicit user confirmation or `--overwrite` flag
 
+---
+
+## After Plan Generation
+
+After creating the task breakdown, I present it and ask for verification:
+
+**What I'll show:**
+- Summary of phases and task count
+- First few tasks from each phase
+- Any dependencies detected
+
+**What I'll ask:**
+> "Here's your task breakdown. Before you start implementing, please verify:
+> 1. Does this capture everything from your PRD?
+> 2. Are the tasks in the right order?
+> 3. Is the granularity right (not too big, not too small)?
+>
+> What would you like to do next?"
+
+**Your options:**
+1. Start implementing with `/clavix:implement`
+2. Edit tasks.md to adjust tasks
+3. Regenerate with different granularity
+4. Go back and refine the PRD first
+
+---
+
 ## Workflow Navigation
 
 **You are here:** Plan (Task Breakdown)
+
+**State markers for workflow continuity:**
+- If user came from `/clavix:prd`: Full PRD available, use comprehensive task breakdown
+- If user came from `/clavix:summarize`: Mini-PRD available, may need simpler task structure
+- If PRD has many features: Consider grouping by feature in phases
+- If PRD has dependencies: Ensure task ordering reflects them
 
 **Common workflows:**
 - **PRD workflow**: `/clavix:prd` → `/clavix:plan` → `/clavix:implement` → `/clavix:archive`
 - **Conversation workflow**: `/clavix:summarize` → `/clavix:plan` → `/clavix:implement` → `/clavix:archive`
 - **Standalone**: [Existing PRD] → `/clavix:plan` → Review tasks.md → `/clavix:implement`
+
+**After completion, guide user to:**
+- `/clavix:implement` - Start executing tasks (recommended next step)
+- Edit `tasks.md` - If they want to adjust task order or granularity
 
 **Related commands:**
 - `/clavix:prd` - Generate PRD (typical previous step)

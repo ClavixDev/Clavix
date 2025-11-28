@@ -27,7 +27,6 @@ export class UniversalAdapter extends BaseAdapter {
     // Set features from config for interface compatibility
     this.features = {
       supportsSubdirectories: config.features.supportsSubdirectories,
-      supportsFrontmatter: config.features.supportsFrontmatter,
       commandFormat: {
         separator: config.features.commandSeparator,
       },
@@ -117,12 +116,5 @@ export class UniversalAdapter extends BaseAdapter {
    */
   supportsSubdirectories(): boolean {
     return this.config.features.supportsSubdirectories;
-  }
-
-  /**
-   * Check if this adapter supports frontmatter
-   */
-  supportsFrontmatter(): boolean {
-    return this.config.features.supportsFrontmatter;
   }
 }

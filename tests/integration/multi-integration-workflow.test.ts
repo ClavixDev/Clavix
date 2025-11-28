@@ -361,7 +361,6 @@ describe('Multi-Integration Workflow Integration', () => {
       // All adapters should expose a features object
       for (const adapter of agentManager.getAdapters()) {
         expect(adapter.features).toBeDefined();
-        expect(typeof adapter.features?.supportsFrontmatter).toBe('boolean');
         expect(typeof adapter.features?.supportsSubdirectories).toBe('boolean');
       }
     });
@@ -383,13 +382,6 @@ describe('Multi-Integration Workflow Integration', () => {
       for (const name of flatAdapters) {
         const adapter = agentManager.requireAdapter(name);
         expect(adapter.features?.supportsSubdirectories).toBe(false);
-      }
-    });
-
-    it('should identify frontmatter support', () => {
-      // Currently no adapters use frontmatter by default
-      for (const adapter of agentManager.getAdapters()) {
-        expect(adapter.features?.supportsFrontmatter).toBe(false);
       }
     });
   });

@@ -163,7 +163,7 @@
     },
     {
       "name": "llxprt",
-      "displayName": "LLXpert",
+      "displayName": "LLXPRT",
       "directory": ".llxprt/commands/clavix",
       "filenamePattern": "{name}",
       "extension": ".toml",

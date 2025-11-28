@@ -42,7 +42,7 @@ describe('UniversalAdapter', () => {
     filenamePattern: 'tool-{name}',
     features: {
       supportsSubdirectories: false,
-      supportsFrontmatter: true,
+      supportsDocInjection: false,
       commandSeparator: '-',
     },
     detection: { type: 'file', path: '.custom/config.json' },
@@ -149,22 +149,6 @@ describe('UniversalAdapter', () => {
       };
       const adapter = new UniversalAdapter(subConfig);
       expect(adapter.supportsSubdirectories()).toBe(true);
-    });
-  });
-
-  describe('supportsFrontmatter', () => {
-    it('should return feature flag value', () => {
-      const adapter = new UniversalAdapter(cursorConfig);
-      expect(adapter.supportsFrontmatter()).toBe(false);
-    });
-
-    it('should return true when enabled', () => {
-      const fmConfig: AdapterConfig = {
-        ...cursorConfig,
-        features: { ...DEFAULT_MD_FEATURES, supportsFrontmatter: true },
-      };
-      const adapter = new UniversalAdapter(fmConfig);
-      expect(adapter.supportsFrontmatter()).toBe(true);
     });
   });
 

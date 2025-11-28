@@ -314,10 +314,20 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 **You are here:** Clavix Planning Mode (Strategic Planning)
 
+**State markers for workflow continuity:**
+- If user came from `/clavix:improve`: Prompt was too complex for simple optimization
+- If user came from `/clavix:start`: They explored, now want structured planning
+- If this is a greenfield project: Start with business context questions
+- If modifying existing feature: Start with current state questions
+
 **Common workflows:**
 - **Full planning workflow**: `/clavix:prd` → `/clavix:plan` → `/clavix:implement` → `/clavix:archive`
 - **From improve mode**: `/clavix:improve` → (strategic scope detected) → `/clavix:prd`
 - **Quick to strategic**: `/clavix:improve` → (realizes complexity) → `/clavix:prd`
+
+**After completion, guide user to:**
+- `/clavix:plan` - Generate task breakdown from the PRD (recommended next step)
+- `/clavix:refine` - If they want to iterate on the PRD
 
 **Related commands:**
 - `/clavix:plan` - Generate task breakdown from PRD (next step)

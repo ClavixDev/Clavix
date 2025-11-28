@@ -245,7 +245,6 @@ describe('CommandTransformer', () => {
     it('should work with Cursor adapter features', () => {
       const cursorFeatures: IntegrationFeatures = {
         supportsSubdirectories: false,
-        supportsFrontmatter: false,
         commandFormat: { separator: '-' },
       };
 
@@ -258,7 +257,6 @@ describe('CommandTransformer', () => {
     it('should work with Claude Code adapter features (no commandFormat)', () => {
       const claudeFeatures: IntegrationFeatures = {
         supportsSubdirectories: true,
-        supportsFrontmatter: false,
       };
 
       const content = 'Run `/clavix:execute --latest` to implement.';
@@ -270,8 +268,6 @@ describe('CommandTransformer', () => {
     it('should work with Droid adapter features', () => {
       const droidFeatures: IntegrationFeatures = {
         supportsSubdirectories: false,
-        supportsFrontmatter: true,
-        frontmatterFields: ['description', 'argument-hint'],
         argumentPlaceholder: '$ARGUMENTS',
         commandFormat: { separator: '-' },
       };

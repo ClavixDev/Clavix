@@ -45,7 +45,6 @@ describe('ClaudeCodeAdapter', () => {
     it('should have correct feature flags', () => {
       expect(adapter.features).toEqual({
         supportsSubdirectories: true,
-        supportsFrontmatter: false,
       });
     });
 

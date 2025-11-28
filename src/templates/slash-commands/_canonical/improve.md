@@ -47,6 +47,28 @@ This is a prompt improvement workflow. Your job is to ANALYZE and IMPROVE the pr
 
 ---
 
+## Self-Correction Protocol
+
+**DETECT**: If you find yourself doing any of these mistake types:
+
+| Type | What It Looks Like |
+|------|--------------------|
+| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints |
+| 2. Skipping Quality Assessment | Not scoring all 6 dimensions, jumping to improved prompt without analysis |
+| 3. Wrong Depth Selection | Not explaining why standard/comprehensive was chosen |
+| 4. Incomplete Pattern Application | Not showing which patterns were applied |
+| 5. Missing Depth Features | In comprehensive mode: missing alternatives, edge cases, or validation |
+| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing pattern names |
+
+**STOP**: Immediately halt the incorrect action
+
+**CORRECT**: Output:
+"I apologize - I was [describe mistake]. Let me return to prompt optimization."
+
+**RESUME**: Return to the prompt optimization workflow with correct approach.
+
+---
+
 ## State Assertion (REQUIRED)
 
 **Before starting analysis, output:**
@@ -80,28 +102,6 @@ Clavix provides a unified **improve** mode that intelligently selects the approp
 - Edge Case Analysis: Potential issues and failure modes
 - Validation Checklist: Steps to verify implementation
 - Risk Assessment: "What could go wrong" analysis
-
----
-
-## Self-Correction Protocol
-
-**DETECT**: If you find yourself doing any of these mistake types:
-
-| Type | What It Looks Like |
-|------|--------------------|
-| 1. Implementation Code | Writing function/class definitions, creating components, generating API endpoints |
-| 2. Skipping Quality Assessment | Not scoring all 6 dimensions, jumping to improved prompt without analysis |
-| 3. Wrong Depth Selection | Not explaining why standard/comprehensive was chosen |
-| 4. Incomplete Pattern Application | Not showing which patterns were applied |
-| 5. Missing Depth Features | In comprehensive mode: missing alternatives, edge cases, or validation |
-| 6. Capability Hallucination | Claiming features Clavix doesn't have, inventing pattern names |
-
-**STOP**: Immediately halt the incorrect action
-
-**CORRECT**: Output:
-"I apologize - I was [describe mistake]. Let me return to prompt optimization."
-
-**RESUME**: Return to the prompt optimization workflow with correct approach.
 
 ---
 
@@ -477,10 +477,20 @@ Wait for the user to decide what to do next.
 
 **You are here:** Improve Mode (Unified Prompt Intelligence)
 
+**State markers for workflow continuity:**
+- If user came from `/clavix:start`: They explored conversationally, now want optimization
+- If user came from `/clavix:summarize`: They have a mini-PRD, want to refine the prompt further
+- If prompt is complex (score < 60%): Suggest `/clavix:prd` for comprehensive planning instead
+
 **Common workflows:**
-- **Quick cleanup**: `/clavix:improve` -> `/clavix:implement --latest` -> Build
-- **Force comprehensive**: `/clavix:improve --comprehensive` -> Full analysis with alternatives
-- **Strategic planning**: `/clavix:improve` -> (suggests) `/clavix:prd` -> Plan -> Implement -> Archive
+- **Quick cleanup**: `/clavix:improve` → `/clavix:implement --latest` → Build
+- **Force comprehensive**: `/clavix:improve --comprehensive` → Full analysis with alternatives
+- **Strategic planning**: `/clavix:improve` → (suggests) `/clavix:prd` → Plan → Implement → Archive
+
+**After completion, guide user to:**
+- `/clavix:implement --latest` - Build what the prompt describes
+- `/clavix:prd` - If the task is larger than expected
+- `/clavix:refine` - If they want to iterate on the improved prompt
 
 **Related commands:**
 - `/clavix:implement` - Execute saved prompt or tasks (IMPLEMENTATION starts here)

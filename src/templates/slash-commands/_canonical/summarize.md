@@ -424,10 +424,21 @@ The `/clavix:summarize` command extracts requirements from exploratory conversat
 
 **You are here:** Summarize (Conversation Extraction)
 
+**State markers for workflow continuity:**
+- If user came from `/clavix:start`: There's conversation context to extract
+- If user invoked directly: Look for any recent conversation in context
+- If conversation was technical: Focus on implementation details in extraction
+- If conversation was exploratory: Focus on requirements and goals
+
 **Common workflows:**
 - **Standard flow**: `/clavix:start` → [conversation] → `/clavix:summarize` → Use optimized prompt
 - **To implementation**: `/clavix:summarize` → `/clavix:plan` → `/clavix:implement` → `/clavix:archive`
 - **Standalone use**: [Any conversation] → `/clavix:summarize` → Extract and optimize
+
+**After completion, guide user to:**
+- `/clavix:plan` - Generate tasks from the mini-PRD (if strategic)
+- `/clavix:implement --latest` - Build directly (if simple)
+- `/clavix:improve` - Polish the extracted prompt further
 
 **Related commands:**
 - `/clavix:start` - Begin conversational exploration (typical previous step)

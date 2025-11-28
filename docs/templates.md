@@ -267,6 +267,38 @@ Use quality dimension tags in improvement explanations:
 4. Update `integrations.json` if needed
 5. Run consistency tests: `npm run test:consistency`
 
+## Argument Placeholder Strategy
+
+Templates can include argument placeholders that get replaced with user input at runtime. The syntax varies by adapter type:
+
+### Placeholder Syntax by Adapter
+
+| Adapter Type | Placeholder | Example |
+|--------------|-------------|---------|
+| TOML adapters (Gemini, Qwen, LLXPRT) | `{{args}}` | `Improve {{args}}` |
+| Some MD adapters (Droid, OpenCode, Codex) | `$ARGUMENTS` | `Improve $ARGUMENTS` |
+| Most adapters | None | No runtime argument support |
+
+### How It Works
+
+1. **In canonical templates**: Use `{{ARGS}}` (uppercase) as the canonical placeholder
+2. **At generation time**: TOML adapters convert `{{ARGS}}` to `{{args}}` (their native syntax)
+3. **MD adapters with $ARGUMENTS**: Pass through as-is (configured in `integrations.json`)
+4. **Other adapters**: Placeholder is removed or kept as documentation
+
+### Configuration
+
+Argument support is configured per-adapter in `integrations.json`:
+
+```json
+{
+  "name": "gemini-cli",
+  "features": {
+    "argumentPlaceholder": "{{args}}"
+  }
+}
+```
+
 ## Forbidden Practices
 
 **NEVER:**

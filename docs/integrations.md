@@ -49,7 +49,7 @@ For detailed information on template customization and override options, see [Ge
 | OpenCode | `-` | `.opencode/command/` | No | `$ARGUMENTS` |
 | Gemini CLI | `:` | `.gemini/commands/clavix/` | Yes | `{{args}}` |
 | Qwen CLI | `:` | `.qwen/commands/clavix/` | Yes | `{{args}}` |
-| LLXpert | `:` | `.llxprt/commands/clavix/` | Yes | `{{args}}` |
+| LLXPRT | `:` | `.llxprt/commands/clavix/` | Yes | `{{args}}` |
 | Amp | `-` | `.agents/commands/` | No | *(implicit)* |
 | Crush | `-` | `.crush/commands/` | No | *(implicit)* |
 | Codex CLI | `-` | `~/.codex/prompts/` (global) | No | `$ARGUMENTS` |

@@ -32,7 +32,6 @@ export abstract class TomlFormattingAdapter extends BaseAdapter {
   readonly fileExtension = '.toml';
   readonly features = {
     supportsSubdirectories: true,
-    supportsFrontmatter: false,
     argumentPlaceholder: '{{args}}',
   };
 

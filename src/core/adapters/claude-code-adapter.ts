@@ -15,7 +15,6 @@ export class ClaudeCodeAdapter extends BaseAdapter {
   readonly fileExtension = '.md';
   readonly features = {
     supportsSubdirectories: true,
-    supportsFrontmatter: false,
   };
 
   /**

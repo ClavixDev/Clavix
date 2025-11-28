@@ -99,6 +99,24 @@ These features have been proposed and explicitly rejected. **Do NOT develop them
 
 If an AI agent can already do something with its native tools, **do NOT add TypeScript code for it**. Templates guide agents; code doesn't replace them.
 
+### Out of Scope
+
+The following features are **explicitly out of scope** for Clavix. These are intentional product decisions, not future roadmap items:
+
+| Feature | Why It's Out of Scope |
+|---------|----------------------|
+| **MCP Server Integration** | Clavix is template-based; MCP servers require runtime execution. Adding MCP support would violate the agentic-first principle. Agents already have MCP capabilities - Clavix doesn't need to duplicate them. |
+| **Git Hooks** | Clavix templates don't execute code. Git hooks require runtime execution. Users can implement their own hooks that call agents with Clavix commands if desired. |
+| **CI/CD Templates** | Outside core scope. Clavix focuses on local development workflows with AI agents. CI/CD integration would require runtime execution infrastructure. |
+
+**Why have an Out of Scope list?**
+
+1. **Focus** - Prevents scope creep and keeps the project maintainable
+2. **Clarity** - Contributors know what NOT to work on
+3. **Architecture** - These features would require breaking the agentic-first principle
+
+If you believe something should be reconsidered, open a discussion issue first.
+
 ### What You CAN Do
 
 | Do This | Why It Works |
@@ -287,7 +305,7 @@ npm run format        # Format with Prettier
 - [ ] Linting passes (`npm run lint`)
 - [ ] Changes follow agentic-first principles
 - [ ] Documentation updated if needed
-- [ ] CHANGELOG.md updated for user-facing changes
+- [ ] Commit message follows format (see below)
 - [ ] No TypeScript added for slash command "logic"
 
 ### Commit Message Format
@@ -302,6 +320,8 @@ Fixes #123
 ```
 
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+**Release commits:** Use version in scope, e.g., `feat(v5.6.7): new feature description`. Versions are tracked in commit history and package.json - no separate CHANGELOG file.
 
 ---
 

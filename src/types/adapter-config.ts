@@ -37,13 +37,18 @@ export interface DetectionConfig {
 export interface AdapterFeatures {
   /** Whether the adapter supports subdirectories in command path */
   supportsSubdirectories: boolean;
-  /** Whether the adapter supports frontmatter in command files */
-  supportsFrontmatter: boolean;
   /** Whether the adapter supports doc injection (CLAUDE.md, etc.) */
   supportsDocInjection: boolean;
   /** Command separator character */
   commandSeparator: CommandSeparator;
-  /** Argument placeholder for TOML adapters */
+  /**
+   * Argument placeholder for tools that support runtime arguments.
+   *
+   * Syntax varies by tool:
+   * - TOML adapters (Gemini, Qwen, LLXPRT): `{{args}}` - converted at generation time
+   * - Some markdown adapters (Droid, OpenCode, Codex): `$ARGUMENTS` - passed through as-is
+   * - Most adapters: undefined - no argument support
+   */
   argumentPlaceholder?: string;
 }
 
@@ -78,7 +83,6 @@ export interface AdapterConfig {
  */
 export const DEFAULT_MD_FEATURES: AdapterFeatures = {
   supportsSubdirectories: false,
-  supportsFrontmatter: false,
   supportsDocInjection: false,
   commandSeparator: '-',
 };
@@ -88,7 +92,6 @@ export const DEFAULT_MD_FEATURES: AdapterFeatures = {
  */
 export const DEFAULT_TOML_FEATURES: AdapterFeatures = {
   supportsSubdirectories: true,
-  supportsFrontmatter: false,
   supportsDocInjection: false,
   commandSeparator: ':',
   argumentPlaceholder: '{{args}}',

@@ -59,7 +59,6 @@ describe('TomlFormattingAdapter', () => {
     it('sets correct features', () => {
       expect(adapter.features).toEqual({
         supportsSubdirectories: true,
-        supportsFrontmatter: false,
         argumentPlaceholder: '{{args}}',
       });
     });

@@ -89,10 +89,9 @@ function transformConfig(config: IntegrationConfig): AdapterConfig {
     features.argumentPlaceholder = config.placeholder;
   }
 
-  // Special handling for Claude Code (subdirectories + frontmatter + doc injection)
+  // Special handling for Claude Code (subdirectories + doc injection)
   if (config.specialAdapter === 'doc-injection') {
     features.supportsSubdirectories = true;
-    features.supportsFrontmatter = true;
     features.supportsDocInjection = true;
     features.commandSeparator = ':';
   }
