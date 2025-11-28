@@ -42,6 +42,15 @@ export default class Update extends Command {
   async run(): Promise<void> {
     const { flags } = await this.parse(Update);
 
+    // Validate flag combinations
+    if (flags['docs-only'] && flags['commands-only']) {
+      this.error(
+        chalk.red('Cannot use --docs-only and --commands-only together.') +
+          '\n' +
+          chalk.yellow('Hint: Use one flag or neither (to update both).')
+      );
+    }
+
     const clavixDir = path.join(process.cwd(), '.clavix');
     const configPath = path.join(clavixDir, 'config.json');
 

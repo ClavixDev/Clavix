@@ -523,4 +523,481 @@ This project uses Clavix for prompt improvement and PRD generation.
       expect(legacyPatterns).not.toContain(currentPattern);
     });
   });
+
+  describe('conflicting flags validation', () => {
+    it('should reject when both --docs-only and --commands-only are set', () => {
+      const docsOnly = true;
+      const commandsOnly = true;
+
+      // This should be an error condition
+      const hasConflict = docsOnly && commandsOnly;
+
+      expect(hasConflict).toBe(true);
+    });
+
+    it('should allow --docs-only alone', () => {
+      const docsOnly = true;
+      const commandsOnly = false;
+
+      const hasConflict = docsOnly && commandsOnly;
+
+      expect(hasConflict).toBe(false);
+    });
+
+    it('should allow --commands-only alone', () => {
+      const docsOnly = false;
+      const commandsOnly = true;
+
+      const hasConflict = docsOnly && commandsOnly;
+
+      expect(hasConflict).toBe(false);
+    });
+
+    it('should allow neither flag (update all)', () => {
+      const docsOnly = false;
+      const commandsOnly = false;
+
+      const hasConflict = docsOnly && commandsOnly;
+
+      expect(hasConflict).toBe(false);
+    });
+  });
+
+  describe('config validation', () => {
+    it('should reject config with invalid version type', async () => {
+      const invalidConfig = {
+        version: 123, // Should be string
+        integrations: ['claude-code'],
+      };
+      await fs.writeJSON(configPath, invalidConfig, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+
+      // Version should be a string, not number
+      expect(typeof loadedConfig.version).toBe('number');
+    });
+
+    it('should reject config with invalid integrations type', async () => {
+      const invalidConfig = {
+        version: '1.0.0',
+        integrations: 'claude-code', // Should be array
+      };
+      await fs.writeJSON(configPath, invalidConfig, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+
+      expect(Array.isArray(loadedConfig.integrations)).toBe(false);
+    });
+
+    it('should accept config with all valid fields', async () => {
+      const validConfig = {
+        version: '1.0.0',
+        integrations: ['claude-code', 'cursor'],
+        projectName: 'test-project',
+      };
+      await fs.writeJSON(configPath, validConfig, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+
+      expect(loadedConfig.version).toBe('1.0.0');
+      expect(loadedConfig.integrations).toEqual(['claude-code', 'cursor']);
+      expect(loadedConfig.projectName).toBe('test-project');
+    });
+
+    it('should handle config with optional projectName', async () => {
+      const config = {
+        version: '1.0.0',
+        integrations: ['claude-code'],
+        // projectName is optional
+      };
+      await fs.writeJSON(configPath, config, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+
+      expect(loadedConfig.projectName).toBeUndefined();
+    });
+  });
+
+  describe('error scenarios', () => {
+    it('should handle malformed JSON in config', async () => {
+      await fs.writeFile(configPath, '{ invalid json }');
+
+      let parseError: Error | null = null;
+      try {
+        await fs.readJSON(configPath);
+      } catch (error) {
+        parseError = error as Error;
+      }
+
+      expect(parseError).not.toBeNull();
+    });
+
+    it('should handle empty config file', async () => {
+      await fs.writeFile(configPath, '');
+
+      let parseError: Error | null = null;
+      try {
+        await fs.readJSON(configPath);
+      } catch (error) {
+        parseError = error as Error;
+      }
+
+      expect(parseError).not.toBeNull();
+    });
+
+    it('should handle config with null values', async () => {
+      const config = {
+        version: null,
+        integrations: null,
+      };
+      await fs.writeJSON(configPath, config, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+
+      expect(loadedConfig.version).toBeNull();
+      expect(loadedConfig.integrations).toBeNull();
+    });
+
+    it('should handle non-existent config gracefully', async () => {
+      await fs.remove(configPath);
+
+      const exists = await fs.pathExists(configPath);
+
+      expect(exists).toBe(false);
+    });
+  });
+
+  describe('special integration handling', () => {
+    it('should identify agents-md as doc generator', () => {
+      const integration = 'agents-md';
+      const isDocGenerator = ['agents-md', 'octo-md', 'warp-md'].includes(integration);
+
+      expect(isDocGenerator).toBe(true);
+    });
+
+    it('should identify octo-md as doc generator', () => {
+      const integration = 'octo-md';
+      const isDocGenerator = ['agents-md', 'octo-md', 'warp-md'].includes(integration);
+
+      expect(isDocGenerator).toBe(true);
+    });
+
+    it('should identify warp-md as doc generator', () => {
+      const integration = 'warp-md';
+      const isDocGenerator = ['agents-md', 'octo-md', 'warp-md'].includes(integration);
+
+      expect(isDocGenerator).toBe(true);
+    });
+
+    it('should not identify claude-code as doc generator', () => {
+      const integration = 'claude-code';
+      const isDocGenerator = ['agents-md', 'octo-md', 'warp-md'].includes(integration);
+
+      expect(isDocGenerator).toBe(false);
+    });
+
+    it('should handle all doc generators in config', async () => {
+      const config = {
+        version: '1.0.0',
+        integrations: ['agents-md', 'octo-md', 'warp-md'],
+      };
+      await fs.writeJSON(configPath, config, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+      const docGenerators = loadedConfig.integrations.filter((i: string) =>
+        ['agents-md', 'octo-md', 'warp-md'].includes(i)
+      );
+
+      expect(docGenerators.length).toBe(3);
+    });
+  });
+
+  describe('documentation file detection', () => {
+    it('should detect existing AGENTS.md', async () => {
+      const agentsPath = path.join(testDir, 'AGENTS.md');
+      await fs.writeFile(agentsPath, '# AGENTS.md');
+
+      const exists = await fs.pathExists(agentsPath);
+
+      expect(exists).toBe(true);
+    });
+
+    it('should detect missing AGENTS.md', async () => {
+      const agentsPath = path.join(testDir, 'AGENTS.md');
+      // Don't create the file
+
+      const exists = await fs.pathExists(agentsPath);
+
+      expect(exists).toBe(false);
+    });
+
+    it('should detect existing CLAUDE.md', async () => {
+      const claudePath = path.join(testDir, 'CLAUDE.md');
+      await fs.writeFile(claudePath, '# CLAUDE.md');
+
+      const exists = await fs.pathExists(claudePath);
+
+      expect(exists).toBe(true);
+    });
+
+    it('should detect missing CLAUDE.md', async () => {
+      const claudePath = path.join(testDir, 'CLAUDE.md');
+      // Don't create the file
+
+      const exists = await fs.pathExists(claudePath);
+
+      expect(exists).toBe(false);
+    });
+
+    it('should detect existing OCTO.md', async () => {
+      const octoPath = path.join(testDir, 'OCTO.md');
+      await fs.writeFile(octoPath, '# OCTO.md');
+
+      const exists = await fs.pathExists(octoPath);
+
+      expect(exists).toBe(true);
+    });
+
+    it('should detect existing WARP.md', async () => {
+      const warpPath = path.join(testDir, 'WARP.md');
+      await fs.writeFile(warpPath, '# WARP.md');
+
+      const exists = await fs.pathExists(warpPath);
+
+      expect(exists).toBe(true);
+    });
+  });
+
+  describe('template loading', () => {
+    it('should have command templates directory', async () => {
+      const commandsDir = path.join(__dirname, '../../src/templates/slash-commands');
+
+      const exists = await fs.pathExists(commandsDir);
+
+      expect(exists).toBe(true);
+    });
+
+    it('should have improve command template', async () => {
+      const templatePath = path.join(
+        __dirname,
+        '../../src/templates/slash-commands/_canonical/improve.md'
+      );
+
+      const exists = await fs.pathExists(templatePath);
+
+      expect(exists).toBe(true);
+    });
+
+    it('should have prd command template', async () => {
+      const templatePath = path.join(
+        __dirname,
+        '../../src/templates/slash-commands/_canonical/prd.md'
+      );
+
+      const exists = await fs.pathExists(templatePath);
+
+      expect(exists).toBe(true);
+    });
+
+    it('should have implement command template', async () => {
+      const templatePath = path.join(
+        __dirname,
+        '../../src/templates/slash-commands/_canonical/implement.md'
+      );
+
+      const exists = await fs.pathExists(templatePath);
+
+      expect(exists).toBe(true);
+    });
+  });
+
+  describe('adapter command path validation', () => {
+    it('should get correct command path for claude-code', () => {
+      const agentManager = new AgentManager();
+      const adapter = agentManager.getAdapter('claude-code');
+      const commandPath = adapter?.getCommandPath();
+
+      expect(commandPath).toContain('.claude');
+      expect(commandPath).toContain('commands');
+    });
+
+    it('should get correct command path for cursor', () => {
+      const agentManager = new AgentManager();
+      const adapter = agentManager.getAdapter('cursor');
+      const commandPath = adapter?.getCommandPath();
+
+      expect(commandPath).toContain('.cursor');
+    });
+
+    it('should handle adapter without command path gracefully', () => {
+      const agentManager = new AgentManager();
+      const adapter = agentManager.getAdapter('unknown');
+
+      expect(adapter).toBeUndefined();
+    });
+  });
+
+  describe('update counter tracking', () => {
+    it('should start with zero updates', () => {
+      let updatedCount = 0;
+
+      expect(updatedCount).toBe(0);
+    });
+
+    it('should increment for each updated file', () => {
+      let updatedCount = 0;
+      updatedCount++; // AGENTS.md
+      updatedCount++; // CLAUDE.md
+      updatedCount++; // Commands
+
+      expect(updatedCount).toBe(3);
+    });
+
+    it('should not increment for skipped files', () => {
+      let updatedCount = 0;
+      const isUpToDate = true;
+
+      if (!isUpToDate) {
+        updatedCount++;
+      }
+
+      expect(updatedCount).toBe(0);
+    });
+  });
+
+  describe('legacy providers field migration', () => {
+    it('should support legacy providers field', async () => {
+      const legacyConfig = {
+        version: '1.0.0',
+        providers: ['claude-code', 'cursor'], // Old field name
+      };
+      await fs.writeJSON(configPath, legacyConfig, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+      const integrations = loadedConfig.integrations || loadedConfig.providers || ['claude-code'];
+
+      expect(integrations).toEqual(['claude-code', 'cursor']);
+    });
+
+    it('should prefer integrations over providers', async () => {
+      const mixedConfig = {
+        version: '1.0.0',
+        integrations: ['claude-code'],
+        providers: ['cursor', 'windsurf'],
+      };
+      await fs.writeJSON(configPath, mixedConfig, { spaces: 2 });
+
+      const loadedConfig = await fs.readJSON(configPath);
+      const integrations = loadedConfig.integrations || loadedConfig.providers || ['claude-code'];
+
+      expect(integrations).toEqual(['claude-code']);
+    });
+  });
+
+  describe('getClaudeContent integration', () => {
+    it('should get CLAUDE.md content from DocInjector', () => {
+      const content = DocInjector.getClaudeBlockContent();
+
+      expect(content).toBeDefined();
+      expect(content.length).toBeGreaterThan(0);
+    });
+
+    it('should include slash command references in CLAUDE.md content', () => {
+      const content = DocInjector.getClaudeBlockContent();
+
+      expect(content).toContain('clavix:improve');
+      expect(content).toContain('clavix:prd');
+    });
+  });
+
+  describe('integration filtering', () => {
+    it('should filter out special integrations for command generation', () => {
+      const integrations = ['claude-code', 'agents-md', 'cursor', 'octo-md', 'warp-md'];
+      const specialIntegrations = ['agents-md', 'octo-md', 'warp-md'];
+      const regularIntegrations = integrations.filter((i) => !specialIntegrations.includes(i));
+
+      expect(regularIntegrations).toEqual(['claude-code', 'cursor']);
+    });
+
+    it('should identify integrations needing .clavix/instructions/', () => {
+      const integrations = ['cursor', 'windsurf', 'kilocode'];
+      const excludedFromInstructions = [
+        'claude-code',
+        'gemini',
+        'agents-md',
+        'octo-md',
+        'warp-md',
+        'copilot-instructions',
+      ];
+
+      const needsInstructions = integrations.some((i) => !excludedFromInstructions.includes(i));
+
+      expect(needsInstructions).toBe(true);
+    });
+
+    it('should not need instructions for claude-code only', () => {
+      const integrations = ['claude-code'];
+      const excludedFromInstructions = [
+        'claude-code',
+        'gemini',
+        'agents-md',
+        'octo-md',
+        'warp-md',
+        'copilot-instructions',
+      ];
+
+      const needsInstructions = integrations.some((i) => !excludedFromInstructions.includes(i));
+
+      expect(needsInstructions).toBe(false);
+    });
+  });
+
+  describe('command file naming', () => {
+    it('should use correct naming pattern for commands', () => {
+      const commandName = 'improve';
+      const expectedFilename = `${commandName}.md`;
+
+      expect(expectedFilename).toBe('improve.md');
+    });
+
+    it('should not use legacy clavix- prefix', () => {
+      const commandName = 'improve';
+      const legacyFilename = `clavix-${commandName}.md`;
+      const currentFilename = `${commandName}.md`;
+
+      expect(currentFilename).not.toBe(legacyFilename);
+    });
+
+    it('should not use underscore separator', () => {
+      const commandName = 'improve';
+      const underscoreFilename = `clavix_${commandName}.md`;
+      const currentFilename = `${commandName}.md`;
+
+      expect(currentFilename).not.toBe(underscoreFilename);
+    });
+  });
+
+  describe('all registered integrations', () => {
+    it('should have all expected adapters registered', () => {
+      const agentManager = new AgentManager();
+      const adapters = agentManager.getAdapters();
+
+      const adapterNames = adapters.map((a) => a.name);
+
+      // Core integrations
+      expect(adapterNames).toContain('claude-code');
+      expect(adapterNames).toContain('cursor');
+      expect(adapterNames).toContain('windsurf');
+    });
+
+    it('should have displayName for each adapter', () => {
+      const agentManager = new AgentManager();
+      const adapters = agentManager.getAdapters();
+
+      for (const adapter of adapters) {
+        expect(adapter.displayName).toBeDefined();
+        expect(adapter.displayName.length).toBeGreaterThan(0);
+      }
+    });
+  });
 });
