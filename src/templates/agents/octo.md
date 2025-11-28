@@ -135,6 +135,7 @@ Autofix handles edge cases gracefully - let it work.
 | `/clavix:implement` | Execute tasks or prompts (auto-detects source) |
 | `/clavix:start` | Begin conversational session |
 | `/clavix:summarize` | Extract requirements from conversation |
+| `/clavix:refine` | Refine existing PRD or saved prompt |
 
 ### Agentic Utilities (Project Management)
 | Utility | Purpose |

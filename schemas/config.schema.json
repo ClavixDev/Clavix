@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://clavix.dev/schemas/config.json",
+  "title": "Clavix Configuration",
+  "description": "Configuration file for Clavix (.clavix/config.json)",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Clavix configuration version"
+    },
+    "integrations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "List of enabled integration names"
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Legacy field: use \"integrations\" instead",
+      "deprecated": true
+    },
+    "templates": {
+      "type": "object",
+      "properties": {
+        "prdQuestions": {
+          "type": "string"
+        },
+        "fullPrd": {
+          "type": "string"
+        },
+        "quickPrd": {
+          "type": "string"
+        }
+      },
+      "description": "Custom template paths"
+    },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "markdown",
+            "pdf"
+          ]
+        }
+      },
+      "description": "Output configuration"
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "autoOpenOutputs": {
+          "type": "boolean"
+        },
+        "verboseLogging": {
+          "type": "boolean"
+        }
+      },
+      "description": "User preferences"
+    },
+    "experimental": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Experimental features"
+    }
+  },
+  "additionalProperties": false
+}

@@ -108,7 +108,10 @@ describe('Init Command', () => {
     mockInquirerPrompt.mockImplementation(async (questions: any[]) => {
       const answers: any = {};
       for (const q of questions) {
-        if (q.name === 'reinit') answers.reinit = true;
+        if (q.name === 'action')
+          answers.action = 'reconfigure'; // Handle existing config menu
+        else if (q.name === 'reinit')
+          answers.reinit = true; // Legacy support
         else if (q.name === 'cleanupAction') answers.cleanupAction = 'skip';
         else if (q.name === 'confirmCodex') answers.confirmCodex = true;
         else if (q.name === 'useNamespace') answers.useNamespace = true;

@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://clavix.dev/schemas/integrations.json",
+  "title": "Clavix Integrations",
+  "description": "Registry of supported AI tool integrations",
+  "type": "object",
+  "required": [
+    "version",
+    "integrations"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (semver format)"
+    },
+    "integrations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "displayName",
+          "directory",
+          "filenamePattern",
+          "extension",
+          "separator",
+          "detection"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique identifier for the integration"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable name"
+          },
+          "directory": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Directory path for command files"
+          },
+          "filenamePattern": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Pattern for command filenames"
+          },
+          "extension": {
+            "type": "string",
+            "enum": [
+              ".md",
+              ".toml"
+            ],
+            "description": "File extension for commands"
+          },
+          "separator": {
+            "type": "string",
+            "enum": [
+              ":",
+              "-"
+            ],
+            "description": "Separator character in command names"
+          },
+          "detection": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Path to detect if integration is available"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "universal"
+            ],
+            "default": "standard",
+            "description": "Integration type (standard or universal)"
+          },
+          "specialAdapter": {
+            "type": "string",
+            "enum": [
+              "toml",
+              "doc-injection"
+            ],
+            "description": "Special adapter type if needed"
+          },
+          "rootDir": {
+            "type": "string",
+            "description": "Root directory for global installations"
+          },
+          "global": {
+            "type": "boolean",
+            "description": "Whether this is a global integration"
+          },
+          "placeholder": {
+            "type": "string",
+            "description": "Placeholder content for templates"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "List of integration configurations"
+    }
+  },
+  "additionalProperties": false
+}
