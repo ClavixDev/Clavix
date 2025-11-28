@@ -3,6 +3,7 @@ import { BaseAdapter } from './base-adapter.js';
 import { ManagedBlock } from '../../types/agent.js';
 import { FileSystem } from '../../utils/file-system.js';
 import { IntegrationError } from '../../types/errors.js';
+import { escapeRegex } from '../../utils/string-utils.js';
 
 /**
  * Claude Code agent adapter
@@ -87,7 +88,7 @@ export class ClaudeCodeAdapter extends BaseAdapter {
     }
 
     const blockRegex = new RegExp(
-      `${this.escapeRegex(startMarker)}[\\s\\S]*?${this.escapeRegex(endMarker)}`,
+      `${escapeRegex(startMarker)}[\\s\\S]*?${escapeRegex(endMarker)}`,
       'g'
     );
 
@@ -106,6 +107,4 @@ export class ClaudeCodeAdapter extends BaseAdapter {
 
     await FileSystem.writeFileAtomic(fullPath, fileContent);
   }
-
-  // escapeRegex is inherited from BaseAdapter
 }

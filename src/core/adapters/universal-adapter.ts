@@ -18,10 +18,19 @@ import * as path from 'path';
 
 export class UniversalAdapter extends BaseAdapter {
   private config: AdapterConfig;
+  readonly features: IntegrationFeatures;
 
   constructor(config: AdapterConfig) {
     super();
     this.config = config;
+    // Set features from config for interface compatibility
+    this.features = {
+      supportsSubdirectories: config.features.supportsSubdirectories,
+      supportsFrontmatter: config.features.supportsFrontmatter,
+      commandFormat: {
+        separator: config.features.commandSeparator,
+      },
+    };
   }
 
   get name(): string {

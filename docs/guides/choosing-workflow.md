@@ -76,11 +76,6 @@ Do you have a clear, specific task?
 - `--commit-strategy per-phase` - Git commit after each phase
 - `--commit-strategy none` - No auto-commits
 
-**Task completion**:
-```
-clavix task-complete <taskId>  # Mark task done, auto-commit if configured
-```
-
 ### Conversational Workflow (Exploration)
 
 **Use when**: You're not sure what you want yet.

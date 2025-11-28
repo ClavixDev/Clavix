@@ -1,46 +1,36 @@
 import { AgentAdapter, ValidationResult } from '../types/agent.js';
 import { ClaudeCodeAdapter } from './adapters/claude-code-adapter.js';
-import { CursorAdapter } from './adapters/cursor-adapter.js';
-import { DroidAdapter } from './adapters/droid-adapter.js';
-import { OpenCodeAdapter } from './adapters/opencode-adapter.js';
-import { AmpAdapter } from './adapters/amp-adapter.js';
-import { CrushAdapter } from './adapters/crush-adapter.js';
-import { WindsurfAdapter } from './adapters/windsurf-adapter.js';
-import { KilocodeAdapter } from './adapters/kilocode-adapter.js';
-import { ClineAdapter } from './adapters/cline-adapter.js';
-import { RoocodeAdapter } from './adapters/roocode-adapter.js';
-import { IntegrationError } from '../types/errors.js';
-import { CodeBuddyAdapter } from './adapters/codebuddy-adapter.js';
 import { GeminiAdapter } from './adapters/gemini-adapter.js';
 import { QwenAdapter } from './adapters/qwen-adapter.js';
-import { CodexAdapter } from './adapters/codex-adapter.js';
-import { AugmentAdapter } from './adapters/augment-adapter.js';
 import { LlxprtAdapter } from './adapters/llxprt-adapter.js';
+import { UniversalAdapter } from './adapters/universal-adapter.js';
+import { getSimpleAdapters } from './adapter-registry.js';
+import { IntegrationError } from '../types/errors.js';
 
 /**
  * Agent Manager - handles agent detection and registration
+ *
+ * Uses factory pattern with ADAPTER_CONFIGS for simple adapters,
+ * while keeping dedicated classes for special adapters (TOML, doc injection).
+ *
+ * @since v5.5.0 - Refactored to use config-driven factory pattern
  */
 export class AgentManager {
   private adapters: Map<string, AgentAdapter> = new Map();
 
   constructor() {
-    // Register all built-in adapters
-    this.registerAdapter(new ClaudeCodeAdapter());
-    this.registerAdapter(new CursorAdapter());
-    this.registerAdapter(new DroidAdapter());
-    this.registerAdapter(new OpenCodeAdapter());
-    this.registerAdapter(new AmpAdapter());
-    this.registerAdapter(new CrushAdapter());
-    this.registerAdapter(new WindsurfAdapter());
-    this.registerAdapter(new KilocodeAdapter());
-    this.registerAdapter(new LlxprtAdapter());
-    this.registerAdapter(new ClineAdapter());
-    this.registerAdapter(new RoocodeAdapter());
-    this.registerAdapter(new AugmentAdapter());
-    this.registerAdapter(new CodeBuddyAdapter());
-    this.registerAdapter(new GeminiAdapter());
-    this.registerAdapter(new QwenAdapter());
-    this.registerAdapter(new CodexAdapter());
+    // Register special adapters (require custom logic)
+    this.registerAdapter(new ClaudeCodeAdapter()); // Doc injection
+    this.registerAdapter(new GeminiAdapter()); // TOML format
+    this.registerAdapter(new QwenAdapter()); // TOML format
+    this.registerAdapter(new LlxprtAdapter()); // TOML format
+
+    // Register simple adapters from config (using UniversalAdapter factory)
+    for (const config of getSimpleAdapters()) {
+      // Skip adapters that have special handlers registered above
+      if (this.adapters.has(config.name)) continue;
+      this.registerAdapter(new UniversalAdapter(config));
+    }
   }
 
   /**

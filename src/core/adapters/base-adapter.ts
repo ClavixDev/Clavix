@@ -8,7 +8,7 @@ import {
 } from '../../types/agent.js';
 import { FileSystem } from '../../utils/file-system.js';
 import { IntegrationError } from '../../types/errors.js';
-import { escapeRegex } from '../../utils/string-utils.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * Base adapter class with shared logic for all integrations
@@ -106,7 +106,7 @@ export abstract class BaseAdapter implements AgentAdapter {
         removed++;
       } catch (error) {
         // Log warning but continue with other files
-        console.warn(`Failed to remove ${filePath}: ${error}`);
+        logger.warn(`Failed to remove ${filePath}: ${error}`);
       }
     }
 
@@ -117,7 +117,7 @@ export abstract class BaseAdapter implements AgentAdapter {
         await FileSystem.remove(clavixSubdir);
         removed++;
       } catch (error) {
-        console.warn(`Failed to remove ${clavixSubdir}: ${error}`);
+        logger.warn(`Failed to remove ${clavixSubdir}: ${error}`);
       }
     }
 
@@ -177,13 +177,5 @@ export abstract class BaseAdapter implements AgentAdapter {
   async injectDocumentation(_blocks: ManagedBlock[]): Promise<void> {
     // Default: no documentation injection
     // Override in subclasses if needed
-  }
-
-  /**
-   * Escape special regex characters
-   * @deprecated Use escapeRegex from utils/string-utils.js directly
-   */
-  protected escapeRegex(str: string): string {
-    return escapeRegex(str);
   }
 }

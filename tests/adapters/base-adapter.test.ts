@@ -260,27 +260,6 @@ describe('BaseAdapter', () => {
     });
   });
 
-  describe('escapeRegex', () => {
-    it('should escape special regex characters', () => {
-      // Access protected method
-      const escaped = (adapter as any).escapeRegex('test.*+?^${}()|[]\\');
-
-      expect(escaped).toBe('test\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\\\');
-    });
-
-    it('should handle strings without special characters', () => {
-      const escaped = (adapter as any).escapeRegex('simple text');
-
-      expect(escaped).toBe('simple text');
-    });
-
-    it('should escape markdown markers', () => {
-      const escaped = (adapter as any).escapeRegex('<!-- MARKER -->');
-
-      expect(escaped).toBe('<!-- MARKER -->');
-    });
-  });
-
   describe('removeAllCommands', () => {
     it('should return 0 when directory does not exist', async () => {
       const removed = await adapter.removeAllCommands();
