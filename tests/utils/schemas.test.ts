@@ -238,6 +238,55 @@ describe('UserConfigSchema', () => {
     const result = UserConfigSchema.safeParse(config);
     expect(result.success).toBe(false);
   });
+
+  it('should validate full ClavixConfig structure', () => {
+    const config = {
+      version: '5.6.3',
+      integrations: ['agents-md', 'amp', 'claude-code'],
+      templates: {
+        prdQuestions: 'default',
+        fullPrd: 'default',
+        quickPrd: 'default',
+      },
+      outputs: {
+        path: '.clavix/outputs',
+        format: 'markdown',
+      },
+      preferences: {
+        autoOpenOutputs: false,
+        verboseLogging: false,
+      },
+    };
+
+    const result = UserConfigSchema.safeParse(config);
+    expect(result.success).toBe(true);
+  });
+
+  it('should validate config with experimental field', () => {
+    const config = {
+      integrations: ['cursor'],
+      experimental: {
+        featureX: true,
+        settingY: 'value',
+      },
+    };
+
+    const result = UserConfigSchema.safeParse(config);
+    expect(result.success).toBe(true);
+  });
+
+  it('should fail on invalid output format', () => {
+    const config = {
+      integrations: ['cursor'],
+      outputs: {
+        path: '.clavix/outputs',
+        format: 'html', // invalid - must be markdown or pdf
+      },
+    };
+
+    const result = UserConfigSchema.safeParse(config);
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('validateIntegrationsConfig', () => {

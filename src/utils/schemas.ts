@@ -50,15 +50,46 @@ export const IntegrationsConfigSchema = z.object({
 });
 
 /**
+ * Schema for template configuration
+ */
+const TemplateConfigSchema = z.object({
+  prdQuestions: z.string(),
+  fullPrd: z.string(),
+  quickPrd: z.string(),
+});
+
+/**
+ * Schema for output configuration
+ */
+const OutputConfigSchema = z.object({
+  path: z.string(),
+  format: z.enum(['markdown', 'pdf']),
+});
+
+/**
+ * Schema for user preferences
+ */
+const PreferencesConfigSchema = z.object({
+  autoOpenOutputs: z.boolean(),
+  verboseLogging: z.boolean(),
+});
+
+/**
  * Schema for user's .clavix/config.json
+ * Matches ClavixConfig interface in src/types/config.ts
  */
 export const UserConfigSchema = z.object({
+  version: z.string().optional(),
   integrations: z.array(z.string().min(1)).optional().describe('List of enabled integration names'),
   // Legacy field name (backwards compatibility)
   providers: z
     .array(z.string().min(1))
     .optional()
     .describe('Legacy field: use "integrations" instead'),
+  templates: TemplateConfigSchema.optional(),
+  outputs: OutputConfigSchema.optional(),
+  preferences: PreferencesConfigSchema.optional(),
+  experimental: z.record(z.unknown()).optional(),
 });
 
 /**
@@ -139,7 +170,15 @@ export function validateUserConfig(content: unknown): ValidationResult<UserConfi
 
   // Check for unknown fields (warn only)
   if (typeof content === 'object' && content !== null) {
-    const knownFields = new Set(['integrations', 'providers']);
+    const knownFields = new Set([
+      'version',
+      'integrations',
+      'providers',
+      'templates',
+      'outputs',
+      'preferences',
+      'experimental',
+    ]);
     const contentKeys = Object.keys(content);
     const unknownKeys = contentKeys.filter((key) => !knownFields.has(key));
 
