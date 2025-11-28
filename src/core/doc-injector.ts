@@ -223,6 +223,8 @@ For more information, run \`clavix --help\` in your terminal.
 
 This project uses Clavix for prompt improvement and PRD generation. The following slash commands are available:
 
+> **Command Format:** Commands shown with colon (\`:\`) format. Some tools use hyphen (\`-\`): Claude Code uses \`/clavix:improve\`, Cursor uses \`/clavix-improve\`. Your tool autocompletes the correct format.
+
 ### Prompt Optimization
 
 #### /clavix:improve [prompt]
@@ -239,7 +241,7 @@ Generate an optimized implementation task breakdown from your PRD. Creates a pha
 #### /clavix:implement
 Execute tasks or prompts with AI assistance. Auto-detects source: tasks.md (from PRD workflow) or prompts/ (from improve workflow). Supports automatic git commits and progress tracking.
 
-Use \`--latest\` to execute most recent prompt, \`--tasks\` to force task mode.
+Use \`--latest\` to implement most recent prompt, \`--tasks\` to force task mode.
 
 ### Session Management
 

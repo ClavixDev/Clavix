@@ -224,8 +224,13 @@ Execute tasks or prompts.
 ```
 
 **Auto-detection:**
-- If `tasks.md` exists: Task mode
-- If prompts exist in `.clavix/outputs/prompts/`: Prompt mode
+
+Without flags, implement auto-detects the source:
+1. If `tasks.md` exists → Task mode (sequential execution)
+2. Else if `prompts/*.md` exists → Prompt mode (most recent)
+3. Else → Asks user what to build
+
+Use `--tasks` or `--latest` to override auto-detection.
 
 **Task mode flags:**
 - `-p, --project <name>` - Select PRD project

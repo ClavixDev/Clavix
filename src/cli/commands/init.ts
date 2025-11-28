@@ -2,7 +2,11 @@ import { Command } from '@oclif/core';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { AgentManager } from '../../core/agent-manager.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { DocInjector } from '../../core/doc-injector.js';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
 import { OctoMdGenerator } from '../../core/adapters/octo-md-generator.js';
@@ -187,8 +191,9 @@ export default class Init extends Command {
       console.log(chalk.cyan('⚙️  Generating configuration...'));
       await this.generateConfig(selectedIntegrations);
 
-      // Generate INSTRUCTIONS.md
+      // Generate INSTRUCTIONS.md and QUICKSTART.md
       await this.generateInstructions();
+      await this.generateQuickstart();
 
       // Generate commands for each selected integration
       console.log(
@@ -686,5 +691,23 @@ To reconfigure integrations, run \`clavix init\` again.
     const regex = new RegExp(`${CLAVIX_BLOCK_START}([\\s\\S]*?)${CLAVIX_BLOCK_END}`);
     const match = content.match(regex);
     return match ? match[1].trim() : content;
+  }
+
+  private async generateQuickstart(): Promise<void> {
+    const quickstartPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'templates',
+      'instructions',
+      'QUICKSTART.md'
+    );
+    try {
+      const quickstartContent = await FileSystem.readFile(quickstartPath);
+      await FileSystem.writeFileAtomic('.clavix/QUICKSTART.md', quickstartContent);
+    } catch {
+      // QUICKSTART.md template not found or write failed, skip silently
+      // This can happen in test environments or custom installations
+    }
   }
 }

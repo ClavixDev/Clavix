@@ -279,6 +279,28 @@ Copy and fill in:
 
 ---
 
+## Quick PRD Examples
+
+Quick PRDs condense the full PRD into 2-3 AI-optimized paragraphs for efficient agent consumption.
+
+### Quick PRD Example 1: Habit Tracker
+
+**Goal:** Build a mobile-first habit tracking app that helps users build consistent daily routines through streak tracking, reminders, and progress visualization. Target users are productivity-focused individuals who want simple habit management without complex features.
+
+**Core Features:** Daily habit check-in with streak counter, customizable reminder notifications, weekly/monthly progress charts, habit templates for common goals (exercise, reading, meditation). Tech stack: React Native, local storage with optional cloud sync.
+
+**Scope Boundaries:** No social features, no gamification beyond streaks, no premium tiers. Focus on core tracking reliability over feature breadth.
+
+### Quick PRD Example 2: API User Management
+
+**Goal:** Create a RESTful user management microservice for the existing e-commerce platform, handling authentication, authorization, and user profile CRUD operations. Must integrate with existing PostgreSQL database and support OAuth2.
+
+**Core Features:** JWT-based authentication, role-based access control (admin/user/guest), user registration with email verification, password reset flow, profile management endpoints. Built with Node.js/Express, PostgreSQL, Redis for session caching.
+
+**Scope Boundaries:** No frontend components, no payment integration, no analytics dashboard. Service-only implementation with OpenAPI documentation.
+
+---
+
 ### Key Elements of a Good Mini-PRD
 
 1. **Clear problem statement** - Why are we building this?

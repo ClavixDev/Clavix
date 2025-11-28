@@ -326,9 +326,9 @@ Before considering this task complete, verify:
 
 ---
 
-## CHECKPOINT: Analysis Complete?
+**CHECKPOINT:** Analysis Complete
 
-**Before proceeding to save, verify you have output ALL of the following:**
+Before proceeding to save, verify you have output ALL of the following:
 
 **Standard Depth:**
 - [ ] **Intent Analysis** with type and confidence
@@ -349,9 +349,9 @@ Before considering this task complete, verify:
 
 ---
 
-## ⛔ SAVING CHECKPOINT (REQUIRED - DO NOT SKIP)
+**CHECKPOINT:** Saving Protocol (REQUIRED - DO NOT SKIP)
 
-**DO NOT output any "saved" message until you have COMPLETED and VERIFIED all save steps.**
+DO NOT output any "saved" message until you have COMPLETED and VERIFIED all save steps.
 
 This is a BLOCKING checkpoint. You cannot proceed to the final message until saving is verified.
 

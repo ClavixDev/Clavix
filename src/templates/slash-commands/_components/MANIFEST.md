@@ -9,9 +9,11 @@ Core protocols that all AI agents must follow. Shared across most commands.
 
 | Component | Purpose | Used By |
 |-----------|---------|---------|
-| `AGENT_MANUAL.md` | Universal protocols (transparency, mode identification, communication patterns) | All 8 commands |
+| `AGENT_MANUAL.md` | Universal protocols (transparency, mode identification, communication patterns) | All 9 commands |
 | `cli-reference.md` | CLI command reference including removed commands table | improve, prd, plan, implement, verify, archive |
 | `state-awareness.md` | Workflow state detection (mid-PRD, mid-implementation, etc.) | prd, plan, implement, summarize |
+| `state-assertion.md` | Required mode assertion output (MODE, Purpose, Implementation status) | Available for all commands |
+| `self-correction-protocol.md` | Mistake detection and correction patterns (supports variables) | Available for all commands |
 | `supportive-companion.md` | Conversational guidance for start mode | start |
 | `task-blocking.md` | Task execution protocols for implement mode | implement |
 
@@ -62,6 +64,18 @@ Components are included using the `{{INCLUDE:path}}` directive:
 {{INCLUDE:sections/escalation-factors.md}}
 {{INCLUDE:references/quality-dimensions.md}}
 ```
+
+### Variable Interpolation
+
+Components can accept variables for customization:
+
+```markdown
+{{INCLUDE:agent-protocols/state-assertion.md MODE_NAME="Improve" MODE_TYPE="planning" MODE_PURPOSE="Optimizing prompts" IMPL_STATUS="BLOCKED"}}
+```
+
+Variables use mustache-style syntax:
+- `{{VAR_NAME}}` - Simple replacement
+- `{{#VAR_NAME}}content{{/VAR_NAME}}` - Conditional block (shown if VAR_NAME is set)
 
 ## Guidelines for New Components
 

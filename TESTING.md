@@ -12,10 +12,10 @@ npm test
 npm run test:coverage
 
 # Run specific test file
-npm test -- tests/core/session-manager.test.ts
+npm test -- tests/core/template-assembler.test.ts
 
 # Run tests matching pattern
-npm test -- --testNamePattern="SessionManager"
+npm test -- --testNamePattern="TemplateAssembler"
 
 # Update snapshots
 npm test -- --updateSnapshot
@@ -49,9 +49,9 @@ tests/
 - Test names: Use `should <expected behavior>` format
 
 ```typescript
-describe('SessionManager', () => {
-  describe('createSession', () => {
-    it('should create a new session with unique ID', async () => {
+describe('TemplateAssembler', () => {
+  describe('assembleTemplate', () => {
+    it('should process INCLUDE directives correctly', async () => {
       // ...
     });
   });
@@ -301,10 +301,10 @@ npm test -- tests/e2e/
 npm test -- --verbose
 
 # Run single test
-npm test -- -t "should create session"
+npm test -- -t "should process INCLUDE"
 
 # Debug with node inspector
-node --inspect-brk node_modules/.bin/jest --runInBand tests/core/session-manager.test.ts
+node --inspect-brk node_modules/.bin/jest --runInBand tests/core/template-assembler.test.ts
 ```
 
 ## Adding New Tests

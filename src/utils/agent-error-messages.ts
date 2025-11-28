@@ -19,7 +19,7 @@ export class AgentErrorMessages {
       'Agent recovery options:\n' +
       '  1. Execute /clavix:prd to generate comprehensive PRD\n' +
       '  2. Execute /clavix:summarize if conversation exists\n\n' +
-      'Select option and execute, then retry this command.'
+      'Select option and run, then retry this command.'
     );
   }
 

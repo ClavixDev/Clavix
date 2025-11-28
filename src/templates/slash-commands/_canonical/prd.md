@@ -252,11 +252,17 @@ mkdir -p .clavix/outputs/{sanitized-project-name}
 ```
 
 ### Step 5: Verify Files Were Created
-```bash
-ls .clavix/outputs/{project-name}/
-```
 
-**Expected output**:
+**Verification Protocol:**
+1. **Immediately after Write**, use Read tool to verify each file:
+   - Read `.clavix/outputs/{project-name}/full-prd.md`
+   - Confirm content matches what you wrote
+   - Read `.clavix/outputs/{project-name}/quick-prd.md`
+   - Confirm content matches what you wrote
+
+2. **If Read fails**: STOP and report error to user
+
+**Expected files**:
 - `full-prd.md`
 - `quick-prd.md`
 

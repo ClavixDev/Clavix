@@ -1,5 +1,17 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import { DataError } from '../types/errors.js';
+
+/**
+ * Maximum depth for nested {{INCLUDE:}} directives
+ * Prevents infinite loops from circular includes
+ */
+const MAX_INCLUDE_DEPTH = 10;
+
+/**
+ * Depth at which to log a warning about deep nesting
+ */
+const DEPTH_WARNING_THRESHOLD = 5;
 
 /**
  * Represents a component slot in a template
@@ -59,14 +71,14 @@ export class TemplateAssembler {
     );
     const content = await this.loadFile(fullPath);
 
-    return this.processIncludes(content);
+    return this.processIncludes(content, 0);
   }
 
   /**
    * Assemble template from raw content string
    */
   async assembleFromContent(content: string): Promise<AssemblyResult> {
-    return this.processIncludes(content);
+    return this.processIncludes(content, 0);
   }
 
   /**
@@ -78,8 +90,26 @@ export class TemplateAssembler {
 
   /**
    * Process all include markers in content
+   * @param content - The template content to process
+   * @param depth - Current nesting depth (for circular include protection)
    */
-  private async processIncludes(content: string): Promise<AssemblyResult> {
+  private async processIncludes(content: string, depth: number): Promise<AssemblyResult> {
+    // Circular include protection
+    if (depth > MAX_INCLUDE_DEPTH) {
+      throw new DataError(
+        `Maximum include depth (${MAX_INCLUDE_DEPTH}) exceeded`,
+        'Check for circular {{INCLUDE:}} references in templates'
+      );
+    }
+
+    // Warn about deep nesting
+    if (depth === DEPTH_WARNING_THRESHOLD) {
+      console.warn(
+        `[TemplateAssembler] Warning: Include depth ${depth} reached. ` +
+          'Consider flattening template structure.'
+      );
+    }
+
     const includedComponents: string[] = [];
     const missingComponents: string[] = [];
     const variablesUsed: Set<string> = new Set();
@@ -134,9 +164,9 @@ export class TemplateAssembler {
       }
     }
 
-    // Process nested includes (recursive)
+    // Process nested includes (recursive with depth tracking)
     if (this.hasIncludes(processedContent)) {
-      const nestedResult = await this.processIncludes(processedContent);
+      const nestedResult = await this.processIncludes(processedContent, depth + 1);
       processedContent = nestedResult.content;
       includedComponents.push(...nestedResult.includedComponents);
       missingComponents.push(...nestedResult.missingComponents);

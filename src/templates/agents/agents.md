@@ -80,6 +80,8 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 ### Workflow Commands (Slash Commands)
 All workflows are executed via slash commands that AI agents read and follow:
 
+> **Command Format:** Commands shown with colon (`:`) format. Some tools use hyphen (`-`): Claude Code uses `/clavix:improve`, Cursor uses `/clavix-improve`. Your tool autocompletes the correct format.
+
 | Slash Command | Purpose |
 |---------------|---------|
 | `/clavix:improve` | Optimize prompts (auto-selects depth) |

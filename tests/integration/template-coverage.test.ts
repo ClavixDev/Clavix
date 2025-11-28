@@ -62,7 +62,7 @@ describe('Template Coverage - Integration', () => {
       const content = fs.readFileSync(fastPath, 'utf-8');
 
       // v5: Check for required saving checkpoint section
-      expect(content).toContain('SAVING CHECKPOINT (REQUIRED');
+      expect(content).toContain('**CHECKPOINT:** Saving Protocol (REQUIRED');
 
       // Check for step-by-step instructions
       expect(content).toContain('Step 1: Create Directory Structure');

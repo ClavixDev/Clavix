@@ -123,6 +123,21 @@ Ask yourself:
 | Documentation | `docs/` |
 | Type definitions | `src/types/` |
 
+### Source of Truth vs Generated Files
+
+During Clavix development, always reference **source files**, not generated outputs:
+
+| What You Want | Reference This | NOT This |
+|---------------|----------------|----------|
+| Slash command content | `src/templates/slash-commands/_canonical/*.md` | `.claude/commands/clavix/*.md` |
+| CLAUDE.md block content | `src/core/doc-injector.ts` | `CLAUDE.md` in any project |
+| AGENTS.md content | `src/templates/agents/agents.md` | `AGENTS.md` in any project |
+| Instruction files | `src/templates/instructions/` | `.clavix/instructions/` |
+
+**Why?** Generated files (local CLAUDE.md, .clavix/ contents) are outputs that update when users run `clavix init` or `clavix update`. If you "fix" a local generated file, your fix will be overwritten. Fix the source template instead.
+
+**Example:** If you notice `/clavix:refine` is missing from a project's CLAUDE.md, don't edit that CLAUDE.md. Check if `doc-injector.ts` includes refine in `getClaudeBlockContent()`. If yes, the local file is just outdated — user needs to run `clavix update`.
+
 ### Project Structure
 
 ```
