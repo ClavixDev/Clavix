@@ -157,7 +157,7 @@ Do you have a clear, specific task?
 
 ```json
 {
-  "version": "5.5.0",
+  "version": "5.5.2",
   "integrations": ["claude-code", "cursor"],
   "outputs": {
     "path": ".clavix/outputs",
@@ -258,6 +258,10 @@ All outputs go to `.clavix/outputs/`:
 │   ├── full-prd.md
 │   ├── quick-prd.md
 │   └── tasks.md
+├── summarize/         # Outputs from /clavix:summarize
+│   ├── mini-prd.md           # Structured requirements (like a mini PRD)
+│   ├── original-prompt.md    # Original prompt as received
+│   └── optimized-prompt.md   # Improved version of the prompt
 └── archive/           # Archived projects
 ```
 
@@ -266,6 +270,13 @@ All outputs go to `.clavix/outputs/`:
 1. `/clavix:improve` saves to `prompts/`
 2. `/clavix:implement --latest` executes most recent
 3. Delete old prompts: `rm .clavix/outputs/prompts/executed-*.md`
+
+### Summarize Outputs
+
+`/clavix:summarize` extracts requirements from conversation and produces:
+- **mini-prd.md**: Structured requirements in PRD format
+- **original-prompt.md**: The original prompt/requirement
+- **optimized-prompt.md**: An improved, clearer version of the prompt
 
 ---
 

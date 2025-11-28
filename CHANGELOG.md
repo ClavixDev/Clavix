@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.2] - 2025-11-28
+
+### Added
+
+- **`/clavix:refine` Command** - New slash command for refining existing PRDs and prompts:
+  - Auto-detects available refinement targets (PRDs and saved prompts)
+  - Change tracking with `[ADDED]`, `[MODIFIED]`, `[REMOVED]`, `[UNCHANGED]` markers
+  - Before/after quality comparison for prompts
+  - Refinement history tracking in PRD files
+  - Integration guidance for next steps (plan regeneration, implementation)
+
+- **Mandatory AGENTS.md Integration** - Universal agent guidance is now always enabled:
+  - AGENTS.md automatically included in all installations
+  - Removed from user selection (handled internally)
+  - Added `ensureMandatoryIntegrations()` helper function
+  - Users informed during init: "AGENTS.md is always enabled to provide universal agent guidance"
+
+- **New AgentErrorMessages Methods** - Extended error messaging for better diagnostics:
+  - `templateNotFound()` - When template files are missing
+  - `adapterNotFound()` - When adapter lookup fails
+  - `configLoadFailed()` - When configuration parsing fails
+  - `updateFailed()` - When update command encounters issues
+  - `diagnosticFailed()` - When diagnose command finds problems
+
+### Changed
+
+- **Error Handling Consistency** - Replaced generic `Error` throws with typed `DataError`:
+  - `agents-md-generator.ts`, `octo-md-generator.ts`, `warp-md-generator.ts`
+  - `copilot-instructions-generator.ts`, `instructions-generator.ts`
+  - `toml-templates.ts`
+
+- **Constants Consolidation** - Cleaned up `src/constants.ts`:
+  - Removed 11 unused constants
+  - Kept only `CLAVIX_BLOCK_START` and `CLAVIX_BLOCK_END`
+  - Updated all imports to use constants instead of hardcoded values
+
+- **CONTRIBUTING.md Updates** - Added explicit architecture boundaries:
+  - "Explicitly Forbidden Features" section with 4 rejected proposals
+  - Clear explanations for WHY certain features don't fit the architecture
+  - Guidance on what TO do instead of forbidden patterns
+
+### Fixed
+
+- **Documentation Accuracy** - Fixed coverage claims and output paths:
+  - Updated TESTING.md: Changed 100% to 70%+ (actual thresholds)
+  - Updated getting-started.md: Added summarize outputs documentation
+  - Updated docs/commands.md with full refine command documentation
+
 ## [5.5.1] - 2025-11-28
 
 ### Added

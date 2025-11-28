@@ -37,6 +37,46 @@ Result: Optimized prompt saved to .clavix/outputs/
 | Create runtime hooks for slash commands | Slash commands aren't executed by CLI |
 | Add programmatic guardrails | Agents follow instructions, not code |
 
+### Explicitly Forbidden Features
+
+These features have been proposed and explicitly rejected. **Do NOT develop them:**
+
+#### 1. Conversation State Persistence
+
+**Rejected:** Adding `.clavix-conversation-state.json` or similar state files.
+
+**Why:** AI agents handle their own conversation context internally. Adding state files would:
+- Duplicate what agents already do
+- Violate the agentic-first principle
+- Add maintenance burden without user value
+- Risk state conflicts between agent and file
+
+**What to do instead:** Let agents manage context. If users need to preserve state, they can use `/clavix:summarize` to extract requirements.
+
+#### 2. Structured Logging
+
+**Rejected:** Adding JSON format logs, log files, timestamps, or logging infrastructure.
+
+**Why:** The current logger is intentionally minimal. Structured logging would:
+- Add complexity without user value
+- Agents don't need log files - they see output directly
+- Increase maintenance burden
+- Not align with agentic-first architecture
+
+**What to do instead:** Keep logging minimal. User-facing errors should be clear and actionable.
+
+#### 3. Backend Commands for Verify/Archive
+
+**Rejected:** Adding TypeScript CLI handlers for `/clavix:verify` or `/clavix:archive` operations.
+
+**Why:** These are **template-driven workflows**. Agents use native tools (bash, mv, rm) to execute them. The markdown instructions ARE the implementation.
+
+**What to do instead:** Improve the template instructions in `verify.md` and `archive.md`. Agents will follow better instructions.
+
+#### 4. General Principle: No Duplicating Agent Capabilities
+
+If an AI agent can already do something with its native tools, **do NOT add TypeScript code for it**. Templates guide agents; code doesn't replace them.
+
 ### What You CAN Do
 
 | Do This | Why It Works |

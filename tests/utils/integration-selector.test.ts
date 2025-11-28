@@ -33,7 +33,9 @@ jest.unstable_mockModule('../../src/core/agent-manager.js', () => ({
 }));
 
 // Import after mocking
-const { selectIntegrations } = await import('../../src/utils/integration-selector.js');
+const { selectIntegrations, ensureMandatoryIntegrations, MANDATORY_INTEGRATION } = await import(
+  '../../src/utils/integration-selector.js'
+);
 const { AgentManager } = await import('../../src/core/agent-manager.js');
 
 describe('Integration Selector', () => {
@@ -85,8 +87,9 @@ describe('Integration Selector', () => {
         expect(result).toEqual(['windsurf']);
       });
 
-      it('should return all integrations when all selected', async () => {
-        const allIntegrations = [
+      it('should return all selectable integrations when all selected', async () => {
+        // Note: agents-md is no longer in the selection list (it's always enabled)
+        const allSelectableIntegrations = [
           'amp',
           'augment',
           'claude-code',
@@ -103,17 +106,16 @@ describe('Integration Selector', () => {
           'kilocode',
           'roocode',
           'windsurf',
-          'agents-md',
           'copilot-instructions',
           'octo-md',
           'warp-md',
         ];
-        mockPrompt.mockResolvedValue({ selectedIntegrations: allIntegrations });
+        mockPrompt.mockResolvedValue({ selectedIntegrations: allSelectableIntegrations });
 
         const result = await selectIntegrations(agentManager);
 
-        expect(result).toEqual(allIntegrations);
-        expect(result.length).toBe(20);
+        expect(result).toEqual(allSelectableIntegrations);
+        expect(result.length).toBe(19); // agents-md is mandatory, not in selection
       });
     });
 
@@ -230,7 +232,7 @@ describe('Integration Selector', () => {
     });
 
     describe('choices structure', () => {
-      it('should include all 20 integration options', async () => {
+      it('should include all 19 selectable integration options (agents-md is mandatory)', async () => {
         mockPrompt.mockResolvedValue({ selectedIntegrations: ['claude-code'] });
 
         await selectIntegrations(agentManager);
@@ -241,7 +243,8 @@ describe('Integration Selector', () => {
         // Filter out separators to get actual choices
         const integrationChoices = choices.filter((c: any) => c.value !== undefined);
 
-        expect(integrationChoices.length).toBe(20);
+        // agents-md is no longer in selection (always enabled)
+        expect(integrationChoices.length).toBe(19);
       });
 
       it('should have CLI Tools category with correct integrations', async () => {
@@ -290,7 +293,7 @@ describe('Integration Selector', () => {
         });
       });
 
-      it('should have Universal Adapters category with correct integrations', async () => {
+      it('should have Optional Universal Adapters category with correct integrations', async () => {
         mockPrompt.mockResolvedValue({ selectedIntegrations: ['claude-code'] });
 
         await selectIntegrations(agentManager);
@@ -298,13 +301,18 @@ describe('Integration Selector', () => {
         const promptConfig = mockPrompt.mock.calls[0][0][0];
         const choices = promptConfig.choices;
 
-        const universalAdapters = ['agents-md', 'copilot-instructions', 'octo-md', 'warp-md'];
+        // agents-md is no longer in selection (always enabled)
+        const optionalUniversalAdapters = ['copilot-instructions', 'octo-md', 'warp-md'];
 
-        universalAdapters.forEach((adapter) => {
+        optionalUniversalAdapters.forEach((adapter) => {
           const choice = choices.find((c: any) => c.value === adapter);
           expect(choice).toBeDefined();
           expect(choice.name).toBeDefined();
         });
+
+        // agents-md should NOT be in choices
+        const agentsMdChoice = choices.find((c: any) => c.value === 'agents-md');
+        expect(agentsMdChoice).toBeUndefined();
       });
 
       it('should include separators for category headers', async () => {
@@ -341,9 +349,10 @@ describe('Integration Selector', () => {
         expect(cursor?.name).toContain('Cursor');
         expect(cursor?.name).toContain('.cursor/commands/');
 
-        const agentsMd = choices.find((c: any) => c.value === 'agents-md');
-        expect(agentsMd?.name).toContain('AGENTS.md');
-        expect(agentsMd?.name).toContain('Universal');
+        // agents-md is no longer in choices (always enabled)
+        const copilot = choices.find((c: any) => c.value === 'copilot-instructions');
+        expect(copilot?.name).toContain('GitHub Copilot');
+        expect(copilot?.name).toContain('copilot-instructions.md');
       });
     });
 
@@ -364,7 +373,7 @@ describe('Integration Selector', () => {
       });
 
       it('should work when user selects from multiple categories', async () => {
-        const mixedSelection = ['amp', 'cursor', 'agents-md'];
+        const mixedSelection = ['amp', 'cursor', 'copilot-instructions'];
         mockPrompt.mockResolvedValue({ selectedIntegrations: mixedSelection });
 
         const result = await selectIntegrations(agentManager);
@@ -420,6 +429,60 @@ describe('Integration Selector', () => {
 
       const uniqueValues = new Set(integrationValues);
       expect(uniqueValues.size).toBe(integrationValues.length);
+    });
+  });
+
+  describe('MANDATORY_INTEGRATION constant', () => {
+    it('should be defined as agents-md', () => {
+      expect(MANDATORY_INTEGRATION).toBe('agents-md');
+    });
+  });
+
+  describe('ensureMandatoryIntegrations', () => {
+    it('should add agents-md when not present', () => {
+      const integrations = ['claude-code', 'cursor'];
+      const result = ensureMandatoryIntegrations(integrations);
+
+      expect(result).toContain('agents-md');
+      expect(result).toEqual(['agents-md', 'claude-code', 'cursor']);
+    });
+
+    it('should not duplicate agents-md when already present', () => {
+      const integrations = ['agents-md', 'claude-code', 'cursor'];
+      const result = ensureMandatoryIntegrations(integrations);
+
+      expect(result).toEqual(['agents-md', 'claude-code', 'cursor']);
+      // Should only appear once
+      expect(result.filter((i) => i === 'agents-md').length).toBe(1);
+    });
+
+    it('should return array with agents-md first when adding', () => {
+      const integrations = ['windsurf', 'cursor'];
+      const result = ensureMandatoryIntegrations(integrations);
+
+      expect(result[0]).toBe('agents-md');
+      expect(result.length).toBe(3);
+    });
+
+    it('should handle empty array', () => {
+      const result = ensureMandatoryIntegrations([]);
+
+      expect(result).toEqual(['agents-md']);
+      expect(result.length).toBe(1);
+    });
+
+    it('should handle array with only agents-md', () => {
+      const result = ensureMandatoryIntegrations(['agents-md']);
+
+      expect(result).toEqual(['agents-md']);
+      expect(result.length).toBe(1);
+    });
+
+    it('should preserve original array order when adding agents-md', () => {
+      const integrations = ['cursor', 'windsurf', 'claude-code'];
+      const result = ensureMandatoryIntegrations(integrations);
+
+      expect(result).toEqual(['agents-md', 'cursor', 'windsurf', 'claude-code']);
     });
   });
 });

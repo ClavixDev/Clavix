@@ -3,6 +3,7 @@ import { FileSystem } from '../utils/file-system.js';
 import { DataError } from '../types/errors.js';
 import { escapeRegex } from '../utils/string-utils.js';
 import { logger } from '../utils/logger.js';
+import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../constants.js';
 
 export interface ManagedBlockOptions {
   startMarker: string;
@@ -16,8 +17,8 @@ export interface ManagedBlockOptions {
  * DocInjector - manages injection and updating of managed blocks in documentation files
  */
 export class DocInjector {
-  private static readonly DEFAULT_START_MARKER = '<!-- CLAVIX:START -->';
-  private static readonly DEFAULT_END_MARKER = '<!-- CLAVIX:END -->';
+  private static readonly DEFAULT_START_MARKER = CLAVIX_BLOCK_START;
+  private static readonly DEFAULT_END_MARKER = CLAVIX_BLOCK_END;
 
   /**
    * Inject or update managed block in a file
@@ -248,6 +249,11 @@ Enter conversational mode for iterative prompt development. Discuss your require
 #### /clavix:summarize
 Analyze the current conversation and extract key requirements into a structured prompt and mini-PRD.
 
+### Refinement
+
+#### /clavix:refine
+Refine existing PRD or prompt through continued discussion. Detects available PRDs and saved prompts, then guides you through updating them with tracked changes.
+
 ### Agentic Utilities
 
 These utilities provide structured workflows for common tasks. Invoke them using the slash commands below:
@@ -261,10 +267,11 @@ These utilities provide structured workflows for common tasks. Invoke them using
 
 **Recommended Workflow:**
 1. Start with \`/clavix:prd\` or \`/clavix:start\` for complex features
-2. Generate tasks with \`/clavix:plan\`
-3. Implement with \`/clavix:implement\`
-4. Verify with \`/clavix:verify\`
-5. Archive when complete with \`/clavix:archive\`
+2. Refine requirements with \`/clavix:refine\` as needed
+3. Generate tasks with \`/clavix:plan\`
+4. Implement with \`/clavix:implement\`
+5. Verify with \`/clavix:verify\`
+6. Archive when complete with \`/clavix:archive\`
 
 **Pro tip**: Start complex features with \`/clavix:prd\` or \`/clavix:start\` to ensure clear requirements before implementation.`;
   }

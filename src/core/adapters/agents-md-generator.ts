@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { FileSystem } from '../../utils/file-system.js';
 import { DocInjector } from '../doc-injector.js';
+import { DataError } from '../../types/errors.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,7 +22,10 @@ export class AgentsMdGenerator {
     const templatePath = path.join(__dirname, '../../templates/agents/agents.md');
 
     if (!(await FileSystem.exists(templatePath))) {
-      throw new Error(`AGENTS.md template not found at ${templatePath}`);
+      throw new DataError(
+        `AGENTS.md template not found at ${templatePath}`,
+        "Check Clavix installation or run 'clavix update'"
+      );
     }
 
     const template = await FileSystem.readFile(templatePath);

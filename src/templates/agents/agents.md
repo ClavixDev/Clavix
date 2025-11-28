@@ -60,6 +60,7 @@ For complete step-by-step workflows, see `.clavix/instructions/`:
 | "create a PRD", "product requirements" | PRD mode → Socratic questioning | `workflows/prd.md` |
 | "let's discuss", "not sure what I want" | Conversational mode → Start gathering | `workflows/start.md` |
 | "summarize our conversation" | Extract mode → Analyze thread | `workflows/summarize.md` |
+| "refine", "update PRD", "change requirements", "modify prompt" | Refine mode → Update existing content | `workflows/refine.md` |
 | "verify", "check my implementation" | Verify mode → Implementation verification | `core/verification.md` |
 
 **When detected:** Reference the corresponding `.clavix/instructions/workflows/{workflow}.md` file.
@@ -87,6 +88,7 @@ All workflows are executed via slash commands that AI agents read and follow:
 | `/clavix:implement` | Execute tasks or prompts (auto-detects source) |
 | `/clavix:start` | Begin conversational session |
 | `/clavix:summarize` | Extract requirements from conversation |
+| `/clavix:refine` | Refine existing PRD or saved prompt |
 
 ### Agentic Utilities (Project Management)
 These utilities provide structured workflows for project completion:

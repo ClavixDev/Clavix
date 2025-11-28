@@ -1,6 +1,7 @@
 import { FileSystem } from '../../utils/file-system.js';
 import { TemplateAssembler } from '../template-assembler.js';
 import { CommandTransformer } from '../command-transformer.js';
+import { DataError } from '../../types/errors.js';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -33,7 +34,10 @@ export class InstructionsGenerator {
 
     // Check if static template exists
     if (!(await FileSystem.exists(staticInstructionsPath))) {
-      throw new Error(`.clavix/instructions static files not found at ${staticInstructionsPath}`);
+      throw new DataError(
+        `.clavix/instructions static files not found at ${staticInstructionsPath}`,
+        "Check Clavix installation or run 'clavix update'"
+      );
     }
 
     // Create target directory
@@ -84,7 +88,10 @@ export class InstructionsGenerator {
     const workflowsTarget = path.join(this.TARGET_DIR, 'workflows');
 
     if (!(await FileSystem.exists(canonicalPath))) {
-      throw new Error(`Canonical templates not found at ${canonicalPath}`);
+      throw new DataError(
+        `Canonical templates not found at ${canonicalPath}`,
+        "Check Clavix installation or run 'clavix update'"
+      );
     }
 
     // Create workflows directory

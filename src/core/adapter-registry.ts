@@ -7,6 +7,11 @@
  * For adapters requiring custom behavior (TOML format, doc injection),
  * dedicated adapter classes still exist.
  *
+ * NOTE: AGENTS.md is a mandatory integration that is always enabled by default.
+ * It provides universal agent guidance that all AI tools can read. The AGENTS.md
+ * adapter is handled separately via AgentsMdGenerator and is automatically
+ * included by ensureMandatoryIntegrations() in integration-selector.ts.
+ *
  * @since v5.3.0
  */
 

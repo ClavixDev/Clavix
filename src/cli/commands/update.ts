@@ -3,8 +3,6 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import { DocInjector } from '../../core/doc-injector.js';
 import { AgentManager } from '../../core/agent-manager.js';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
@@ -13,9 +11,7 @@ import { WarpMdGenerator } from '../../core/adapters/warp-md-generator.js';
 import { InstructionsGenerator } from '../../core/adapters/instructions-generator.js';
 import { AgentAdapter } from '../../types/agent.js';
 import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const _dirname = dirname(__filename); // eslint-disable-line @typescript-eslint/no-unused-vars
+import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
 
 export default class Update extends Command {
   static description = 'Update managed blocks and slash commands';
@@ -167,8 +163,8 @@ export default class Update extends Command {
 
         if (force || !this.hasUpToDateBlock(currentContent, claudeContent)) {
           await DocInjector.injectBlock(claudePath, claudeContent, {
-            startMarker: '<!-- CLAVIX:START -->',
-            endMarker: '<!-- CLAVIX:END -->',
+            startMarker: CLAVIX_BLOCK_START,
+            endMarker: CLAVIX_BLOCK_END,
           });
           this.log(chalk.gray('  ✓ Updated CLAUDE.md'));
           updated++;

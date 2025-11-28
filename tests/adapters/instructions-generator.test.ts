@@ -58,20 +58,21 @@ describe('InstructionsGenerator', () => {
       expect(await fs.pathExists('.clavix/instructions/README.md')).toBe(true);
     });
 
-    // v5.1: 8 canonical workflows (execute consolidated into implement)
-    it('should copy ALL 8 canonical workflows to .clavix/instructions/workflows/', async () => {
+    // v5.5.2: 9 canonical workflows (added refine)
+    it('should copy ALL 9 canonical workflows to .clavix/instructions/workflows/', async () => {
       await InstructionsGenerator.generate();
 
       const workflowsDir = '.clavix/instructions/workflows';
       expect(await fs.pathExists(workflowsDir)).toBe(true);
 
-      // v5.1: 8 canonical templates (execute consolidated into implement)
+      // v5.5.2: 9 canonical templates (added refine)
       const expectedFiles = [
         'archive.md',
         'implement.md',
         'improve.md',
         'plan.md',
         'prd.md',
+        'refine.md',
         'start.md',
         'summarize.md',
         'verify.md',
@@ -81,10 +82,10 @@ describe('InstructionsGenerator', () => {
         expect(await fs.pathExists(path.join(workflowsDir, file))).toBe(true);
       }
 
-      // Verify count (v5.1: 8 workflows - execute consolidated into implement)
+      // Verify count (v5.5.2: 9 workflows - added refine)
       const files = await fs.readdir(workflowsDir);
       const mdFiles = files.filter((f) => f.endsWith('.md'));
-      expect(mdFiles.length).toBe(8);
+      expect(mdFiles.length).toBe(9);
     });
 
     it('should copy canonical content correctly (verify improve.md sample)', async () => {
@@ -202,7 +203,7 @@ describe('InstructionsGenerator', () => {
       expect(secondContent).not.toContain('MODIFIED');
     });
 
-    // v4.11: Now 9 workflows (fast/deep merged into improve)
+    // v5.5.2: Now 9 workflows (added refine)
     it('should maintain all 9 workflows after regeneration', async () => {
       // First generation
       await InstructionsGenerator.generate();
@@ -216,10 +217,10 @@ describe('InstructionsGenerator', () => {
       // Should restore deleted file
       expect(await fs.pathExists('.clavix/instructions/workflows/plan.md')).toBe(true);
 
-      // Verify still have all 8 (v5.1: execute consolidated into implement)
+      // Verify still have all 9 (v5.5.2: added refine)
       const files = await fs.readdir('.clavix/instructions/workflows');
       const mdFiles = files.filter((f) => f.endsWith('.md'));
-      expect(mdFiles.length).toBe(8);
+      expect(mdFiles.length).toBe(9);
     });
   });
 
@@ -239,22 +240,22 @@ describe('InstructionsGenerator', () => {
   });
 
   describe('edge cases', () => {
-    // v5.1: 8 workflows (execute consolidated into implement)
+    // v5.5.2: 9 workflows (added refine)
     it('should handle multiple generations in sequence', async () => {
       // First generation
       await InstructionsGenerator.generate();
       let files = await fs.readdir('.clavix/instructions/workflows');
-      expect(files.filter((f) => f.endsWith('.md')).length).toBe(8);
+      expect(files.filter((f) => f.endsWith('.md')).length).toBe(9);
 
       // Second generation (should not duplicate)
       await InstructionsGenerator.generate();
       files = await fs.readdir('.clavix/instructions/workflows');
-      expect(files.filter((f) => f.endsWith('.md')).length).toBe(8);
+      expect(files.filter((f) => f.endsWith('.md')).length).toBe(9);
 
       // Third generation
       await InstructionsGenerator.generate();
       files = await fs.readdir('.clavix/instructions/workflows');
-      expect(files.filter((f) => f.endsWith('.md')).length).toBe(8);
+      expect(files.filter((f) => f.endsWith('.md')).length).toBe(9);
     });
 
     it('should preserve core/ and troubleshooting/ files during regeneration', async () => {

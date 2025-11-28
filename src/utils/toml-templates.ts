@@ -1,3 +1,5 @@
+import { DataError } from '../types/errors.js';
+
 export interface ParsedTomlTemplate {
   description: string;
   prompt: string;
@@ -21,8 +23,9 @@ export function parseTomlSlashCommand(
   const promptHeaderMatch = normalized.match(/^\s*prompt\s*=\s*"""/m);
 
   if (!promptHeaderMatch || promptHeaderMatch.index === undefined) {
-    throw new Error(
-      `Template ${templateName}.toml for ${integrationName} is missing a prompt = """ ... """ block.`
+    throw new DataError(
+      `Template ${templateName}.toml for ${integrationName} is missing a prompt = """ ... """ block.`,
+      'Check the template file format. TOML templates require prompt = """...""" syntax.'
     );
   }
 
@@ -31,8 +34,9 @@ export function parseTomlSlashCommand(
   const closingIndex = bodyRemainder.indexOf('"""');
 
   if (closingIndex === -1) {
-    throw new Error(
-      `Template ${templateName}.toml for ${integrationName} does not terminate its prompt = """ ... """ block.`
+    throw new DataError(
+      `Template ${templateName}.toml for ${integrationName} does not terminate its prompt = """ ... """ block.`,
+      'Add closing """ to the prompt block.'
     );
   }
 

@@ -2,9 +2,17 @@ import inquirer from 'inquirer';
 import { AgentManager } from '../core/agent-manager.js';
 
 /**
+ * AGENTS.md is always enabled by default.
+ * It provides universal agent guidance that all AI tools can read.
+ */
+export const MANDATORY_INTEGRATION = 'agents-md';
+
+/**
  * Interactive integration selection utility
  * Displays multi-select checkbox for all available integrations
  * Used by both init and config commands
+ *
+ * Note: AGENTS.md is always enabled and not shown in selection
  */
 export async function selectIntegrations(
   agentManager: AgentManager,
@@ -38,8 +46,8 @@ export async function selectIntegrations(
         { name: 'Windsurf (.windsurf/rules/)', value: 'windsurf' },
         new inquirer.Separator(),
 
-        new inquirer.Separator('=== Universal Adapters ==='),
-        { name: 'AGENTS.md (Universal)', value: 'agents-md' },
+        new inquirer.Separator('=== Optional Universal Adapters ==='),
+        // Note: AGENTS.md is always enabled (not shown here)
         { name: 'GitHub Copilot (.github/copilot-instructions.md)', value: 'copilot-instructions' },
         { name: 'OCTO.md (Universal)', value: 'octo-md' },
         { name: 'WARP.md (Universal)', value: 'warp-md' },
@@ -65,4 +73,15 @@ export async function selectIntegrations(
   ]);
 
   return selectedIntegrations;
+}
+
+/**
+ * Ensures AGENTS.md is always included in the final integration list.
+ * Call this after selectIntegrations() to enforce mandatory integrations.
+ */
+export function ensureMandatoryIntegrations(integrations: string[]): string[] {
+  if (!integrations.includes(MANDATORY_INTEGRATION)) {
+    return [MANDATORY_INTEGRATION, ...integrations];
+  }
+  return integrations;
 }

@@ -57,10 +57,12 @@ For detailed information on template customization and override options, see [Ge
 
 ## Universal adapters
 
-- **AGENTS.md** – Adds a managed block to `AGENTS.md` for tooling that ingests long-form documentation instead of slash commands.
+- **AGENTS.md** *(mandatory, always enabled)* – Adds a managed block to `AGENTS.md` for tooling that ingests long-form documentation instead of slash commands. This integration is **always enabled by default** to ensure all AI tools receive universal agent guidance, regardless of which other integrations you select.
 - **GitHub Copilot** – Generates `.github/copilot-instructions.md` with natural language Clavix workflow instructions per [official GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions).
 - **OCTO.md** – Generates content tailored for Octofriend's markdown interface.
 - **WARP.md** – Provides Clavix quick-start guidance optimized for Warp users.
+
+> **Note:** AGENTS.md is not shown in the integration selection prompt because it's always included automatically. This ensures consistent agent guidance across all projects.
 
 ### Multi-select during `clavix init`
 

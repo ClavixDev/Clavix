@@ -17,9 +17,16 @@ const __dirname = path.dirname(__filename);
 const mockSelectIntegrations = jest.fn<() => Promise<string[]>>();
 const mockInquirerPrompt = jest.fn<(questions: any[]) => Promise<any>>();
 
-// Mock integration selector
+// Mock integration selector (v5.5.2: include ensureMandatoryIntegrations)
 jest.unstable_mockModule('../../src/utils/integration-selector.js', () => ({
   selectIntegrations: mockSelectIntegrations,
+  MANDATORY_INTEGRATION: 'agents-md',
+  ensureMandatoryIntegrations: (integrations: string[]) => {
+    if (!integrations.includes('agents-md')) {
+      return ['agents-md', ...integrations];
+    }
+    return integrations;
+  },
 }));
 
 // Mock inquirer
@@ -147,14 +154,20 @@ describe('Init Command', () => {
       expect(result.stdout).toContain('Droid commands');
     });
 
-    it('should abort if no integrations selected', async () => {
+    // v5.5.2: With mandatory AGENTS.md, even if user selects nothing, AGENTS.md is always enabled
+    it('should proceed with AGENTS.md when no other integrations selected', async () => {
       mockSelectIntegrations.mockResolvedValueOnce([]);
 
       const result = await runInitCommand(testDir);
 
-      expect(result.exitCode).toBe(0); // Returns 0 but stops
-      expect(result.stdout).toContain('No integrations selected');
-      expect(await fs.pathExists('.clavix')).toBe(false);
+      // v5.5.2: AGENTS.md is mandatory, so init succeeds with just AGENTS.md
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Clavix initialized successfully');
+      expect(await fs.pathExists('.clavix')).toBe(true);
+
+      // Verify config includes agents-md
+      const config = await fs.readJSON('.clavix/config.json');
+      expect(config.integrations).toContain('agents-md');
     });
   });
 

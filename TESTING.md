@@ -28,12 +28,17 @@ tests/
 ├── cli/                  # CLI command tests
 ├── core/                 # Core module tests
 ├── adapters/             # Adapter implementation tests
+├── consistency/          # Template consistency and parity tests
 ├── contracts/            # API contract tests
 ├── critical-paths/       # End-to-end workflow tests
+├── edge-cases/           # Edge case and boundary tests
+├── fixtures/             # Test data and fixtures
 ├── integration/          # Integration tests
+├── smoke/                # Quick smoke tests
 ├── snapshots/            # Snapshot tests for output stability
 │   └── __snapshots__/    # Auto-generated snapshot files
 ├── helpers/              # Test utilities and factories
+├── utils/                # Utility module tests
 └── e2e/                  # End-to-end CLI tests
 ```
 
@@ -246,7 +251,7 @@ const config = createConfig({
 
 ## Coverage Requirements
 
-The project targets **100% coverage**. Run coverage check with:
+The project targets **70%+ coverage** for most metrics. Run coverage check with:
 
 ```bash
 npm run test:coverage
@@ -257,13 +262,15 @@ Coverage thresholds are configured in `jest.config.mjs`:
 ```javascript
 coverageThreshold: {
   global: {
-    branches: 100,
-    functions: 100,
-    lines: 100,
-    statements: 100,
+    branches: 60,   // Lower threshold - CLI commands are interactive
+    functions: 70,
+    lines: 70,
+    statements: 70,
   },
 }
 ```
+
+**Why 60% for branches?** CLI commands use inquirer for interactive prompts, making certain code paths difficult to test without extensive mocking. The branch threshold is set to 60% to accommodate this while still requiring good coverage of core logic.
 
 ## Running Specific Test Categories
 

@@ -244,4 +244,91 @@ export class AgentErrorMessages {
       'No action needed unless forced.'
     );
   }
+
+  /**
+   * Error: Template not found
+   * Used by: template-loader.ts, commands generating slash commands
+   */
+  static templateNotFound(templateName: string, searchPath?: string): string {
+    const pathInfo = searchPath ? `\nSearch path: ${searchPath}` : '';
+
+    return (
+      `Template not found: ${templateName}${pathInfo}\n\n` +
+      'Agent recovery options:\n' +
+      "  1. Run 'clavix update' to regenerate templates\n" +
+      '  2. Check if Clavix is installed correctly\n' +
+      '  3. Verify template name is spelled correctly\n\n' +
+      'After recovery, retry the command.'
+    );
+  }
+
+  /**
+   * Error: Adapter/integration not found
+   * Used by: agent-manager.ts, init.ts
+   */
+  static adapterNotFound(adapterName: string, availableAdapters?: string[]): string {
+    const adapterList = availableAdapters
+      ? '\n\nAvailable adapters:\n' + availableAdapters.map((a) => `  • ${a}`).join('\n')
+      : '';
+
+    return (
+      `Adapter not found: ${adapterName}${adapterList}\n\n` +
+      'Agent recovery options:\n' +
+      '  1. Check adapter name is spelled correctly\n' +
+      "  2. Run 'clavix diagnose' to see available integrations\n" +
+      '  3. Adapter may have been removed or renamed\n\n' +
+      'Use a valid adapter name and retry.'
+    );
+  }
+
+  /**
+   * Error: Configuration loading failed
+   * Used by: init.ts, update.ts when .clavix/config.json is invalid
+   */
+  static configLoadFailed(configPath: string, reason?: string): string {
+    const reasonInfo = reason ? `\nReason: ${reason}` : '';
+
+    return (
+      `Failed to load configuration: ${configPath}${reasonInfo}\n\n` +
+      'Agent recovery options:\n' +
+      "  1. Run 'clavix init' to regenerate configuration\n" +
+      '  2. Check .clavix/config.json syntax is valid JSON\n' +
+      '  3. Remove .clavix/ and reinitialize\n\n' +
+      'After fixing configuration, retry the command.'
+    );
+  }
+
+  /**
+   * Error: Update command failed
+   * Used by: update.ts when template regeneration fails
+   */
+  static updateFailed(reason: string): string {
+    return (
+      `Update failed: ${reason}\n\n` +
+      'Agent recovery options:\n' +
+      '  1. Check Clavix is installed correctly: clavix --version\n' +
+      '  2. Verify write permissions in project directory\n' +
+      "  3. Try removing .clavix/ and running 'clavix init'\n\n" +
+      'Fix the underlying issue and retry.'
+    );
+  }
+
+  /**
+   * Error: Diagnostic check failed
+   * Used by: diagnose.ts when health check identifies issues
+   */
+  static diagnosticFailed(issues: string[]): string {
+    const issueList = issues.map((issue) => `  • ${issue}`).join('\n');
+
+    return (
+      'Diagnostic check identified issues:\n\n' +
+      issueList +
+      '\n\n' +
+      'Agent recovery options:\n' +
+      "  1. Run 'clavix update' to fix template issues\n" +
+      "  2. Run 'clavix init' to reinitialize configuration\n" +
+      '  3. Check file permissions in project directory\n\n' +
+      'Address issues above and rerun diagnose.'
+    );
+  }
 }

@@ -26,7 +26,7 @@ These run TypeScript code to set up your environment:
 | `clavix diagnose` | Check installation health |
 | `clavix version` | Show version |
 
-### Slash Commands (8 total)
+### Slash Commands (9 total)
 
 These are markdown templates that AI agents read and execute:
 
@@ -38,6 +38,7 @@ These are markdown templates that AI agents read and execute:
 | `/clavix:implement` | Implement | Execute tasks or prompts |
 | `/clavix:start` | Explore | Conversational requirements gathering |
 | `/clavix:summarize` | Document | Extract requirements from conversation |
+| `/clavix:refine` | Refine | Update existing PRD or prompt |
 | `/clavix:verify` | Verify | Check implementation against checklist |
 | `/clavix:archive` | Manage | Archive completed projects |
 
@@ -300,6 +301,50 @@ Extract structured requirements from conversation.
 
 ---
 
+## /clavix:refine
+
+Refine existing PRD or prompt through continued discussion.
+
+```
+/clavix:refine
+```
+
+**What it does:**
+1. Detects available PRDs and saved prompts
+2. Asks what you want to refine (PRD or prompt)
+3. Loads and displays current content
+4. Enters conversational refinement mode
+5. Updates files with tracked changes
+
+**Refinement targets:**
+- PRD projects in `.clavix/outputs/<project>/`
+- Saved prompts in `.clavix/outputs/prompts/`
+
+**Change tracking:**
+- `[ADDED]` - New requirement or feature
+- `[MODIFIED]` - Changed from original
+- `[REMOVED]` - Explicitly removed
+- `[UNCHANGED]` - Kept as-is
+
+**PRD refinement options:**
+- Add new features
+- Modify existing features
+- Change technical constraints
+- Adjust scope (add/remove items)
+- Update success criteria
+
+**Prompt refinement options:**
+- Clarify the objective
+- Add more context or constraints
+- Make it more specific
+- Change the approach
+
+**After refinement:**
+- PRDs: Run `/clavix:plan` to regenerate tasks
+- Prompts: Run `/clavix:implement --latest` to execute
+
+---
+
 ## /clavix:verify
 
 Verify implementation against checklist.
@@ -366,6 +411,8 @@ Archive completed projects.
      ↓
 /clavix:prd            # (Alternative) Guided PRD
      ↓
+/clavix:refine         # (Optional) Update requirements
+     ↓
 /clavix:plan           # Generate task breakdown
      ↓
 /clavix:implement      # Execute tasks
@@ -375,11 +422,20 @@ Archive completed projects.
 /clavix:archive        # Archive when complete
 ```
 
-Or for quick improvements:
+For quick improvements:
 ```
 /clavix:improve "add user authentication"
      ↓
 /clavix:implement --latest
      ↓
 /clavix:verify
+```
+
+For iterative refinement:
+```
+/clavix:refine         # Update existing PRD/prompt
+     ↓
+/clavix:plan           # Regenerate tasks (if PRD)
+     ↓
+/clavix:implement      # Execute updates
 ```

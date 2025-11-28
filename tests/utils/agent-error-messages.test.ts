@@ -135,4 +135,61 @@ describe('AgentErrorMessages', () => {
     expect(message).toContain('phase-1-setup-1');
     expect(message).toContain('No action needed');
   });
+
+  it('templateNotFound provides search path and recovery steps', () => {
+    const message = AgentErrorMessages.templateNotFound('improve.md', '/templates');
+    expect(message).toContain('Template not found: improve.md');
+    expect(message).toContain('/templates');
+    expect(message).toContain('clavix update');
+    expectHasRecoveryBlock(message);
+  });
+
+  it('templateNotFound works without search path', () => {
+    const message = AgentErrorMessages.templateNotFound('prd.md');
+    expect(message).toContain('Template not found: prd.md');
+    expect(message).not.toContain('Search path');
+  });
+
+  it('adapterNotFound lists available adapters', () => {
+    const message = AgentErrorMessages.adapterNotFound('unknown', ['claude-code', 'cursor']);
+    expect(message).toContain('Adapter not found: unknown');
+    expect(message).toContain('• claude-code');
+    expect(message).toContain('• cursor');
+    expectHasRecoveryBlock(message);
+  });
+
+  it('adapterNotFound works without available adapters list', () => {
+    const message = AgentErrorMessages.adapterNotFound('invalid');
+    expect(message).toContain('Adapter not found: invalid');
+    expect(message).not.toContain('Available adapters');
+  });
+
+  it('configLoadFailed shows path and optional reason', () => {
+    const message = AgentErrorMessages.configLoadFailed('.clavix/config.json', 'invalid JSON');
+    expect(message).toContain('.clavix/config.json');
+    expect(message).toContain('invalid JSON');
+    expect(message).toContain('clavix init');
+    expectHasRecoveryBlock(message);
+  });
+
+  it('configLoadFailed works without reason', () => {
+    const message = AgentErrorMessages.configLoadFailed('.clavix/config.json');
+    expect(message).toContain('.clavix/config.json');
+    expect(message).not.toContain('Reason:');
+  });
+
+  it('updateFailed provides recovery steps', () => {
+    const message = AgentErrorMessages.updateFailed('permission denied');
+    expect(message).toContain('Update failed: permission denied');
+    expect(message).toContain('clavix --version');
+    expectHasRecoveryBlock(message);
+  });
+
+  it('diagnosticFailed lists issues with recovery options', () => {
+    const message = AgentErrorMessages.diagnosticFailed(['config missing', 'templates outdated']);
+    expect(message).toContain('• config missing');
+    expect(message).toContain('• templates outdated');
+    expect(message).toContain('clavix update');
+    expectHasRecoveryBlock(message);
+  });
 });

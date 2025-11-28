@@ -16,6 +16,7 @@ import { GeminiAdapter } from '../../core/adapters/gemini-adapter.js';
 import { QwenAdapter } from '../../core/adapters/qwen-adapter.js';
 import { loadCommandTemplates } from '../../utils/template-loader.js';
 import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
+import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
 
 export default class Init extends Command {
   static description = 'Initialize Clavix in the current project';
@@ -86,9 +87,18 @@ export default class Init extends Command {
       // Select integrations using shared utility
       console.log(chalk.gray('Select AI development tools to support:\n'));
       console.log(chalk.gray('(Space to select, Enter to confirm)\n'));
+      console.log(
+        chalk.cyan('ℹ'),
+        chalk.gray('AGENTS.md is always enabled to provide universal agent guidance.\n')
+      );
 
-      const { selectIntegrations } = await import('../../utils/integration-selector.js');
-      const selectedIntegrations = await selectIntegrations(agentManager, existingIntegrations);
+      const { selectIntegrations, ensureMandatoryIntegrations } = await import(
+        '../../utils/integration-selector.js'
+      );
+      const userSelectedIntegrations = await selectIntegrations(agentManager, existingIntegrations);
+
+      // Always include AGENTS.md
+      const selectedIntegrations = ensureMandatoryIntegrations(userSelectedIntegrations);
 
       if (!selectedIntegrations || selectedIntegrations.length === 0) {
         console.log(chalk.red('\n✗ No integrations selected\n'));
@@ -673,7 +683,8 @@ To reconfigure integrations, run \`clavix init\` again.
   }
 
   private extractClavixBlock(content: string): string {
-    const match = content.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/);
+    const regex = new RegExp(`${CLAVIX_BLOCK_START}([\\s\\S]*?)${CLAVIX_BLOCK_END}`);
+    const match = content.match(regex);
     return match ? match[1].trim() : content;
   }
 }
