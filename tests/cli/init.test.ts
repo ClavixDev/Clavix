@@ -354,4 +354,187 @@ More custom content below.`
       expect(result.stdout).not.toContain('session');
     });
   });
+
+  /**
+   * Reconfiguration Flow Tests (v5.6.5)
+   * These tests verify the reconfiguration flows: cleanup, update, and integration changes
+   */
+  describe('Reconfiguration Flows (v5.6.5)', () => {
+    beforeEach(async () => {
+      // Setup existing clavix installation with cursor integration
+      await fs.ensureDir('.clavix');
+      await fs.writeJSON('.clavix/config.json', {
+        ...DEFAULT_CONFIG,
+        integrations: ['cursor', 'windsurf'],
+      });
+      // Create existing .cursor directory for command cleanup testing
+      await fs.ensureDir('.cursor/rules/clavix');
+      await fs.writeFile('.cursor/rules/clavix/improve.mdc', '# Old improve command');
+    });
+
+    describe('Cleanup Action Flow', () => {
+      it('should prompt for cleanup when integrations are deselected', async () => {
+        // Existing: cursor, windsurf. New selection: claude-code only
+        // This deselects cursor and windsurf
+        mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'skip' }));
+
+        const result = await runInitCommand(testDir);
+
+        expect(result.exitCode).toBe(0);
+        // Should show deselected integrations
+        expect(result.stdout).toContain('Previously configured but not selected');
+        expect(result.stdout).toContain('cursor');
+      });
+
+      it('should execute cleanup when user selects cleanup action', async () => {
+        mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'cleanup' }));
+
+        const result = await runInitCommand(testDir);
+
+        expect(result.exitCode).toBe(0);
+        // Should mention cleanup
+        expect(result.stdout).toContain('Cleaning up');
+      });
+
+      it('should keep integrations when user selects update action', async () => {
+        mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'update' }));
+
+        const result = await runInitCommand(testDir);
+
+        expect(result.exitCode).toBe(0);
+        // Should indicate keeping integrations
+        expect(result.stdout).toContain('Keeping all integrations');
+      });
+    });
+
+    describe('Integration Selection Changes', () => {
+      it('should handle switching from IDE extensions to CLI tools', async () => {
+        // Existing: cursor, windsurf (IDE extensions)
+        // New: claude-code (CLI tool)
+        mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'cleanup' }));
+
+        const result = await runInitCommand(testDir);
+
+        expect(result.exitCode).toBe(0);
+        expect(result.stdout).toContain('Clavix initialized successfully');
+        // Verify the cleanup was attempted for deselected integrations
+        expect(result.stdout).toContain('Cleaning up');
+      });
+
+      it('should handle adding new integrations to existing ones', async () => {
+        // Existing: cursor, windsurf
+        // New: cursor, windsurf, claude-code (adding claude-code)
+        mockSelectIntegrations.mockResolvedValueOnce(['cursor', 'windsurf', 'claude-code']);
+        mockInquirerPrompt.mockImplementationOnce(async () => ({ action: 'reconfigure' }));
+
+        const result = await runInitCommand(testDir);
+
+        expect(result.exitCode).toBe(0);
+        // No deselected integrations, so no cleanup prompt
+        expect(result.stdout).not.toContain('Previously configured but not selected');
+      });
+
+      it('should handle selecting only mandatory agents-md integration', async () => {
+        // Empty selection triggers mandatory agents-md fallback
+        mockSelectIntegrations.mockResolvedValueOnce([]);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'cleanup' }));
+
+        const result = await runInitCommand(testDir);
+
+        expect(result.exitCode).toBe(0);
+        // Should show cleanup prompt since cursor and windsurf are deselected
+        expect(result.stdout).toContain('Cleaning up');
+        // agents-md should be generated (mandatory)
+        expect(result.stdout).toContain('AGENTS.md');
+      });
+    });
+
+    describe('Doc Generator Integration Handling', () => {
+      it('should handle octo-md integration specially', async () => {
+        // octo-md + agents-md (mandatory) - existing config has cursor+windsurf
+        mockSelectIntegrations.mockResolvedValueOnce(['octo-md']);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'cleanup' }));
+
+        const result = await runInitCommand(testDir);
+
+        // Should mention OCTO.md generation regardless of exit code
+        const combinedOutput = result.stdout + result.stderr;
+        expect(combinedOutput).toContain('OCTO.md');
+      });
+
+      it('should handle warp-md integration specially', async () => {
+        mockSelectIntegrations.mockResolvedValueOnce(['warp-md']);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'cleanup' }));
+
+        const result = await runInitCommand(testDir);
+
+        // Should mention WARP.md generation regardless of exit code
+        const combinedOutput = result.stdout + result.stderr;
+        expect(combinedOutput).toContain('WARP.md');
+      });
+
+      it('should handle copilot-instructions integration specially', async () => {
+        mockSelectIntegrations.mockResolvedValueOnce(['copilot-instructions']);
+        mockInquirerPrompt
+          .mockImplementationOnce(async () => ({ action: 'reconfigure' }))
+          .mockImplementationOnce(async () => ({ cleanupAction: 'cleanup' }));
+
+        const result = await runInitCommand(testDir);
+
+        // Should mention copilot-instructions generation regardless of exit code
+        const combinedOutput = result.stdout + result.stderr;
+        expect(combinedOutput).toContain('copilot-instructions');
+      });
+    });
+
+    describe('Config Validation During Reconfiguration', () => {
+      it('should handle corrupted config.json gracefully', async () => {
+        // Write corrupted JSON
+        await fs.writeFile('.clavix/config.json', '{ invalid json }');
+
+        mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+
+        const result = await runInitCommand(testDir);
+
+        expect(result.exitCode).toBe(0);
+        // Should warn about invalid config and continue
+        expect(result.stdout).toContain('Could not parse');
+        expect(result.stdout).toContain('Clavix initialized successfully');
+      });
+
+      it('should handle config with invalid structure gracefully', async () => {
+        // Write config with invalid structure
+        await fs.writeJSON('.clavix/config.json', {
+          version: 123, // Should be string
+          integrations: 'not-an-array', // Should be array
+        });
+
+        mockSelectIntegrations.mockResolvedValueOnce(['claude-code']);
+
+        const result = await runInitCommand(testDir);
+
+        // Should continue with warning
+        expect(result.exitCode).toBe(0);
+        expect(result.stdout).toContain('invalid structure');
+      });
+    });
+  });
 });

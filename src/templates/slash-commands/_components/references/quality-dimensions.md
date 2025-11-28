@@ -160,3 +160,24 @@ If ANY of these are true, suggest deep mode:
 | Completeness | 25% | Yes - below 50% triggers deep mode |
 | Actionability | 20% | Yes - below 50% triggers deep mode |
 | Specificity | 10% | No |
+
+---
+
+### Workflow-Specific Dimension Usage
+
+Different Clavix workflows use quality dimensions in different ways:
+
+| Workflow | Dimensions Used | Notes |
+|----------|----------------|-------|
+| `/clavix:improve` | All 6 | Full quality assessment for prompt optimization |
+| `/clavix:prd` | All 6 | PRD quality requires all dimensions |
+| `/clavix:summarize` | 5 (excludes Specificity) | Conversational extraction may lack concrete specifics by nature |
+| `/clavix:refine` | All 6 | Refinement targets all quality aspects |
+
+**Why Summarize Excludes Specificity:**
+The `/clavix:summarize` command extracts requirements from conversation. Users in exploratory mode often haven't determined specific versions, numbers, or file paths yet. Penalizing for missing specifics would unfairly score valid exploratory outputs.
+
+**Rationale for Dimension Selection:**
+- **Clarity, Completeness, Actionability**: Always critical - these determine if AI can act on the prompt
+- **Structure, Efficiency**: Important for complex prompts, less critical for simple ones
+- **Specificity**: Important for implementation, less important for early-stage exploration

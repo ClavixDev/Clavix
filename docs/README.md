@@ -88,7 +88,7 @@ For full architecture details, see [Architecture](architecture.md) or [CONTRIBUT
 
 ## Supported Integrations
 
-Clavix supports 20+ AI coding tools:
+Clavix supports 20 AI coding tools:
 
 - **CLI agents:** Claude Code, Gemini CLI, Qwen CLI, Droid, CodeBuddy, OpenCode, Amp, Crush, Codex, Augment, LLXPRT
 - **IDE extensions:** Cursor, Windsurf, Cline, Kilocode, Roocode

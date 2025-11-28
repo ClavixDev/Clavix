@@ -285,6 +285,39 @@ Result: Project permanently deleted
 - `/clavix:plan` - Review task completion status
 - `/clavix:prd` - Start new project after archiving old one
 
+## Archive Size Management
+
+**Proactive maintenance to prevent archive bloat:**
+
+**When to clean up the archive:**
+- Archive exceeds 50 projects (or 100MB)
+- Projects older than 12 months that haven't been referenced
+- Duplicate or superseded projects
+- Failed experiments with no learning value
+
+**Size check (run periodically):**
+```bash
+# Count archived projects
+ls .clavix/outputs/archive/ | wc -l
+
+# Check total archive size
+du -sh .clavix/outputs/archive/
+```
+
+**Cleanup workflow:**
+1. List all archived projects with dates: `ls -lt .clavix/outputs/archive/`
+2. Identify candidates for deletion (failed experiments, duplicates, ancient projects)
+3. For each candidate, confirm zero future value
+4. Delete only with explicit confirmation
+
+**Archive retention recommendations:**
+| Project Type | Keep For | Then |
+|--------------|----------|------|
+| Completed features | Indefinitely | Archive forever (reference value) |
+| Failed experiments | 30 days | Delete if no learning value |
+| Superseded versions | 90 days | Delete if newer version exists |
+| Test/demo projects | 7 days | Delete unless documenting patterns |
+
 ## Tips
 
 - Archive keeps your active projects list clean and focused
@@ -292,6 +325,7 @@ Result: Project permanently deleted
 - Archive is searchable - you can still `grep` or find files in archive/
 - Regular archiving keeps `.clavix/outputs/` organized
 - Check `.clavix/outputs/archive/` to see what's been archived
+- Review archive size quarterly to avoid unbounded growth
 
 ## Troubleshooting
 

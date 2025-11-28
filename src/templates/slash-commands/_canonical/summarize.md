@@ -375,12 +375,15 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
 ## Quality Enhancement
 
-**What gets optimized:**
+**What gets optimized (5 dimensions):**
 - **Clarity**: Remove ambiguity from extracted requirements
 - **Efficiency**: Remove verbosity and conversational fluff
 - **Structure**: Ensure logical flow (context → requirements → constraints → output)
 - **Completeness**: Add missing specifications, formats, success criteria
 - **Actionability**: Make requirements specific and executable
+
+**Why Specificity is excluded:**
+The `/clavix:summarize` command extracts requirements from exploratory conversations. Users in discovery mode often haven't determined concrete specifics yet (exact versions, file paths, numeric thresholds). Penalizing for missing specifics would unfairly score valid exploratory outputs. If specific details are needed, use `/clavix:improve` on the extracted prompt or proceed to `/clavix:prd` for full specification.
 
 **Output files:**
 - `original-prompt.md` - Raw extraction from conversation

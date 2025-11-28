@@ -22,7 +22,7 @@ Static reference documentation for AI agents.
 
 | Component | Purpose | Used By |
 |-----------|---------|---------|
-| `quality-dimensions.md` | Explanation of quality scoring dimensions (clarity, efficiency, etc.) | improve, prd, summarize |
+| `quality-dimensions.md` | Quality scoring dimensions (6 dimensions), workflow-specific usage, and why summarize excludes Specificity | improve, prd, summarize, refine |
 
 ### Sections
 Reusable content sections for specific workflows.
@@ -52,6 +52,7 @@ Recovery patterns for common agent issues.
 | `/clavix:implement` | AGENT_MANUAL, state-awareness, task-blocking, cli-reference, vibecoder-recovery |
 | `/clavix:start` | AGENT_MANUAL, supportive-companion, conversation-examples, vibecoder-recovery |
 | `/clavix:summarize` | AGENT_MANUAL, improvement-explanations, quality-dimensions, state-awareness, vibecoder-recovery |
+| `/clavix:refine` | AGENT_MANUAL, cli-reference, quality-dimensions, state-awareness |
 | `/clavix:verify` | AGENT_MANUAL, cli-reference, vibecoder-recovery |
 | `/clavix:archive` | AGENT_MANUAL, cli-reference, vibecoder-recovery |
 

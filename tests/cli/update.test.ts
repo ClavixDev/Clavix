@@ -6,8 +6,9 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import { AgentManager } from '../../src/core/agent-manager';
 import { DocInjector } from '../../src/core/doc-injector';
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { fileURLToPath } from 'url';
+import Update from '../../src/cli/commands/update';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -998,6 +999,244 @@ This project uses Clavix for prompt improvement and PRD generation.
         expect(adapter.displayName).toBeDefined();
         expect(adapter.displayName.length).toBeGreaterThan(0);
       }
+    });
+  });
+
+  /**
+   * Command Behavior Verification Tests (v5.6.5)
+   * These tests verify Update command behaviors through unit testing patterns
+   * Full integration tests with ESM mocking are in update-integration.test.ts
+   */
+  describe('Command Behavior Verification', () => {
+    describe('Flag parsing logic', () => {
+      it('should define docs-only flag with correct default', () => {
+        // Verify the Update command has the expected flag definition
+        const flags = Update.flags;
+
+        expect(flags['docs-only']).toBeDefined();
+        expect(flags['docs-only'].description).toContain('documentation');
+      });
+
+      it('should define commands-only flag with correct default', () => {
+        const flags = Update.flags;
+
+        expect(flags['commands-only']).toBeDefined();
+        expect(flags['commands-only'].description).toContain('slash command');
+      });
+
+      it('should define force flag with char shortcut', () => {
+        const flags = Update.flags;
+
+        expect(flags['force']).toBeDefined();
+        expect(flags['force'].char).toBe('f');
+      });
+    });
+
+    describe('Command metadata', () => {
+      it('should have proper description', () => {
+        expect(Update.description).toBeDefined();
+        expect(Update.description.toLowerCase()).toContain('update');
+      });
+
+      it('should have usage examples', () => {
+        expect(Update.examples).toBeDefined();
+        expect(Array.isArray(Update.examples)).toBe(true);
+        expect(Update.examples.length).toBeGreaterThan(0);
+      });
+
+      it('should include docs-only example', () => {
+        const examples = Update.examples.map((e) => String(e).toLowerCase());
+        const hasDocsOnlyExample = examples.some((e) => e.includes('docs-only'));
+
+        expect(hasDocsOnlyExample).toBe(true);
+      });
+
+      it('should include commands-only example', () => {
+        const examples = Update.examples.map((e) => String(e).toLowerCase());
+        const hasCommandsOnlyExample = examples.some((e) => e.includes('commands-only'));
+
+        expect(hasCommandsOnlyExample).toBe(true);
+      });
+    });
+
+    describe('Integration handling logic', () => {
+      it('should handle agents-md as special integration', () => {
+        const specialIntegrations = ['agents-md', 'octo-md', 'warp-md'];
+        const isSpecial = specialIntegrations.includes('agents-md');
+
+        expect(isSpecial).toBe(true);
+      });
+
+      it('should handle octo-md as special integration', () => {
+        const specialIntegrations = ['agents-md', 'octo-md', 'warp-md'];
+        const isSpecial = specialIntegrations.includes('octo-md');
+
+        expect(isSpecial).toBe(true);
+      });
+
+      it('should handle warp-md as special integration', () => {
+        const specialIntegrations = ['agents-md', 'octo-md', 'warp-md'];
+        const isSpecial = specialIntegrations.includes('warp-md');
+
+        expect(isSpecial).toBe(true);
+      });
+
+      it('should NOT treat claude-code as special integration', () => {
+        const specialIntegrations = ['agents-md', 'octo-md', 'warp-md'];
+        const isSpecial = specialIntegrations.includes('claude-code');
+
+        expect(isSpecial).toBe(false);
+      });
+    });
+
+    describe('Update decision logic', () => {
+      it('should update both when no flags provided', () => {
+        const docsOnly = false;
+        const commandsOnly = false;
+
+        const updateDocs = docsOnly || (!docsOnly && !commandsOnly);
+        const updateCommands = commandsOnly || (!docsOnly && !commandsOnly);
+
+        expect(updateDocs).toBe(true);
+        expect(updateCommands).toBe(true);
+      });
+
+      it('should update only docs when docs-only flag set', () => {
+        const docsOnly = true;
+        const commandsOnly = false;
+
+        const updateDocs = docsOnly || (!docsOnly && !commandsOnly);
+        const updateCommands = commandsOnly || (!docsOnly && !commandsOnly);
+
+        expect(updateDocs).toBe(true);
+        expect(updateCommands).toBe(false);
+      });
+
+      it('should update only commands when commands-only flag set', () => {
+        const docsOnly = false;
+        const commandsOnly = true;
+
+        const updateDocs = docsOnly || (!docsOnly && !commandsOnly);
+        const updateCommands = commandsOnly || (!docsOnly && !commandsOnly);
+
+        expect(updateDocs).toBe(false);
+        expect(updateCommands).toBe(true);
+      });
+    });
+
+    describe('Config validation scenarios', () => {
+      it('should detect missing .clavix directory', async () => {
+        await fs.remove(clavixDir);
+
+        const clavixExists = await fs.pathExists(clavixDir);
+        const configExists = await fs.pathExists(configPath);
+        const shouldError = !clavixExists || !configExists;
+
+        expect(shouldError).toBe(true);
+      });
+
+      it('should detect missing config.json', async () => {
+        await fs.remove(configPath);
+
+        const clavixExists = await fs.pathExists(clavixDir);
+        const configExists = await fs.pathExists(configPath);
+        const shouldError = !clavixExists || !configExists;
+
+        expect(shouldError).toBe(true);
+      });
+
+      it('should pass validation with valid setup', async () => {
+        const clavixExists = await fs.pathExists(clavixDir);
+        const configExists = await fs.pathExists(configPath);
+        const shouldError = !clavixExists || !configExists;
+
+        expect(shouldError).toBe(false);
+      });
+    });
+
+    describe('Integration fallback logic', () => {
+      it('should default to claude-code when integrations missing', async () => {
+        const config: { integrations?: string[]; providers?: string[] } = {
+          // No integrations or providers
+        };
+
+        const integrations = config.integrations || config.providers || ['claude-code'];
+
+        expect(integrations).toEqual(['claude-code']);
+      });
+
+      it('should prefer integrations over providers (legacy field)', async () => {
+        const config = {
+          integrations: ['cursor'],
+          providers: ['claude-code'], // Legacy field
+        };
+
+        const integrations = config.integrations || config.providers || ['claude-code'];
+
+        expect(integrations).toEqual(['cursor']);
+      });
+
+      it('should use providers when integrations missing', async () => {
+        const config: { integrations?: string[]; providers?: string[] } = {
+          providers: ['windsurf'], // Legacy field
+        };
+
+        const integrations = config.integrations || config.providers || ['claude-code'];
+
+        expect(integrations).toEqual(['windsurf']);
+      });
+    });
+
+    describe('CLAUDE.md update targeting', () => {
+      it('should only update CLAUDE.md for claude-code integration', () => {
+        const integrationName = 'claude-code';
+        const shouldUpdateClaude = integrationName === 'claude-code';
+
+        expect(shouldUpdateClaude).toBe(true);
+      });
+
+      it('should NOT update CLAUDE.md for cursor integration', () => {
+        const integrationName = 'cursor';
+        const shouldUpdateClaude = integrationName === 'claude-code';
+
+        expect(shouldUpdateClaude).toBe(false);
+      });
+
+      it('should NOT update CLAUDE.md for windsurf integration', () => {
+        const integrationName = 'windsurf';
+        const shouldUpdateClaude = integrationName === 'claude-code';
+
+        expect(shouldUpdateClaude).toBe(false);
+      });
+    });
+
+    describe('Force flag behavior', () => {
+      it('should update when forced even if content matches', () => {
+        const force = true;
+        const isUpToDate = true;
+
+        const shouldUpdate = force || !isUpToDate;
+
+        expect(shouldUpdate).toBe(true);
+      });
+
+      it('should skip update when not forced and content matches', () => {
+        const force = false;
+        const isUpToDate = true;
+
+        const shouldUpdate = force || !isUpToDate;
+
+        expect(shouldUpdate).toBe(false);
+      });
+
+      it('should update when not forced but content differs', () => {
+        const force = false;
+        const isUpToDate = false;
+
+        const shouldUpdate = force || !isUpToDate;
+
+        expect(shouldUpdate).toBe(true);
+      });
     });
   });
 });

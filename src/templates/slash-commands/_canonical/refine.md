@@ -328,11 +328,13 @@ Present the current prompt to the user:
 
 ---
 
-**Quality Assessment:**
+**Quality Assessment (6 dimensions):**
 - Clarity: [Score]
-- Specificity: [Score]
+- Efficiency: [Score]
+- Structure: [Score]
 - Completeness: [Score]
 - Actionability: [Score]
+- Specificity: [Score]
 
 **What would you like to change?**
 1. Clarify the objective
@@ -351,13 +353,13 @@ Enter conversational mode:
 
 ### Step 6b: Run Quality Assessment
 
-After refinement, re-assess using the same 6 dimensions as `/clavix:improve`:
+After refinement, re-assess using the standard 6 quality dimensions:
 - Clarity
-- Specificity
-- Context
-- Constraints
-- Actionability
+- Efficiency
 - Structure
+- Completeness
+- Actionability
+- Specificity
 
 ### Step 7b: Save Refined Prompt
 
@@ -559,6 +561,9 @@ I'll update the PRD and add this to the refinement history. Confirm?
 ### CLI Reference
 {{INCLUDE:agent-protocols/cli-reference.md}}
 
+### Quality Dimensions (for Prompt Refinement)
+{{INCLUDE:references/quality-dimensions.md}}
+
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
 
@@ -610,3 +615,34 @@ I'll update the PRD and add this to the refinement history. Confirm?
 - Run `/clavix:plan` to regenerate tasks
 - Or manually update tasks.md
 - Previous progress markers may need adjustment
+
+### Issue: User wants to refine multiple topics at once
+**Cause**: PRD covers several distinct features and user wants to update multiple areas
+**Solution**:
+1. **Sequential approach (recommended)**:
+   - Focus on one topic/feature at a time
+   - Complete refinement for Topic A
+   - Then start new refinement session for Topic B
+   - Clearer change tracking per topic
+
+2. **Batched approach (if user insists)**:
+   - Discuss all changes upfront
+   - Group changes by category: [ADDED], [MODIFIED], [REMOVED]
+   - Apply all changes in one session
+   - In Refinement History, list changes per topic area:
+     ```
+     ### [Date] - Multi-Topic Refinement
+     **Authentication changes:**
+     - [ADDED] 2FA support
+     - [MODIFIED] Password requirements
+
+     **Dashboard changes:**
+     - [ADDED] Dark mode toggle
+     - [REMOVED] Deprecated widgets
+     ```
+
+3. **When to recommend splitting**:
+   - Changes span 4+ distinct features
+   - Changes affect different system components
+   - Risk of losing track of individual changes
+   - User seems overwhelmed by scope

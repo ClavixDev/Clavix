@@ -134,6 +134,16 @@ If you have the full PRD content in memory and want to generate tasks directly:
    - Each phase should be independently deployable when possible
    - Critical path first (must-haves before nice-to-haves)
 
+   **Task Dependency Management:**
+   - **Explicit ordering**: Tasks within a phase should be ordered by execution sequence
+   - **Dependency markers**: Use `(depends: task-id)` for explicit dependencies
+   - **Common dependency patterns**:
+     - Database schema → Models → API endpoints → UI components
+     - Authentication → Protected routes → User-specific features
+     - Core utilities → Features that use them → Integration tests
+   - **Anti-pattern**: Avoid circular dependencies (A depends on B, B depends on A)
+   - **Parallel tasks**: If two tasks have no dependencies, they can be worked on simultaneously
+
 4. **Review and customize generated tasks**:
    - The command will generate `tasks.md` in the PRD folder
    - Tasks are organized into logical phases with quality principles
@@ -244,11 +254,16 @@ The generated `tasks.md` will look like:
 
 **Basic**: `- [ ] {Clear, actionable description}`
 **With reference**: `- [ ] {Description} (ref: {PRD Section Name})`
+**With dependency**: `- [ ] {Description} (depends: {task-id})`
+**Combined**: `- [ ] {Description} (ref: {Section}) (depends: {task-id})`
 
 **Example**:
 ```markdown
 - [ ] Create user registration API endpoint (ref: User Management)
   Task ID: phase-1-authentication-1
+
+- [ ] Add JWT token validation middleware (depends: phase-1-authentication-1)
+  Task ID: phase-1-authentication-2
 ```
 
 ### Task ID Placement

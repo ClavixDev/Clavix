@@ -1,6 +1,6 @@
 # Clavix
 
-> Agentic-first prompt workflows. Markdown templates that teach AI agents how to optimize prompts, create PRDs, and manage implementation. Works with Claude Code, Cursor, Windsurf, and 19+ other AI coding tools.
+> Agentic-first prompt workflows. Markdown templates that teach AI agents how to optimize prompts, create PRDs, and manage implementation. Works with Claude Code, Cursor, Windsurf, and 20 AI coding tools.
 
 ## Quick Links
 

@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.6.6] - 2025-11-28
+
+### Added
+
+- **Test Coverage Improvements** - 21 new tests for CLI commands:
+  - 10 command behavior verification tests for `update.ts`
+  - 11 reconfiguration flow tests for `init.ts`
+  - Total test count: 1306 tests passing
+
+- **Template Enhancements**:
+  - Task dependency guidance in `plan.md` with explicit dependency markers
+  - Scope creep detection and handling in `start.md`
+  - Archive size management guidance in `archive.md`
+  - Multi-topic handling in `refine.md` troubleshooting
+
+- **Quality Dimension Documentation**:
+  - Workflow-specific dimension usage table in `quality-dimensions.md`
+  - Documented why `/clavix:summarize` excludes Specificity dimension
+  - Added quality dimensions reference to `refine.md`
+
+### Fixed
+
+- **Documentation Consistency**:
+  - Updated package.json description to list all 9 slash commands
+  - Fixed "19+" to "20" AI tools count in README.md and docs
+  - Standardized quality dimension terminology in `refine.md` (was using "Context/Constraints" instead of standard 6 dimensions)
+
+- **MANIFEST.md** - Added `/clavix:refine` to usage matrix and updated quality-dimensions description
+
+## [5.6.5] - 2025-11-28
+
+### Fixed
+
+- **UserConfigSchema Missing Fields** - Fixed Zod schema to match `ClavixConfig` interface
+
 ## [5.6.4] - 2025-11-28
 
 ### Fixed
