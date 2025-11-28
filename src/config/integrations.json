@@ -1,6 +1,6 @@
 {
   "$schema": "./integrations.schema.json",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "integrations": [
     {
       "name": "cursor",
@@ -9,7 +9,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".cursor"
+      "detection": ".cursor",
+      "type": "standard"
     },
     {
       "name": "windsurf",
@@ -18,7 +19,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".windsurf"
+      "detection": ".windsurf",
+      "type": "standard"
     },
     {
       "name": "kilocode",
@@ -27,7 +29,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".kilocode"
+      "detection": ".kilocode",
+      "type": "standard"
     },
     {
       "name": "roocode",
@@ -36,7 +39,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".roo"
+      "detection": ".roo",
+      "type": "standard"
     },
     {
       "name": "cline",
@@ -45,7 +49,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".clinerules"
+      "detection": ".clinerules",
+      "type": "standard"
     },
     {
       "name": "droid",
@@ -55,7 +60,8 @@
       "extension": ".md",
       "separator": "-",
       "detection": ".factory",
-      "placeholder": "$ARGUMENTS"
+      "placeholder": "$ARGUMENTS",
+      "type": "standard"
     },
     {
       "name": "opencode",
@@ -65,7 +71,8 @@
       "extension": ".md",
       "separator": "-",
       "detection": ".opencode",
-      "placeholder": "$ARGUMENTS"
+      "placeholder": "$ARGUMENTS",
+      "type": "standard"
     },
     {
       "name": "codebuddy",
@@ -74,7 +81,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".codebuddy"
+      "detection": ".codebuddy",
+      "type": "standard"
     },
     {
       "name": "amp",
@@ -83,7 +91,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".agents"
+      "detection": ".agents",
+      "type": "standard"
     },
     {
       "name": "crush",
@@ -92,7 +101,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".crush"
+      "detection": ".crush",
+      "type": "standard"
     },
     {
       "name": "codex",
@@ -103,7 +113,8 @@
       "separator": "-",
       "detection": ".codex",
       "global": true,
-      "placeholder": "$ARGUMENTS"
+      "placeholder": "$ARGUMENTS",
+      "type": "standard"
     },
     {
       "name": "augment",
@@ -112,7 +123,8 @@
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",
-      "detection": ".augment"
+      "detection": ".augment",
+      "type": "standard"
     },
     {
       "name": "claude-code",
@@ -122,7 +134,8 @@
       "extension": ".md",
       "separator": ":",
       "detection": ".claude",
-      "specialAdapter": "doc-injection"
+      "specialAdapter": "doc-injection",
+      "type": "standard"
     },
     {
       "name": "gemini",
@@ -133,7 +146,8 @@
       "separator": ":",
       "detection": ".gemini",
       "specialAdapter": "toml",
-      "rootDir": ".gemini"
+      "rootDir": ".gemini",
+      "type": "standard"
     },
     {
       "name": "qwen",
@@ -144,7 +158,8 @@
       "separator": ":",
       "detection": ".qwen",
       "specialAdapter": "toml",
-      "rootDir": ".qwen"
+      "rootDir": ".qwen",
+      "type": "standard"
     },
     {
       "name": "llxprt",
@@ -155,7 +170,48 @@
       "separator": ":",
       "detection": ".llxprt",
       "specialAdapter": "toml",
-      "rootDir": ".llxprt"
+      "rootDir": ".llxprt",
+      "type": "standard"
+    },
+    {
+      "name": "agents-md",
+      "displayName": "AGENTS.md",
+      "directory": ".",
+      "filenamePattern": "AGENTS",
+      "extension": ".md",
+      "separator": "-",
+      "detection": "AGENTS.md",
+      "type": "universal"
+    },
+    {
+      "name": "copilot-instructions",
+      "displayName": "GitHub Copilot",
+      "directory": ".github",
+      "filenamePattern": "copilot-instructions",
+      "extension": ".md",
+      "separator": "-",
+      "detection": ".github",
+      "type": "universal"
+    },
+    {
+      "name": "octo-md",
+      "displayName": "OCTO.md (Octofriend)",
+      "directory": ".",
+      "filenamePattern": "OCTO",
+      "extension": ".md",
+      "separator": "-",
+      "detection": "OCTO.md",
+      "type": "universal"
+    },
+    {
+      "name": "warp-md",
+      "displayName": "WARP.md (Warp AI)",
+      "directory": ".",
+      "filenamePattern": "WARP",
+      "extension": ".md",
+      "separator": "-",
+      "detection": "WARP.md",
+      "type": "universal"
     }
   ]
 }

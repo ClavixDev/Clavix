@@ -27,13 +27,37 @@ When you run `/clavix:implement`, I:
 ```
 /clavix:implement
     │
-    ├─► Check .clavix/outputs/<project>/tasks.md
+    ├─► Check .clavix/outputs/<project>/tasks.md (all project folders)
     │       └─► If found → Task Implementation Mode
+    │
+    ├─► Check .clavix/outputs/summarize/tasks.md (legacy fallback)
+    │       └─► If found → Task Implementation Mode (legacy)
     │
     └─► Check .clavix/outputs/prompts/*.md
             └─► If found → Prompt Execution Mode
             └─► If neither → Ask what to build
 ```
+
+### Required Confirmation Message
+
+**Before starting any implementation, you MUST output a confirmation message:**
+
+**For tasks.md detection:**
+```
+Found tasks.md with [N] pending tasks in [project-name]. Starting task implementation...
+```
+
+**For prompt detection:**
+```
+Found [N] saved prompt(s) in prompts/. Implementing [prompt-name]...
+```
+
+**For legacy summarize/ fallback:**
+```
+Found tasks.md with [N] pending tasks in summarize/ (legacy location). Starting task implementation...
+```
+
+This confirmation ensures the user knows exactly what will be implemented before any code is written.
 
 ### Explicit Flags
 

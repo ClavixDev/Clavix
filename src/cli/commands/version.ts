@@ -18,9 +18,18 @@ export default class Version extends Command {
       const packageJsonPath = path.join(__dirname, '../../../package.json');
       const packageJson = await fs.readJson(packageJsonPath);
 
-      console.log(chalk.cyan(`\nClavix v${packageJson.version}\n`));
-    } catch {
-      console.log(chalk.red('\n✗ Could not determine version\n'));
+      this.log(chalk.cyan(`\nClavix v${packageJson.version}\n`));
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error reading package.json';
+      this.error(
+        chalk.red('Could not determine version') +
+          '\n' +
+          chalk.gray(`  Error: ${errorMessage}`) +
+          '\n' +
+          chalk.yellow('  Hint: Try reinstalling Clavix with ') +
+          chalk.cyan('npm install -g clavix')
+      );
     }
   }
 }

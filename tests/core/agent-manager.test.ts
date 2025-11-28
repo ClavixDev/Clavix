@@ -3,7 +3,12 @@
  */
 
 import { AgentManager } from '../../src/core/agent-manager';
-import { AgentAdapter, ValidationResult, CommandTemplate, ManagedBlock } from '../../src/types/agent';
+import {
+  AgentAdapter,
+  ValidationResult,
+  CommandTemplate,
+  ManagedBlock,
+} from '../../src/types/agent';
 import { IntegrationError } from '../../src/types/errors';
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 
@@ -20,7 +25,7 @@ describe('AgentManager', () => {
 
       expect(adapters.length).toBeGreaterThan(0);
 
-      const adapterNames = adapters.map(a => a.name);
+      const adapterNames = adapters.map((a) => a.name);
       expect(adapterNames).toContain('claude-code');
       expect(adapterNames).toContain('cursor');
       expect(adapterNames).toContain('droid');
@@ -35,15 +40,15 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('codex');
     });
 
-    it('should have exactly 16 built-in adapters', () => {
+    it('should have exactly 20 built-in adapters', () => {
       const adapters = manager.getAdapters();
 
-      // Note: Copilot was removed as an adapter and is now handled via CopilotInstructionsGenerator
-      // which injects into .github/copilot-instructions.md instead
-      expect(adapters.length).toBe(16);
+      // v5.6.3: Added 4 universal adapters (agents-md, copilot-instructions, octo-md, warp-md)
+      // bringing total from 16 to 20
+      expect(adapters.length).toBe(20);
 
       // Verify new adapters are registered
-      const adapterNames = adapters.map(a => a.name);
+      const adapterNames = adapters.map((a) => a.name);
       expect(adapterNames).toContain('windsurf');
       expect(adapterNames).toContain('kilocode');
       expect(adapterNames).toContain('llxprt');
@@ -145,21 +150,25 @@ describe('AgentManager', () => {
       detectableAdapter.detectProject = jest.fn<() => Promise<boolean>>().mockResolvedValue(true);
 
       const nonDetectableAdapter = createMockAdapter('non-detectable');
-      nonDetectableAdapter.detectProject = jest.fn<() => Promise<boolean>>().mockResolvedValue(false);
+      nonDetectableAdapter.detectProject = jest
+        .fn<() => Promise<boolean>>()
+        .mockResolvedValue(false);
 
       manager.registerAdapter(detectableAdapter);
       manager.registerAdapter(nonDetectableAdapter);
 
       const detected = await manager.detectAgents();
 
-      const detectedNames = detected.map(a => a.name);
+      const detectedNames = detected.map((a) => a.name);
       expect(detectedNames).toContain('detectable');
       expect(detectedNames).not.toContain('non-detectable');
     });
 
     it('should handle detection errors gracefully', async () => {
       const errorAdapter = createMockAdapter('error-adapter');
-      errorAdapter.detectProject = jest.fn<() => Promise<boolean>>().mockRejectedValue(new Error('Detection failed'));
+      errorAdapter.detectProject = jest
+        .fn<() => Promise<boolean>>()
+        .mockRejectedValue(new Error('Detection failed'));
 
       manager.registerAdapter(errorAdapter);
 
@@ -326,7 +335,7 @@ describe('AgentManager', () => {
       expect(choices.length).toBeGreaterThan(0);
 
       // Check structure
-      choices.forEach(choice => {
+      choices.forEach((choice) => {
         expect(choice).toHaveProperty('name');
         expect(choice).toHaveProperty('value');
         expect(choice.name).toContain('(');
@@ -337,7 +346,7 @@ describe('AgentManager', () => {
     it('should pre-select Claude Code by default', () => {
       const choices = manager.getAdapterChoices();
 
-      const claudeCodeChoice = choices.find(c => c.value === 'claude-code');
+      const claudeCodeChoice = choices.find((c) => c.value === 'claude-code');
 
       expect(claudeCodeChoice).toBeDefined();
       expect(claudeCodeChoice?.checked).toBe(true);
@@ -346,9 +355,9 @@ describe('AgentManager', () => {
     it('should not pre-select other adapters', () => {
       const choices = manager.getAdapterChoices();
 
-      const otherChoices = choices.filter(c => c.value !== 'claude-code');
+      const otherChoices = choices.filter((c) => c.value !== 'claude-code');
 
-      otherChoices.forEach(choice => {
+      otherChoices.forEach((choice) => {
         expect(choice.checked).toBeFalsy();
       });
     });
@@ -358,7 +367,7 @@ describe('AgentManager', () => {
       manager.registerAdapter(customAdapter);
 
       const choices = manager.getAdapterChoices();
-      const customChoice = choices.find(c => c.value === 'custom');
+      const customChoice = choices.find((c) => c.value === 'custom');
 
       expect(customChoice?.name).toContain('Custom Agent');
       expect(customChoice?.name).toContain('.custom');
@@ -379,7 +388,7 @@ describe('AgentManager', () => {
 
       // Detect
       const detected = await manager.detectAgents();
-      expect(detected.map(a => a.name)).toContain('lifecycle-test');
+      expect(detected.map((a) => a.name)).toContain('lifecycle-test');
 
       // Validate
       const results = await manager.validateAdapters(['lifecycle-test']);
@@ -417,11 +426,7 @@ describe('AgentManager', () => {
 /**
  * Helper function to create a mock adapter
  */
-function createMockAdapter(
-  name: string,
-  displayName?: string,
-  directory?: string
-): AgentAdapter {
+function createMockAdapter(name: string, displayName?: string, directory?: string): AgentAdapter {
   return {
     name,
     displayName: displayName || `Mock ${name}`,

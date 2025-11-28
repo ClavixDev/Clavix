@@ -2,6 +2,28 @@
 
 Thank you for your interest in contributing to Clavix! Before you start, please read this guide carefully - especially the architecture principles section.
 
+## Quick Start for First-Time Contributors
+
+**What is Clavix?** Clavix is an agentic-first tool that provides markdown templates for AI coding assistants. When users run slash commands like `/clavix:improve`, their AI agent reads a markdown template and follows the instructions using its native capabilities.
+
+**Key insight:** The markdown templates ARE the product. TypeScript code only handles CLI setup (`clavix init`, `clavix update`, etc.) - it never executes during slash commands.
+
+### What type of change are you making?
+
+| I want to... | You should... |
+|--------------|---------------|
+| Improve how a slash command works | Edit templates in `src/templates/slash-commands/_canonical/` |
+| Add a new slash command | Create new `.md` file in `_canonical/` and update docs |
+| Fix a CLI bug | Edit TypeScript in `src/cli/commands/` |
+| Add support for new AI tool | Add entry to `src/config/integrations.json` |
+| Improve documentation | Edit files in `docs/` or template files |
+
+### Important Resources
+
+- **[Template Authoring Guide](docs/templates.md)** - How to create and modify templates
+- **Architecture section below** - Why we don't put logic in TypeScript
+- **Source of Truth section** - What to edit vs. what's generated
+
 ## Critical Architecture Principle: Agentic-First
 
 **Clavix is an agentic-first tool. This is non-negotiable.**

@@ -43,8 +43,8 @@ describe('Multi-Integration Workflow Integration', () => {
     it('should register all built-in adapters', () => {
       const adapters = agentManager.getAdapters();
 
-      // Note: Copilot is now handled via CopilotInstructionsGenerator, not as an adapter
-      expect(adapters).toHaveLength(16);
+      // v5.6.3: 16 standard + 4 universal adapters = 20 total
+      expect(adapters).toHaveLength(20);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
@@ -141,7 +141,7 @@ describe('Multi-Integration Workflow Integration', () => {
     });
 
     it('should detect all integrations when all markers present', async () => {
-      // Create directories for all 16 adapters (using correct detection paths)
+      // Create directories for all 16 standard adapters (using correct detection paths)
       await fs.ensureDir('.claude'); // claude-code
       await fs.ensureDir('.cursor'); // cursor
       await fs.ensureDir('.factory'); // droid (detection: .factory)
@@ -159,10 +159,17 @@ describe('Multi-Integration Workflow Integration', () => {
       await fs.ensureDir('.augment'); // augment
       await fs.ensureDir('.codex'); // codex (project dir)
 
+      // v5.6.3: Create detection markers for 4 universal adapters
+      await fs.writeFile('AGENTS.md', '# AGENTS'); // agents-md
+      await fs.ensureDir('.github'); // copilot-instructions
+      await fs.writeFile('OCTO.md', '# OCTO'); // octo-md
+      await fs.writeFile('WARP.md', '# WARP'); // warp-md
+
       const detected = await agentManager.detectAgents();
       const names = detected.map((a) => a.name);
 
-      expect(detected).toHaveLength(16);
+      // v5.6.3: 16 standard + 4 universal adapters = 20 total
+      expect(detected).toHaveLength(20);
       expect(names).toEqual(
         expect.arrayContaining([
           'claude-code',
@@ -391,8 +398,8 @@ describe('Multi-Integration Workflow Integration', () => {
     it('should provide formatted choices for prompts', () => {
       const choices = agentManager.getAdapterChoices();
 
-      // Note: Copilot is now handled via CopilotInstructionsGenerator, not as an adapter
-      expect(choices).toHaveLength(16);
+      // v5.6.3: 16 standard + 4 universal adapters = 20 total
+      expect(choices).toHaveLength(20);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
 

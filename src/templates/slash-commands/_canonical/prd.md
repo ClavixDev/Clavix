@@ -65,7 +65,7 @@ For complete mode documentation, see: `.clavix/instructions/core/clavix-mode.md`
 
 ---
 
-## State Assertion (Required)
+## State Assertion (REQUIRED)
 
 **Before starting PRD development, output:**
 ```

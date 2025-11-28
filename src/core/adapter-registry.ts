@@ -24,10 +24,34 @@ import {
   DEFAULT_MD_FEATURES,
   DEFAULT_TOML_FEATURES,
 } from '../types/adapter-config.js';
+import {
+  validateIntegrationsConfig,
+  formatZodErrors,
+  type IntegrationsConfig,
+} from '../utils/schemas.js';
 
 // Use createRequire for JSON imports in ESM
 const require = createRequire(import.meta.url);
-const integrations = require('../config/integrations.json');
+const rawIntegrations = require('../config/integrations.json');
+
+// Validate integrations.json at load time (build-time validation)
+const validationResult = validateIntegrationsConfig(rawIntegrations);
+
+if (!validationResult.success && validationResult.errors) {
+  const errorMessages = formatZodErrors(validationResult.errors);
+  throw new Error(
+    `Invalid integrations.json configuration:\n${errorMessages.map((e) => `  - ${e}`).join('\n')}`
+  );
+}
+
+// Log warnings for unknown fields (non-blocking)
+if (validationResult.warnings && validationResult.warnings.length > 0) {
+  console.warn(
+    `[Clavix] integrations.json warnings:\n${validationResult.warnings.map((w) => `  - ${w}`).join('\n')}`
+  );
+}
+
+const integrations: IntegrationsConfig = validationResult.data!;
 
 /**
  * Integration configuration from JSON
