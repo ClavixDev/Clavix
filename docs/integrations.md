@@ -1,6 +1,17 @@
 # Supported Integrations
 
-Clavix can generate slash commands and documentation snippets for a wide range of IDEs and CLI agents. The tables below summarize where command files are written, whether subdirectories are supported, and which argument placeholders are used.
+Clavix can generate slash commands and documentation snippets for a wide range of IDEs and CLI agents. The tables below summarize where command files are written, the command format used, and which argument placeholders apply.
+
+## Command Format Quick Reference
+
+**Your command format depends on your AI tool:**
+
+| Tool Type | Separator | Example |
+|-----------|-----------|---------|
+| **CLI agents** (Claude Code, Gemini, Qwen, Crush, LLXPRT, Augment) | Colon (`:`) | `/clavix:improve` |
+| **IDE extensions** (Cursor, Windsurf, Cline, Kilocode, Roocode, Droid, etc.) | Hyphen (`-`) | `/clavix-improve` |
+
+**Rule of thumb:** CLI tools use colon, IDE extensions use hyphen.
 
 ## Template architecture
 
@@ -16,33 +27,33 @@ Integration-specific formatting is handled by each adapter's `formatCommand()` m
 - **TOML integrations** (Gemini, Qwen): Convert to TOML with `prompt = """..."""` wrapper
 - **Special integrations** (Crush): Apply custom placeholder transformations
 
-For detailed information on template customization and override options, see [Template customization guide](guides/templates.md).
+For detailed information on template customization and override options, see [Getting Started](getting-started.md#template-customization).
 
 ## IDEs and editor extensions
 
-| Integration | Command location | Subdirectories | Placeholder |
-| --- | --- | --- | --- |
-| Cursor | `.cursor/commands/` | No | *(implicit)* |
-| Windsurf | `.windsurf/workflows/` | Yes | *(implicit)* |
-| Kilocode | `.kilocode/workflows/` | No | *(implicit)* |
-| Roocode | `.roo/commands/` | No | *(implicit)* |
-| Cline | `.clinerules/workflows/` (falls back to `.cline/`) | No | *(implicit)* |
+| Integration | Format | Command location | Subdirectories | Placeholder |
+| --- | --- | --- | --- | --- |
+| Cursor | `-` | `.cursor/commands/` | No | *(implicit)* |
+| Windsurf | `-` | `.windsurf/workflows/` | Yes | *(implicit)* |
+| Kilocode | `-` | `.kilocode/workflows/` | No | *(implicit)* |
+| Roocode | `-` | `.roo/commands/` | No | *(implicit)* |
+| Cline | `-` | `.clinerules/workflows/` (falls back to `.cline/`) | No | *(implicit)* |
 
 ## CLI agents and toolchains
 
-| Integration | Command location | Subdirectories | Placeholder |
-| --- | --- | --- | --- |
-| Claude Code | `.claude/commands/clavix/` | Yes | *(implicit — command templates inject arguments directly)* |
-| Droid CLI | `.factory/commands/` | No | `$ARGUMENTS` |
-| CodeBuddy CLI | `.codebuddy/commands/` (or `~/.codebuddy/commands/`) | No | `$1`, `$2`, … |
-| OpenCode | `.opencode/command/` | No | `$ARGUMENTS` |
-| Gemini CLI | `.gemini/commands/clavix/` by default (optional `.gemini/commands/`) | Yes | `{{args}}` |
-| Qwen Code | `.qwen/commands/clavix/` by default (optional `.qwen/commands/`) | Yes | `{{args}}` |
-| LLXPRT | `.llxprt/commands/clavix/` | Yes | `{{args}}` |
-| Amp | `.agents/commands/` | No | *(raw prompt — no placeholder)* |
-| Crush CLI | `.crush/commands/clavix/` | Yes | `$PROMPT` |
-| Codex CLI | `~/.codex/prompts` | No | `$ARGUMENTS` |
-| Augment CLI | `.augment/commands/clavix/` (or `~/.augment/commands/clavix/`) | Yes | *(implicit — templates include arguments)* |
+| Integration | Format | Command location | Subdirectories | Placeholder |
+| --- | --- | --- | --- | --- |
+| Claude Code | `:` | `.claude/commands/clavix/` | Yes | *(implicit)* |
+| Droid CLI | `-` | `.factory/commands/` | No | `$ARGUMENTS` |
+| CodeBuddy CLI | `-` | `.codebuddy/commands/` (or `~/.codebuddy/commands/`) | No | `$1`, `$2`, … |
+| OpenCode | `-` | `.opencode/command/` | No | `$ARGUMENTS` |
+| Gemini CLI | `:` | `.gemini/commands/clavix/` | Yes | `{{args}}` |
+| Qwen Code | `:` | `.qwen/commands/clavix/` | Yes | `{{args}}` |
+| LLXPRT | `:` | `.llxprt/commands/clavix/` | Yes | `{{args}}` |
+| Amp | `-` | `.agents/commands/` | No | *(raw prompt)* |
+| Crush CLI | `:` | `.crush/commands/clavix/` | Yes | `$PROMPT` |
+| Codex CLI | `-` | `~/.codex/prompts` | No | `$ARGUMENTS` |
+| Augment CLI | `:` | `.augment/commands/clavix/` (or `~/.augment/commands/clavix/`) | Yes | *(implicit)* |
 
 ## Universal adapters
 
@@ -55,4 +66,4 @@ For detailed information on template customization and override options, see [Te
 
 `clavix init` uses an interactive checkbox list so you can enable multiple integrations at once. Clavix remembers the integrations in `.clavix/config.json` and `clavix update` regenerates the corresponding commands on demand.
 
-For a complete walkthrough of the initialization flow, see [clavix init](commands/init.md).
+For a complete walkthrough of the initialization flow, see [Commands Reference](commands.md#clavix-init).

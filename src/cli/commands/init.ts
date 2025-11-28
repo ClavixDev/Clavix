@@ -325,30 +325,61 @@ export default class Init extends Command {
         console.log(chalk.gray('  ✓ Created detailed workflow guides for generic integrations'));
       }
 
-      // Success message
-      // v4.11: Use generic command names - format varies by integration
-      // (claude-code uses colon like /clavix:improve, droid uses hyphen like /clavix-improve)
+      // Success message with prominent command format display
       console.log(chalk.bold.green('\n✅ Clavix initialized successfully!\n'));
-      console.log(chalk.gray('Next steps:'));
+
+      // Determine the primary command format based on selected integrations
+      const colonTools = ['claude-code', 'gemini', 'qwen', 'crush', 'llxprt', 'augment'];
+      const usesColon = selectedIntegrations.some((i) => colonTools.includes(i));
+      const usesHyphen = selectedIntegrations.some((i) => !colonTools.includes(i));
+      const separator = usesColon && !usesHyphen ? ':' : usesHyphen && !usesColon ? '-' : ':';
+      const altSeparator = separator === ':' ? '-' : ':';
+
+      // Show command format prominently at the TOP
+      console.log(
+        chalk.bold('📋 Your command format:'),
+        chalk.bold.cyan(`/clavix${separator}improve`)
+      );
+      if (usesColon && usesHyphen) {
+        console.log(
+          chalk.gray('   (Some integrations use'),
+          chalk.cyan(`/clavix${altSeparator}improve`),
+          chalk.gray('instead)')
+        );
+      }
+      console.log();
+
+      // Available commands
+      console.log(chalk.gray('Available slash commands:'));
+      console.log(
+        chalk.gray('  •'),
+        chalk.cyan(`/clavix${separator}improve`),
+        chalk.gray('- Smart prompt optimization')
+      );
+      console.log(
+        chalk.gray('  •'),
+        chalk.cyan(`/clavix${separator}prd`),
+        chalk.gray('- Generate PRD through guided questions')
+      );
+      console.log(
+        chalk.gray('  •'),
+        chalk.cyan(`/clavix${separator}plan`),
+        chalk.gray('- Create task breakdown from PRD')
+      );
+      console.log(
+        chalk.gray('  •'),
+        chalk.cyan(`/clavix${separator}implement`),
+        chalk.gray('- Execute tasks or prompts')
+      );
+
+      console.log(chalk.gray('\nNext steps:'));
       console.log(chalk.gray('  • Slash commands are now available in your AI agent'));
       console.log(
         chalk.gray('  • Run'),
-        chalk.cyan('clavix --help'),
-        chalk.gray('to see all CLI commands')
+        chalk.cyan('clavix diagnose'),
+        chalk.gray('to verify installation')
       );
-      console.log(chalk.gray('  • Available slash commands:'));
-      console.log(
-        chalk.gray('    ◦'),
-        chalk.cyan('improve'),
-        chalk.gray('- Smart prompt optimization with auto depth selection')
-      );
-      console.log(
-        chalk.gray('    ◦'),
-        chalk.cyan('prd'),
-        chalk.gray('- Generate PRD through guided questions')
-      );
-      console.log(chalk.gray('    ◦'), chalk.cyan('execute'), chalk.gray('- Run saved prompts'));
-      console.log(chalk.gray('\n  Command format varies by integration (colon vs hyphen)\n'));
+      console.log();
     } catch (error: unknown) {
       const { getErrorMessage, toError } = await import('../../utils/error-utils.js');
       console.error(chalk.red('\n✗ Initialization failed:'), getErrorMessage(error));
@@ -462,6 +493,17 @@ export default class Init extends Command {
     const instructions = `# Clavix Instructions
 
 Welcome to Clavix! This directory contains your local Clavix configuration and data.
+
+## Command Format
+
+**Your command format depends on your AI tool:**
+
+| Tool Type | Format | Example |
+|-----------|--------|---------|
+| **CLI tools** (Claude Code, Gemini, Qwen) | Colon (\`:\`) | \`/clavix:improve\` |
+| **IDE extensions** (Cursor, Windsurf, Cline) | Hyphen (\`-\`) | \`/clavix-improve\` |
+
+**Rule of thumb:** CLI tools use colon, IDE extensions use hyphen.
 
 ## Directory Structure
 

@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.1] - 2025-11-28
+
+### Added
+
+- **CONTRIBUTING.md** - Comprehensive contributor guide with architecture principles:
+  - Documents agentic-first architecture and why it must remain so
+  - Explains what CAN and CANNOT be changed (TypeScript won't help slash commands)
+  - Full development setup, testing instructions, and PR process
+
+- **Command Format Visibility** - Users now see their command format prominently:
+  - `clavix init` output shows format at the TOP (e.g., "Your command format: /clavix:improve")
+  - Generated `INSTRUCTIONS.md` includes command format table
+  - All docs include format reference tables
+
+### Changed
+
+- **Documentation Consolidation** - Reduced 18+ scattered files to 5 focused documents:
+  - `docs/README.md` - Single entry point with navigation
+  - `docs/architecture.md` - Consolidated from how-it-works.md + philosophy.md
+  - `docs/commands.md` - All 12 command docs in one file
+  - `docs/getting-started.md` - Consolidated from 4 guide files
+  - `docs/integrations.md` - Added Format column to integration tables
+
+- **README.md** - Slimmed down with prominent command format section and links to consolidated docs
+
+### Removed
+
+- Deleted `docs/commands/` directory (12 individual command files)
+- Deleted `docs/guides/` directory (4 guide files)
+- Deleted `docs/how-it-works.md`, `docs/philosophy.md`, `docs/why-clavix.md` (merged into architecture.md)
+
 ## [5.5.0] - 2025-11-27
 
 ### Changed

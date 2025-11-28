@@ -1,0 +1,385 @@
+# Commands Reference
+
+## Command Format by Tool
+
+**Your command format depends on your AI tool:**
+
+| Tool Type | Separator | Example |
+|-----------|-----------|---------|
+| **CLI agents** (Claude Code, Gemini, Qwen, Crush, LLXPRT, Augment) | Colon (`:`) | `/clavix:improve` |
+| **IDE extensions** (Cursor, Windsurf, Cline, Kilocode, Roocode, Droid, etc.) | Hyphen (`-`) | `/clavix-improve` |
+
+**Rule of thumb:** CLI tools use colon, IDE extensions use hyphen.
+
+---
+
+## Command Overview
+
+### CLI Commands (4 total)
+
+These run TypeScript code to set up your environment:
+
+| Command | Purpose |
+|---------|---------|
+| `clavix init` | Initialize Clavix in a project |
+| `clavix update` | Regenerate templates after package update |
+| `clavix diagnose` | Check installation health |
+| `clavix version` | Show version |
+
+### Slash Commands (8 total)
+
+These are markdown templates that AI agents read and execute:
+
+| Command | Stage | Purpose |
+|---------|-------|---------|
+| `/clavix:improve` | Optimize | Smart prompt optimization with auto-depth |
+| `/clavix:prd` | Document | Guided PRD generation |
+| `/clavix:plan` | Plan | Task breakdown from PRD |
+| `/clavix:implement` | Implement | Execute tasks or prompts |
+| `/clavix:start` | Explore | Conversational requirements gathering |
+| `/clavix:summarize` | Document | Extract requirements from conversation |
+| `/clavix:verify` | Verify | Check implementation against checklist |
+| `/clavix:archive` | Manage | Archive completed projects |
+
+---
+
+# CLI Commands
+
+## clavix init
+
+Initialize Clavix in the current project.
+
+```bash
+clavix init
+```
+
+**What it does:**
+- Creates `.clavix/` directory with configuration
+- Generates provider-specific slash command templates
+- Injects documentation blocks into agent files (AGENTS.md, CLAUDE.md, etc.)
+
+**Outputs:**
+- `.clavix/config.json` - Selected providers and preferences
+- `.clavix/INSTRUCTIONS.md` - Local quick-start guide
+- Provider command files (e.g., `.claude/commands/clavix/*.md`)
+
+**Common messages:**
+- `Clavix is already initialized. Reinitialize?` - Choose Yes to rebuild
+- `You must select at least one provider.` - Select at least one integration
+
+---
+
+## clavix update
+
+Refresh templates and documentation blocks.
+
+```bash
+clavix update [options]
+```
+
+**Flags:**
+- `--docs-only` - Update documentation blocks only
+- `--commands-only` - Regenerate command files only
+- `-f, --force` - Overwrite even if no changes detected
+
+**Common messages:**
+- `No .clavix directory found.` - Run `clavix init` first
+- `Unknown provider: <name>, skipping...` - Provider not in adapter registry
+
+---
+
+## clavix diagnose
+
+Check installation health.
+
+```bash
+clavix diagnose
+```
+
+**Checks performed:**
+1. Version check - Package version readable
+2. Directory check - `.clavix/` exists with required subdirectories
+3. Configuration check - `config.json` valid
+4. Integration check - Each configured integration working
+5. Template check - Package templates intact
+
+**Sample output:**
+```
+Results:
+  ✓ Version: v5.5.0
+  ✓ .clavix directory OK
+  ✓ config.json OK (2 integration(s))
+  ✓ Claude Code: 8 command(s)
+  ✓ AGENTS.md: Generated
+  ✓ Package templates OK
+
+Summary: 6 passed, 0 warnings, 0 failed
+```
+
+---
+
+## clavix version
+
+Show installed version.
+
+```bash
+clavix version
+```
+
+**Output:** `Clavix vX.Y.Z`
+
+---
+
+# Slash Commands
+
+## /clavix:improve
+
+Smart prompt optimization with auto-depth selection.
+
+```
+/clavix:improve [prompt]
+```
+
+**What it does:**
+1. Analyzes prompt quality across 6 dimensions (clarity, efficiency, structure, completeness, actionability, specificity)
+2. Auto-selects depth: standard for good prompts, comprehensive for complex ones
+3. Applies optimization patterns
+4. Saves result to `.clavix/outputs/prompts/`
+
+**Mode:** Planning (no code allowed)
+
+**When to use:** Any prompt that needs improvement - feature requests, bug reports, refactoring tasks.
+
+---
+
+## /clavix:prd
+
+Generate PRD through guided Socratic questions.
+
+```
+/clavix:prd [options]
+```
+
+**Flags:**
+- `-q, --quick` - Shorter question flow
+- `-p, --project <name>` - Name the project directory
+- `--skip-validation` - Skip CLEAR analysis
+
+**What it does:**
+1. Asks strategic questions about your project
+2. Detects tech stack from project files
+3. Generates comprehensive PRD (`full-prd.md`)
+4. Creates AI-optimized version (`quick-prd.md`)
+
+**Output files:**
+- `.clavix/outputs/<project>/full-prd.md` - Detailed PRD
+- `.clavix/outputs/<project>/quick-prd.md` - Condensed version
+
+**When to use:**
+- Building something completely new
+- Complex features with multiple requirements
+- Greenfield development
+
+**When NOT to use:** Modifications to existing code - use `/clavix:improve` instead.
+
+---
+
+## /clavix:plan
+
+Generate task breakdown from PRD.
+
+```
+/clavix:plan [options]
+```
+
+**Flags:**
+- `-p, --project <name>` - Target specific project
+- `--source <auto|full|quick|mini|prompt>` - Choose artifact to use
+- `--max-tasks <number>` - Limit tasks per phase (default: 20)
+- `-o, --overwrite` - Replace existing tasks.md
+
+**What it does:**
+1. Reads PRD artifacts
+2. Extracts top-level features (not nested details)
+3. Groups into phases
+4. Generates `tasks.md` checklist
+
+**Task generation algorithm:**
+- Top-level numbered lists = Features (tasks)
+- Nested bullets = Implementation notes (NOT separate tasks)
+- "Technical Stack" sections = Dependencies (NOT tasks)
+
+**Output:**
+- `.clavix/outputs/<project>/tasks.md` - Phased checklist
+
+---
+
+## /clavix:implement
+
+Execute tasks or prompts.
+
+```
+/clavix:implement [options]
+```
+
+**Auto-detection:**
+- If `tasks.md` exists: Task mode
+- If prompts exist in `.clavix/outputs/prompts/`: Prompt mode
+
+**Task mode flags:**
+- `-p, --project <name>` - Select PRD project
+- `--tasks` - Force task mode
+- `--no-git` - Skip git auto-commits
+- `--commit-strategy <per-task|per-5-tasks|per-phase|none>` - Auto-commit strategy
+
+**Prompt mode flags:**
+- `--latest` - Execute most recent saved prompt
+- `--prompt <id>` - Execute specific prompt by ID
+
+**Git commit strategies:**
+| Strategy | Behavior |
+|----------|----------|
+| `none` (default) | No automatic commits |
+| `per-task` | Commit after every task |
+| `per-5-tasks` | Commit every 5 completed tasks |
+| `per-phase` | Commit when phase completes |
+
+---
+
+## /clavix:start
+
+Start conversational mode for requirements exploration.
+
+```
+/clavix:start
+```
+
+**What it does:**
+- Enters exploration mode
+- Asks clarifying questions instead of jumping to implementation
+- Tracks conversation topics
+- Suggests `/clavix:summarize` when ready
+
+**Mode boundaries:**
+- Asking clarifying questions
+- Helping think through ideas
+- Identifying edge cases
+- Tracking requirements
+- **NO code writing**
+
+**Next steps:**
+- `/clavix:summarize` - Extract requirements
+- `/clavix:prd` - Switch to guided PRD
+
+---
+
+## /clavix:summarize
+
+Extract structured requirements from conversation.
+
+```
+/clavix:summarize
+```
+
+**What it does:**
+1. Pre-validates conversation coverage
+2. Extracts features, constraints, success criteria
+3. Creates documentation files
+4. Applies optimization patterns
+5. Flags unclear areas
+
+**Output files:**
+- `.clavix/outputs/<project>/mini-prd.md` - Comprehensive requirements
+- `.clavix/outputs/<project>/original-prompt.md` - Raw extraction
+- `.clavix/outputs/<project>/optimized-prompt.md` - Enhanced version
+
+**Confidence indicators:**
+- **[HIGH]** - Explicitly stated multiple times
+- **[MEDIUM]** - Mentioned once or inferred
+- **[LOW]** - Assumed based on limited info
+
+---
+
+## /clavix:verify
+
+Verify implementation against checklist.
+
+```
+/clavix:verify
+```
+
+**What it does:**
+1. Locates the prompt you implemented
+2. Checks against requirements checklist
+3. Runs automated tests if they exist
+4. Reports pass/fail results
+5. Identifies issues
+
+**Automated checks:**
+- Test suite execution
+- Build/compile verification
+- Linter checks
+- Type checking
+
+**Report format:**
+```
+## Verification Report
+
+### Passed (8/10)
+- [x] Tests pass
+- [x] Build succeeds
+...
+
+### Failed (2/10)
+- [ ] Error handling for edge case
+- [ ] Mobile responsive design
+```
+
+---
+
+## /clavix:archive
+
+Archive completed projects.
+
+```
+/clavix:archive [project] [options]
+```
+
+**Flags:**
+- `-l, --list` - Display archived projects
+- `-f, --force` - Archive even if tasks incomplete
+- `-r, --restore <project>` - Restore from archive
+
+**What it does:**
+- Moves project from `.clavix/outputs/` to `.clavix/outputs/archive/`
+- Checks task completion status
+- Supports restore for later reference
+
+---
+
+## Recommended Workflow
+
+```
+/clavix:start          # Explore requirements
+     ↓
+/clavix:summarize      # Extract documentation
+     ↓
+/clavix:prd            # (Alternative) Guided PRD
+     ↓
+/clavix:plan           # Generate task breakdown
+     ↓
+/clavix:implement      # Execute tasks
+     ↓
+/clavix:verify         # Check implementation
+     ↓
+/clavix:archive        # Archive when complete
+```
+
+Or for quick improvements:
+```
+/clavix:improve "add user authentication"
+     ↓
+/clavix:implement --latest
+     ↓
+/clavix:verify
+```
