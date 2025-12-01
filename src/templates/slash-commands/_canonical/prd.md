@@ -344,7 +344,7 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ---
 
-## Agent Transparency (v5.8.0)
+## Agent Transparency (v5.8.1)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
@@ -360,6 +360,9 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ### CLI Reference
 {{INCLUDE:agent-protocols/cli-reference.md}}
+
+### Recovery Patterns
+{{INCLUDE:troubleshooting/vibecoder-recovery.md}}
 
 ---
 

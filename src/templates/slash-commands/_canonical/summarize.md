@@ -401,7 +401,7 @@ The `/clavix:summarize` command extracts requirements from exploratory conversat
 
 ---
 
-## Agent Transparency (v5.8.0)
+## Agent Transparency (v5.8.1)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
@@ -414,6 +414,9 @@ The `/clavix:summarize` command extracts requirements from exploratory conversat
 
 ### Workflow State Detection
 {{INCLUDE:agent-protocols/state-awareness.md}}
+
+### CLI Reference
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### Recovery Patterns
 {{INCLUDE:troubleshooting/vibecoder-recovery.md}}
