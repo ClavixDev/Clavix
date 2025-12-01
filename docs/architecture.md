@@ -61,7 +61,7 @@ The agent doesn't "use" Clavix as a service. The agent **becomes** Clavix-aware 
 
 ## Template System
 
-### Canonical Templates (8 workflows)
+### Canonical Templates (9 workflows)
 
 | Template | Purpose | Mode |
 |----------|---------|------|
@@ -71,6 +71,7 @@ The agent doesn't "use" Clavix as a service. The agent **becomes** Clavix-aware 
 | `/clavix:implement` | Execute tasks or prompts | Implementation |
 | `/clavix:start` | Conversational requirements | Planning |
 | `/clavix:summarize` | Extract requirements from conversation | Planning |
+| `/clavix:refine` | Refine existing PRD or prompt | Planning |
 | `/clavix:verify` | Check implementation against PRD | Verification |
 | `/clavix:archive` | Archive completed projects | Management |
 

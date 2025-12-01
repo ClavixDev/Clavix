@@ -1,6 +1,5 @@
 import { Command, Flags } from '@oclif/core';
 import chalk from 'chalk';
-import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import * as path from 'path';
 import { DocInjector } from '../../core/doc-injector.js';
@@ -10,7 +9,6 @@ import { OctoMdGenerator } from '../../core/adapters/octo-md-generator.js';
 import { WarpMdGenerator } from '../../core/adapters/warp-md-generator.js';
 import { InstructionsGenerator } from '../../core/adapters/instructions-generator.js';
 import { AgentAdapter } from '../../types/agent.js';
-import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
 import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
 import { validateUserConfig, formatZodErrors } from '../../utils/schemas.js';
 
@@ -228,7 +226,7 @@ export default class Update extends Command {
     return updated;
   }
 
-  private async updateCommands(adapter: AgentAdapter, force: boolean): Promise<number> {
+  private async updateCommands(adapter: AgentAdapter, _force: boolean): Promise<number> {
     this.log(chalk.cyan(`\n🔧 Updating slash commands for ${adapter.displayName}...`));
 
     // Remove all existing commands first (force regeneration)
@@ -251,61 +249,7 @@ export default class Update extends Command {
 
     this.log(chalk.gray(`  ✓ Generated ${templates.length} command(s)`));
 
-    // Handle legacy commands (cleanup old naming patterns)
-    const commandNames = templates.map((t) => t.name);
-    const legacyRemoved = await this.handleLegacyCommands(adapter, commandNames, force);
-
-    return removed + templates.length + legacyRemoved;
-  }
-
-  private async handleLegacyCommands(
-    adapter: AgentAdapter,
-    commandNames: string[],
-    force: boolean
-  ): Promise<number> {
-    if (commandNames.length === 0) {
-      return 0;
-    }
-
-    const legacyFiles = await collectLegacyCommandFiles(adapter, commandNames);
-
-    if (legacyFiles.length === 0) {
-      return 0;
-    }
-
-    const relativePaths = legacyFiles
-      .map((file) => path.relative(process.cwd(), file))
-      .sort((a, b) => a.localeCompare(b));
-
-    this.log(chalk.gray(`  ⚠ Found ${relativePaths.length} deprecated command file(s):`));
-    for (const file of relativePaths) {
-      this.log(chalk.gray(`    • ${file}`));
-    }
-
-    if (!force) {
-      const { removeLegacy } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'removeLegacy',
-          message: `Remove deprecated files for ${adapter.displayName}? Functionality is unchanged; filenames are being standardized.`,
-          default: true,
-        },
-      ]);
-
-      if (!removeLegacy) {
-        this.log(chalk.gray('  ⊗ Kept legacy files (deprecated naming retained)'));
-        return 0;
-      }
-    }
-
-    let removed = 0;
-    for (const file of legacyFiles) {
-      await fs.remove(file);
-      this.log(chalk.gray(`  ✓ Removed ${path.relative(process.cwd(), file)}`));
-      removed++;
-    }
-
-    return removed;
+    return removed + templates.length;
   }
 
   private getAgentsContent(): string {

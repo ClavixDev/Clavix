@@ -226,10 +226,16 @@ The goal is natural exploration of requirements, not a rigid questionnaire. Foll
 
 ---
 
-## Agent Transparency (v5.8.0)
+## Agent Transparency (v5.8.1)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
+
+### Workflow State Detection
+{{INCLUDE:agent-protocols/state-awareness.md}}
+
+### CLI Reference
+{{INCLUDE:agent-protocols/cli-reference.md}}
 
 ### Conversational Companion
 {{INCLUDE:agent-protocols/supportive-companion.md}}

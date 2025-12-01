@@ -19,7 +19,6 @@ import { CommandTemplate, AgentAdapter } from '../../types/agent.js';
 import { GeminiAdapter } from '../../core/adapters/gemini-adapter.js';
 import { QwenAdapter } from '../../core/adapters/qwen-adapter.js';
 import { loadCommandTemplates } from '../../utils/template-loader.js';
-import { collectLegacyCommandFiles } from '../../utils/legacy-command-cleanup.js';
 import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
 import { validateUserConfig } from '../../utils/schemas.js';
 
@@ -330,8 +329,6 @@ export default class Init extends Command {
         // Generate slash commands
         const generatedTemplates = await this.generateSlashCommands(adapter);
 
-        await this.handleLegacyCommands(adapter, generatedTemplates);
-
         if (adapter.name === 'gemini' || adapter.name === 'qwen') {
           const commandPath = adapter.getCommandPath();
           const isNamespaced = commandPath.endsWith(path.join('commands', 'clavix'));
@@ -484,17 +481,7 @@ export default class Init extends Command {
       }
 
       // Generate slash commands
-      const templates = await this.generateSlashCommands(adapter);
-
-      // Handle legacy command cleanup (silent in update mode)
-      const commandNames = templates.map((template) => template.name);
-      const legacyFiles = await collectLegacyCommandFiles(adapter, commandNames);
-      if (legacyFiles.length > 0) {
-        for (const file of legacyFiles) {
-          await FileSystem.remove(file);
-        }
-        this.log(chalk.gray(`    Cleaned ${legacyFiles.length} legacy file(s)`));
-      }
+      await this.generateSlashCommands(adapter);
 
       // Re-inject documentation blocks (Claude Code only)
       if (integrationName === 'claude-code') {
@@ -658,46 +645,6 @@ To reconfigure integrations, run \`clavix init\` again.
 
     await adapter.generateCommands(templates);
     return templates;
-  }
-
-  private async handleLegacyCommands(
-    adapter: AgentAdapter,
-    templates: CommandTemplate[]
-  ): Promise<void> {
-    const commandNames = templates.map((template) => template.name);
-    const legacyFiles = await collectLegacyCommandFiles(adapter, commandNames);
-
-    if (legacyFiles.length === 0) {
-      return;
-    }
-
-    const relativePaths = legacyFiles
-      .map((file) => path.relative(process.cwd(), file))
-      .sort((a, b) => a.localeCompare(b));
-
-    this.log(chalk.gray(`    ⚠ Found ${relativePaths.length} deprecated command file(s):`));
-    for (const file of relativePaths) {
-      this.log(chalk.gray(`      • ${file}`));
-    }
-
-    const { removeLegacy } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'removeLegacy',
-        message: `Remove deprecated files for ${adapter.displayName}? Functionality is unchanged; filenames are being standardized.`,
-        default: true,
-      },
-    ]);
-
-    if (!removeLegacy) {
-      this.log(chalk.gray('    ⊗ Kept legacy files (deprecated naming retained)'));
-      return;
-    }
-
-    for (const file of legacyFiles) {
-      await FileSystem.remove(file);
-      this.log(chalk.gray(`    ✓ Removed ${path.relative(process.cwd(), file)}`));
-    }
   }
 
   private async injectDocumentation(adapter: AgentAdapter): Promise<void> {

@@ -352,38 +352,38 @@ Refine existing PRD or prompt through continued discussion.
 
 ## /clavix:verify
 
-Verify implementation against checklist.
+Perform a spec-driven technical audit of the implementation.
 
 ```
 /clavix:verify
 ```
 
 **What it does:**
-1. Locates the prompt you implemented
-2. Checks against requirements checklist
-3. Runs automated tests if they exist
-4. Reports pass/fail results
-5. Identifies issues
+1. **Loads the Spec:** Reads `tasks.md` (Technical Plan) and `full-prd.md` (Requirements).
+2. **Reads the Code:** Inspects actual source files associated with completed tasks.
+3. **Performs Gap Analysis:** Compares implementation against the plan and requirements.
+4. **Generates Review:** Outputs a structured "Review Board" with categorized issues.
 
-**Automated checks:**
-- Test suite execution
-- Build/compile verification
-- Linter checks
-- Type checking
+**Review Output Categories:**
+- 🔴 **CRITICAL**: Architectural violations, broken features, or missing core requirements.
+- 🟠 **MAJOR**: Logic errors, missing edge case handling, or deviation from PRD.
+- 🟡 **MINOR**: Code style, naming, comments, or optimizations.
+- ⚪ **OUTDATED**: The code is correct, but the plan/PRD was wrong.
 
-**Report format:**
+**Example Output:**
+```markdown
+# Verification Report
+
+## 🔍 Review Comments
+| ID | Severity | Location | Issue |
+|:--:|:--------:|:---------|:------|
+| #1 | 🔴 CRIT | src/auth.ts | Used fetch instead of configured ApiClient |
+| #2 | 🟠 MAJOR | src/login.tsx | Missing "Forgot Password" link (Req 3.1) |
+
+Recommended: "Fix #1 and #2"
 ```
-## Verification Report
 
-### Passed (8/10)
-- [x] Tests pass
-- [x] Build succeeds
-...
-
-### Failed (2/10)
-- [ ] Error handling for edge case
-- [ ] Mobile responsive design
-```
+**Note:** This is a **code audit**, not just a test runner. It verifies *design compliance*.
 
 ---
 
