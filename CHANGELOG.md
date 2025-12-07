@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.8.2] - 2025-12-07
+
+### Added
+
+- **Clarifying Questions Protocol** - New systematic protocol for gathering critical information:
+  - Added `clarifying-questions.md` component in `agent-protocols/`
+  - Integrated into AGENT_MANUAL for universal access
+  - Applied to planning/improvement commands: improve, prd, plan, start, summarize
+  - 95% confidence threshold for when to ask questions
+  - Structured format for multiple choice and custom input questions
+  - Best practices and examples for effective questioning
+
+- **Template Customization Documentation** - Comprehensive guide for customizing Clavix templates:
+  - New `docs/template-customization.md` with full integration paths
+  - Complete reference table showing where each integration generates templates
+  - Step-by-step workflows for customizing canonical templates, integration-specific overrides, and components
+  - Common customization examples (project context, security checklists, team standards)
+  - Troubleshooting guide for template customization issues
+
+### Changed
+
+- **MANIFEST.md** - Updated component usage matrix:
+  - Added clarifying-questions.md to agent protocols section
+  - Updated usage matrix to show which commands include the new protocol
+  - Clarified that clarifying-questions is included via AGENT_MANUAL
+
 ## [5.6.6] - 2025-11-28
 
 ### Added

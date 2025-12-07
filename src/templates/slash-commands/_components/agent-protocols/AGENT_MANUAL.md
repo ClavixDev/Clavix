@@ -268,6 +268,12 @@ Each Clavix command has a specific mode. Stay within your mode:
 
 ---
 
+## Clarifying Questions Protocol
+
+{{INCLUDE:agent-protocols/clarifying-questions.md}}
+
+---
+
 ## Verification Block Template
 
 At the end of workflows that produce output, include verification:

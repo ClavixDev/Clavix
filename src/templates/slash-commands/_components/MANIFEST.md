@@ -10,6 +10,7 @@ Core protocols that all AI agents must follow. Shared across most commands.
 | Component | Purpose | Used By |
 |-----------|---------|---------|
 | `AGENT_MANUAL.md` | Universal protocols (transparency, mode identification, communication patterns) | All 9 commands |
+| `clarifying-questions.md` | Systematic protocol for asking clarifying questions (95% confidence threshold) | improve, prd, plan, start, summarize |
 | `cli-reference.md` | CLI command reference including removed commands table | improve, prd, plan, implement, verify, archive |
 | `state-awareness.md` | Workflow state detection (mid-PRD, mid-implementation, etc.) | prd, plan, implement, summarize |
 | `state-assertion.md` | Required mode assertion output (MODE, Purpose, Implementation status) | Available for all commands |
@@ -46,12 +47,12 @@ Recovery patterns for common agent issues.
 
 | Command | Components Used |
 |---------|----------------|
-| `/clavix:improve` | AGENT_MANUAL, cli-reference, improvement-explanations, quality-dimensions, escalation-factors, pattern-impact |
-| `/clavix:prd` | AGENT_MANUAL, prd-examples, quality-dimensions, state-awareness, cli-reference |
-| `/clavix:plan` | AGENT_MANUAL, state-awareness, cli-reference, vibecoder-recovery |
+| `/clavix:improve` | AGENT_MANUAL (includes clarifying-questions), cli-reference, improvement-explanations, quality-dimensions, escalation-factors, pattern-impact |
+| `/clavix:prd` | AGENT_MANUAL (includes clarifying-questions), prd-examples, quality-dimensions, state-awareness, cli-reference |
+| `/clavix:plan` | AGENT_MANUAL (includes clarifying-questions), state-awareness, cli-reference, vibecoder-recovery |
 | `/clavix:implement` | AGENT_MANUAL, state-awareness, task-blocking, cli-reference, vibecoder-recovery |
-| `/clavix:start` | AGENT_MANUAL, supportive-companion, conversation-examples, vibecoder-recovery |
-| `/clavix:summarize` | AGENT_MANUAL, improvement-explanations, quality-dimensions, state-awareness, vibecoder-recovery |
+| `/clavix:start` | AGENT_MANUAL (includes clarifying-questions), supportive-companion, conversation-examples, vibecoder-recovery |
+| `/clavix:summarize` | AGENT_MANUAL (includes clarifying-questions), improvement-explanations, quality-dimensions, state-awareness, vibecoder-recovery |
 | `/clavix:refine` | AGENT_MANUAL, cli-reference, quality-dimensions, state-awareness |
 | `/clavix:verify` | AGENT_MANUAL, cli-reference, vibecoder-recovery |
 | `/clavix:archive` | AGENT_MANUAL, cli-reference, vibecoder-recovery |

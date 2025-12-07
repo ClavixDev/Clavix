@@ -125,6 +125,8 @@ Clavix provides a unified **improve** mode that intelligently selects the approp
 
 ## Instructions
 
+**Before beginning:** Use the Clarifying Questions Protocol (see Agent Transparency section) when you need critical information from the user (confidence < 95%). For prompt improvement, this means confirming intent, desired depth, or technical constraints when ambiguous.
+
 1. Take the user's prompt: `{{ARGS}}`
 
 2. **Intent Detection** - Analyze what the user is trying to achieve:
@@ -522,7 +524,7 @@ Wait for the user to decide what to do next.
 
 ---
 
-## Agent Transparency (v5.8.1)
+## Agent Transparency (v5.8.2)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

@@ -80,6 +80,8 @@ Implementation: BLOCKED - I will extract requirements, not implement them
 
 ## Instructions
 
+**Before beginning:** Use the Clarifying Questions Protocol (see Agent Transparency section) when you need critical information from the user (confidence < 95%). For summarization, this means asking for missing context, unclear requirements, or ambiguous technical specifications before extraction.
+
 1. **Pre-Extraction Validation** - Check conversation completeness:
 
    **CHECKPOINT:** Pre-extraction validation started
@@ -401,7 +403,7 @@ The `/clavix:summarize` command extracts requirements from exploratory conversat
 
 ---
 
-## Agent Transparency (v5.8.1)
+## Agent Transparency (v5.8.2)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

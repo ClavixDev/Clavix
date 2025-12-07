@@ -79,6 +79,8 @@ Implementation: BLOCKED - I will ask questions and explore needs, not implement
 
 ## Instructions
 
+**Before beginning:** Use the Clarifying Questions Protocol (see Agent Transparency section) throughout the conversation when you need critical information from the user (confidence < 95%). In conversational mode, this means probing for unclear requirements, technical constraints, or user needs.
+
 1. Begin with a friendly introduction:
    ```
    I'm starting Clavix conversational mode for requirements gathering.
@@ -226,7 +228,7 @@ The goal is natural exploration of requirements, not a rigid questionnaire. Foll
 
 ---
 
-## Agent Transparency (v5.8.1)
+## Agent Transparency (v5.8.2)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

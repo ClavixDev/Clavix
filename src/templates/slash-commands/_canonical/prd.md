@@ -87,6 +87,8 @@ Both documents are automatically validated for quality (Clarity, Structure, Comp
 
 ## Instructions
 
+**Before beginning:** Use the Clarifying Questions Protocol (see Agent Transparency section) when you need critical information from the user (confidence < 95%). For PRD development, this means confirming ambiguous project scope, technical requirements, or feature priorities.
+
 1. Guide the user through these strategic questions, **one at a time** with validation:
 
    **Question 1**: What are we building and why? (Problem + goal in 2-3 sentences)
@@ -344,7 +346,7 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ---
 
-## Agent Transparency (v5.8.1)
+## Agent Transparency (v5.8.2)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

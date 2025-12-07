@@ -79,6 +79,8 @@ Implementation: BLOCKED - I will create the plan, not the code
 
 ## Instructions
 
+**Before beginning:** Use the Clarifying Questions Protocol (see Agent Transparency section) when you need critical information from the user (confidence < 95%). For task planning, this means confirming which PRD to use, technical approach preferences, or task breakdown granularity.
+
 ### Part A: Agent Execution Protocol
 
 **As an AI agent, you must follow this strict sequence:**
@@ -219,7 +221,7 @@ Present the plan and ask:
 
 ---
 
-## Agent Transparency (v5.8.1)
+## Agent Transparency (v5.8.2)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
