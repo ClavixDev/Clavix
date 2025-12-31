@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.9.1] - 2025-12-31
+
+### Added
+
+- **$CODEX_HOME Environment Variable Support** - Custom Codex prompts directory:
+  - New `src/utils/path-resolver.ts` for centralized path resolution with priority system
+  - Environment variable priority: `$CODEX_HOME` → user config → default path
+  - Interactive prompting during `clavix init` when `$CODEX_HOME` is detected
+  - Custom paths stored in `.clavix/config.json` under `experimental.integrationPaths`
+  - Extensible pattern for future integrations (e.g., `CURSOR_HOME`, `GEMINI_HOME`)
+  - 13 new comprehensive tests (all passing)
+
+### Changed
+
+- **UniversalAdapter** - Updated to use new path resolver instead of direct tilde expansion
+- **AgentManager** - Now accepts and passes `userConfig` to all adapters
+- **All Adapters** - Updated constructors to accept optional `userConfig` parameter:
+  - `ClaudeCodeAdapter`
+  - `GeminiAdapter`, `QwenAdapter`, `LlxprtAdapter` (via `TomlFormattingAdapter`)
+  - `UniversalAdapter`
+
+### Technical Details
+
+- Added `IntegrationPathsConfig` interface to `src/types/config.ts`
+- Added schema validation for `integrationPaths` in `src/utils/schemas.ts`
+- Updated `clavix init` to detect and prompt about `$CODEX_HOME`
+- Updated `clavix update` to pass config to `AgentManager`
+- Backward compatible - existing installations work without changes
+
 ## [5.9.0] - 2025-12-23
 
 ### Added
