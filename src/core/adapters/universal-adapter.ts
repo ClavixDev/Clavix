@@ -14,16 +14,19 @@
 import { BaseAdapter } from './base-adapter.js';
 import { AdapterConfig } from '../../types/adapter-config.js';
 import { IntegrationFeatures } from '../../types/agent.js';
+import { ClavixConfig } from '../../types/config.js';
+import { resolveIntegrationPath } from '../../utils/path-resolver.js';
 import * as path from 'path';
-import * as os from 'os';
 
 export class UniversalAdapter extends BaseAdapter {
   private config: AdapterConfig;
   readonly features: IntegrationFeatures;
+  private userConfig?: ClavixConfig;
 
-  constructor(config: AdapterConfig) {
+  constructor(config: AdapterConfig, userConfig?: ClavixConfig) {
     super();
     this.config = config;
+    this.userConfig = userConfig;
     // Set features from config for interface compatibility
     this.features = {
       supportsSubdirectories: config.features.supportsSubdirectories,
@@ -42,11 +45,8 @@ export class UniversalAdapter extends BaseAdapter {
   }
 
   get directory(): string {
-    // Expand ~ to home directory for global adapters
-    if (this.config.directory.startsWith('~/')) {
-      return this.config.directory.replace('~', os.homedir());
-    }
-    return this.config.directory;
+    // Use path resolver for proper environment variable and config override support
+    return resolveIntegrationPath(this.config, this.userConfig);
   }
 
   /**

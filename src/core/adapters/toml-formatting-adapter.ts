@@ -3,6 +3,7 @@ import * as path from 'path';
 import { BaseAdapter } from './base-adapter.js';
 import { CommandTemplate } from '../../types/agent.js';
 import { FileSystem } from '../../utils/file-system.js';
+import { ClavixConfig } from '../../types/config.js';
 
 /**
  * Configuration for TOML-based adapters
@@ -36,13 +37,18 @@ export abstract class TomlFormattingAdapter extends BaseAdapter {
   };
 
   protected readonly config: TomlAdapterConfig;
+  protected readonly userConfig?: ClavixConfig;
 
-  constructor(config: TomlAdapterConfig, options: { useNamespace?: boolean } = {}) {
+  constructor(
+    config: TomlAdapterConfig,
+    options: { useNamespace?: boolean; userConfig?: ClavixConfig } = {}
+  ) {
     super();
     this.config = {
       ...config,
       useNamespace: options.useNamespace ?? config.useNamespace ?? true,
     };
+    this.userConfig = options.userConfig;
   }
 
   get name(): string {

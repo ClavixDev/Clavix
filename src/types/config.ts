@@ -10,7 +10,9 @@ export interface ClavixConfig {
   templates: TemplateConfig;
   outputs: OutputConfig;
   preferences: PreferencesConfig;
-  experimental?: Record<string, unknown>;
+  experimental?: Record<string, unknown> & {
+    integrationPaths?: IntegrationPathsConfig;
+  };
 }
 
 /**
@@ -43,6 +45,14 @@ export interface OutputConfig {
 export interface PreferencesConfig {
   autoOpenOutputs: boolean;
   verboseLogging: boolean;
+}
+
+/**
+ * Custom directory paths for integrations
+ * Maps integration name (e.g., 'codex') to custom directory path
+ */
+export interface IntegrationPathsConfig {
+  [integrationName: string]: string;
 }
 
 export const DEFAULT_CONFIG: ClavixConfig = {

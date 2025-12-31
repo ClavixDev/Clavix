@@ -6,6 +6,7 @@ import { LlxprtAdapter } from './adapters/llxprt-adapter.js';
 import { UniversalAdapter } from './adapters/universal-adapter.js';
 import { getSimpleAdapters } from './adapter-registry.js';
 import { IntegrationError } from '../types/errors.js';
+import { ClavixConfig } from '../types/config.js';
 
 /**
  * Agent Manager - handles agent detection and registration
@@ -17,19 +18,22 @@ import { IntegrationError } from '../types/errors.js';
  */
 export class AgentManager {
   private adapters: Map<string, AgentAdapter> = new Map();
+  private userConfig?: ClavixConfig;
 
-  constructor() {
+  constructor(userConfig?: ClavixConfig) {
+    this.userConfig = userConfig;
+
     // Register special adapters (require custom logic)
-    this.registerAdapter(new ClaudeCodeAdapter()); // Doc injection
-    this.registerAdapter(new GeminiAdapter()); // TOML format
-    this.registerAdapter(new QwenAdapter()); // TOML format
-    this.registerAdapter(new LlxprtAdapter()); // TOML format
+    this.registerAdapter(new ClaudeCodeAdapter(userConfig)); // Doc injection
+    this.registerAdapter(new GeminiAdapter(userConfig)); // TOML format
+    this.registerAdapter(new QwenAdapter(userConfig)); // TOML format
+    this.registerAdapter(new LlxprtAdapter(userConfig)); // TOML format
 
     // Register simple adapters from config (using UniversalAdapter factory)
     for (const config of getSimpleAdapters()) {
       // Skip adapters that have special handlers registered above
       if (this.adapters.has(config.name)) continue;
-      this.registerAdapter(new UniversalAdapter(config));
+      this.registerAdapter(new UniversalAdapter(config, userConfig));
     }
   }
 

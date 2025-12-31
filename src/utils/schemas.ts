@@ -75,6 +75,26 @@ const PreferencesConfigSchema = z.object({
 });
 
 /**
+ * Schema for integration paths in experimental config
+ * Maps integration name to custom directory path
+ */
+export const IntegrationPathsSchema = z
+  .record(
+    z.string().min(1, 'Integration name is required'),
+    z.string().min(1, 'Path cannot be empty')
+  )
+  .optional();
+
+/**
+ * Schema for experimental configuration
+ */
+const ExperimentalConfigSchema = z
+  .object({
+    integrationPaths: IntegrationPathsSchema,
+  })
+  .passthrough(); // Allow other experimental fields
+
+/**
  * Schema for user's .clavix/config.json
  * Matches ClavixConfig interface in src/types/config.ts
  */
@@ -89,7 +109,7 @@ export const UserConfigSchema = z.object({
   templates: TemplateConfigSchema.optional(),
   outputs: OutputConfigSchema.optional(),
   preferences: PreferencesConfigSchema.optional(),
-  experimental: z.record(z.unknown()).optional(),
+  experimental: ExperimentalConfigSchema.optional(),
 });
 
 /**

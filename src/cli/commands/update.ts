@@ -11,6 +11,7 @@ import { InstructionsGenerator } from '../../core/adapters/instructions-generato
 import { AgentAdapter } from '../../types/agent.js';
 import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
 import { validateUserConfig, formatZodErrors } from '../../utils/schemas.js';
+import { ClavixConfig } from '../../types/config.js';
 
 export default class Update extends Command {
   static description = 'Update managed blocks and slash commands';
@@ -65,7 +66,7 @@ export default class Update extends Command {
     this.log(chalk.bold.cyan('🔄 Updating Clavix integration...\n'));
 
     // Load config to determine integrations
-    let config: { integrations?: string[]; providers?: string[] };
+    let config: ClavixConfig;
     try {
       const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
@@ -92,7 +93,9 @@ export default class Update extends Command {
         }
       }
 
-      config = validationResult.data!;
+      // Type assertion: validationResult.data is User type which has optional version
+      // We know version exists in valid configs, so we can assert
+      config = validationResult.data! as ClavixConfig;
     } catch (error: unknown) {
       const { getErrorMessage } = await import('../../utils/error-utils.js');
       this.error(
@@ -105,9 +108,11 @@ export default class Update extends Command {
           chalk.yellow(' to regenerate.')
       );
     }
-    const integrations = config.integrations || config.providers || ['claude-code'];
+    // Handle legacy 'providers' field for backward compatibility
+    const integrations = config.integrations || (config as any).providers || ['claude-code'];
 
-    const agentManager = new AgentManager();
+    // Initialize agent manager with config (for custom integration paths)
+    const agentManager = new AgentManager(config);
 
     const updateDocs = flags['docs-only'] || (!flags['docs-only'] && !flags['commands-only']);
     const updateCommands =

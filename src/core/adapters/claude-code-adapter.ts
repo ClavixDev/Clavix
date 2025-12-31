@@ -4,6 +4,7 @@ import { ManagedBlock } from '../../types/agent.js';
 import { FileSystem } from '../../utils/file-system.js';
 import { IntegrationError } from '../../types/errors.js';
 import { escapeRegex } from '../../utils/string-utils.js';
+import { ClavixConfig } from '../../types/config.js';
 
 /**
  * Claude Code agent adapter
@@ -16,6 +17,12 @@ export class ClaudeCodeAdapter extends BaseAdapter {
   readonly features = {
     supportsSubdirectories: true,
   };
+  protected readonly userConfig?: ClavixConfig;
+
+  constructor(userConfig?: ClavixConfig) {
+    super();
+    this.userConfig = userConfig;
+  }
 
   /**
    * Detect if Claude Code is available in the project

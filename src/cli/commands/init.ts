@@ -31,8 +31,8 @@ export default class Init extends Command {
     this.log(chalk.bold.cyan('\n🚀 Clavix Initialization\n'));
 
     try {
-      const agentManager = new AgentManager();
       let existingIntegrations: string[] = [];
+      let existingConfig: ClavixConfig | undefined;
 
       // Load existing config if present
       if (await FileSystem.exists('.clavix/config.json')) {
@@ -46,6 +46,7 @@ export default class Init extends Command {
           if (validationResult.success && validationResult.data) {
             existingIntegrations =
               validationResult.data.integrations || validationResult.data.providers || [];
+            existingConfig = validationResult.data as ClavixConfig;
 
             // Log warnings (non-blocking)
             if (validationResult.warnings) {
@@ -72,6 +73,9 @@ export default class Init extends Command {
           // Continue with empty array - will prompt for new configuration
         }
       }
+
+      // Initialize agent manager with existing config (for custom integration paths)
+      const agentManager = new AgentManager(existingConfig);
 
       // Check if already initialized
       if (await FileSystem.exists('.clavix')) {
@@ -209,13 +213,99 @@ export default class Init extends Command {
         // If 'skip': do nothing
       }
 
+      // Collect custom integration paths (e.g., for Codex with $CODEX_HOME)
+      const integrationPaths: Record<string, string> = {};
+
+      // Prompt about Codex path if Codex is selected
+      if (selectedIntegrations.includes('codex')) {
+        this.log(chalk.cyan('\n🔧 Codex Configuration'));
+
+        const hasEnvVar = process.env.CODEX_HOME;
+        const defaultPath = '~/.codex/prompts';
+
+        if (hasEnvVar) {
+          // $CODEX_HOME is detected - ask for confirmation
+          const { useEnvPath } = await inquirer.prompt([
+            {
+              type: 'confirm',
+              name: 'useEnvPath',
+              message: `Detected $CODEX_HOME=${hasEnvVar}. Use this path instead of ${defaultPath}?`,
+              default: true,
+            },
+          ]);
+
+          if (useEnvPath) {
+            integrationPaths.codex = hasEnvVar;
+            this.log(chalk.gray(`  ✓ Using $CODEX_HOME: ${hasEnvVar}`));
+          } else {
+            // Ask if they want to use a custom path
+            const { useCustomPath } = await inquirer.prompt([
+              {
+                type: 'confirm',
+                name: 'useCustomPath',
+                message: 'Use a custom Codex prompts directory?',
+                default: false,
+              },
+            ]);
+
+            if (useCustomPath) {
+              const { customPath } = await inquirer.prompt([
+                {
+                  type: 'input',
+                  name: 'customPath',
+                  message: 'Enter path to Codex prompts directory:',
+                  default: defaultPath,
+                  validate: (input: string) => {
+                    if (!input || input.trim().length === 0) {
+                      return 'Path cannot be empty';
+                    }
+                    return true;
+                  },
+                },
+              ]);
+              integrationPaths.codex = customPath;
+              this.log(chalk.gray(`  ✓ Using custom path: ${customPath}`));
+            }
+          }
+        } else {
+          // No $CODEX_HOME - ask if they want a custom path
+          const { useCustomPath } = await inquirer.prompt([
+            {
+              type: 'confirm',
+              name: 'useCustomPath',
+              message: 'Use a custom Codex prompts directory?',
+              default: false,
+            },
+          ]);
+
+          if (useCustomPath) {
+            const { customPath } = await inquirer.prompt([
+              {
+                type: 'input',
+                name: 'customPath',
+                message: 'Enter path to Codex prompts directory:',
+                default: defaultPath,
+                validate: (input: string) => {
+                  if (!input || input.trim().length === 0) {
+                    return 'Path cannot be empty';
+                  }
+                  return true;
+                },
+              },
+            ]);
+            integrationPaths.codex = customPath;
+            this.log(chalk.gray(`  ✓ Using custom path: ${customPath}`));
+          }
+        }
+      }
+
       // Create .clavix directory structure
       this.log(chalk.cyan('\n📁 Creating directory structure...'));
       await this.createDirectoryStructure();
 
       // Generate config
       this.log(chalk.cyan('⚙️  Generating configuration...'));
-      await this.generateConfig(selectedIntegrations);
+      await this.generateConfig(selectedIntegrations, integrationPaths);
 
       // Generate INSTRUCTIONS.md and QUICKSTART.md
       await this.generateInstructions();
@@ -505,11 +595,21 @@ export default class Init extends Command {
     }
   }
 
-  private async generateConfig(integrations: string[]): Promise<void> {
+  private async generateConfig(
+    integrations: string[],
+    integrationPaths: Record<string, string> = {}
+  ): Promise<void> {
     const config: ClavixConfig = {
       ...DEFAULT_CONFIG,
       integrations,
     };
+
+    // Add integration paths to experimental if any
+    if (Object.keys(integrationPaths).length > 0) {
+      config.experimental = {
+        integrationPaths,
+      };
+    }
 
     const configPath = '.clavix/config.json';
     const configContent = JSON.stringify(config, null, 2);

@@ -40,11 +40,21 @@ export async function loadExistingConfig(): Promise<{
 /**
  * Generate and save the Clavix config file
  */
-export async function generateConfig(integrations: string[]): Promise<void> {
+export async function generateConfig(
+  integrations: string[],
+  integrationPaths: Record<string, string> = {}
+): Promise<void> {
   const config: ClavixConfig = {
     ...DEFAULT_CONFIG,
     integrations,
   };
+
+  // Add integration paths to experimental if any
+  if (Object.keys(integrationPaths).length > 0) {
+    config.experimental = {
+      integrationPaths,
+    };
+  }
 
   const configPath = '.clavix/config.json';
   const configContent = JSON.stringify(config, null, 2);
