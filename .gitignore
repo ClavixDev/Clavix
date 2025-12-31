@@ -46,6 +46,7 @@ yarn-error.log*
 .roo/
 .crush/
 .cursor/
+.droid/
 .factory/
 .opencode/
 .agents/
