@@ -36,7 +36,7 @@ For detailed information on template customization and override options, see [Ge
 | Cursor | `-` | `.cursor/rules/` | No | *(implicit)* |
 | Windsurf | `-` | `.windsurf/rules/` | No | *(implicit)* |
 | Kilocode | `-` | `.kilocode/rules/` | No | *(implicit)* |
-| Roo-Code | `-` | `.roo/rules/` | No | *(implicit)* |
+| Roo-Code | `-` | `.roo/commands/` | No | *(implicit)* |
 | Cline | `-` | `.clinerules/` | No | *(implicit)* |
 
 ## CLI agents and toolchains

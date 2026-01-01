@@ -35,7 +35,7 @@
     {
       "name": "roocode",
       "displayName": "Roo-Code",
-      "directory": ".roo/rules",
+      "directory": ".roo/commands",
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",

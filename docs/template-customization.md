@@ -17,7 +17,7 @@ After running `clavix init`, templates are generated in these locations:
 | **Cursor** | `-` | `.cursor/rules/` | `clavix-<command>.md` |
 | **Windsurf** | `-` | `.windsurf/rules/` | `clavix-<command>.md` |
 | **Kilocode** | `-` | `.kilocode/rules/` | `clavix-<command>.md` |
-| **Roo-Code** | `-` | `.roo/rules/` | `clavix-<command>.md` |
+| **Roo-Code** | `-` | `.roo/commands/` | `clavix-<command>.md` |
 | **Cline** | `-` | `.clinerules/` | `clavix-<command>.md` |
 
 **Example paths for Cursor:**

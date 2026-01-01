@@ -42,7 +42,7 @@ export async function selectIntegrations(
         { name: 'Cline (.cline/workflows/)', value: 'cline' },
         { name: 'Cursor (.cursor/commands/)', value: 'cursor' },
         { name: 'Kilocode (.kilo/clavix/)', value: 'kilocode' },
-        { name: 'Roocode (.roo/clavix/)', value: 'roocode' },
+        { name: 'Roocode (.roo/commands/)', value: 'roocode' },
         { name: 'Windsurf (.windsurf/rules/)', value: 'windsurf' },
         new inquirer.Separator(),
 
