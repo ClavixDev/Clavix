@@ -50,11 +50,18 @@ describe('path-resolver', () => {
     };
 
     describe('Environment variable priority', () => {
-      it('should use $CODEX_HOME when set', () => {
+      it('should use $CODEX_HOME when set and append /prompts subdirectory', () => {
         process.env.CODEX_HOME = '/custom/codex/path';
 
         const result = resolveIntegrationPath(mockAdapterConfig);
-        expect(result).toBe('/custom/codex/path');
+        expect(result).toBe('/custom/codex/path/prompts');
+      });
+
+      it('should not duplicate /prompts if $CODEX_HOME already includes it', () => {
+        process.env.CODEX_HOME = '/custom/codex/prompts';
+
+        const result = resolveIntegrationPath(mockAdapterConfig);
+        expect(result).toBe('/custom/codex/prompts');
       });
 
       it('should prioritize env var over user config', () => {
@@ -74,12 +81,12 @@ describe('path-resolver', () => {
         };
 
         const result = resolveIntegrationPath(mockAdapterConfig, userConfig);
-        expect(result).toBe('/env/path');
+        expect(result).toBe('/env/path/prompts');
       });
     });
 
     describe('User config override', () => {
-      it('should use user config path when env var is not set', () => {
+      it('should use user config path when env var is not set and append /prompts', () => {
         delete process.env.CODEX_HOME;
 
         const userConfig: ClavixConfig = {
@@ -96,7 +103,27 @@ describe('path-resolver', () => {
         };
 
         const result = resolveIntegrationPath(mockAdapterConfig, userConfig);
-        expect(result).toBe('/custom/codex/from/config');
+        expect(result).toBe('/custom/codex/from/config/prompts');
+      });
+
+      it('should not duplicate /prompts if user config already includes it', () => {
+        delete process.env.CODEX_HOME;
+
+        const userConfig: ClavixConfig = {
+          version: '5.9.0',
+          integrations: ['codex'],
+          templates: { prdQuestions: 'default', fullPrd: 'default', quickPrd: 'default' },
+          outputs: { path: '.clavix/outputs', format: 'markdown' },
+          preferences: { autoOpenOutputs: false, verboseLogging: false },
+          experimental: {
+            integrationPaths: {
+              codex: '/custom/codex/from/config/prompts',
+            },
+          },
+        };
+
+        const result = resolveIntegrationPath(mockAdapterConfig, userConfig);
+        expect(result).toBe('/custom/codex/from/config/prompts');
       });
     });
 
