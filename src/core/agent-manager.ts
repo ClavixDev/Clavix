@@ -3,6 +3,7 @@ import { ClaudeCodeAdapter } from './adapters/claude-code-adapter.js';
 import { GeminiAdapter } from './adapters/gemini-adapter.js';
 import { QwenAdapter } from './adapters/qwen-adapter.js';
 import { LlxprtAdapter } from './adapters/llxprt-adapter.js';
+import { VibeAdapter } from './adapters/vibe-adapter.js';
 import { UniversalAdapter } from './adapters/universal-adapter.js';
 import { getSimpleAdapters } from './adapter-registry.js';
 import { IntegrationError } from '../types/errors.js';
@@ -28,6 +29,7 @@ export class AgentManager {
     this.registerAdapter(new GeminiAdapter(userConfig)); // TOML format
     this.registerAdapter(new QwenAdapter(userConfig)); // TOML format
     this.registerAdapter(new LlxprtAdapter(userConfig)); // TOML format
+    this.registerAdapter(new VibeAdapter(userConfig)); // Vibe CLI skills
 
     // Register simple adapters from config (using UniversalAdapter factory)
     for (const config of getSimpleAdapters()) {

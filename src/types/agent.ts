@@ -65,4 +65,6 @@ export type AgentType =
   | 'opencode'
   | 'qwen'
   | 'roocode'
+  | 'vibe'
+  | 'warp-md'
   | 'windsurf';

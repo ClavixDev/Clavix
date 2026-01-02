@@ -40,15 +40,18 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('codex');
     });
 
-    it('should have exactly 20 built-in adapters', () => {
+    it('should have exactly 21 built-in adapters', () => {
       const adapters = manager.getAdapters();
 
       // v5.6.3: Added 4 universal adapters (agents-md, copilot-instructions, octo-md, warp-md)
       // bringing total from 16 to 20
-      expect(adapters.length).toBe(20);
+      // v5.10.0: Added Vibe CLI adapter
+      // bringing total from 20 to 21
+      expect(adapters.length).toBe(21);
 
       // Verify new adapters are registered
       const adapterNames = adapters.map((a) => a.name);
+      expect(adapterNames).toContain('vibe');
       expect(adapterNames).toContain('windsurf');
       expect(adapterNames).toContain('kilocode');
       expect(adapterNames).toContain('llxprt');

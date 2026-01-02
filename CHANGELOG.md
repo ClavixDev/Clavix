@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.10.0] - 2026-01-02
+
+### Added
+
+- **Vibe CLI Integration** - New first-class integration for Mistral Vibe CLI:
+  - VibeAdapter generates SKILL.md files in `./.vibe/skills/`
+  - All 9 Clavix slash commands available as Vibe skills
+  - Skill files named: `clavix-{command}-skill.md` (e.g., `clavix-improve-skill.md`)
+  - Local project skills priority (`.vibe/skills/` over `~/.vibe/skills/`)
+  - Comprehensive test coverage for all adapter methods
+
+### Changed
+
+- **AgentManager** - Registered VibeAdapter for Vibe CLI support
+- **integrations.json** - Added Vibe CLI configuration entry
+- **AgentType** - Added 'vibe' to type union for type safety
+- Also added missing 'warp-md' to AgentType union
+
 ## [5.9.2] - 2026-01-01
 
 ### Fixed
