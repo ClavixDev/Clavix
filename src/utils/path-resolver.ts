@@ -8,6 +8,7 @@
  */
 
 import * as os from 'os';
+import * as path from 'path';
 import type { ClavixConfig } from '../types/config.js';
 import type { AdapterConfig } from '../types/adapter-config.js';
 
@@ -34,21 +35,38 @@ export const ENV_VAR_MAP: Record<string, string> = {
  */
 export function resolveIntegrationPath(config: AdapterConfig, userConfig?: ClavixConfig): string {
   const integrationName = config.name;
+  let resolvedPath: string;
 
   // Priority 1: Environment variable
   const envVar = ENV_VAR_MAP[integrationName];
   if (envVar && process.env[envVar]) {
-    return process.env[envVar]!;
+    resolvedPath = process.env[envVar]!;
+  } else {
+    // Priority 2: User config override
+    const customPath = userConfig?.experimental?.integrationPaths?.[integrationName];
+    if (customPath && typeof customPath === 'string') {
+      resolvedPath = customPath;
+    } else {
+      // Priority 3: Built-in default from config
+      resolvedPath = config.directory;
+    }
   }
 
-  // Priority 2: User config override
-  const customPath = userConfig?.experimental?.integrationPaths?.[integrationName];
-  if (customPath && typeof customPath === 'string') {
-    return expandTilde(customPath);
+  // Codex-specific: ensure /prompts subdirectory exists
+  // When using $CODEX_HOME, the user may set it to the base directory
+  // (e.g., /custom/codex) without the /prompts suffix. We need to
+  // ensure prompts always go into the /prompts subdirectory.
+  if (integrationName === 'codex') {
+    const normalizedPath = path.normalize(resolvedPath);
+    if (
+      !normalizedPath.endsWith(path.join('prompts')) &&
+      !normalizedPath.endsWith(path.sep + 'prompts')
+    ) {
+      resolvedPath = path.join(resolvedPath, 'prompts');
+    }
   }
 
-  // Priority 3: Built-in default from config
-  return expandTilde(config.directory);
+  return expandTilde(resolvedPath);
 }
 
 /**

@@ -244,7 +244,8 @@ describe('Integration Selector', () => {
         const integrationChoices = choices.filter((c: any) => c.value !== undefined);
 
         // agents-md is no longer in selection (always enabled)
-        expect(integrationChoices.length).toBe(19);
+        // vibe integration was added in v5.10.0
+        expect(integrationChoices.length).toBe(20);
       });
 
       it('should have CLI Tools category with correct integrations', async () => {
@@ -267,6 +268,7 @@ describe('Integration Selector', () => {
           'llxprt',
           'opencode',
           'qwen',
+          'vibe',
         ];
 
         cliTools.forEach((tool) => {
