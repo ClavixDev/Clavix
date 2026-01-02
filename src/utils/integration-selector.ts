@@ -36,6 +36,7 @@ export async function selectIntegrations(
         { name: 'LLXPRT (~/.llxprt/clavix/)', value: 'llxprt' },
         { name: 'OpenCode (.opencode/clavix/)', value: 'opencode' },
         { name: 'Qwen Code (~/.qwen/commands/clavix/)', value: 'qwen' },
+        { name: 'Mistral Vibe (.vibe/skills/)', value: 'vibe' },
         new inquirer.Separator(),
 
         new inquirer.Separator('=== IDE & IDE Extensions ==='),

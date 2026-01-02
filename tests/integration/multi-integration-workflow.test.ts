@@ -44,7 +44,8 @@ describe('Multi-Integration Workflow Integration', () => {
       const adapters = agentManager.getAdapters();
 
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
-      expect(adapters).toHaveLength(20);
+      // v5.10.0: Added Vibe CLI adapter = 21 total
+      expect(adapters).toHaveLength(21);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
@@ -157,6 +158,7 @@ describe('Multi-Integration Workflow Integration', () => {
       await fs.ensureDir('.qwen'); // qwen
       await fs.ensureDir('.llxprt'); // llxprt
       await fs.ensureDir('.augment'); // augment
+      await fs.ensureDir('.vibe'); // vibe (v5.10.0)
       await fs.ensureDir('.codex'); // codex (project dir)
 
       // v5.6.3: Create detection markers for 4 universal adapters
@@ -169,7 +171,8 @@ describe('Multi-Integration Workflow Integration', () => {
       const names = detected.map((a) => a.name);
 
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
-      expect(detected).toHaveLength(20);
+      // v5.10.0: Added Vibe CLI adapter = 21 total
+      expect(detected).toHaveLength(21);
       expect(names).toEqual(
         expect.arrayContaining([
           'claude-code',
@@ -187,6 +190,7 @@ describe('Multi-Integration Workflow Integration', () => {
           'qwen',
           'llxprt',
           'augment',
+          'vibe',
           'codex',
         ])
       );
@@ -391,7 +395,8 @@ describe('Multi-Integration Workflow Integration', () => {
       const choices = agentManager.getAdapterChoices();
 
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
-      expect(choices).toHaveLength(20);
+      // v5.10.0: Added Vibe CLI adapter = 21 total
+      expect(choices).toHaveLength(21);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
 

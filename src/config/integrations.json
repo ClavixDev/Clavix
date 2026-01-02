@@ -174,6 +174,16 @@
       "type": "standard"
     },
     {
+      "name": "vibe",
+      "displayName": "Vibe CLI",
+      "directory": ".vibe/skills",
+      "filenamePattern": "clavix-{name}-skill",
+      "extension": ".md",
+      "separator": "-",
+      "detection": ".vibe",
+      "type": "standard"
+    },
+    {
       "name": "agents-md",
       "displayName": "AGENTS.md",
       "directory": ".",
