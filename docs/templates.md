@@ -196,7 +196,7 @@ The main workflow instructions for the agent.
 Include relevant components:
 
 ```markdown
-## Agent Transparency (v5.1)
+## Agent Transparency (v5.10.2)
 
 ### Agent Manual
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

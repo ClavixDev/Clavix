@@ -278,7 +278,7 @@ All templates must include comprehensive troubleshooting:
 All templates must include the Agent Transparency section with current version:
 
 ```markdown
-## Agent Transparency (v5.7.0)
+## Agent Transparency (v5.10.2)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

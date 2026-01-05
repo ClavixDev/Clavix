@@ -1,6 +1,6 @@
 # Clavix
 
-> Agentic-first prompt workflows. Markdown templates that teach AI agents how to optimize prompts, create PRDs, and manage implementation. Works with Claude Code, Cursor, Windsurf, and 20 AI coding tools.
+> Agentic-first prompt workflows. Markdown templates that teach AI agents how to optimize prompts, create PRDs, and manage implementation. Works with Claude Code, Cursor, Windsurf, and 21 AI coding tools.
 
 ## Quick Links
 
@@ -114,7 +114,7 @@ See [Architecture](docs/architecture.md) for details.
 | Category | Tools |
 |----------|-------|
 | IDE extensions | Cursor, Windsurf, Kilocode, Roocode, Cline |
-| CLI agents | Claude Code, Gemini CLI, Qwen Code, Droid CLI, CodeBuddy, OpenCode, LLXPRT, Amp, Crush CLI, Codex CLI, Augment CLI |
+| CLI agents | Claude Code, Gemini CLI, Qwen Code, Droid CLI, CodeBuddy, OpenCode, LLXPRT, Amp, Crush CLI, Codex CLI, Augment CLI, Vibe CLI |
 | Universal | AGENTS.md, GitHub Copilot, OCTO.md, WARP.md |
 
 Full list: [docs/integrations.md](docs/integrations.md)

@@ -107,7 +107,7 @@ clavix diagnose
 **Sample output:**
 ```
 Results:
-  ✓ Version: v5.5.0
+  ✓ Version: v5.10.2
   ✓ .clavix directory OK
   ✓ config.json OK (2 integration(s))
   ✓ Claude Code: 8 command(s)

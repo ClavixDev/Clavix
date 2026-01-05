@@ -23,6 +23,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AgentType** - Added 'vibe' to type union for type safety
 - Also added missing 'warp-md' to AgentType union
 
+## [5.10.2] - 2026-01-05
+
+### Added
+
+- **Task Selection for Implement Command** - New task selection mode:
+  - `all` - Execute all tasks sequentially
+  - `task N` - Execute specific task by number
+  - Interactive list - Select task from numbered list
+  - Confirmation prompt before starting implementation
+  - Better control over which tasks to execute
+
+## [5.10.1] - 2026-01-04
+
+### Fixed
+
+- **Codex Prompts Subdirectory** - Codex prompts now correctly use `/prompts` subdirectory with `$CODEX_HOME` environment variable
+
 ## [5.9.2] - 2026-01-01
 
 ### Fixed

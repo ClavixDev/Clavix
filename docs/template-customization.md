@@ -48,6 +48,7 @@ After running `clavix init`, templates are generated in these locations:
 | **Crush** | `-` | `.crush/commands/` | `clavix-<command>.md` |
 | **Codex CLI** | `-` | `~/.codex/prompts/` (global) | `clavix-<command>.md` |
 | **Augment Code** | `-` | `.augment/rules/` | `clavix-<command>.md` |
+| **Vibe** | `-` | `.vibe/skills/` | `clavix-<command>-skill.md` |
 
 **Example paths for Claude Code:**
 ```

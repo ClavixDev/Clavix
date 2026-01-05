@@ -157,7 +157,7 @@ Do you have a clear, specific task?
 
 ```json
 {
-  "version": "5.5.2",
+  "version": "5.10.2",
   "integrations": ["claude-code", "cursor"],
   "outputs": {
     "path": ".clavix/outputs",

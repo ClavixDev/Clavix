@@ -54,6 +54,7 @@ For detailed information on template customization and override options, see [Ge
 | Crush | `-` | `.crush/commands/` | No | *(implicit)* |
 | Codex CLI | `-` | `~/.codex/prompts/` (global) | No | `$ARGUMENTS` |
 | Augment Code | `-` | `.augment/rules/` | No | *(implicit)* |
+| Vibe CLI | `-` | `.vibe/skills/` | No | *(implicit)* |
 
 ## Universal adapters
 
