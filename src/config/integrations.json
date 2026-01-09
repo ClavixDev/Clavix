@@ -5,7 +5,7 @@
     {
       "name": "cursor",
       "displayName": "Cursor",
-      "directory": ".cursor/rules",
+      "directory": ".cursor/commands",
       "filenamePattern": "clavix-{name}",
       "extension": ".md",
       "separator": "-",

@@ -524,7 +524,7 @@ Wait for the user to decide what to do next.
 
 ---
 
-## Agent Transparency (v5.10.2)
+## Agent Transparency (v5.10.3)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
