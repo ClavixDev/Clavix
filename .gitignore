@@ -57,6 +57,10 @@ AGENTS.md
 OCTO.md
 CLAUDE.md
 
+# Husky and skills
+.husky/
+.vibe/skills/
+
 # OpenSpec (local spec working files)
 openspec/
 
