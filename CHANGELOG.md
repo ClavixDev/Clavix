@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **New `/clavix:review` Command** - Criteria-driven PR review for team collaboration:
+- **New `/clavix:review` Command** - Criteria-driven PR review for team collaboration
+  *(Inspired by [@fmflurry](https://github.com/fmflurry))*:
   - Review teammate's PRs without requiring them to use Clavix
   - Conversational intake: asks which branch/PR, which criteria, and team conventions
   - **5 Review Presets**: Security, Architecture, Standards, Performance, All-Around
