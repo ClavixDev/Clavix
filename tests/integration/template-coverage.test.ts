@@ -149,27 +149,8 @@ describe('Template Coverage - Integration', () => {
     });
   });
 
-  describe('Provider Templates - copilot-instructions.md', () => {
-    const copilotPath = path.join(templatesDir, 'agents/copilot-instructions.md');
-
-    it('should exist', () => {
-      expect(fs.existsSync(copilotPath)).toBe(true);
-    });
-
-    it('should have Prompt Lifecycle Workflow section', () => {
-      const content = fs.readFileSync(copilotPath, 'utf-8');
-
-      expect(content).toContain('Prompt Lifecycle Workflow');
-    });
-
-    it('should document complete lifecycle workflow', () => {
-      const content = fs.readFileSync(copilotPath, 'utf-8');
-
-      expect(content).toContain('Prompt Lifecycle Workflow');
-      expect(content).toContain('Optimize');
-      expect(content).toContain('Execute');
-    });
-  });
+  // Note: copilot-instructions.md was removed in v6.1.0
+  // GitHub Copilot now uses .github/prompts/*.prompt.md slash commands instead
 
   describe('Cross-Template Consistency', () => {
     it('canonical templates should use consistent storage paths', () => {
@@ -224,7 +205,7 @@ describe('Template Coverage - Integration', () => {
       expect(fs.existsSync(path.join(agentsDist, 'agents.md'))).toBe(true);
       expect(fs.existsSync(path.join(agentsDist, 'octo.md'))).toBe(true);
       expect(fs.existsSync(path.join(agentsDist, 'warp.md'))).toBe(true);
-      expect(fs.existsSync(path.join(agentsDist, 'copilot-instructions.md'))).toBe(true);
+      // copilot-instructions.md removed in v6.1.0 - now uses .github/prompts/*.prompt.md
     });
   });
 });

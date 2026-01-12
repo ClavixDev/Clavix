@@ -6,19 +6,14 @@ import { DocInjector } from '../../../core/doc-injector.js';
 import { AgentsMdGenerator } from '../../../core/adapters/agents-md-generator.js';
 import { OctoMdGenerator } from '../../../core/adapters/octo-md-generator.js';
 import { WarpMdGenerator } from '../../../core/adapters/warp-md-generator.js';
-import { CopilotInstructionsGenerator } from '../../../core/adapters/copilot-instructions-generator.js';
+
 import { InstructionsGenerator } from '../../../core/adapters/instructions-generator.js';
 import type { AgentManager } from '../../../core/agent-manager.js';
 
 /**
  * Doc generator integrations (not regular adapters)
  */
-export const DOC_GENERATOR_INTEGRATIONS = [
-  'agents-md',
-  'octo-md',
-  'warp-md',
-  'copilot-instructions',
-] as const;
+export const DOC_GENERATOR_INTEGRATIONS = ['agents-md', 'octo-md', 'warp-md'] as const;
 
 /**
  * Integrations that use colon separator (CLI tools)
@@ -53,9 +48,6 @@ export async function generateDocGeneratorContent(integrationName: string): Prom
     case 'warp-md':
       await WarpMdGenerator.generate();
       break;
-    case 'copilot-instructions':
-      await CopilotInstructionsGenerator.generate();
-      break;
   }
 }
 
@@ -72,9 +64,6 @@ export async function cleanupDocGeneratorIntegration(integrationName: string): P
       break;
     case 'warp-md':
       await DocInjector.removeBlock('WARP.md');
-      break;
-    case 'copilot-instructions':
-      await DocInjector.removeBlock('.github/copilot-instructions.md');
       break;
   }
 }

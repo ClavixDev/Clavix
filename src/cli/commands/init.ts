@@ -11,7 +11,7 @@ import { DocInjector } from '../../core/doc-injector.js';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator.js';
 import { OctoMdGenerator } from '../../core/adapters/octo-md-generator.js';
 import { WarpMdGenerator } from '../../core/adapters/warp-md-generator.js';
-import { CopilotInstructionsGenerator } from '../../core/adapters/copilot-instructions-generator.js';
+
 import { InstructionsGenerator } from '../../core/adapters/instructions-generator.js';
 import { FileSystem } from '../../utils/file-system.js';
 import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config.js';
@@ -326,13 +326,6 @@ export default class Init extends Command {
           continue;
         }
 
-        // Handle copilot-instructions separately (it's not an adapter)
-        if (integrationName === 'copilot-instructions') {
-          this.log(chalk.gray('  ✓ Generating .github/copilot-instructions.md...'));
-          await CopilotInstructionsGenerator.generate();
-          continue;
-        }
-
         // Handle octo-md separately (it's not an adapter)
         if (integrationName === 'octo-md') {
           this.log(chalk.gray('  ✓ Generating OCTO.md...'));
@@ -534,12 +527,6 @@ export default class Init extends Command {
       if (integrationName === 'agents-md') {
         this.log(chalk.gray('  ✓ Regenerating AGENTS.md...'));
         await AgentsMdGenerator.generate();
-        continue;
-      }
-
-      if (integrationName === 'copilot-instructions') {
-        this.log(chalk.gray('  ✓ Regenerating .github/copilot-instructions.md...'));
-        await CopilotInstructionsGenerator.generate();
         continue;
       }
 

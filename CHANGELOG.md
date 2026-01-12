@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.0] - 2026-01-12
+
+### Added
+
+- **GitHub Copilot Custom Slash Commands** - Full integration with VS Code GitHub Copilot:
+  - Replaced global `.github/copilot-instructions.md` with proper slash commands
+  - New adapter generates `.github/prompts/*.prompt.md` files
+  - Commands appear as `/clavix-improve`, `/clavix-prd`, etc. in Copilot Chat
+  - YAML frontmatter with `name`, `description`, `agent`, and `tools`
+  - Smart agent mapping: `ask` for planning commands, `agent` for implementation
+  - Moved from "Universal Adapters" to "IDE & IDE Extensions" category
+
+### Changed
+
+- **CopilotPromptsAdapter** replaces `CopilotInstructionsGenerator`
+- **Integration name**: `copilot-instructions` → `copilot`
+- **File location**: `.github/copilot-instructions.md` → `.github/prompts/clavix-*.prompt.md`
+- **Schema updates**: Added `.prompt.md` extension and `prompt-files` specialAdapter type
+
+### Removed
+
+- `CopilotInstructionsGenerator` class
+- `src/templates/agents/copilot-instructions.md` template
+
 ## [6.0.0] - 2026-01-12
 
 ### Added

@@ -194,14 +194,15 @@
       "type": "universal"
     },
     {
-      "name": "copilot-instructions",
+      "name": "copilot",
       "displayName": "GitHub Copilot",
-      "directory": ".github",
-      "filenamePattern": "copilot-instructions",
-      "extension": ".md",
+      "directory": ".github/prompts",
+      "filenamePattern": "clavix-{name}",
+      "extension": ".prompt.md",
       "separator": "-",
       "detection": ".github",
-      "type": "universal"
+      "specialAdapter": "prompt-files",
+      "type": "standard"
     },
     {
       "name": "octo-md",

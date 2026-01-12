@@ -304,7 +304,8 @@ describe('Integration Selector', () => {
         const choices = promptConfig.choices;
 
         // agents-md is no longer in selection (always enabled)
-        const optionalUniversalAdapters = ['copilot-instructions', 'octo-md', 'warp-md'];
+        // copilot moved to IDE Extensions in v6.1.0
+        const optionalUniversalAdapters = ['octo-md', 'warp-md'];
 
         optionalUniversalAdapters.forEach((adapter) => {
           const choice = choices.find((c: any) => c.value === adapter);
@@ -351,10 +352,10 @@ describe('Integration Selector', () => {
         expect(cursor?.name).toContain('Cursor');
         expect(cursor?.name).toContain('.cursor/commands/');
 
-        // agents-md is no longer in choices (always enabled)
-        const copilot = choices.find((c: any) => c.value === 'copilot-instructions');
+        // GitHub Copilot now in IDE Extensions (v6.1.0)
+        const copilot = choices.find((c: any) => c.value === 'copilot');
         expect(copilot?.name).toContain('GitHub Copilot');
-        expect(copilot?.name).toContain('copilot-instructions.md');
+        expect(copilot?.name).toContain('.github/prompts/');
       });
     });
 

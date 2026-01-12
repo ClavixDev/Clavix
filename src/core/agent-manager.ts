@@ -1,5 +1,6 @@
 import { AgentAdapter, ValidationResult } from '../types/agent.js';
 import { ClaudeCodeAdapter } from './adapters/claude-code-adapter.js';
+import { CopilotPromptsAdapter } from './adapters/copilot-prompts-adapter.js';
 import { GeminiAdapter } from './adapters/gemini-adapter.js';
 import { QwenAdapter } from './adapters/qwen-adapter.js';
 import { LlxprtAdapter } from './adapters/llxprt-adapter.js';
@@ -26,6 +27,7 @@ export class AgentManager {
 
     // Register special adapters (require custom logic)
     this.registerAdapter(new ClaudeCodeAdapter(userConfig)); // Doc injection
+    this.registerAdapter(new CopilotPromptsAdapter(userConfig)); // Prompt files
     this.registerAdapter(new GeminiAdapter(userConfig)); // TOML format
     this.registerAdapter(new QwenAdapter(userConfig)); // TOML format
     this.registerAdapter(new LlxprtAdapter(userConfig)); // TOML format

@@ -426,7 +426,7 @@ describe('Multi-Integration Workflow Integration', () => {
       const droidChoice = choices.find((c) => c.value === 'droid');
 
       expect(claudeChoice?.name).toContain('.claude/commands/clavix');
-      expect(cursorChoice?.name).toContain('.cursor/rules');
+      expect(cursorChoice?.name).toContain('.cursor/commands');
       expect(droidChoice?.name).toContain('.factory/commands');
     });
   });

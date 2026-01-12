@@ -42,6 +42,7 @@ export async function selectIntegrations(
         new inquirer.Separator('=== IDE & IDE Extensions ==='),
         { name: 'Cline (.cline/workflows/)', value: 'cline' },
         { name: 'Cursor (.cursor/commands/)', value: 'cursor' },
+        { name: 'GitHub Copilot (.github/prompts/)', value: 'copilot' },
         { name: 'Kilocode (.kilo/clavix/)', value: 'kilocode' },
         { name: 'Roocode (.roo/commands/)', value: 'roocode' },
         { name: 'Windsurf (.windsurf/rules/)', value: 'windsurf' },
@@ -49,7 +50,6 @@ export async function selectIntegrations(
 
         new inquirer.Separator('=== Optional Universal Adapters ==='),
         // Note: AGENTS.md is always enabled (not shown here)
-        { name: 'GitHub Copilot (.github/copilot-instructions.md)', value: 'copilot-instructions' },
         { name: 'OCTO.md (Universal)', value: 'octo-md' },
         { name: 'WARP.md (Universal)', value: 'warp-md' },
       ].map((choice) => {
