@@ -139,6 +139,7 @@ describe('Mode Enforcement Consistency', () => {
       'summarize.md',
       'archive.md',
       'verify.md',
+      'review.md',
     ];
 
     it.each(workflowTemplates)('%s does not list /clavix:prompts in navigation', async (file) => {

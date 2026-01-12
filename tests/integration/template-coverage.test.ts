@@ -215,6 +215,7 @@ describe('Template Coverage - Integration', () => {
       expect(fs.existsSync(path.join(canonicalDist, 'prompts.md'))).toBe(false);
       expect(fs.existsSync(path.join(canonicalDist, 'improve.md'))).toBe(true);
       expect(fs.existsSync(path.join(canonicalDist, 'implement.md'))).toBe(true);
+      expect(fs.existsSync(path.join(canonicalDist, 'review.md'))).toBe(true);
     });
 
     it('dist should contain provider templates', () => {

@@ -415,7 +415,7 @@ I'll update the PRD and add this to the refinement history. Confirm?
 
 ---
 
-## Agent Transparency (v5.10.3)
+## Agent Transparency (v6.0.0)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

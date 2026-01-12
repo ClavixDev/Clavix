@@ -26,7 +26,7 @@ These run TypeScript code to set up your environment:
 | `clavix diagnose` | Check installation health |
 | `clavix version` | Show version |
 
-### Slash Commands (9 total)
+### Slash Commands (10 total)
 
 These are markdown templates that AI agents read and execute:
 
@@ -40,6 +40,7 @@ These are markdown templates that AI agents read and execute:
 | `/clavix:summarize` | Document | Extract requirements from conversation |
 | `/clavix:refine` | Refine | Update existing PRD or prompt |
 | `/clavix:verify` | Verify | Check implementation against checklist |
+| `/clavix:review` | Review | Criteria-driven PR review for teammates |
 | `/clavix:archive` | Manage | Archive completed projects |
 
 ---
@@ -387,6 +388,77 @@ Recommended: "Fix #1 and #2"
 
 ---
 
+## /clavix:review
+
+Perform criteria-driven PR review with structured actionable feedback.
+
+```
+/clavix:review [options]
+```
+
+**Flags:**
+- `-b, --branch <name>` - Target branch to diff against (default: main/master)
+- `-c, --criteria <preset>` - Use predefined criteria preset
+- `--quick` - Skip questions, use sensible defaults
+
+**What it does:**
+1. **Asks for PR context** - Which branch or PR to review
+2. **Gathers review criteria** - Security, architecture, standards, or custom focus
+3. **Collects additional context** - Team conventions, specific concerns
+4. **Analyzes the diff** - Reads changed files and surrounding context
+5. **Generates review report** - Structured findings with severity levels
+6. **Saves report** - To `.clavix/outputs/reviews/`
+
+**Review Criteria Presets:**
+- 🔒 **Security** - Auth, validation, secrets, XSS/CSRF, injection
+- 🏗️ **Architecture** - Design patterns, SOLID, separation of concerns
+- 📏 **Standards** - Code style, naming, documentation, testing
+- ⚡ **Performance** - Efficiency, caching, query optimization
+- 🔄 **All-Around** - Balanced review across all dimensions
+
+**Output Categories:**
+- 🔴 **CRITICAL**: Security vulnerabilities, broken functionality
+- 🟠 **MAJOR**: Architecture violations, missing tests for critical paths
+- 🟡 **MINOR**: Code style, naming, minor improvements
+- ⚪ **SUGGESTION**: Nice-to-have improvements
+
+**Example Output:**
+```markdown
+# PR Review Report
+
+**Branch:** `feature/user-auth` → `main`
+**Review Criteria:** Security
+
+## 📊 Executive Summary
+
+| Dimension | Rating | Key Finding |
+|-----------|--------|-------------|
+| Security | 🔴 NEEDS WORK | SQL injection in user search |
+
+## 🔍 Detailed Findings
+
+### 🔴 Critical (Must Fix)
+
+| ID | File | Line | Issue |
+|:--:|:-----|:----:|:------|
+| C1 | `src/api/users.ts` | 45 | SQL injection: uses string concatenation |
+```
+
+**When to use:**
+- Reviewing a teammate's PR before manual review
+- Ensuring PR meets team standards
+- Getting structured feedback on code changes
+
+**When NOT to use:**
+- Checking your own implementation against your PRD (use `/clavix:verify`)
+- Code is not yet in a branch/PR
+
+**Difference from `/clavix:verify`:**
+- **verify** = checks YOUR implementation against YOUR PRD/tasks
+- **review** = reviews SOMEONE ELSE's PR against configurable criteria
+
+---
+
 ## /clavix:archive
 
 Archive completed projects.
@@ -443,4 +515,15 @@ For iterative refinement:
 /clavix:plan           # Regenerate tasks (if PRD)
      ↓
 /clavix:implement      # Execute updates
+```
+
+For PR reviews (teammate's code):
+```
+[Teammate creates PR]
+     ↓
+/clavix:review         # Analyze PR with criteria
+     ↓
+[Review report generated]
+     ↓
+[Manual PR review with guidance]
 ```

@@ -24,6 +24,7 @@ Static reference documentation for AI agents.
 | Component | Purpose | Used By |
 |-----------|---------|---------|
 | `quality-dimensions.md` | Quality scoring dimensions (6 dimensions), workflow-specific usage, and why summarize excludes Specificity | improve, prd, summarize, refine |
+| `review-criteria.md` | Review dimension definitions (security, architecture, standards, etc.) | review |
 
 ### Sections
 Reusable content sections for specific workflows.
@@ -35,6 +36,8 @@ Reusable content sections for specific workflows.
 | `improvement-explanations.md` | How to explain quality improvements | improve, summarize |
 | `pattern-impact.md` | What patterns had the biggest impact | improve |
 | `prd-examples.md` | PRD generation examples | prd |
+| `review-presets.md` | Predefined criteria presets for PR review | review |
+| `review-examples.md` | Example review report outputs | review |
 
 ### Troubleshooting
 Recovery patterns for common agent issues.
@@ -55,6 +58,7 @@ Recovery patterns for common agent issues.
 | `/clavix:summarize` | AGENT_MANUAL (includes clarifying-questions), improvement-explanations, quality-dimensions, state-awareness, vibecoder-recovery |
 | `/clavix:refine` | AGENT_MANUAL, cli-reference, quality-dimensions, state-awareness |
 | `/clavix:verify` | AGENT_MANUAL, cli-reference, vibecoder-recovery |
+| `/clavix:review` | AGENT_MANUAL, review-criteria, review-presets, self-correction-protocol, cli-reference, vibecoder-recovery |
 | `/clavix:archive` | AGENT_MANUAL, cli-reference, vibecoder-recovery |
 
 ## Include Syntax

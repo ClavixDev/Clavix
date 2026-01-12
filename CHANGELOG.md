@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-01-12
+
+### Added
+
+- **New `/clavix:review` Command** - Criteria-driven PR review for team collaboration:
+  - Review teammate's PRs without requiring them to use Clavix
+  - Conversational intake: asks which branch/PR, which criteria, and team conventions
+  - **5 Review Presets**: Security, Architecture, Standards, Performance, All-Around
+  - **Custom criteria support**: describe specific concerns in natural language
+  - **Structured output**: Executive Summary + Detailed Findings with severity levels
+  - **Severity categories**: 🔴 Critical, 🟠 Major, 🟡 Minor, ⚪ Suggestion
+  - Saves reports to `.clavix/outputs/reviews/` with frontmatter metadata
+  - Differentiates from `/clavix:verify` (which checks YOUR code against YOUR PRD)
+
+- **New Template Components**:
+  - `references/review-criteria.md` - Comprehensive review dimension definitions
+  - `sections/review-presets.md` - Predefined criteria preset configurations
+  - `sections/review-examples.md` - Example review report outputs
+
+- **Comprehensive Test Suite** - 32 new tests for review command:
+  - Template structure validation
+  - Component existence and content checks
+  - MANIFEST and documentation verification
+  - Build artifact verification
+
+### Changed
+
+- **Slash Commands**: Now 10 total (was 9) with addition of `/clavix:review`
+- **MANIFEST.md**: Updated with review command and its components
+- **cli-reference.md**: Added reviews directory to file structure
+- **docs/commands.md**: Full documentation for review command with examples
+
+### Why v6.0.0?
+
+This is a **major version bump** because:
+1. Introduces a significant new workflow (PR review) that expands Clavix beyond personal use to team collaboration
+2. Changes the command count from 9 to 10
+3. Adds new output directory structure (`.clavix/outputs/reviews/`)
+
 ## [5.10.3] - 2026-01-09
 
 ### Fixed

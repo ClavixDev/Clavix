@@ -85,7 +85,7 @@ describe('InstructionsGenerator', () => {
       // Verify count (v5.5.2: 9 workflows - added refine)
       const files = await fs.readdir(workflowsDir);
       const mdFiles = files.filter((f) => f.endsWith('.md'));
-      expect(mdFiles.length).toBe(9);
+      expect(mdFiles.length).toBe(10);
     });
 
     it('should copy canonical content correctly (verify improve.md sample)', async () => {
@@ -220,7 +220,7 @@ describe('InstructionsGenerator', () => {
       // Verify still have all 9 (v5.5.2: added refine)
       const files = await fs.readdir('.clavix/instructions/workflows');
       const mdFiles = files.filter((f) => f.endsWith('.md'));
-      expect(mdFiles.length).toBe(9);
+      expect(mdFiles.length).toBe(10);
     });
   });
 
@@ -245,17 +245,17 @@ describe('InstructionsGenerator', () => {
       // First generation
       await InstructionsGenerator.generate();
       let files = await fs.readdir('.clavix/instructions/workflows');
-      expect(files.filter((f) => f.endsWith('.md')).length).toBe(9);
+      expect(files.filter((f) => f.endsWith('.md')).length).toBe(10);
 
       // Second generation (should not duplicate)
       await InstructionsGenerator.generate();
       files = await fs.readdir('.clavix/instructions/workflows');
-      expect(files.filter((f) => f.endsWith('.md')).length).toBe(9);
+      expect(files.filter((f) => f.endsWith('.md')).length).toBe(10);
 
       // Third generation
       await InstructionsGenerator.generate();
       files = await fs.readdir('.clavix/instructions/workflows');
-      expect(files.filter((f) => f.endsWith('.md')).length).toBe(9);
+      expect(files.filter((f) => f.endsWith('.md')).length).toBe(10);
     });
 
     it('should preserve core/ and troubleshooting/ files during regeneration', async () => {
