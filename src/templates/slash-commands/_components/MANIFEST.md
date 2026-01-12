@@ -9,7 +9,7 @@ Core protocols that all AI agents must follow. Shared across most commands.
 
 | Component | Purpose | Used By |
 |-----------|---------|---------|
-| `AGENT_MANUAL.md` | Universal protocols (transparency, mode identification, communication patterns) | All 9 commands |
+| `AGENT_MANUAL.md` | Universal protocols (transparency, mode identification, communication patterns) | All 10 commands |
 | `clarifying-questions.md` | Systematic protocol for asking clarifying questions (95% confidence threshold) | improve, prd, plan, start, summarize |
 | `cli-reference.md` | CLI command reference including removed commands table | improve, prd, plan, implement, verify, archive |
 | `state-awareness.md` | Workflow state detection (mid-PRD, mid-implementation, etc.) | prd, plan, implement, summarize |
@@ -44,7 +44,7 @@ Recovery patterns for common agent issues.
 
 | Component | Purpose | Used By |
 |-----------|---------|---------|
-| `vibecoder-recovery.md` | Recovery patterns for "vibe coders" who skip instructions | All 8 commands |
+| `vibecoder-recovery.md` | Recovery patterns for "vibe coders" who skip instructions | All 10 commands |
 
 ## Usage Matrix
 
@@ -58,7 +58,7 @@ Recovery patterns for common agent issues.
 | `/clavix:summarize` | AGENT_MANUAL (includes clarifying-questions), improvement-explanations, quality-dimensions, state-awareness, vibecoder-recovery |
 | `/clavix:refine` | AGENT_MANUAL, cli-reference, quality-dimensions, state-awareness |
 | `/clavix:verify` | AGENT_MANUAL, cli-reference, vibecoder-recovery |
-| `/clavix:review` | AGENT_MANUAL, review-criteria, review-presets, self-correction-protocol, cli-reference, vibecoder-recovery |
+| `/clavix:review` | AGENT_MANUAL, review-criteria, review-presets, review-examples, self-correction-protocol, cli-reference, vibecoder-recovery |
 | `/clavix:archive` | AGENT_MANUAL, cli-reference, vibecoder-recovery |
 
 ## Include Syntax

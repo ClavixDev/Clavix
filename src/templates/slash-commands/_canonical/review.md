@@ -458,6 +458,9 @@ consistent with the project's conventions.
 ### Review Presets
 {{INCLUDE:sections/review-presets.md}}
 
+### Review Examples
+{{INCLUDE:sections/review-examples.md}}
+
 ### Self-Correction Protocol
 {{INCLUDE:agent-protocols/self-correction-protocol.md}}
 
