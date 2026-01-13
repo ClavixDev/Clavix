@@ -1,6 +1,6 @@
 # Clavix
 
-> Agentic-first prompt workflows. Markdown templates that teach AI agents how to optimize prompts, create PRDs, and manage implementation. Works with Claude Code, Cursor, Windsurf, and 21 AI coding tools.
+> Agentic-first prompt workflows. Markdown templates that teach AI agents how to optimize prompts, create PRDs, and manage implementation. Works with Claude Code, Cursor, Windsurf, GitHub Copilot, and many AI coding tools.
 
 ## Quick Links
 
@@ -19,7 +19,7 @@
 | Tool Type | Format | Example |
 |-----------|--------|---------|
 | **CLI tools** (Claude Code, Gemini, Qwen) | Colon (`:`) | `/clavix:improve` |
-| **IDE extensions** (Cursor, Windsurf, Cline) | Hyphen (`-`) | `/clavix-improve` |
+| **IDEs & extensions** (Cursor, Windsurf, Cline, GitHub Copilot) | Hyphen (`-`) | `/clavix-improve` |
 
 **Rule of thumb:** CLI tools use colon, IDE extensions use hyphen.
 
@@ -32,13 +32,19 @@ npm install -g clavix
 clavix init
 ```
 
+During `clavix init`, pick your AI tools (Cursor, Claude Code, GitHub Copilot, etc.). Clavix installs slash command templates into those integrations.
+
 ### 2. Use Slash Commands
 
-```
+```text
+# CLI-style tools (Claude Code, Gemini, Qwen)
 /clavix:improve "Create a secure login page with JWT"
+
+# IDE-style tools (Cursor, Windsurf, GitHub Copilot, etc.)
+/clavix-improve "Create a secure login page with JWT"
 ```
 
-The AI agent reads the template and optimizes your prompt.
+The AI agent reads the Clavix template and optimizes your prompt.
 
 ### 3. Choose Your Workflow
 
@@ -79,7 +85,7 @@ Have a conversation to explore requirements, then extract and plan.
 ```
 Refine existing PRDs or prompts based on feedback.
 
-### All 9 Slash Commands
+### All 10 Slash Commands
 
 | Command | Purpose |
 |---------|---------|
@@ -91,21 +97,24 @@ Refine existing PRDs or prompts based on feedback.
 | `/clavix:summarize` | Extract requirements from conversation |
 | `/clavix:refine` | Refine existing PRD or prompt |
 | `/clavix:verify` | Verify implementation against requirements |
+| `/clavix:review` | Review teammate PRs using criteria presets |
 | `/clavix:archive` | Archive completed projects |
 
-See [Getting Started](docs/getting-started.md) for the full guide.
+`/clavix:review` is for reviewing teammates' PRs (criteria-driven, severity levels, saved reports), while `/clavix:verify` checks your implementation against your own PRD.
+
+For a full walkthrough, see [Getting Started](docs/getting-started.md).
 
 ## How It Works
 
 Clavix is **agentic-first**:
 
-1. **You run `clavix init`** - Sets up slash command templates
-2. **You invoke a slash command** - Like `/clavix:improve`
-3. **AI agent reads the template** - Markdown instructions
-4. **Agent follows instructions** - Using its native tools
-5. **Output is saved** - To `.clavix/outputs/`
+1. **You run `clavix init`** – Select integrations (Cursor, Claude Code, GitHub Copilot, etc.). Clavix installs markdown templates into each tool (e.g. `.cursor/commands/`, `.github/prompts/clavix-*.prompt.md`).
+2. **You invoke a slash command** – Like `/clavix:improve`, `/clavix:plan`, or `/clavix:review` in your AI tool.
+3. **The AI agent reads the template** – Structured markdown instructions with frontmatter.
+4. **The agent follows the instructions** – Using its native tools (edit files, run tests, summarize, review PRs, etc.).
+5. **Outputs are saved locally** – Under `.clavix/outputs/` (including `.clavix/outputs/reviews/` for PR review reports).
 
-**No TypeScript executes during slash commands.** The markdown templates ARE the product.
+**No TypeScript executes during slash commands.** The markdown templates ARE the product; Clavix only installs and updates them.
 
 See [Architecture](docs/architecture.md) for details.
 
@@ -113,9 +122,11 @@ See [Architecture](docs/architecture.md) for details.
 
 | Category | Tools |
 |----------|-------|
-| IDE extensions | Cursor, Windsurf, Kilocode, Roocode, Cline |
+| IDEs & extensions | Cursor, Windsurf, Kilocode, Roocode, Cline, GitHub Copilot (VS Code) |
 | CLI agents | Claude Code, Gemini CLI, Qwen Code, Droid CLI, CodeBuddy, OpenCode, LLXPRT, Amp, Crush CLI, Codex CLI, Augment CLI, Vibe CLI |
-| Universal | AGENTS.md, GitHub Copilot, OCTO.md, WARP.md |
+| Universal formats | AGENTS.md, OCTO.md, WARP.md |
+
+In GitHub Copilot Chat, Clavix commands appear as `/clavix-improve`, `/clavix-prd`, `/clavix-review`, etc.
 
 Full list: [docs/integrations.md](docs/integrations.md)
 
@@ -123,12 +134,12 @@ Full list: [docs/integrations.md](docs/integrations.md)
 
 | Command | Purpose |
 |---------|---------|
-| `clavix init` | Initialize Clavix in a project |
-| `clavix update` | Regenerate templates |
-| `clavix diagnose` | Check installation |
+| `clavix init` | Initialize or reconfigure Clavix integrations in a project |
+| `clavix update` | Regenerate templates for selected integrations |
+| `clavix diagnose` | Check installation and integration health |
 | `clavix version` | Show version |
 
-All workflows (`/clavix:improve`, etc.) are **slash commands** that AI agents execute.
+All workflows (`/clavix:improve`, `/clavix:plan`, `/clavix:review`, etc.) are **slash commands** that your AI tools execute using Clavix templates.
 
 ## Documentation
 
@@ -142,7 +153,7 @@ All workflows (`/clavix:improve`, etc.) are **slash commands** that AI agents ex
 
 - **Node.js >= 18.0.0**
 - npm or yarn
-- An AI coding tool (Claude Code, Cursor, etc.)
+- An AI coding tool (Claude Code, Cursor, GitHub Copilot, etc.)
 
 ## License
 
