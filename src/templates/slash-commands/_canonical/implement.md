@@ -615,7 +615,7 @@ I'll explain what's wrong and what you might need to do:
 
 ---
 
-## Agent Transparency (v6.1.1)
+## Agent Transparency (v6.1.2)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
