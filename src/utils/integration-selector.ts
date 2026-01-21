@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
 import { AgentManager } from '../core/agent-manager.js';
+import { SkillScope } from '../types/skill.js';
 
 /**
  * AGENTS.md is always enabled by default.
@@ -24,6 +25,11 @@ export async function selectIntegrations(
       name: 'selectedIntegrations',
       message: 'Which AI tools are you using?',
       choices: [
+        new inquirer.Separator('=== Agent Skills (agentskills.io) ==='),
+        { name: 'Agent Skills - Global (~/.config/agents/skills/)', value: 'agent-skills-global' },
+        { name: 'Agent Skills - Project (.skills/)', value: 'agent-skills-project' },
+        new inquirer.Separator(),
+
         new inquirer.Separator('=== CLI Tools ==='),
         { name: 'Amp (.agents/commands/)', value: 'amp' },
         { name: 'Augment CLI (.augment/commands/clavix/)', value: 'augment' },
@@ -85,4 +91,29 @@ export function ensureMandatoryIntegrations(integrations: string[]): string[] {
     return [MANDATORY_INTEGRATION, ...integrations];
   }
   return integrations;
+}
+
+/**
+ * Check if agent skills integration is selected
+ */
+export function hasAgentSkillsSelected(integrations: string[]): boolean {
+  return (
+    integrations.includes('agent-skills-global') || integrations.includes('agent-skills-project')
+  );
+}
+
+/**
+ * Get the skill scope from integration name
+ */
+export function getSkillScope(integrationName: string): SkillScope | null {
+  if (integrationName === 'agent-skills-global') return 'global';
+  if (integrationName === 'agent-skills-project') return 'project';
+  return null;
+}
+
+/**
+ * Check if integration name is an agent skills integration
+ */
+export function isAgentSkillsIntegration(name: string): boolean {
+  return name === 'agent-skills-global' || name === 'agent-skills-project';
 }

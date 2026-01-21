@@ -45,7 +45,8 @@ describe('Multi-Integration Workflow Integration', () => {
 
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
       // v5.10.0: Added Vibe CLI adapter = 21 total
-      expect(adapters).toHaveLength(21);
+      // v6.2.0: Added Agent Skills (global + project) = 23 total
+      expect(adapters).toHaveLength(23);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
@@ -104,27 +105,35 @@ describe('Multi-Integration Workflow Integration', () => {
   });
 
   describe('Project Detection', () => {
-    it('should detect no agents in empty project', async () => {
+    it('should detect no project-local agents in empty project', async () => {
       const detected = await agentManager.detectAgents();
-      expect(detected).toHaveLength(0);
+      // Filter out global adapters (like agent-skills-global) that may detect regardless of project
+      const projectLocal = detected.filter(
+        (a) => !a.name.includes('-global') && a.directory && !a.directory.startsWith('~')
+      );
+      expect(projectLocal).toHaveLength(0);
     });
 
     it('should detect Claude Code project', async () => {
       await fs.ensureDir('.claude');
 
       const detected = await agentManager.detectAgents();
+      const names = detected.map((a) => a.name);
 
-      expect(detected).toHaveLength(1);
-      expect(detected[0].name).toBe('claude-code');
+      // Claude Code should be detected
+      expect(names).toContain('claude-code');
     });
 
     it('should detect Cursor project', async () => {
       await fs.ensureDir('.cursor');
 
       const detected = await agentManager.detectAgents();
+      const names = detected.map((a) => a.name);
 
-      expect(detected).toHaveLength(1);
-      expect(detected[0].name).toBe('cursor');
+      // Cursor should be detected
+      expect(names).toContain('cursor');
+      // May also detect agent-skills-global if ~/.config/agents/skills exists
+      expect(detected.length).toBeGreaterThanOrEqual(1);
     });
 
     it('should detect multiple integrations in same project', async () => {
@@ -134,7 +143,9 @@ describe('Multi-Integration Workflow Integration', () => {
 
       const detected = await agentManager.detectAgents();
 
-      expect(detected).toHaveLength(3);
+      // May detect 3-4 depending on whether ~/.config/agents/skills exists
+      expect(detected.length).toBeGreaterThanOrEqual(3);
+      expect(detected.length).toBeLessThanOrEqual(4);
       const names = detected.map((a) => a.name);
       expect(names).toContain('claude-code');
       expect(names).toContain('cursor');
@@ -172,7 +183,11 @@ describe('Multi-Integration Workflow Integration', () => {
 
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
       // v5.10.0: Added Vibe CLI adapter = 21 total
-      expect(detected).toHaveLength(21);
+      // v6.2.0: Added Agent Skills (global + project) = 23 total
+      // Note: agent-skills-global detects ~/.config/agents/skills which may or may not exist
+      // So we check for 21-23 depending on environment
+      expect(detected.length).toBeGreaterThanOrEqual(21);
+      expect(detected.length).toBeLessThanOrEqual(23);
       expect(names).toEqual(
         expect.arrayContaining([
           'claude-code',
@@ -396,13 +411,17 @@ describe('Multi-Integration Workflow Integration', () => {
 
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
       // v5.10.0: Added Vibe CLI adapter = 21 total
-      expect(choices).toHaveLength(21);
+      // v6.2.0: Added Agent Skills (global + project) = 23 total
+      expect(choices).toHaveLength(23);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
 
       // Verify new providers are included
       expect(choices.find((c) => c.value === 'windsurf')).toBeDefined();
       expect(choices.find((c) => c.value === 'kilocode')).toBeDefined();
+      // Verify Agent Skills are included
+      expect(choices.find((c) => c.value === 'agent-skills-global')).toBeDefined();
+      expect(choices.find((c) => c.value === 'agent-skills-project')).toBeDefined();
       expect(choices.find((c) => c.value === 'llxprt')).toBeDefined();
       expect(choices.find((c) => c.value === 'cline')).toBeDefined();
       expect(choices.find((c) => c.value === 'roocode')).toBeDefined();

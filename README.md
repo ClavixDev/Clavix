@@ -122,6 +122,7 @@ See [Architecture](docs/architecture.md) for details.
 
 | Category | Tools |
 |----------|-------|
+| Agent Skills | Global (`~/.config/agents/skills/`) or Project (`.skills/`) - works with any [agentskills.io](https://agentskills.io) compatible tool |
 | IDEs & extensions | Cursor, Windsurf, Kilocode, Roocode, Cline, GitHub Copilot (VS Code) |
 | CLI agents | Claude Code, Gemini CLI, Qwen Code, Droid CLI, CodeBuddy, OpenCode, LLXPRT, Amp, Crush CLI, Codex CLI, Augment CLI, Vibe CLI |
 | Universal formats | AGENTS.md, OCTO.md, WARP.md |

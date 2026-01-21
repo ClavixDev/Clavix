@@ -56,10 +56,21 @@ For detailed information on template customization and override options, see [Ge
 | Augment Code | `-` | `.augment/rules/` | No | *(implicit)* |
 | Vibe CLI | `-` | `.vibe/skills/` | No | *(implicit)* |
 
+## Agent Skills (agentskills.io)
+
+| Scope | Command location | Description |
+| --- | --- | --- |
+| Global | `~/.config/agents/skills/clavix-*/` | Available to all projects |
+| Project | `.skills/clavix-*/` | Project-specific skills |
+
+Agent Skills integration generates directory-based skills following the [agentskills.io](https://agentskills.io) specification. Each skill is a directory containing a `SKILL.md` file with YAML frontmatter (name, description, license).
+
+All 10 Clavix workflows are available as curated skills, optimized for efficient context usage (< 500 lines each). Skills work with any Agent Skills-compatible AI tool.
+
 ## Universal adapters
 
 - **AGENTS.md** *(mandatory, always enabled)* – Adds a managed block to `AGENTS.md` for tooling that ingests long-form documentation instead of slash commands. This integration is **always enabled by default** to ensure all AI tools receive universal agent guidance, regardless of which other integrations you select.
-- **GitHub Copilot** – Generates `.github/copilot-instructions.md` with natural language Clavix workflow instructions per [official GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions).
+- **GitHub Copilot** – Generates `.github/prompts/clavix-*.prompt.md` slash command files per [official GitHub documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions).
 - **OCTO.md** – Generates content tailored for Octofriend's markdown interface.
 - **WARP.md** – Provides Clavix quick-start guidance optimized for Warp users.
 

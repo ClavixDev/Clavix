@@ -19,6 +19,8 @@ import { CommandTemplate, AgentAdapter } from '../../types/agent.js';
 import { GeminiAdapter } from '../../core/adapters/gemini-adapter.js';
 import { QwenAdapter } from '../../core/adapters/qwen-adapter.js';
 import { loadCommandTemplates } from '../../utils/template-loader.js';
+import { loadSkillTemplates } from '../../utils/skill-template-loader.js';
+import { isAgentSkillsIntegration } from '../../utils/integration-selector.js';
 import { CLAVIX_BLOCK_START, CLAVIX_BLOCK_END } from '../../constants.js';
 import { validateUserConfig } from '../../utils/schemas.js';
 
@@ -339,6 +341,41 @@ export default class Init extends Command {
           continue;
         }
 
+        // Handle Agent Skills integrations
+        if (isAgentSkillsIntegration(integrationName)) {
+          const adapter = agentManager.requireAdapter(integrationName);
+          const scope = integrationName === 'agent-skills-global' ? 'global' : 'project';
+          const location = scope === 'global' ? '~/.config/agents/skills/' : '.skills/';
+
+          this.log(chalk.gray(`  ✓ Generating ${adapter.displayName}...`));
+
+          // Validate before generating
+          if (adapter.validate) {
+            const validation = await adapter.validate();
+            if (validation.warnings?.length) {
+              for (const warning of validation.warnings) {
+                this.log(chalk.yellow(`    ⚠ ${warning}`));
+              }
+            }
+          }
+
+          // Remove existing skills
+          const removed = await adapter.removeAllCommands();
+          if (removed > 0) {
+            this.log(chalk.gray(`    Removed ${removed} existing skill(s)`));
+          }
+
+          // Generate skills using skill templates
+          const skillTemplates = await loadSkillTemplates();
+          await adapter.generateCommands(skillTemplates);
+
+          this.log(chalk.gray(`    Created ${skillTemplates.length} skills in ${location}`));
+          this.log(
+            chalk.gray('    Skills: clavix-improve, clavix-prd, clavix-plan, clavix-implement, ...')
+          );
+          continue;
+        }
+
         let adapter: AgentAdapter = agentManager.requireAdapter(integrationName);
 
         this.log(chalk.gray(`  ✓ Generating ${adapter.displayName} commands...`));
@@ -539,6 +576,30 @@ export default class Init extends Command {
       if (integrationName === 'warp-md') {
         this.log(chalk.gray('  ✓ Regenerating WARP.md...'));
         await WarpMdGenerator.generate();
+        continue;
+      }
+
+      // Handle Agent Skills integrations
+      if (isAgentSkillsIntegration(integrationName)) {
+        const adapter = agentManager.getAdapter(integrationName);
+        if (!adapter) {
+          this.log(chalk.yellow(`  ⚠ Unknown integration: ${integrationName}`));
+          continue;
+        }
+
+        this.log(chalk.gray(`  ✓ Regenerating ${adapter.displayName}...`));
+
+        // Remove existing skills
+        const removed = await adapter.removeAllCommands();
+        if (removed > 0) {
+          this.log(chalk.gray(`    Removed ${removed} existing skill(s)`));
+        }
+
+        // Generate skills using skill templates
+        const skillTemplates = await loadSkillTemplates();
+        await adapter.generateCommands(skillTemplates);
+
+        this.log(chalk.gray(`    Regenerated ${skillTemplates.length} skills`));
         continue;
       }
 

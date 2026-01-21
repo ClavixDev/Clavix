@@ -5,6 +5,7 @@ import { GeminiAdapter } from './adapters/gemini-adapter.js';
 import { QwenAdapter } from './adapters/qwen-adapter.js';
 import { LlxprtAdapter } from './adapters/llxprt-adapter.js';
 import { VibeAdapter } from './adapters/vibe-adapter.js';
+import { AgentSkillsAdapter } from './adapters/agent-skills-adapter.js';
 import { UniversalAdapter } from './adapters/universal-adapter.js';
 import { getSimpleAdapters } from './adapter-registry.js';
 import { IntegrationError } from '../types/errors.js';
@@ -32,6 +33,10 @@ export class AgentManager {
     this.registerAdapter(new QwenAdapter(userConfig)); // TOML format
     this.registerAdapter(new LlxprtAdapter(userConfig)); // TOML format
     this.registerAdapter(new VibeAdapter(userConfig)); // Vibe CLI skills
+
+    // Register Agent Skills adapters (both global and project scope)
+    this.registerAdapter(new AgentSkillsAdapter('global', userConfig));
+    this.registerAdapter(new AgentSkillsAdapter('project', userConfig));
 
     // Register simple adapters from config (using UniversalAdapter factory)
     for (const config of getSimpleAdapters()) {

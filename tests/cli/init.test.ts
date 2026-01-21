@@ -18,6 +18,7 @@ const mockSelectIntegrations = jest.fn<() => Promise<string[]>>();
 const mockInquirerPrompt = jest.fn<(questions: any[]) => Promise<any>>();
 
 // Mock integration selector (v5.5.2: include ensureMandatoryIntegrations)
+// v6.2.0: Added isAgentSkillsIntegration, hasAgentSkillsSelected, getSkillScope
 jest.unstable_mockModule('../../src/utils/integration-selector.js', () => ({
   selectIntegrations: mockSelectIntegrations,
   MANDATORY_INTEGRATION: 'agents-md',
@@ -27,6 +28,15 @@ jest.unstable_mockModule('../../src/utils/integration-selector.js', () => ({
     }
     return integrations;
   },
+  hasAgentSkillsSelected: (integrations: string[]) =>
+    integrations.includes('agent-skills-global') || integrations.includes('agent-skills-project'),
+  getSkillScope: (name: string) => {
+    if (name === 'agent-skills-global') return 'global';
+    if (name === 'agent-skills-project') return 'project';
+    return null;
+  },
+  isAgentSkillsIntegration: (name: string) =>
+    name === 'agent-skills-global' || name === 'agent-skills-project',
 }));
 
 // Mock inquirer

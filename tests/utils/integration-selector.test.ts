@@ -245,7 +245,8 @@ describe('Integration Selector', () => {
 
         // agents-md is no longer in selection (always enabled)
         // vibe integration was added in v5.10.0
-        expect(integrationChoices.length).toBe(20);
+        // v6.2.0: Added Agent Skills (global + project) = 22 total selectable
+        expect(integrationChoices.length).toBe(22);
       });
 
       it('should have CLI Tools category with correct integrations', async () => {

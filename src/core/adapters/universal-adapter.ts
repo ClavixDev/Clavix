@@ -117,4 +117,34 @@ export class UniversalAdapter extends BaseAdapter {
   supportsSubdirectories(): boolean {
     return this.config.features.supportsSubdirectories;
   }
+
+  /**
+   * Determine if a file is a Clavix-generated command
+   *
+   * Uses the filenamePattern from config to identify Clavix files.
+   * This prevents removal of user's existing command files.
+   *
+   * For pattern 'clavix-{name}' → matches 'clavix-*.md'
+   * For pattern '{name}' → matches '*.md' (all files with extension)
+   */
+  protected isClavixGeneratedCommand(filename: string): boolean {
+    // Must match our file extension
+    if (!filename.endsWith(this.config.fileExtension)) {
+      return false;
+    }
+
+    // Extract prefix from pattern (everything before {name})
+    const pattern = this.config.filenamePattern;
+    const prefixEnd = pattern.indexOf('{name}');
+
+    if (prefixEnd > 0) {
+      // Pattern has a prefix (e.g., 'clavix-{name}')
+      const prefix = pattern.substring(0, prefixEnd);
+      return filename.startsWith(prefix);
+    }
+
+    // Pattern is just '{name}' - this adapter owns all files in its directory
+    // This is safe for adapters like Claude Code that use dedicated subdirectories
+    return true;
+  }
 }

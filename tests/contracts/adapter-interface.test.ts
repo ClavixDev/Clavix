@@ -161,10 +161,12 @@ describe('Adapter Interface Contract Tests', () => {
       }
     });
 
-    it('all getTargetFilename results should include extension', () => {
+    it('all getTargetFilename results should include extension (except directory-based adapters)', () => {
       for (const adapter of adapters) {
         const filename = adapter.getTargetFilename('test');
-        if (adapter.fileExtension.length > 0) {
+        // Agent Skills adapters return directory names (no extension)
+        const isDirectoryBased = adapter.name.startsWith('agent-skills');
+        if (adapter.fileExtension.length > 0 && !isDirectoryBased) {
           expect(filename).toContain(adapter.fileExtension);
         }
       }

@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.0] - 2026-01-21
+
+### Added
+
+- **Agent Skills Integration** - Full support for [agentskills.io](https://agentskills.io) specification:
+  - New `AgentSkillsAdapter` generates skills following the Agent Skills standard
+  - **Two installation scopes**: Global (`~/.config/agents/skills/`) and Project (`.skills/`)
+  - All 10 Clavix workflows available as curated skills
+  - Skills are directory-based with SKILL.md files per agentskills.io spec
+  - New "Agent Skills" section in integration selector during `clavix init`
+  - Skills have optimized descriptions for agent discovery
+
+- **Curated Skill Templates** - New `src/templates/skills/` directory:
+  - 10 condensed, optimized skill templates based on canonical commands
+  - Skills follow < 500 line recommendation for efficient context usage
+  - Each skill includes proper YAML frontmatter (name, description, license)
+  - Skills work with any Agent Skills-compatible AI tool
+  - Skills include: State Assertions, Self-Correction Protocols (DETECT→STOP→CORRECT→RESUME), Mode Boundaries, File-Saving Protocols, and Workflow Navigation
+
+- **Agent Skills Selector Priority** - "Agent Skills" section now appears first in integration selector during `clavix init` for better discoverability
+
+### Fixed
+
+- **Preserve existing command files during init** - `clavix init` no longer overwrites user's existing command files in shared directories like `.opencode/command/`. Previously, all `.md` files were removed and replaced; now only Clavix-generated files (those matching the `clavix-*` prefix pattern) are updated. This fix affects OpenCode, Cursor, Windsurf, Droid, and other integrations using the `UniversalAdapter`.
+
+### Changed
+
+- **UniversalAdapter** now overrides `isClavixGeneratedCommand()` to use the `filenamePattern` from config, ensuring only files matching the Clavix naming convention (e.g., `clavix-improve.md`) are identified as Clavix-managed.
+
 ## [6.1.0] - 2026-01-12
 
 ### Added

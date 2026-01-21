@@ -46,6 +46,8 @@ export interface ManagedBlock {
 }
 
 export type AgentType =
+  | 'agent-skills-global'
+  | 'agent-skills-project'
   | 'agents-md'
   | 'amp'
   | 'augment'

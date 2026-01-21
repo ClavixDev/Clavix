@@ -47,7 +47,9 @@ describe('AgentManager', () => {
       // bringing total from 16 to 20
       // v5.10.0: Added Vibe CLI adapter
       // bringing total from 20 to 21
-      expect(adapters.length).toBe(21);
+      // v6.2.0: Added Agent Skills (global + project)
+      // bringing total from 21 to 23
+      expect(adapters.length).toBe(23);
 
       // Verify new adapters are registered
       const adapterNames = adapters.map((a) => a.name);
@@ -62,6 +64,8 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('gemini');
       expect(adapterNames).toContain('qwen');
       expect(adapterNames).toContain('codex');
+      expect(adapterNames).toContain('agent-skills-global');
+      expect(adapterNames).toContain('agent-skills-project');
     });
   });
 

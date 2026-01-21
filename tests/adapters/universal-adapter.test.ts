@@ -297,6 +297,48 @@ describe('UniversalAdapter', () => {
       expect(await fs.pathExists(path.join(commandPath, 'clavix-improve.md'))).toBe(false);
       expect(await fs.pathExists(path.join(commandPath, 'other-file.txt'))).toBe(true);
     });
+
+    it('should preserve existing non-Clavix command files with same extension', async () => {
+      const adapter = new UniversalAdapter(cursorConfig);
+      const commandPath = adapter.getCommandPath();
+
+      await fs.ensureDir(commandPath);
+      // Clavix-generated files (should be removed)
+      await fs.writeFile(path.join(commandPath, 'clavix-improve.md'), 'clavix content');
+      await fs.writeFile(path.join(commandPath, 'clavix-prd.md'), 'clavix content');
+      // User's existing command files (should be preserved)
+      await fs.writeFile(path.join(commandPath, 'my-custom-command.md'), 'user content');
+      await fs.writeFile(path.join(commandPath, 'project-specific.md'), 'user content');
+
+      const removed = await adapter.removeAllCommands();
+
+      // Only Clavix files should be removed
+      expect(removed).toBe(2);
+      expect(await fs.pathExists(path.join(commandPath, 'clavix-improve.md'))).toBe(false);
+      expect(await fs.pathExists(path.join(commandPath, 'clavix-prd.md'))).toBe(false);
+      // User files should remain intact
+      expect(await fs.pathExists(path.join(commandPath, 'my-custom-command.md'))).toBe(true);
+      expect(await fs.pathExists(path.join(commandPath, 'project-specific.md'))).toBe(true);
+    });
+
+    it('should handle adapters with {name} only pattern (owns entire directory)', async () => {
+      const ownedDirConfig: AdapterConfig = {
+        ...cursorConfig,
+        directory: '.my-tool/commands/clavix',
+        filenamePattern: '{name}', // No prefix - owns entire subdirectory
+      };
+      const adapter = new UniversalAdapter(ownedDirConfig);
+      const commandPath = adapter.getCommandPath();
+
+      await fs.ensureDir(commandPath);
+      await fs.writeFile(path.join(commandPath, 'improve.md'), 'content');
+      await fs.writeFile(path.join(commandPath, 'prd.md'), 'content');
+
+      const removed = await adapter.removeAllCommands();
+
+      // All .md files should be removed (adapter owns entire directory)
+      expect(removed).toBe(2);
+    });
   });
 
   describe('validate (inherited from BaseAdapter)', () => {
