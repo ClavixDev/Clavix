@@ -1,171 +1,83 @@
 # Clavix
 
-> Agentic-first prompt workflows. Markdown templates that teach AI agents how to optimize prompts, create PRDs, and manage implementation. Works with Claude Code, Cursor, Windsurf, GitHub Copilot, and many AI coding tools.
+> Agentic prompt workflows as skills. Works with any [agentskills.io](https://agentskills.io) compatible AI tool.
 
-## Quick Links
-
-| I want to... | Go to |
-|--------------|-------|
-| Get started | [Quickstart](#quickstart) |
-| See all commands | [docs/commands.md](docs/commands.md) |
-| Understand the architecture | [docs/architecture.md](docs/architecture.md) |
-| Check integrations | [docs/integrations.md](docs/integrations.md) |
-| Contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |
-
-## Command Format
-
-**Your command format depends on your AI tool:**
-
-| Tool Type | Format | Example |
-|-----------|--------|---------|
-| **CLI tools** (Claude Code, Gemini, Qwen) | Colon (`:`) | `/clavix:improve` |
-| **IDEs & extensions** (Cursor, Windsurf, Cline, GitHub Copilot) | Hyphen (`-`) | `/clavix-improve` |
-
-**Rule of thumb:** CLI tools use colon, IDE extensions use hyphen.
-
-## Quickstart
-
-### 1. Install and Initialize
+## Install
 
 ```bash
 npm install -g clavix
 clavix init
 ```
 
-During `clavix init`, pick your AI tools (Cursor, Claude Code, GitHub Copilot, etc.). Clavix installs slash command templates into those integrations.
+Select **Agent Skills** during setup. Choose global (`~/.config/agents/skills/`) or project (`.skills/`) scope.
 
-### 2. Use Slash Commands
+## Skills
 
-```text
-# CLI-style tools (Claude Code, Gemini, Qwen)
-/clavix:improve "Create a secure login page with JWT"
+| Skill | Purpose |
+|-------|---------|
+| `clavix-improve` | Optimize prompts with 6-dimension quality assessment |
+| `clavix-prd` | Generate PRD through strategic questions |
+| `clavix-plan` | Create task breakdown from PRD |
+| `clavix-implement` | Execute tasks with progress tracking |
+| `clavix-start` | Begin conversational exploration |
+| `clavix-summarize` | Extract requirements from conversation |
+| `clavix-refine` | Update existing PRD or prompt |
+| `clavix-verify` | Verify implementation against requirements |
+| `clavix-review` | Review PRs with criteria presets |
+| `clavix-archive` | Archive completed projects |
 
-# IDE-style tools (Cursor, Windsurf, GitHub Copilot, etc.)
-/clavix-improve "Create a secure login page with JWT"
+## Workflows
+
 ```
-
-The AI agent reads the Clavix template and optimizes your prompt.
-
-### 3. Choose Your Workflow
-
-```mermaid
-graph TD
-    A["/clavix:improve"] --> B["/clavix:implement"]
-    C["/clavix:prd"] --> D["/clavix:plan"]
-    D --> E["/clavix:implement"]
-    E --> F["/clavix:verify"]
-    F --> G["/clavix:archive"]
-    H["/clavix:start"] --> I["/clavix:summarize"]
-    I --> D
-    J["/clavix:refine"] --> D
-    J --> B
+Quick:      clavix-improve → clavix-implement
+Full:       clavix-prd → clavix-plan → clavix-implement → clavix-verify
+Exploratory: clavix-start → clavix-summarize → clavix-plan
 ```
-
-#### Quick Path (Simple Tasks)
-```
-/clavix:improve → /clavix:implement
-```
-Optimize a prompt and implement it directly.
-
-#### Full Planning (Complex Features)
-```
-/clavix:prd → /clavix:plan → /clavix:implement → /clavix:verify → /clavix:archive
-```
-Structured planning with PRD, task breakdown, implementation, verification, and archival.
-
-#### Exploratory (Discovery Mode)
-```
-/clavix:start → [conversation] → /clavix:summarize → /clavix:plan
-```
-Have a conversation to explore requirements, then extract and plan.
-
-#### Refinement (Iteration)
-```
-/clavix:refine → (updated PRD or prompt) → continue workflow
-```
-Refine existing PRDs or prompts based on feedback.
-
-### All 10 Slash Commands
-
-| Command | Purpose |
-|---------|---------|
-| `/clavix:improve` | Optimize prompts (auto-selects depth) |
-| `/clavix:prd` | Generate PRD through guided questions |
-| `/clavix:plan` | Create task breakdown from PRD |
-| `/clavix:implement` | Execute tasks or prompts |
-| `/clavix:start` | Begin conversational session |
-| `/clavix:summarize` | Extract requirements from conversation |
-| `/clavix:refine` | Refine existing PRD or prompt |
-| `/clavix:verify` | Verify implementation against requirements |
-| `/clavix:review` | Review teammate PRs using criteria presets |
-| `/clavix:archive` | Archive completed projects |
-
-`/clavix:review` is for reviewing teammates' PRs (criteria-driven, severity levels, saved reports), while `/clavix:verify` checks your implementation against your own PRD.
-
-For a full walkthrough, see [Getting Started](docs/getting-started.md).
 
 ## How It Works
 
-Clavix is **agentic-first**:
+1. **You run `clavix init`** – Skills are installed as directories with `SKILL.md` files
+2. **You invoke a skill** – Your AI tool loads the skill instructions
+3. **The agent follows the workflow** – Using its native tools
+4. **Outputs saved locally** – Under `.clavix/outputs/`
 
-1. **You run `clavix init`** – Select integrations (Cursor, Claude Code, GitHub Copilot, etc.). Clavix installs markdown templates into each tool (e.g. `.cursor/commands/`, `.github/prompts/clavix-*.prompt.md`).
-2. **You invoke a slash command** – Like `/clavix:improve`, `/clavix:plan`, or `/clavix:review` in your AI tool.
-3. **The AI agent reads the template** – Structured markdown instructions with frontmatter.
-4. **The agent follows the instructions** – Using its native tools (edit files, run tests, summarize, review PRs, etc.).
-5. **Outputs are saved locally** – Under `.clavix/outputs/` (including `.clavix/outputs/reviews/` for PR review reports).
+No code executes during skill invocation. The markdown templates ARE the product.
 
-**No TypeScript executes during slash commands.** The markdown templates ARE the product; Clavix only installs and updates them.
+## Other Integrations
 
-See [Architecture](docs/architecture.md) for details.
-
-## Supported AI Tools
+Clavix also supports tool-specific integrations for tools that don't yet support Agent Skills:
 
 | Category | Tools |
 |----------|-------|
-| Agent Skills | Global (`~/.config/agents/skills/`) or Project (`.skills/`) - works with any [agentskills.io](https://agentskills.io) compatible tool |
-| IDEs & extensions | Cursor, Windsurf, Kilocode, Roocode, Cline, GitHub Copilot (VS Code) |
-| CLI agents | Claude Code, Gemini CLI, Qwen Code, Droid CLI, CodeBuddy, OpenCode, LLXPRT, Amp, Crush CLI, Codex CLI, Augment CLI, Vibe CLI |
-| Universal formats | AGENTS.md, OCTO.md, WARP.md |
+| IDEs | Cursor, Windsurf, Kilocode, Roocode, Cline, GitHub Copilot |
+| CLI agents | Claude Code, Gemini CLI, Qwen, Droid, CodeBuddy, OpenCode, LLXPRT, Amp, Crush, Codex, Augment, Vibe |
+| Universal | AGENTS.md, OCTO.md, WARP.md |
 
-In GitHub Copilot Chat, Clavix commands appear as `/clavix-improve`, `/clavix-prd`, `/clavix-review`, etc.
-
-Full list: [docs/integrations.md](docs/integrations.md)
+Run `clavix init` and select your tools. Command format varies by tool:
+- **CLI tools** (Claude Code, Gemini): `/clavix:improve`
+- **IDE extensions** (Cursor, Copilot): `/clavix-improve`
 
 ## CLI Commands
 
 | Command | Purpose |
 |---------|---------|
-| `clavix init` | Initialize or reconfigure Clavix integrations in a project |
-| `clavix update` | Regenerate templates for selected integrations |
-| `clavix diagnose` | Check installation and integration health |
+| `clavix init` | Initialize or reconfigure integrations |
+| `clavix update` | Regenerate templates |
+| `clavix diagnose` | Check installation health |
 | `clavix version` | Show version |
 
-All workflows (`/clavix:improve`, `/clavix:plan`, `/clavix:review`, etc.) are **slash commands** that your AI tools execute using Clavix templates.
+## Docs
 
-## Documentation
-
-- [Getting Started](docs/getting-started.md) - Installation and first workflow
-- [Commands Reference](docs/commands.md) - All commands in one place
-- [Architecture](docs/architecture.md) - How Clavix works
-- [Integrations](docs/integrations.md) - Full tool matrix
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribute to Clavix
+- [Commands Reference](docs/commands.md)
+- [Integrations](docs/integrations.md)
+- [Architecture](docs/architecture.md)
+- [Getting Started](docs/getting-started.md)
 
 ## Requirements
 
-- **Node.js >= 18.0.0**
-- npm or yarn
-- An AI coding tool (Claude Code, Cursor, GitHub Copilot, etc.)
+- Node.js >= 18.0.0
+- An AI coding tool
 
 ## License
 
 Apache-2.0
-
-## Star History
-
-<a href="https://www.star-history.com/#ClavixDev/Clavix&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ClavixDev/Clavix&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ClavixDev/Clavix&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ClavixDev/Clavix&type=date&legend=top-left" />
- </picture>
-</a>
