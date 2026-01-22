@@ -40,7 +40,7 @@ describe('AgentManager', () => {
       expect(adapterNames).toContain('codex');
     });
 
-    it('should have exactly 21 built-in adapters', () => {
+    it('should have exactly 24 built-in adapters', () => {
       const adapters = manager.getAdapters();
 
       // v5.6.3: Added 4 universal adapters (agents-md, copilot-instructions, octo-md, warp-md)
@@ -49,7 +49,9 @@ describe('AgentManager', () => {
       // bringing total from 20 to 21
       // v6.2.0: Added Agent Skills (global + project)
       // bringing total from 21 to 23
-      expect(adapters.length).toBe(23);
+      // v7.1.0: Added Agent Skills (custom)
+      // bringing total from 23 to 24
+      expect(adapters.length).toBe(24);
 
       // Verify new adapters are registered
       const adapterNames = adapters.map((a) => a.name);

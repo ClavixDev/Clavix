@@ -301,6 +301,64 @@ export default class Init extends Command {
         }
       }
 
+      // Prompt for custom Agent Skills path if selected
+      if (selectedIntegrations.includes('agent-skills-custom')) {
+        this.log(chalk.cyan('\n🔧 Agent Skills Custom Path Configuration'));
+
+        const { pathType } = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'pathType',
+            message: 'What type of path do you want to use?',
+            choices: [
+              {
+                name: 'Relative - resolved from current folder (e.g., .aider-desk/skills)',
+                value: 'relative',
+              },
+              {
+                name: 'Absolute - starts from root or home (e.g., ~/.config/my-skills or /opt/skills)',
+                value: 'absolute',
+              },
+            ],
+          },
+        ]);
+
+        const existingCustomPath =
+          existingConfig?.experimental?.integrationPaths?.['agent-skills-custom'];
+
+        const { customSkillsPath } = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'customSkillsPath',
+            message: 'Enter path to skills directory:',
+            default:
+              existingCustomPath ||
+              (pathType === 'relative' ? '.skills' : '~/.config/agents/skills'),
+            validate: (input: string) => {
+              const trimmed = input.trim();
+              if (!trimmed) {
+                return 'Path cannot be empty';
+              }
+
+              if (pathType === 'relative') {
+                if (path.isAbsolute(trimmed) || trimmed.startsWith('~/')) {
+                  return 'Relative path should not start with / or ~/. Example: .aider-desk/skills';
+                }
+              } else {
+                if (!path.isAbsolute(trimmed) && !trimmed.startsWith('~/')) {
+                  return 'Absolute path should start with / or ~/. Example: ~/.config/my-skills';
+                }
+              }
+
+              return true;
+            },
+          },
+        ]);
+
+        integrationPaths['agent-skills-custom'] = customSkillsPath.trim();
+        this.log(chalk.gray(`  ✓ Using custom skills path: ${customSkillsPath.trim()}`));
+      }
+
       // Create .clavix directory structure
       this.log(chalk.cyan('\n📁 Creating directory structure...'));
       await this.createDirectoryStructure();
@@ -308,6 +366,16 @@ export default class Init extends Command {
       // Generate config
       this.log(chalk.cyan('⚙️  Generating configuration...'));
       await this.generateConfig(selectedIntegrations, integrationPaths);
+
+      // Re-create AgentManager with updated config (includes custom integration paths)
+      const updatedConfig: ClavixConfig = {
+        ...DEFAULT_CONFIG,
+        integrations: selectedIntegrations,
+        ...(Object.keys(integrationPaths).length > 0 && {
+          experimental: { integrationPaths },
+        }),
+      };
+      const updatedAgentManager = new AgentManager(updatedConfig);
 
       // Generate INSTRUCTIONS.md and QUICKSTART.md
       await this.generateInstructions();
@@ -343,9 +411,15 @@ export default class Init extends Command {
 
         // Handle Agent Skills integrations
         if (isAgentSkillsIntegration(integrationName)) {
-          const adapter = agentManager.requireAdapter(integrationName);
-          const scope = integrationName === 'agent-skills-global' ? 'global' : 'project';
-          const location = scope === 'global' ? '~/.config/agents/skills/' : '.skills/';
+          const adapter = updatedAgentManager.requireAdapter(integrationName);
+          let location: string;
+          if (integrationName === 'agent-skills-global') {
+            location = '~/.config/agents/skills/';
+          } else if (integrationName === 'agent-skills-project') {
+            location = '.skills/';
+          } else {
+            location = integrationPaths['agent-skills-custom'] || 'custom path';
+          }
 
           this.log(chalk.gray(`  ✓ Generating ${adapter.displayName}...`));
 

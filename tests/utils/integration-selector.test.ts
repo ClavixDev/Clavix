@@ -232,7 +232,7 @@ describe('Integration Selector', () => {
     });
 
     describe('choices structure', () => {
-      it('should include all 19 selectable integration options (agents-md is mandatory)', async () => {
+      it('should include all 23 selectable integration options (agents-md is mandatory)', async () => {
         mockPrompt.mockResolvedValue({ selectedIntegrations: ['claude-code'] });
 
         await selectIntegrations(agentManager);
@@ -246,7 +246,8 @@ describe('Integration Selector', () => {
         // agents-md is no longer in selection (always enabled)
         // vibe integration was added in v5.10.0
         // v6.2.0: Added Agent Skills (global + project) = 22 total selectable
-        expect(integrationChoices.length).toBe(22);
+        // v7.1.0: Added Agent Skills (custom) = 23 total selectable
+        expect(integrationChoices.length).toBe(23);
       });
 
       it('should have CLI Tools category with correct integrations', async () => {

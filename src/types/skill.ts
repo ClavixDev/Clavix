@@ -10,7 +10,7 @@
 /**
  * Skill installation scope
  */
-export type SkillScope = 'global' | 'project';
+export type SkillScope = 'global' | 'project' | 'custom';
 
 /**
  * Skill template with optional references
@@ -77,7 +77,7 @@ export interface SkillDirectory {
  * Skills configuration options
  */
 export interface SkillsConfig {
-  /** Installation scope: 'global' or 'project' */
+  /** Installation scope: 'global', 'project', or 'custom' */
   scope: SkillScope;
   /** Custom directory path (overrides default based on scope) */
   customPath?: string;

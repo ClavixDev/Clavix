@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.0] - 2026-01-22
+
+### Added
+
+- **Custom Agent Skills Path** - New "Agent Skills - Custom Path" option in `clavix init`:
+  - Users can specify any directory for skills installation (e.g., `.aider-desk/skills`)
+  - Supports both relative paths (from project root) and absolute paths (including `~/`)
+  - Interactive prompt guides path type selection with clear explanations
+  - Path stored in `config.experimental.integrationPaths['agent-skills-custom']`
+
 ## [7.0.0] - 2026-01-21
 
 ### BREAKING: Agent Skills as Primary Integration

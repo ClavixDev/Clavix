@@ -46,7 +46,8 @@ describe('Multi-Integration Workflow Integration', () => {
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
       // v5.10.0: Added Vibe CLI adapter = 21 total
       // v6.2.0: Added Agent Skills (global + project) = 23 total
-      expect(adapters).toHaveLength(23);
+      // v7.1.0: Added Agent Skills (custom) = 24 total
+      expect(adapters).toHaveLength(24);
       expect(agentManager.hasAgent('claude-code')).toBe(true);
       expect(agentManager.hasAgent('cursor')).toBe(true);
       expect(agentManager.hasAgent('droid')).toBe(true);
@@ -412,7 +413,8 @@ describe('Multi-Integration Workflow Integration', () => {
       // v5.6.3: 16 standard + 4 universal adapters = 20 total
       // v5.10.0: Added Vibe CLI adapter = 21 total
       // v6.2.0: Added Agent Skills (global + project) = 23 total
-      expect(choices).toHaveLength(23);
+      // v7.1.0: Added Agent Skills (custom) = 24 total
+      expect(choices).toHaveLength(24);
       expect(choices[0].name).toContain('Claude Code');
       expect(choices[0].value).toBe('claude-code');
 
@@ -422,6 +424,7 @@ describe('Multi-Integration Workflow Integration', () => {
       // Verify Agent Skills are included
       expect(choices.find((c) => c.value === 'agent-skills-global')).toBeDefined();
       expect(choices.find((c) => c.value === 'agent-skills-project')).toBeDefined();
+      expect(choices.find((c) => c.value === 'agent-skills-custom')).toBeDefined();
       expect(choices.find((c) => c.value === 'llxprt')).toBeDefined();
       expect(choices.find((c) => c.value === 'cline')).toBeDefined();
       expect(choices.find((c) => c.value === 'roocode')).toBeDefined();
@@ -460,9 +463,11 @@ describe('Multi-Integration Workflow Integration', () => {
         },
       ];
 
-      // Generate for all integrations
+      // Generate for all integrations (skip unconfigured custom adapters)
       for (const name of agentManager.getAvailableAgents()) {
         const adapter = agentManager.requireAdapter(name);
+        // Skip agent-skills-custom as it requires explicit path configuration
+        if (name === 'agent-skills-custom') continue;
         await adapter.generateCommands(templates);
       }
 

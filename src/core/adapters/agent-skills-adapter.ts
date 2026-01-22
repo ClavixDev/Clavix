@@ -38,13 +38,20 @@ export class AgentSkillsAdapter extends BaseAdapter {
     this.userConfig = userConfig;
 
     // Set name and displayName based on scope
-    this.name = scope === 'global' ? 'agent-skills-global' : 'agent-skills-project';
-    this.displayName = scope === 'global' ? 'Agent Skills (Global)' : 'Agent Skills (Project)';
+    if (scope === 'global') {
+      this.name = 'agent-skills-global';
+      this.displayName = 'Agent Skills (Global)';
+    } else if (scope === 'project') {
+      this.name = 'agent-skills-project';
+      this.displayName = 'Agent Skills (Project)';
+    } else {
+      this.name = 'agent-skills-custom';
+      this.displayName = 'Agent Skills (Custom Path)';
+    }
 
     // Check for custom path in user config
-    const configKey = scope === 'global' ? 'agent-skills-global' : 'agent-skills-project';
-    if (userConfig?.experimental?.integrationPaths?.[configKey]) {
-      this.customPath = userConfig.experimental.integrationPaths[configKey];
+    if (userConfig?.experimental?.integrationPaths?.[this.name]) {
+      this.customPath = userConfig.experimental.integrationPaths[this.name];
     }
   }
 
@@ -57,12 +64,26 @@ export class AgentSkillsAdapter extends BaseAdapter {
 
   /**
    * Get the directory path based on scope
+   * For custom scope without a configured path, returns a placeholder
    */
   get directory(): string {
     if (this.customPath) {
       return this.customPath;
     }
+    if (this.scope === 'custom') {
+      return '<custom-path-not-configured>';
+    }
     return this.scope === 'global' ? SKILL_PATHS.global : SKILL_PATHS.project;
+  }
+
+  /**
+   * Check if the adapter is properly configured
+   */
+  isConfigured(): boolean {
+    if (this.scope === 'custom') {
+      return !!this.customPath;
+    }
+    return true;
   }
 
   /**
@@ -80,9 +101,15 @@ export class AgentSkillsAdapter extends BaseAdapter {
    */
   getCommandPath(): string {
     const dir = this.directory;
-    if (dir.startsWith('~/') || this.scope === 'global') {
+    // Expand ~ paths
+    if (dir.startsWith('~/')) {
       return this.expandPath(dir);
     }
+    // Absolute paths (global scope default or user-provided absolute)
+    if (this.scope === 'global' || path.isAbsolute(dir)) {
+      return dir;
+    }
+    // Relative paths (project scope or custom relative)
     return path.join(process.cwd(), dir);
   }
 
@@ -114,6 +141,13 @@ export class AgentSkillsAdapter extends BaseAdapter {
    *       └── <reference-files>.md
    */
   async generateCommands(templates: CommandTemplate[]): Promise<void> {
+    if (!this.isConfigured()) {
+      throw new IntegrationError(
+        'Custom scope requires a custom path to be set',
+        'Ensure agent-skills-custom has a path configured in experimental.integrationPaths'
+      );
+    }
+
     const skillsPath = this.getCommandPath();
 
     try {

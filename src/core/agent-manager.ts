@@ -34,9 +34,10 @@ export class AgentManager {
     this.registerAdapter(new LlxprtAdapter(userConfig)); // TOML format
     this.registerAdapter(new VibeAdapter(userConfig)); // Vibe CLI skills
 
-    // Register Agent Skills adapters (both global and project scope)
+    // Register Agent Skills adapters (global, project, and custom scope)
     this.registerAdapter(new AgentSkillsAdapter('global', userConfig));
     this.registerAdapter(new AgentSkillsAdapter('project', userConfig));
+    this.registerAdapter(new AgentSkillsAdapter('custom', userConfig));
 
     // Register simple adapters from config (using UniversalAdapter factory)
     for (const config of getSimpleAdapters()) {
