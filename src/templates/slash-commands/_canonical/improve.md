@@ -380,7 +380,7 @@ This is a BLOCKING checkpoint. You cannot proceed to the final message until sav
 | Step | Action | Tool to Use | Verification |
 |------|--------|-------------|--------------|
 | 1 | Create directory | Write tool (create parent dirs) | Directory exists |
-| 2 | Generate prompt ID | Format: `{std\\|comp}-YYYYMMDD-HHMMSS-<random>` | ID is unique |
+| 2 | Generate prompt ID | Format: `{std\|comp}-YYYYMMDD-HHMMSS-<random>` | ID is unique |
 | 3 | Write prompt file with frontmatter | **Write tool** | File created |
 | 4 | **VERIFY: Read back file** | **Read tool** | File readable |
 
@@ -524,7 +524,7 @@ Wait for the user to decide what to do next.
 
 ---
 
-## Agent Transparency (v7.1.0)
+## Agent Transparency (v7.1.1)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

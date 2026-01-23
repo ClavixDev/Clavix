@@ -229,7 +229,7 @@ Present the plan and ask:
 
 ---
 
-## Agent Transparency (v7.1.0)
+## Agent Transparency (v7.1.1)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
