@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.0] - 2026-01-27
+
+### Added
+
+- **Verification Loop Patterns** - Robust verification and fix loops across Clavix skills:
+  - **Iron Laws**: "No completion without verification evidence" and "Issues found = issues fixed + re-verified"
+  - **Verification Gate Pattern**: IDENTIFY → RUN → READ → VERIFY before any completion claims
+  - **Mandatory Fix Loops**: Cannot proceed until issues are fixed AND re-verified
+  - **3-Strike Rule**: If 3+ fix attempts fail, stop and ask for help
+
+- **`using-clavix` Meta-Skill** - New orchestration skill establishing workflow rules:
+  - Skill invocation requirements (check for skills BEFORE any action)
+  - Complete workflow map showing skill chains
+  - Required skill chains (prd → plan → implement → verify)
+  - Red flags table for catching rationalization patterns
+  - Skill priority order (exploration → planning → implementation → verification)
+
+- **Subagent Templates** - New templates for delegating implementation work:
+  - `clavix-implement/implementer-prompt.md` - Dispatch implementer subagent
+  - `clavix-implement/spec-reviewer-prompt.md` - Dispatch spec compliance reviewer
+  - `clavix-implement/quality-reviewer-prompt.md` - Dispatch code quality reviewer
+  - Two-stage review pattern: spec compliance first, then code quality
+
+- **Required Sub-Skill References** - Explicit skill chain enforcement:
+  - `clavix-prd` → REQUIRED: `clavix-plan`
+  - `clavix-plan` → REQUIRED: `clavix-implement`
+  - `clavix-implement` → REQUIRED: `clavix-verify` (after all tasks)
+
+### Changed
+
+- **`clavix-implement` Skill** - Major verification enhancements:
+  - Added Iron Law section at top of skill
+  - Replaced optional verification with mandatory Verification Gate
+  - Added Fix Loop pattern with re-verification requirement
+  - Added subagent template references
+  - Removed "skip verification" options from troubleshooting
+
+- **`clavix-verify` Skill** - Mandatory fix loops:
+  - Added Iron Law: "Issues found = issues fixed + re-verified"
+  - Changed "Fixing Workflow (Optional Loop)" to "Fixing Workflow (MANDATORY Loop)"
+  - Added evidence requirement for claiming fixes
+  - Added Red Flags table for catching skip temptations
+  - Enhanced After Verification section with mandatory fix loop diagram
+
+- **`clavix-plan` Skill** - Skill chain enforcement:
+  - Added REQUIRED SUB-SKILL header template for generated plans
+  - Added skill chain diagram in Next Steps section
+
+- **`clavix-prd` Skill** - Skill chain enforcement:
+  - Added REQUIRED SUB-SKILL reference to clavix-plan
+  - Added complete skill chain diagram
+  - Updated recommendations table to emphasize verification
+
+### Why v7.2.0?
+
+This is a minor version bump because:
+1. Introduces new meta-skill (`using-clavix`) that orchestrates other skills
+2. Adds new subagent template files to `clavix-implement`
+3. Significantly enhances verification rigor across multiple skills
+4. Establishes mandatory skill chains (breaking previous optional patterns)
+
 ## [7.1.1] - 2026-01-23
 
 ### Fixed

@@ -354,7 +354,7 @@ The validation ensures generated PRDs are immediately usable for AI consumption 
 
 ---
 
-## Agent Transparency (v7.1.1)
+## Agent Transparency (v7.2.0)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}
