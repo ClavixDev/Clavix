@@ -76,6 +76,11 @@ describe('AgentSkillsAdapter', () => {
       expect(adapter.getTargetFilename('improve')).toBe('clavix-improve');
       expect(adapter.getTargetFilename('prd')).toBe('clavix-prd');
     });
+
+    it('should not add prefix to using-clavix meta-skill', () => {
+      const adapter = new AgentSkillsAdapter('global');
+      expect(adapter.getTargetFilename('using-clavix')).toBe('using-clavix');
+    });
   });
 
   describe('getCommandPath', () => {

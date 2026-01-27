@@ -116,8 +116,13 @@ export class AgentSkillsAdapter extends BaseAdapter {
   /**
    * Skills use directory names, not filenames
    * Returns the skill directory name (e.g., 'clavix-improve')
+   * Special case: 'using-clavix' keeps its name (no prefix) to match superpowers pattern
    */
   getTargetFilename(name: string): string {
+    // using-clavix is special - it's the meta-skill that tells agents how to use other skills
+    if (name === 'using-clavix') {
+      return 'using-clavix';
+    }
     return `clavix-${name}`;
   }
 
@@ -170,7 +175,8 @@ export class AgentSkillsAdapter extends BaseAdapter {
    * Generate a single skill directory from a command template
    */
   private async generateSkill(template: CommandTemplate, basePath: string): Promise<void> {
-    const skillName = `clavix-${template.name}`;
+    // using-clavix keeps its name (no prefix) - it's the meta-skill
+    const skillName = template.name === 'using-clavix' ? 'using-clavix' : `clavix-${template.name}`;
     const skillDir = path.join(basePath, skillName);
 
     // Ensure skill directory exists
@@ -228,6 +234,8 @@ export class AgentSkillsAdapter extends BaseAdapter {
         'Review code changes with criteria-driven analysis (Security, Architecture, Standards, Performance). Use when reviewing PRs or code changes.',
       archive:
         'Archive completed projects by moving outputs to archive directory. Use when a project is complete and ready for archival.',
+      'using-clavix':
+        'Use when starting any conversation involving Clavix workflows - establishes skill invocation rules, verification requirements, and workflow orchestration',
     };
 
     return descriptionMap[name] || baseDescription;
@@ -265,10 +273,10 @@ export class AgentSkillsAdapter extends BaseAdapter {
 
   /**
    * Determine if an entry is a Clavix-generated skill
-   * Skills are directories starting with 'clavix-'
+   * Skills are directories starting with 'clavix-' or the special 'using-clavix' meta-skill
    */
   protected isClavixGeneratedCommand(name: string): boolean {
-    return name.startsWith('clavix-');
+    return name.startsWith('clavix-') || name === 'using-clavix';
   }
 
   /**

@@ -4,6 +4,23 @@ This guide is for agents that can only read documentation (no slash-command supp
 
 ---
 
+## 🚨 FIRST: Load using-clavix Skill
+
+**Before ANY Clavix workflow, invoke the `using-clavix` skill.**
+
+This meta-skill establishes:
+- Skill invocation rules (check skills BEFORE any response)
+- Required skill chains (prd → plan → implement → verify)
+- Iron Laws for verification (no completion claims without evidence)
+- Workflow orchestration and fix loops
+
+If you have even a 1% chance a Clavix skill applies, you MUST check it first.
+
+**In environments with Skill tool:** Invoke `using-clavix` before any Clavix action.
+**In environments without Skill tool:** Read `.config/agents/skills/using-clavix/SKILL.md` or the bundled template.
+
+---
+
 ## ⛔ CLAVIX MODE ENFORCEMENT
 
 **CRITICAL: Know which mode you're in and STOP at the right point.**
