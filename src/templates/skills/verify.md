@@ -1,12 +1,25 @@
 ---
 name: clavix-verify
-description: Spec-driven technical audit against requirements and implementation plan
-license: MIT
+description: Verify implementation against PRD requirements with systematic checking. Use after implementation to validate completeness.
+license: Apache-2.0
 ---
-
 # Clavix Verify Skill
 
 Perform a **Spec-Driven Technical Audit** of your implementation. I don't just "run tests"—I verify that your code matches the **Plan** (`tasks.md`) and the **Requirements** (`full-prd.md`).
+
+---
+
+## The Iron Law
+
+```
+ISSUES FOUND = ISSUES FIXED + RE-VERIFIED
+```
+
+If verification found issues, you must fix them AND re-verify. Proceeding without re-verification is forbidden.
+
+**Evidence before claims, always.**
+
+---
 
 ## What This Skill Does
 
@@ -14,6 +27,7 @@ Perform a **Spec-Driven Technical Audit** of your implementation. I don't just "
 2. **Read the Code** - Inspect actual source files for completed tasks
 3. **Compare & Analyze** - Check implementation accuracy, requirements coverage, code quality
 4. **Generate Review Comments** - Output structured issues (Critical, Major, Minor)
+5. **Enforce Fix Loop** - Issues must be fixed and re-verified before proceeding
 
 ---
 
@@ -176,9 +190,35 @@ Are there quality issues?
 
 ---
 
-## Fixing Workflow (Optional Loop)
+## Fixing Workflow (MANDATORY Loop)
 
-When user says "Fix #1" or "Fix all critical":
+When issues are found, they MUST be fixed. This is not optional.
+
+### The Fix Loop
+
+```
+Issues Found in Report
+         │
+         ▼
+User says "Fix #X" or "Fix all"
+         │
+         ▼
+   Implement Fix
+         │
+         ▼
+   Re-Verify (REQUIRED) ◄───┐
+         │                   │
+         ├── Still issues? ──┘
+         │
+         ▼ (resolved)
+   Issue Marked Resolved
+         │
+         ▼
+   More issues? → Repeat
+         │
+         ▼ (all resolved)
+   Verification Complete
+```
 
 ### Step 1: Acknowledge
 
@@ -188,13 +228,24 @@ When user says "Fix #1" or "Fix all critical":
 
 Modify the code to resolve the specific issue.
 
-### Step 3: Re-Verify
+### Step 3: Re-Verify (REQUIRED)
 
 Run a focused verification on just that file/issue:
 
 > "Re-verified `src/auth.ts`:
 > - ✅ #1 now uses `apiClient` singleton
 > - Issue resolved"
+
+**If the fix didn't work**, repeat steps 2-3. Do not proceed to next issue.
+
+### Step 4: Evidence
+
+When claiming an issue is fixed:
+- Show the code change made
+- Show the verification output
+- Reference specific file:line
+
+**"Fixed" without evidence = not fixed.**
 
 ---
 
@@ -284,13 +335,13 @@ To verify implementation:
 **You are here:** Verify (auditing implementation)
 
 **Common flows:**
-- After implement → `/clavix:verify` → fix issues → verify again
-- Before merge → `/clavix:verify` → ensure quality
+- After implement → `/clavix-verify` → fix issues → verify again
+- Before merge → `/clavix-verify` → ensure quality
 
 **Related commands:**
-- `/clavix:implement` - Build features (what you're verifying)
-- `/clavix:plan` - See the tasks being checked
-- `/clavix:refine` - Update PRD if requirements were wrong
+- `/clavix-implement` - Build features (what you're verifying)
+- `/clavix-plan` - See the tasks being checked
+- `/clavix-refine` - Update PRD if requirements were wrong
 
 ---
 
@@ -298,13 +349,46 @@ To verify implementation:
 
 **If all passed:**
 - ✅ Ready for next phase or merge
-- Consider `/clavix:archive` for completed projects
+- Consider `/clavix-archive` for completed projects
 
-**If failures exist:**
+**If failures exist (MANDATORY FIX LOOP):**
+
+```
+Failures in report
+       │
+       ▼
+Fix critical issues first
+       │
+       ▼
+Re-run verification ◄───┐
+       │                 │
+       ├── Still fails ──┘
+       │
+       ▼ (all pass)
+Done
+```
+
 - Address critical issues first
 - Re-run verification after fixes
-- Repeat until passing
+- **Repeat until passing** - Do NOT skip this
+- Cannot claim "done" until all issues resolved
 
 **If OUTDATED issues:**
 - Update `tasks.md` or `full-prd.md` to reflect reality
 - Re-verify to clear the outdated flags
+
+---
+
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+| Thought | Reality |
+|---------|---------|
+| "It's probably fixed now" | RUN the verification |
+| "Just this one issue can wait" | Fix it now |
+| "I'll re-verify later" | Re-verify NOW |
+| "The important ones are fixed" | ALL issues must be resolved |
+| "Close enough" | Not done until verified |
+
+**All of these mean: STOP. Follow the fix loop.**

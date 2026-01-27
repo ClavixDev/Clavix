@@ -1,12 +1,23 @@
 ---
 name: clavix-implement
-description: Execute implementation tasks or saved prompts with progress tracking
+description: Execute implementation tasks or saved prompts with progress tracking. Use when ready to build what was planned in PRD or improved prompts.
 license: Apache-2.0
 ---
-
 # Clavix Implement Skill
 
 Execute tasks from tasks.md or saved prompts with systematic progress tracking.
+
+---
+
+## The Iron Law
+
+```
+NO TASK MARKED COMPLETE WITHOUT VERIFICATION EVIDENCE
+```
+
+If you haven't run the verification command in this message, you cannot claim it passes.
+
+**Violating the letter of this rule is violating the spirit of this rule.**
 
 ---
 
@@ -142,16 +153,60 @@ For each task, follow this cycle:
 - Follow existing codebase patterns
 - Create/modify files as specified in task
 
-### 4. Mark Complete
+### 4. Verification Gate (REQUIRED)
+
+**BEFORE marking task complete:**
+
+1. **IDENTIFY**: What command proves this task works?
+   - Tests: `npm test`, `pytest`, etc.
+   - Build: `npm run build`, `tsc`, etc.
+   - Lint: `npm run lint`, `eslint`, etc.
+
+2. **RUN**: Execute the verification command (fresh, complete)
+   - Run the full command, not partial checks
+   - Don't rely on previous runs
+
+3. **READ**: Check full output
+   - Exit code (0 = success)
+   - Count failures/errors
+   - Read warnings
+
+4. **VERIFY**: Does output confirm success?
+   - If NO → Go to Fix Loop
+   - If YES → Mark complete WITH evidence
+
+**Skip any step = lying, not verifying**
+
+### 5. Fix Loop (When Verification Fails)
+
+```
+Verification failed
+       │
+       ▼
+Analyze the failure
+       │
+       ▼
+Implement fix
+       │
+       ▼
+Re-run verification ◄───┐
+       │                │
+       ├── Still fails ─┘
+       │
+       ▼ (passes)
+Continue to Mark Complete
+```
+
+**NEVER skip the re-verification after fixes.**
+
+If 3+ fix attempts fail: STOP and ask for help. Don't keep guessing.
+
+### 6. Mark Complete
 - Edit tasks.md directly
 - Change `- [ ]` to `- [x]`
+- Include verification evidence in progress report
 
-### 5. Verify
-- Run tests if available
-- Check acceptance criteria
-- If fails: present fix options
-
-### 6. Next Task
+### 7. Next Task
 - Find next incomplete task (`- [ ]`)
 - Report progress
 - Continue cycle
@@ -198,16 +253,16 @@ After implementing each task:
    - Verify file paths match specification
 
 3. **If verification fails**:
-   > "Tests are failing for this task. Let me see what's wrong...
+   > "Tests are failing for this task. Analyzing the failure...
    >
-   > [Analyze and fix issues]
+   > **Failure**: [describe what failed]
+   > **Root cause**: [analysis of why]
    >
-   > Options:
-   > 1. I'll try to fix this
-   > 2. Skip verification for now
-   > 3. Show you what needs attention
-   >
-   > What would you prefer?"
+   > Implementing fix..."
+
+   Then fix and re-run verification. Repeat until passing.
+
+   **Do NOT offer to skip verification.** The Iron Law applies.
 
 ---
 
@@ -313,9 +368,41 @@ executed: false  →  executed: true
 - A tasks.md (from `/clavix-plan`) OR
 - A saved prompt (from `/clavix-improve`)
 
-**Next Steps**:
-- `/clavix-verify` - Verify implementation against PRD
-- `/clavix-archive` - Archive completed project
+**After ALL tasks complete:**
+
+**REQUIRED SUB-SKILL**: Use `clavix-verify` to audit implementation against PRD
+
+Do NOT skip this step. Do NOT consider implementation complete without verification.
+
+```
+All tasks marked complete
+         │
+         ▼
+   clavix-verify  ◄────────────┐
+         │                      │
+         ├── Issues found? ────►│
+         │        Fix them      │
+         │        Re-verify ────┘
+         │
+         ▼ (all pass)
+   clavix-archive (optional)
+```
+
+---
+
+## Subagent Templates
+
+For delegating implementation work to subagents, use these templates:
+
+- `./implementer-prompt.md` - Dispatch implementer subagent
+- `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer
+- `./quality-reviewer-prompt.md` - Dispatch code quality reviewer
+
+**Subagent workflow:**
+1. Implementer does work + self-review
+2. Spec reviewer verifies compliance (loop until passes)
+3. Quality reviewer verifies quality (loop until passes)
+4. Only then mark task complete
 
 ---
 

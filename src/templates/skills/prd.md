@@ -1,9 +1,8 @@
 ---
 name: clavix-prd
-description: Create comprehensive PRDs through strategic questioning
-license: MIT
+description: Create comprehensive Product Requirements Documents through strategic questioning. Use when planning a new feature or project that needs clear requirements.
+license: Apache-2.0
 ---
-
 # Clavix PRD Skill
 
 Transform ideas into structured Product Requirements Documents through strategic questioning.
@@ -292,10 +291,27 @@ Display quality scores and improvement suggestions if needed.
 
 After PRD creation, guide user to:
 
+**REQUIRED SUB-SKILL**: Use `clavix-plan` to generate implementation tasks
+
+Do not skip directly to implementation. Follow the skill chain:
+
+```
+clavix-prd (you are here)
+      │
+      ▼ REQUIRED
+clavix-plan
+      │
+      ▼ REQUIRED
+clavix-implement
+      │
+      ▼ REQUIRED (after all tasks)
+clavix-verify
+```
+
 | If... | Recommend |
 |-------|-----------|
-| Ready for task breakdown | `/clavix-plan` - Generate tasks.md from PRD |
-| Simple enough to implement directly | `/clavix-implement` |
+| Ready for task breakdown | `/clavix-plan` - Generate tasks.md from PRD (RECOMMENDED) |
+| Simple enough to implement directly | `/clavix-implement` (but still verify after) |
 | Want to improve a prompt first | `/clavix-improve` |
 
 ---
