@@ -123,7 +123,7 @@ Implementation: BLOCKED - I'll analyze and report, not modify or fix
 
 ----
 
-## Agent Transparency (v7.2.3)
+## Agent Transparency (v7.3.0)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

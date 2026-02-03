@@ -95,8 +95,8 @@ describe('Removed Commands Consistency', () => {
         const files = await fs.readdir(commandsDir);
         const tsFiles = files.filter((f: string) => f.endsWith('.ts'));
 
-        // Expected commands in v5.3
-        const expectedCommands = ['diagnose.ts', 'init.ts', 'update.ts', 'version.ts'];
+        // Expected commands in v7.3
+        const expectedCommands = ['clean.ts', 'diagnose.ts', 'init.ts', 'update.ts', 'version.ts'];
 
         expect(tsFiles.sort()).toEqual(expectedCommands.sort());
       }
