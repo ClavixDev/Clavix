@@ -274,7 +274,7 @@ Result: Project permanently deleted
 
 ---
 
-## Agent Transparency (v7.2.2)
+## Agent Transparency (v7.2.3)
 
 ### Agent Manual (Universal Protocols)
 {{INCLUDE:agent-protocols/AGENT_MANUAL.md}}

@@ -156,28 +156,40 @@ All improvements must be labeled with quality dimension tags:
 
 ---
 
-## File-Saving Protocol
+## File-Saving Protocol (REQUIRED - DO NOT SKIP)
 
-### Step 1: Generate ID
+DO NOT output any "saved" message until you have COMPLETED and VERIFIED all save steps.
 
-Format: `{depth}-YYYYMMDD-HHMMSS-{random4}`
-- `std-20240115-143022-a7x2` for standard depth
-- `comp-20240115-143022-b9k4` for comprehensive depth
+This is a BLOCKING checkpoint. You cannot proceed to the final message until saving is verified.
 
-### Step 2: Create Directory
+### What You MUST Do Before Final Output
 
-```bash
-mkdir -p .clavix/outputs/prompts
-```
+| Step | Action | Tool to Use | Verification |
+|------|--------|-------------|--------------|
+| 1 | Create directory with prompt file | **Write tool** (creates parent dirs automatically) | Directory exists |
+| 2 | Generate prompt ID | Format: `{std|comp}-YYYYMMDD-HHMMSS-<random>` | ID is unique |
+| 3 | Write prompt file with frontmatter | **Write tool** | File created |
+| 4 | **VERIFY: Read back file** | **Read tool** | File readable |
 
-### Step 3: Save File
+**⚠️ CRITICAL: You MUST invoke the Write tool to create the file. Showing the content in your response is NOT enough - the file must actually exist on disk.**
 
-Path: `.clavix/outputs/prompts/{id}.md`
-
-Content structure:
-```yaml
 ---
-id: {generated-id}
+
+### Step 1: Generate Prompt ID
+
+Create a unique identifier using this format:
+- **Standard depth**: `std-YYYYMMDD-HHMMSS-<random>` (e.g., `std-20250117-143022-a3f2`)
+- **Comprehensive depth**: `comp-YYYYMMDD-HHMMSS-<random>` (e.g., `comp-20250117-143022-a3f2`)
+
+### Step 2: Write Prompt File (Write Tool)
+
+**You MUST use the Write tool** to create the prompt file at:
+- **Path**: `.clavix/outputs/prompts/{prompt-id}.md`
+
+**File content format**:
+```markdown
+---
+id: {prompt-id}
 depthUsed: standard|comprehensive
 timestamp: {ISO-8601 timestamp}
 executed: false
@@ -185,9 +197,18 @@ originalPrompt: |
   {original user prompt text}
 ---
 
-# Optimized Prompt
+# Improved Prompt
 
 {The improved prompt content}
+
+## Quality Scores
+- **Clarity**: {percentage}%
+- **Efficiency**: {percentage}%
+- **Structure**: {percentage}%
+- **Completeness**: {percentage}%
+- **Actionability**: {percentage}%
+- **Specificity**: {percentage}%
+- **Overall**: {percentage}% ({rating})
 
 ## Analysis Summary
 
@@ -196,13 +217,24 @@ Quality: {before}% → {after}%
 Patterns Applied: {list of patterns}
 ```
 
-### Step 4: Verify After Write
+### Step 3: Verify File Exists (Read Tool)
 
-**CRITICAL**: Use Read to confirm file exists and has valid content.
+After using Write tool to create the file, use the Read tool to verify:
+- Path: `.clavix/outputs/prompts/{prompt-id}.md`
 
-If verification fails:
-- Retry save once
-- If still fails, display prompt content for manual copy
+**If Read fails**: ⛔ STOP - Saving failed. Retry Write tool with proper content.
+
+### Step 4: Final Response
+
+ONLY after verification passes, output:
+
+```
+✅ Prompt saved to: `.clavix/outputs/prompts/{actual-prompt-id}.md`
+
+Ready to implement? Run: /clavix:implement --latest
+```
+
+**⚠️ DO NOT output the saved message until you have verified the file exists.**
 
 ---
 
