@@ -122,8 +122,13 @@ export function getSkillScope(integrationName: string): SkillScope | null {
   if (integrationName === 'agent-skills-global') return 'global';
   if (integrationName === 'agent-skills-project') return 'project';
   if (integrationName === 'agent-skills-custom') return 'custom';
-  if (integrationName === 'agent-skills-antigravity-global') return 'antigravity-global';
-  if (integrationName === 'agent-skills-antigravity-workspace') return 'antigravity-workspace';
+  // Antigravity scopes are treated as custom internally or handled by specialized adapters
+  if (
+    integrationName === 'agent-skills-antigravity-global' ||
+    integrationName === 'agent-skills-antigravity-workspace'
+  ) {
+    return 'custom';
+  }
   return null;
 }
 

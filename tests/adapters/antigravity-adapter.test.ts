@@ -1,7 +1,7 @@
 /**
  * Agent Skills Adapter Tests for Google Antigravity
  *
- * Tests for the Antigravity integration in AgentSkillsAdapter.
+ * Tests for the Antigravity integration via specialized adapters.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
@@ -9,12 +9,15 @@ import fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import { fileURLToPath } from 'url';
-import { AgentSkillsAdapter } from '../../src/core/adapters/agent-skills-adapter.js';
+import {
+  AntigravityGlobalAdapter,
+  AntigravityWorkspaceAdapter,
+} from '../../src/core/adapters/antigravity-adapter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-describe('AgentSkillsAdapter (Antigravity)', () => {
+describe('Antigravity Adapters', () => {
   const testDir = path.join(__dirname, '../fixtures/antigravity-adapter');
   let originalCwd: string;
 
@@ -30,35 +33,25 @@ describe('AgentSkillsAdapter (Antigravity)', () => {
     await fs.remove(testDir);
   });
 
-  describe('constructor', () => {
-    it('should create antigravity global adapter with correct name', () => {
-      const adapter = new AgentSkillsAdapter('antigravity-global');
+  describe('AntigravityGlobalAdapter', () => {
+    it('should have correct name and display name', () => {
+      const adapter = new AntigravityGlobalAdapter();
       expect(adapter.name).toBe('agent-skills-antigravity-global');
       expect(adapter.displayName).toBe('Agent Skills (Antigravity Global)');
     });
 
-    it('should create antigravity workspace adapter with correct name', () => {
-      const adapter = new AgentSkillsAdapter('antigravity-workspace');
-      expect(adapter.name).toBe('agent-skills-antigravity-workspace');
-      expect(adapter.displayName).toBe('Agent Skills (Antigravity Workspace)');
-    });
-  });
-
-  describe('directory', () => {
-    it('should return correct path for antigravity global scope', () => {
-      const adapter = new AgentSkillsAdapter('antigravity-global');
+    it('should have correct directory', () => {
+      const adapter = new AntigravityGlobalAdapter();
       expect(adapter.directory).toBe('~/.gemini/antigravity/skills');
     });
 
-    it('should return correct path for antigravity workspace scope', () => {
-      const adapter = new AgentSkillsAdapter('antigravity-workspace');
-      expect(adapter.directory).toBe('.agent/skills');
+    it('should have "custom" install scope', () => {
+      const adapter = new AntigravityGlobalAdapter();
+      expect(adapter.installScope).toBe('custom');
     });
-  });
 
-  describe('getCommandPath', () => {
-    it('should expand tilde for antigravity global scope', () => {
-      const adapter = new AgentSkillsAdapter('antigravity-global');
+    it('should expand tilde in command path', () => {
+      const adapter = new AntigravityGlobalAdapter();
       const commandPath = adapter.getCommandPath();
       expect(commandPath).toContain(os.homedir());
       expect(commandPath).toContain('.gemini');
@@ -66,9 +59,27 @@ describe('AgentSkillsAdapter (Antigravity)', () => {
       expect(commandPath).toContain('skills');
       expect(commandPath).not.toContain('~');
     });
+  });
 
-    it('should use relative path for antigravity workspace scope', () => {
-      const adapter = new AgentSkillsAdapter('antigravity-workspace');
+  describe('AntigravityWorkspaceAdapter', () => {
+    it('should have correct name and display name', () => {
+      const adapter = new AntigravityWorkspaceAdapter();
+      expect(adapter.name).toBe('agent-skills-antigravity-workspace');
+      expect(adapter.displayName).toBe('Agent Skills (Antigravity Workspace)');
+    });
+
+    it('should have correct directory', () => {
+      const adapter = new AntigravityWorkspaceAdapter();
+      expect(adapter.directory).toBe('.agent/skills');
+    });
+
+    it('should have "custom" install scope', () => {
+      const adapter = new AntigravityWorkspaceAdapter();
+      expect(adapter.installScope).toBe('custom');
+    });
+
+    it('should use relative path in command path', () => {
+      const adapter = new AntigravityWorkspaceAdapter();
       const commandPath = adapter.getCommandPath();
       expect(commandPath).toContain('.agent');
       expect(commandPath).toContain('skills');
