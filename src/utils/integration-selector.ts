@@ -29,6 +29,14 @@ export async function selectIntegrations(
         { name: 'Agent Skills - Global (~/.config/agents/skills/)', value: 'agent-skills-global' },
         { name: 'Agent Skills - Project (.skills/)', value: 'agent-skills-project' },
         { name: 'Agent Skills - Custom Path', value: 'agent-skills-custom' },
+        {
+          name: 'Google Antigravity - Global (~/.gemini/antigravity/skills/)',
+          value: 'agent-skills-antigravity-global',
+        },
+        {
+          name: 'Google Antigravity - Workspace (.agent/skills/)',
+          value: 'agent-skills-antigravity-workspace',
+        },
         new inquirer.Separator(),
 
         new inquirer.Separator('=== CLI Tools ==='),
@@ -101,7 +109,9 @@ export function hasAgentSkillsSelected(integrations: string[]): boolean {
   return (
     integrations.includes('agent-skills-global') ||
     integrations.includes('agent-skills-project') ||
-    integrations.includes('agent-skills-custom')
+    integrations.includes('agent-skills-custom') ||
+    integrations.includes('agent-skills-antigravity-global') ||
+    integrations.includes('agent-skills-antigravity-workspace')
   );
 }
 
@@ -112,6 +122,13 @@ export function getSkillScope(integrationName: string): SkillScope | null {
   if (integrationName === 'agent-skills-global') return 'global';
   if (integrationName === 'agent-skills-project') return 'project';
   if (integrationName === 'agent-skills-custom') return 'custom';
+  // Antigravity scopes are treated as custom internally or handled by specialized adapters
+  if (
+    integrationName === 'agent-skills-antigravity-global' ||
+    integrationName === 'agent-skills-antigravity-workspace'
+  ) {
+    return 'custom';
+  }
   return null;
 }
 
@@ -122,6 +139,8 @@ export function isAgentSkillsIntegration(name: string): boolean {
   return (
     name === 'agent-skills-global' ||
     name === 'agent-skills-project' ||
-    name === 'agent-skills-custom'
+    name === 'agent-skills-custom' ||
+    name === 'agent-skills-antigravity-global' ||
+    name === 'agent-skills-antigravity-workspace'
   );
 }
