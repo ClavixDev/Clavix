@@ -44,6 +44,12 @@ export class AgentSkillsAdapter extends BaseAdapter {
     } else if (scope === 'project') {
       this.name = 'agent-skills-project';
       this.displayName = 'Agent Skills (Project)';
+    } else if (scope === 'antigravity-global') {
+      this.name = 'agent-skills-antigravity-global';
+      this.displayName = 'Agent Skills (Antigravity Global)';
+    } else if (scope === 'antigravity-workspace') {
+      this.name = 'agent-skills-antigravity-workspace';
+      this.displayName = 'Agent Skills (Antigravity Workspace)';
     } else {
       this.name = 'agent-skills-custom';
       this.displayName = 'Agent Skills (Custom Path)';
@@ -72,6 +78,12 @@ export class AgentSkillsAdapter extends BaseAdapter {
     }
     if (this.scope === 'custom') {
       return '<custom-path-not-configured>';
+    }
+    if (this.scope === 'antigravity-global') {
+      return SKILL_PATHS.antigravityGlobal;
+    }
+    if (this.scope === 'antigravity-workspace') {
+      return SKILL_PATHS.antigravityWorkspace;
     }
     return this.scope === 'global' ? SKILL_PATHS.global : SKILL_PATHS.project;
   }
@@ -106,7 +118,11 @@ export class AgentSkillsAdapter extends BaseAdapter {
       return this.expandPath(dir);
     }
     // Absolute paths (global scope default or user-provided absolute)
-    if (this.scope === 'global' || path.isAbsolute(dir)) {
+    if (
+      this.scope === 'global' ||
+      this.scope === 'antigravity-global' ||
+      path.isAbsolute(dir)
+    ) {
       return dir;
     }
     // Relative paths (project scope or custom relative)

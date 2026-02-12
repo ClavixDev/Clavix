@@ -38,6 +38,8 @@ export class AgentManager {
     this.registerAdapter(new AgentSkillsAdapter('global', userConfig));
     this.registerAdapter(new AgentSkillsAdapter('project', userConfig));
     this.registerAdapter(new AgentSkillsAdapter('custom', userConfig));
+    this.registerAdapter(new AgentSkillsAdapter('antigravity-global', userConfig));
+    this.registerAdapter(new AgentSkillsAdapter('antigravity-workspace', userConfig));
 
     // Register simple adapters from config (using UniversalAdapter factory)
     for (const config of getSimpleAdapters()) {

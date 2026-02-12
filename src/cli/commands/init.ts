@@ -417,6 +417,10 @@ export default class Init extends Command {
             location = '~/.config/agents/skills/';
           } else if (integrationName === 'agent-skills-project') {
             location = '.skills/';
+          } else if (integrationName === 'agent-skills-antigravity-global') {
+            location = '~/.gemini/antigravity/skills/';
+          } else if (integrationName === 'agent-skills-antigravity-workspace') {
+            location = '.agent/skills/';
           } else {
             location = integrationPaths['agent-skills-custom'] || 'custom path';
           }

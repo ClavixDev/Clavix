@@ -10,7 +10,12 @@
 /**
  * Skill installation scope
  */
-export type SkillScope = 'global' | 'project' | 'custom';
+export type SkillScope =
+  | 'global'
+  | 'project'
+  | 'custom'
+  | 'antigravity-global'
+  | 'antigravity-workspace';
 
 /**
  * Skill template with optional references
@@ -91,4 +96,8 @@ export const SKILL_PATHS = {
   global: '~/.config/agents/skills',
   /** Project-level skills directory */
   project: '.skills',
+  /** Antigravity global skills directory */
+  antigravityGlobal: '~/.gemini/antigravity/skills',
+  /** Antigravity workspace skills directory */
+  antigravityWorkspace: '.agent/skills',
 } as const;
