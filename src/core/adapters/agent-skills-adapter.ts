@@ -45,8 +45,6 @@ export class AgentSkillsAdapter extends BaseAdapter {
       this.name = 'agent-skills-project';
       this.displayName = 'Agent Skills (Project)';
     } else {
-      // For custom scope, name will be overridden by subclasses if needed
-      // Default to 'agent-skills-custom'
       this.name = 'agent-skills-custom';
       this.displayName = 'Agent Skills (Custom Path)';
     }

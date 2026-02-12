@@ -417,11 +417,8 @@ export default class Init extends Command {
             location = '~/.config/agents/skills/';
           } else if (integrationName === 'agent-skills-project') {
             location = '.skills/';
-          } else if (integrationName === 'agent-skills-custom') {
-            location = integrationPaths['agent-skills-custom'] || 'custom path';
           } else {
-            // For specialized adapters (like Antigravity), use their directory property
-            location = adapter.directory;
+            location = integrationPaths['agent-skills-custom'] || 'custom path';
           }
 
           this.log(chalk.gray(`  ✓ Generating ${adapter.displayName}...`));

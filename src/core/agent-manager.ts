@@ -6,10 +6,6 @@ import { QwenAdapter } from './adapters/qwen-adapter.js';
 import { LlxprtAdapter } from './adapters/llxprt-adapter.js';
 import { VibeAdapter } from './adapters/vibe-adapter.js';
 import { AgentSkillsAdapter } from './adapters/agent-skills-adapter.js';
-import {
-  AntigravityGlobalAdapter,
-  AntigravityWorkspaceAdapter,
-} from './adapters/antigravity-adapter.js';
 import { UniversalAdapter } from './adapters/universal-adapter.js';
 import { getSimpleAdapters } from './adapter-registry.js';
 import { IntegrationError } from '../types/errors.js';
@@ -42,10 +38,6 @@ export class AgentManager {
     this.registerAdapter(new AgentSkillsAdapter('global', userConfig));
     this.registerAdapter(new AgentSkillsAdapter('project', userConfig));
     this.registerAdapter(new AgentSkillsAdapter('custom', userConfig));
-
-    // Register Antigravity adapters (specialized subclasses)
-    this.registerAdapter(new AntigravityGlobalAdapter(userConfig));
-    this.registerAdapter(new AntigravityWorkspaceAdapter(userConfig));
 
     // Register simple adapters from config (using UniversalAdapter factory)
     for (const config of getSimpleAdapters()) {
